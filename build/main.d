@@ -1,4 +1,4 @@
-main.o: C:/Users/Xex/Desktop/RipJKAnimeNX/source/main.cpp \
+main.o: C:/respaldo2017/RipJKAnimeNX/source/main.cpp \
  C:/devkitPro/portlibs/switch/include/SDL2/SDL.h \
  C:/devkitPro/portlibs/switch/include/SDL2/SDL_main.h \
  C:/devkitPro/portlibs/switch/include/SDL2/SDL_stdinc.h \

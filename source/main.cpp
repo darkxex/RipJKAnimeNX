@@ -16,7 +16,45 @@
 #include <iostream>
 #include <math.h>  
 #include <Vector>
+							
+// Empty strings are invalid.
+SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
+	if (strcmp(string, "") == 0) {
+		strncpy(string, "The name cannot be empty.", size); 
+		return SwkbdTextCheckResult_Bad;
+	}
 
+	return SwkbdTextCheckResult_OK;
+}
+
+const char *Keyboard_GetText(const char *guide_text, const char *initial_text) {
+	Result ret = 0;
+	SwkbdConfig swkbd;
+	static char input_string[256];
+
+	if (R_FAILED(ret = swkbdCreate(&swkbd, 0))) {
+		swkbdClose(&swkbd);
+		return "";
+	}
+
+	swkbdConfigMakePresetDefault(&swkbd);
+
+	if (strlen(guide_text) != 0)
+		swkbdConfigSetGuideText(&swkbd, guide_text);
+
+	if (strlen(initial_text) != 0)
+		swkbdConfigSetInitialText(&swkbd, initial_text);
+
+	swkbdConfigSetTextCheckCallback(&swkbd, Keyboard_ValidateText);
+
+	if (R_FAILED(ret = swkbdShow(&swkbd, input_string, sizeof(input_string)))) {
+		swkbdClose(&swkbd);
+		return "";
+	}
+
+	swkbdClose(&swkbd);
+	return input_string;
+}
 
 bool	isFileExist(const char *file)
 {
@@ -28,14 +66,16 @@ bool	isFileExist(const char *file)
 
 	return (true);
 }
+
+//////////////////////////////////aquí empieza el pc.
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
-enum states {programationstate,downloadstate};
+enum states {programationstate,downloadstate,chapterstate,searchstate};
 int statenow = programationstate;
 std::string  urltodownload = "";
 int porcendown = 0;
-
+std::string temporallink = "";
 int cancelcurl = 0;
 //Texture wrapper class
 class LTexture
@@ -93,6 +133,7 @@ SDL_Renderer* gRenderer = NULL;
 //Globally used font
 TTF_Font *gFont = NULL;
 TTF_Font *gFont2 = NULL;
+TTF_Font *gFont3 = NULL;
 //Rendered texture
 LTexture gTextTexture;
 LTexture Farest;
@@ -259,6 +300,8 @@ void close()
 	gFont = NULL;
 	TTF_CloseFont(gFont2);
 	gFont2 = NULL;
+	TTF_CloseFont(gFont3);
+	gFont3 = NULL;
 	//Destroy window	
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
@@ -270,6 +313,7 @@ void close()
 	IMG_Quit();
 	SDL_Quit();
 }
+
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
 	((std::string*)userp)->append((char*)contents, size * nmemb);
@@ -394,7 +438,7 @@ int downloadjkanimevideo(void* data)
 	replace(namedownload, "-", " ");
 	replace(namedownload, "/", " ");
 	namedownload = namedownload.substr(0, namedownload.length() - 1);
-	
+
 	namedownload = namedownload + ".mp4";
 	std::string directorydownload = "sdmc:/" + namedownload;
 	std::cout << namedownload << std::endl;
@@ -495,7 +539,71 @@ void mayus(std::string &s)
 		}
 	}
 }
+bool tienezero = false;
+std::string capit(std::string b) {
+	tienezero = false;
+
+
+	std::string a = "";
+
+	
+		a = gethtml(b);
+  //
+	
+	
+	int val0, val1, val2, val3;
+
+	int zero1, zero2;
+	std::string zerocontainer = "";
+	std::string zerocontainer2 = "";
+	zero1 = a.rfind("ajax/pagination_episodes/");
+	zero2 = a.find("'", zero1);
+	zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
+	std::cout << zerocontainer << std::endl;
+	
+		zerocontainer2 = gethtml(zerocontainer);
+		int tempzero = zerocontainer2.find("\"0\"");
+		if (tempzero != -1) {
+			
+			std::cout << "Si contiene" << std::endl;
+			tienezero = true;
+		}
+		else {
+			
+			std::cout << "no contiene" << std::endl;
+			tienezero = false;
+		}
+	
+	
+
+	val0 = a.rfind("href=\"#pag");
+
+	if (val0 != -1) {
+
+		val1 = a.find(">", val0);
+		val1 = val1 + 1;
+		val2 = a.find("<", val1);
+
+		std::string urlx;
+
+
+		urlx = (a.substr(val1, val2 - val1));
+		val3 = urlx.find(" - ") + 3;
+		urlx = urlx.substr(val3);
+
+		return (urlx);
+	}
+
+	else
+
+	{
+		return "1";
+	}
+
+
+};
 std::vector<std::string> arraychapter;
+std::vector<std::string> arraysearch;
 
 int main(int argc, char **argv)
 
@@ -508,6 +616,10 @@ int main(int argc, char **argv)
 	int val0 = 0;
 	int arrayselect = 0;
 	int arraycount = 0;
+	int searchcount = 0;
+	int maxcapit = 1;
+	int mincapit = 0;
+	int capmore = 1;
 	SDL_Thread* threadID = NULL;
 	std::string temporal = "";
 	
@@ -583,11 +695,13 @@ int main(int argc, char **argv)
 	}
 		
 
+			int searchchapter = 0;
 			int selectchapter = 0;
 			int posxbase = 20;
 			int posybase = 10;
 			gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
 			gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
+			gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
 			SDL_Color textColor = { 50, 50, 50 };
 			
 			Farest.loadFromFile("romfs:/texture.png");
@@ -623,9 +737,18 @@ int main(int argc, char **argv)
 						//Select surfaces based on key press
 						switch (e.key.keysym.sym)
 						{
-						case SDLK_DOWN:
+							case SDLK_DOWN:
 							switch (statenow)
 								{
+								case searchstate:
+									if (searchchapter < searchcount - 1)
+									{
+										searchchapter++;
+
+										std::cout << searchchapter << std::endl;
+									}
+								break;
+
 								case programationstate:
 								if (selectchapter < arraycount - 1)
 								{
@@ -635,7 +758,16 @@ int main(int argc, char **argv)
 								}
 								break;
 							
-							
+								case chapterstate:
+									if (capmore > 10)
+									{
+										capmore = capmore - 10;
+									}
+									if (capmore < mincapit)
+									{
+										capmore = mincapit;
+									}
+									break;
 							
 							}
 							
@@ -651,26 +783,209 @@ int main(int argc, char **argv)
 									std::cout << selectchapter << std::endl;
 								}
 								break;
+							case chapterstate:
+								if (capmore < maxcapit)
+								{
+									capmore = capmore + 10;
+								}
+								if (capmore >maxcapit)
+								{
+									capmore = maxcapit;
+								}
+								break;
+
+							case searchstate:
+								if (searchchapter > 0)
+								{
+									searchchapter--;
+									std::cout << searchchapter << std::endl;
+								}
+								break;
 
 							}
 							break;
+						case SDLK_a:
+							
+							switch (statenow)
+							{
+							case programationstate:
 
-						case SDLK_LEFT:
-							statenow = programationstate;
-							cancelcurl = 1;
+									{
+								statenow = chapterstate;
+								temporallink = arraychapter[selectchapter];
+								
+								int val1 = temporallink.find("/", 20);
+								temporallink = temporallink.substr(0, val1 + 1);
+								std::cout << temporallink << std::endl;
+								maxcapit = atoi(capit(temporallink).c_str());
+								if (tienezero == true) {
+									maxcapit = maxcapit - 1;
+									mincapit = 0;
+									capmore = maxcapit;
+								}
+								else
+								{
+									mincapit = 1;
+									capmore = maxcapit;
+								}
+								std::cout <<  maxcapit << std::endl;
+
+
+									}
+								break;
+
+							case searchstate:
+							{
+								statenow = chapterstate;
+								temporallink = arraysearch[searchchapter];
+
+								std::cout << temporallink << std::endl;
+								maxcapit = atoi(capit(temporallink).c_str());
+								if (tienezero == true) {
+									maxcapit = maxcapit - 1;
+									mincapit = 0;
+									capmore = maxcapit;
+								}
+								else
+								{
+									mincapit = 1;
+									capmore = maxcapit;
+								}
+								std::cout << maxcapit << std::endl;
+
+
+							}
+								break;
+								case chapterstate:
+								statenow = downloadstate;
+								cancelcurl = 0;
+								urltodownload = temporallink + std::to_string(capmore) + "/";
+								threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
+								break;
+							
+
+							}
 							break;
+						case SDLK_b:
 
-						case SDLK_RIGHT:
-							statenow = downloadstate;
+							switch (statenow)
+							{
+							case programationstate:
+
+
+							break;
+							case downloadstate:
+								statenow = chapterstate;
+								cancelcurl = 1;
+
+								break;
+							case chapterstate:
+								statenow = programationstate;
+								
+
+								break;
+							case searchstate:
+								statenow = programationstate;
+								break;
+
+
+							}
+							break;
+						case SDLK_LEFT:
 							switch (statenow)
 							{
 							case downloadstate:
-								cancelcurl = 0;
-								urltodownload = arraychapter[selectchapter];
-								 threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
+								
 
 								break;
 
+							case chapterstate:
+								if (capmore > mincapit)
+								{
+									capmore = capmore - 1;
+								}
+								if (capmore < mincapit)
+								{
+									capmore = mincapit;
+								}
+								break;
+							}
+							
+							break;
+
+						case SDLK_r:
+							switch (statenow)
+							{
+							case programationstate:
+							    arraysearch.clear();
+								statenow = searchstate;
+							char *buf = (char*)malloc(256);
+							
+							strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
+							std::string tempbus(buf);
+							replace(tempbus," ", "_");
+							replace(tempbus,"!", "");
+							replace(tempbus,";", "");
+							 if (tempbus.length() >= 3){
+								std::string content = gethtml("https://jkanime.net/buscar/" + tempbus + "/1/");
+								 content = content + gethtml("https://jkanime.net/buscar/" + tempbus + "/2/");
+								int val1 = 1;
+								int val2;
+								int val0 = 0;
+								
+								searchcount = 0;
+							
+							
+							
+
+								while (val0 != -1) {
+									val0 = content.find("portada-title", val1);
+									if (val0 == -1) { break; }
+
+									val1 = 6 + content.find("href=", val0);
+									val2 = (content.find('"', val1));
+									std::string gdrive = content.substr(val1, val2 - val1);
+									std::cout << searchcount << ". " << gdrive << std::endl;
+
+									arraysearch.push_back(gdrive);
+									
+									searchcount++;
+									val1++;
+								}
+							 }
+							 else
+							 {
+								statenow = programationstate; 
+							 }
+								break;
+							
+							
+							}
+
+							break;
+
+						case SDLK_RIGHT:
+							
+							switch (statenow)
+							{
+							case programationstate:
+								
+								break;
+							case downloadstate:
+								
+
+								break;
+							case chapterstate:
+								if (capmore < maxcapit)
+								{
+									capmore = capmore + 1;
+								}
+								if (capmore > maxcapit)
+								{
+									capmore = maxcapit;
+								}
+								break;
+							
 							}
 
 
@@ -697,15 +1012,63 @@ int main(int argc, char **argv)
                     if (e.jbutton.which == 0) {
                         if (e.jbutton.button == 0) {
                             // (A) button down
-                            statenow = downloadstate;
-							switch (statenow)
+                          	switch (statenow)
 							{
-							case downloadstate:
-								cancelcurl = 0;
-								urltodownload = arraychapter[selectchapter];
-								 threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
+							case programationstate:
 
+									{
+								statenow = chapterstate;
+								temporallink = arraychapter[selectchapter];
+								
+								int val1 = temporallink.find("/", 20);
+								temporallink = temporallink.substr(0, val1 + 1);
+								std::cout << temporallink << std::endl;
+								maxcapit = atoi(capit(temporallink).c_str());
+								if (tienezero == true) {
+									maxcapit = maxcapit - 1;
+									mincapit = 0;
+									capmore = maxcapit;
+								}
+								else
+								{
+									mincapit = 1;
+									capmore = maxcapit;
+								}
+								std::cout <<  maxcapit << std::endl;
+
+
+									}
 								break;
+
+							case searchstate:
+							{
+								statenow = chapterstate;
+								temporallink = arraysearch[searchchapter];
+
+								std::cout << temporallink << std::endl;
+								maxcapit = atoi(capit(temporallink).c_str());
+								if (tienezero == true) {
+									maxcapit = maxcapit - 1;
+									mincapit = 0;
+									capmore = maxcapit;
+								}
+								else
+								{
+									mincapit = 1;
+									capmore = maxcapit;
+								}
+								std::cout << maxcapit << std::endl;
+
+
+							}
+								break;
+								case chapterstate:
+								statenow = downloadstate;
+								cancelcurl = 0;
+								urltodownload = temporallink + std::to_string(capmore) + "/";
+								threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
+								break;
+							
 
 							}
                         } else if (e.jbutton.button == 10) {
@@ -714,11 +1077,128 @@ int main(int argc, char **argv)
                             quit = 1;
                         }else if (e.jbutton.button == 1) {
                             // (B) button down
-                            statenow = programationstate;
-							cancelcurl = 1;
-                        }else if (e.jbutton.button == 17 || e.jbutton.button == 13) {
-                            // (up) button down
+                           	switch (statenow)
+							{
+							case programationstate:
+
+
+							break;
+							case downloadstate:
+								statenow = chapterstate;
+								cancelcurl = 1;
+
+								break;
+							case chapterstate:
+								statenow = programationstate;
+								
+
+								break;
+							case searchstate:
+								statenow = programationstate;
+								break;
+
+
+							}
+                        }
+						else if (e.jbutton.button == 7) {
+                            // (R) button down
                            switch (statenow)
+							{
+							case programationstate:
+							    arraysearch.clear();
+								statenow = searchstate;
+							char *buf = (char*)malloc(256);
+							
+							strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
+							std::string tempbus(buf);
+							replace(tempbus," ", "_");
+							replace(tempbus,"!", "");
+							replace(tempbus,";", "");
+							 if (tempbus.length() >= 3){
+								std::string content = gethtml("https://jkanime.net/buscar/" + tempbus + "/1/");
+								 content = content + gethtml("https://jkanime.net/buscar/" + tempbus + "/2/");
+								int val1 = 1;
+								int val2;
+								int val0 = 0;
+								
+								searchcount = 0;
+							
+							
+							
+
+								while (val0 != -1) {
+									val0 = content.find("portada-title", val1);
+									if (val0 == -1) { break; }
+
+									val1 = 6 + content.find("href=", val0);
+									val2 = (content.find('"', val1));
+									std::string gdrive = content.substr(val1, val2 - val1);
+									std::cout << searchcount << ". " << gdrive << std::endl;
+
+									arraysearch.push_back(gdrive);
+									
+									searchcount++;
+									val1++;
+								}
+							 }
+							 else
+							 {
+								statenow = programationstate; 
+							 }
+								break;
+							
+							
+							}
+
+                        }
+						else if (e.jbutton.button == 12 || e.jbutton.button == 16) {
+                            // (left) button down
+                           	switch (statenow)
+							{
+							case downloadstate:
+								
+
+								break;
+
+							case chapterstate:
+								if (capmore > mincapit)
+								{
+									capmore = capmore - 1;
+								}
+								if (capmore < mincapit)
+								{
+									capmore = mincapit;
+								}
+								break;
+							}
+                        }
+						else if (e.jbutton.button == 14 || e.jbutton.button == 18) {
+                            // (right) button down
+                        switch (statenow)
+							{
+							case programationstate:
+								
+								break;
+							case downloadstate:
+								
+
+								break;
+							case chapterstate:
+								if (capmore < maxcapit)
+								{
+									capmore = capmore + 1;
+								}
+								if (capmore > maxcapit)
+								{
+									capmore = maxcapit;
+								}
+								break;
+							
+							}
+                        }
+						else if (e.jbutton.button == 17 || e.jbutton.button == 13) {
+                            // (up) button down
+                         switch (statenow)
 							{
 							case programationstate:
 								if (selectchapter > 0)
@@ -727,12 +1207,39 @@ int main(int argc, char **argv)
 									std::cout << selectchapter << std::endl;
 								}
 								break;
+							case chapterstate:
+								if (capmore < maxcapit)
+								{
+									capmore = capmore + 10;
+								}
+								if (capmore >maxcapit)
+								{
+									capmore = maxcapit;
+								}
+								break;
+
+							case searchstate:
+								if (searchchapter > 0)
+								{
+									searchchapter--;
+									std::cout << searchchapter << std::endl;
+								}
+								break;
 
 							}
                         }else if (e.jbutton.button == 19 || e.jbutton.button == 15 ) {
                             // (down) button down
-                           switch (statenow)
+                          switch (statenow)
 								{
+								case searchstate:
+									if (searchchapter < searchcount - 1)
+									{
+										searchchapter++;
+
+										std::cout << searchchapter << std::endl;
+									}
+								break;
+
 								case programationstate:
 								if (selectchapter < arraycount - 1)
 								{
@@ -741,6 +1248,17 @@ int main(int argc, char **argv)
 									std::cout << selectchapter << std::endl;
 								}
 								break;
+							
+								case chapterstate:
+									if (capmore > 10)
+									{
+										capmore = capmore - 10;
+									}
+									if (capmore < mincapit)
+									{
+										capmore = mincapit;
+									}
+									break;
 							
 							}
                         }
@@ -761,7 +1279,7 @@ int main(int argc, char **argv)
 				
 			
 				
-				//Clear screen
+					//Clear screen
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 				SDL_RenderClear(gRenderer);
 
@@ -770,6 +1288,30 @@ int main(int argc, char **argv)
 				Farest.render((0) , (0) );
 				switch (statenow)
 				{
+				case chapterstate:
+					
+				{std::string temptext = temporallink;
+					replace(temptext, "https://jkanime.net/", "");
+					replace(temptext, "/", " ");
+					replace(temptext, "-", " ");
+					mayus(temptext); 
+					gTextTexture.loadFromRenderedText(gFont3, temptext + ":", textColor);
+					gTextTexture.render(posxbase, posybase);
+					gTextTexture.loadFromRenderedText(gFont, "Por favor escoge un capitulo entre: " + std::to_string(mincapit) + " - " + std::to_string(maxcapit), textColor);
+					gTextTexture.render(posxbase, posybase + 50);
+					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Left\" para restar 1, \"Down\" para restar 10. ", textColor);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 100);
+					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Right\" para sumar 1 y \"Up\" para sumar 10.", textColor);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 80);
+					gTextTexture.loadFromRenderedText(gFont, "Presiona \"B\" para volver a la programacion.", textColor);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 60);
+					gTextTexture.loadFromRenderedText(gFont2,"Capitulo: " + std::to_string(capmore), textColor);
+					gTextTexture.render(posxbase, posybase + 200);
+				}
+
+					break;
+
+
 				case programationstate:
 					for (int x = 0; x < arraycount; x++) {
 						std::string temptext = arraychapter[x];
@@ -803,15 +1345,57 @@ int main(int argc, char **argv)
 							gTextTexture.render(posxbase, posybase + (x * 22));
 
 						}
+						
 					}
-					
 					textColor = { 50, 50, 50 };
-					gTextTexture.loadFromRenderedText(gFont, "Presiona \"A\" para Descargar...", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "Presiona \"A\" para Descargar y \"R\" para Buscar...", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
+				
 					
 					break;
+				case searchstate:
+
+					for (int x = 0; x < searchcount; x++) {
+						std::string temptext = arraysearch[x];
+						replace(temptext, "https://jkanime.net/", "");
+						replace(temptext, "/", " ");
+						replace(temptext, "-", " ");
+						mayus(temptext);
+						if (x == searchchapter) {
+							Heart.render(posxbase + 5, posybase + (x * 22));
+							textColor = { 120, 120, 120 };
+
+						}
+						else
+						{
+							textColor = { 50, 50, 50 };
+						}
+
+
+
+						gTextTexture.loadFromRenderedText(gFont, temptext, textColor);
+
+						if (x == searchchapter) {
+
+							gTextTexture.render(posxbase + 30, posybase + (x * 22));
+
+						}
+						else
+						{
+
+
+							gTextTexture.render(posxbase, posybase + (x * 22));
+
+						}
+
+					}
+					textColor = { 50, 50, 50 };
+					gTextTexture.loadFromRenderedText(gFont, "Presiona \"A\" para Descargar y \"B\" para volver...", textColor);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
+
+					break;
 				case downloadstate:
-					std::string temptext = arraychapter[selectchapter];
+					std::string temptext = urltodownload;
 					replace(temptext, "https://jkanime.net/", "");
 					replace(temptext, "/", " ");
 					replace(temptext, "-", " ");
@@ -824,15 +1408,23 @@ int main(int argc, char **argv)
 					gTextTexture.loadFromRenderedText(gFont2, std::to_string(porcendown) + "\%", textColor);
 					gTextTexture.render(posxbase + 40, posybase + 40);
 					
-					gTextTexture.loadFromRenderedText(gFont, "Una vez la descarga sea completada, va a estar en la raiz de tu SD.", textColor);
-					gTextTexture.render(posxbase, posybase + 220);
+					
 					gTextTexture.loadFromRenderedText(gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
-					gTextTexture.render(posxbase, posybase + 240);
+					gTextTexture.render(posxbase, posybase + 260);
 					gTextTexture.loadFromRenderedText(gFont, "Para cancelar la descarga presiona \"B\" y \"+\" para salir.", textColor);
-					gTextTexture.render(posxbase , SCREEN_HEIGHT - 50);
-					gTextTexture.loadFromRenderedText(gFont, "(Esta App es una prueba, en la siguiente version va a tener un buscador de Anime O.o)", textColor);
-					gTextTexture.render(posxbase + 20, SCREEN_HEIGHT - 30);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 50);
+
+					if (std::to_string(porcendown) == "100") {
+						//Render red filled quad
+						SDL_Rect fillRect = { posxbase + 98, posybase + 400, 580, 50};
+						SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+						SDL_RenderFillRect(gRenderer, &fillRect);
+						gTextTexture.loadFromRenderedText(gFont3, "Descarga Completada! Revisa tu SD.", textColor);
+						gTextTexture.render(posxbase + 100 , posybase + 400);
+					}
 					break;
+
+
 
 				}
 				
