@@ -9,4 +9,4 @@ En Atmosphere: abre cualquier juego que tengas mientras mantienes presionado el 
 
 En SX OS: abre cualquier juego que tengas mientras mantienes presionado el botón R. en vez de abrirse tu juego se ejecutará homebrew menu, entonces desde ahí abres RipJKAnimeNX.
 ----------------------------------------
-Si la app se cierra al intentar abrirla, es porque se cayó JKAnime.
+Si la app se cierra al intentar abrirla, es porque se cayó JKAnime y debes intentar más tarde.
