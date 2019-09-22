@@ -1,7 +1,7 @@
 # RipJKNX
 app de JKAnime para Nintendo Switch
 ----------------------------------------
-para ejecutar esta aplicación se necesita usar la memoria completa de la consola, por ende no debes abrirla desde el albúm. necesitas tener homebrew menu instalado (y actualizado.)
+para ejecutar esta aplicación se necesita usar la memoria completa de la consola, por ende no debes abrirla desde el albúm. necesitas tener homebrew menu (actualizado.)
 
 Otros CFW: instala un NSP del homebrew menu actualizado, ábrelo y ejecuta RipJKAnimeNX.
 
