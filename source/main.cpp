@@ -16,6 +16,7 @@
 #include <iostream>
 #include <math.h>  
 #include <Vector>
+
 							
 // Empty strings are invalid.
 SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
@@ -75,7 +76,9 @@ enum states {programationstate,downloadstate,chapterstate,searchstate};
 int statenow = programationstate;
 std::string  urltodownload = "";
 int porcendown = 0;
+int sizeestimated = 0;
 std::string temporallink = "";
+bool ahorro = false;
 int cancelcurl = 0;
 //Texture wrapper class
 class LTexture
@@ -333,7 +336,23 @@ void replace(std::string& subject, const std::string& search,
 		pos += replace.length();
 	}
 }
+void mayus(std::string &s)
+{
+	bool cap = true;
 
+	for (unsigned int i = 0; i <= s.length(); i++)
+	{
+		if (isalpha(s[i]) && cap == true)
+		{
+			s[i] = toupper(s[i]);
+			cap = false;
+		}
+		else if (isspace(s[i]))
+		{
+			cap = true;
+		}
+	}
+}
 int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 	double TotalToUpload, double NowUploaded)
 {     
@@ -354,6 +373,7 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 	// create the "meter"
 	int ii = 0;
 	porcendown = fractiondownloaded * 100;
+	sizeestimated = TotalToDownload;
 	printf("%3.0f%% [", fractiondownloaded * 100);
 	// part  that's full already
 	for (; ii < dotz; ii++) {
@@ -368,7 +388,7 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 	fflush(stdout);
 	// if you don't return 0, the transfer will be aborted - see the documentation
 	if (cancelcurl == 1)
-	{
+	{ 
 		return 1;
 	}
 	
@@ -438,7 +458,7 @@ int downloadjkanimevideo(void* data)
 	replace(namedownload, "-", " ");
 	replace(namedownload, "/", " ");
 	namedownload = namedownload.substr(0, namedownload.length() - 1);
-
+	mayus(namedownload);
 	namedownload = namedownload + ".mp4";
 	std::string directorydownload = "sdmc:/" + namedownload;
 	std::cout << namedownload << std::endl;
@@ -452,54 +472,53 @@ int downloadjkanimevideo(void* data)
 
 
 
-
 		videourl = content.substr(val1, val2 - val1);
 		replace(videourl, "\\", "");
 		replace(videourl, "https://jkanime.net/jkrapid.php?u=", "https://www.rapidvideo.com/e/");
 		videourl = videourl + "/";
 		std::cout << videourl << std::endl;
 
-
-
-		std::string videourlbase = videourl.substr(0, videourl.length() - 1);
-
-
-		videourl = videourlbase + "&q=720p";
-
-
-
-
-
 		videourl = gethtml(videourl);
-		val1 = videourl.find("video/mp4");
-
-		if (val1 == -1) {
-			videourl = videourlbase + "&q=480p";
-			videourl = gethtml(videourl);
-			val1 = videourl.find("video/mp4");
-			if (val1 == -1) {
-				videourl = videourlbase + "&q=360p";
-				videourl = gethtml(videourl);
+		val1 = videourl.find("720p");
+		if (val1 != -1)
+		{
+			std::string temporal = "";
+			val1 = videourl.rfind("https://", val1);
+			val2 = videourl.find('"', val1);
+			temporal = videourl.substr(val1, val2 - val1);
+			std::cout << "intentando 720" << std::endl;
+		}
+		else {
+			val1 = videourl.find("480p");
+			if (val1 != -1)
+			{
+				std::string temporal = "";
+				val1 = videourl.rfind("https://", val1);
+				val2 = videourl.find('"', val1);
+				temporal = videourl.substr(val1, val2 - val1);
+				std::cout << "intentando 480" << std::endl;
+			}
+			else {
+				std::string temporal = "";
 				val1 = videourl.find("video/mp4");
-
+				val1 = videourl.rfind("https://", val1);
+				val2 = videourl.find('"', val1);
+				temporal = videourl.substr(val1, val2 - val1);
+				std::cout << "la minima" << std::endl;
 			}
 
 		}
-		int videopos = val1;
-		val1 = videourl.rfind("http", videopos);
-		val2 = videourl.find('"', val1);
-
-
+		//ahorrotrue
+		if (ahorro == true) {
+			std::string temporal = "";
+			val1 = videourl.find("video/mp4");
+			val1 = videourl.rfind("https://", val1);
+			val2 = videourl.find('"', val1);
+			temporal = videourl.substr(val1, val2 - val1);
+			std::cout << "la minima" << std::endl;
+		}
 
 		videourl = videourl.substr(val1, val2 - val1);
-
-
-		if (videourl.find(".mp4") == -1)
-		{
-			val1 = videourl.find("http", videopos);
-			val2 = videourl.find('"', val1);
-			videourl = videourl.substr(val1, val2 - val1);
-		}
 
 		downloadfile(videourl, directorydownload);
 
@@ -522,23 +541,7 @@ int downloadjkanimevideo(void* data)
 	return 0;
 }
 
-void mayus(std::string &s)
-{
-	bool cap = true;
 
-	for (unsigned int i = 0; i <= s.length(); i++)
-	{
-		if (isalpha(s[i]) && cap == true)
-		{
-			s[i] = toupper(s[i]);
-			cap = false;
-		}
-		else if (isspace(s[i]))
-		{
-			cap = true;
-		}
-	}
-}
 bool tienezero = false;
 std::string capit(std::string b) {
 	tienezero = false;
@@ -875,17 +878,52 @@ int main(int argc, char **argv)
 
 							break;
 							case downloadstate:
-								statenow = chapterstate;
 								cancelcurl = 1;
+								statenow = chapterstate;
+								
 
 								break;
 							case chapterstate:
+							cancelcurl = 1;
 								statenow = programationstate;
 								
 
 								break;
 							case searchstate:
 								statenow = programationstate;
+								break;
+
+
+							}
+							break;
+							case SDLK_x:
+
+							switch (statenow)
+							{
+							case programationstate:
+
+
+								break;
+							case downloadstate:
+
+
+								break;
+							case chapterstate:
+								
+								if (ahorro == true)
+								{
+									ahorro = false;
+								}
+								else
+								{
+									ahorro = true;
+								}
+							
+
+
+								break;
+							case searchstate:
+								
 								break;
 
 
@@ -1084,17 +1122,53 @@ int main(int argc, char **argv)
 
 							break;
 							case downloadstate:
-								statenow = chapterstate;
 								cancelcurl = 1;
+								statenow = chapterstate;
+								
 
 								break;
 							case chapterstate:
+								cancelcurl = 1;
 								statenow = programationstate;
 								
 
 								break;
 							case searchstate:
 								statenow = programationstate;
+								break;
+
+
+							}
+                        }
+						else if (e.jbutton.button == 2) {
+                            // (X) button down
+                           	
+							switch (statenow)
+							{
+							case programationstate:
+
+
+								break;
+							case downloadstate:
+
+
+								break;
+							case chapterstate:
+								
+								if (ahorro == true)
+								{
+									ahorro = false;
+								}
+								else
+								{
+									ahorro = true;
+								}
+							
+
+
+								break;
+							case searchstate:
+								
 								break;
 
 
@@ -1299,12 +1373,26 @@ int main(int argc, char **argv)
 					gTextTexture.render(posxbase, posybase);
 					gTextTexture.loadFromRenderedText(gFont, "Por favor escoge un capitulo entre: " + std::to_string(mincapit) + " - " + std::to_string(maxcapit), textColor);
 					gTextTexture.render(posxbase, posybase + 50);
+						if (ahorro == true)
+					{
+						gTextTexture.loadFromRenderedText(gFont, "Presiona \"X\" para cambiar la calidad del video. (ACTUAL: MEDIA)", textColor);
+						gTextTexture.render(posxbase, SCREEN_HEIGHT - 160);
+					}
+					else
+					{
+						gTextTexture.loadFromRenderedText(gFont, "Presiona \"X\" para cambiar la calidad del video. (ACTUAL: ALTA)", textColor);
+						gTextTexture.render(posxbase, SCREEN_HEIGHT - 160);
+					}
+					gTextTexture.loadFromRenderedText(gFont, "(A veces la calidad ALTA y MEDIA son lo mismo.)", textColor);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 140);
 					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Left\" para restar 1, \"Down\" para restar 10. ", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 100);
 					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Right\" para sumar 1 y \"Up\" para sumar 10.", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 80);
 					gTextTexture.loadFromRenderedText(gFont, "Presiona \"B\" para volver a la programacion.", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 60);
+					gTextTexture.loadFromRenderedText(gFont, "Presiona \"A\" para empezar la descarga.", textColor);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
 					gTextTexture.loadFromRenderedText(gFont2,"Capitulo: " + std::to_string(capmore), textColor);
 					gTextTexture.render(posxbase, posybase + 200);
 				}
@@ -1407,7 +1495,8 @@ int main(int argc, char **argv)
 				
 					gTextTexture.loadFromRenderedText(gFont2, std::to_string(porcendown) + "\%", textColor);
 					gTextTexture.render(posxbase + 40, posybase + 40);
-					
+					gTextTexture.loadFromRenderedText(gFont, "Peso estimado: "+ std::to_string((int )(sizeestimated/1000000)) + "mb.", textColor);
+					gTextTexture.render(posxbase + 100, posybase + 220);
 					
 					gTextTexture.loadFromRenderedText(gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 					gTextTexture.render(posxbase, posybase + 260);
