@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_image.h>
@@ -540,7 +541,76 @@ int downloadjkanimevideo(void* data)
 	}
 	return 0;
 }
+void onlinejkanimevideo(std::string onlineenlace)
+{   Result rc=0;
+	std::string videourl = "";
+	std::string content = "";
 
+	
+	std::string enlacejk =  onlineenlace;
+	
+	content = gethtml(enlacejk.c_str());
+	int val1 = 0, val2 = 0;
+
+	val1 = content.find("https://jkanime.net/um.php?");
+	if (val1 != -1)
+	{
+		val2 = content.find('"', val1);
+
+		videourl = content.substr(val1, val2 - val1);
+		replace(videourl, "\\", "");
+
+
+		std::cout << videourl << std::endl;
+		
+
+
+	}
+	else
+	{
+		val1 = content.find("https://jkanime.net/jk.php?");
+		if (val1 != -1)
+		{
+			val2 = content.find('"', val1);
+
+			videourl = content.substr(val1, val2 - val1);
+			replace(videourl, "\\", "");
+			
+
+			std::cout << videourl << std::endl;
+			
+		}
+	}
+	
+	  WebCommonConfig config;
+            WebCommonReply reply;
+            WebExitReason exitReason= (WebExitReason)0;
+
+            // Create the config. There's a number of web*Create() funcs, see libnx web.h.
+            // webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
+            rc = webPageCreate(&config, videourl.c_str());
+            printf("webPageCreate(): 0x%x\n", rc);
+
+            if (R_SUCCEEDED(rc)) {
+                // At this point you can use any webConfigSet* funcs you want.
+
+                rc = webConfigSetWhitelist(&config, "^http*"); // Set the whitelist, adjust as needed. If you're only using a single domain, you could remove this and use webNewsCreate for the above (see web.h for webNewsCreate).
+                printf("webConfigSetWhitelist(): 0x%x\n", rc);
+
+                if (R_SUCCEEDED(rc)) { // Launch the applet and wait for it to exit.
+                    printf("Running webConfigShow...\n");
+                    rc = webConfigShow(&config, &reply); // If you don't use reply you can pass NULL for it.
+                    printf("webConfigShow(): 0x%x\n", rc);
+                }
+
+                if (R_SUCCEEDED(rc)) { // Normally you can ignore exitReason.
+                    rc = webReplyGetExitReason(&reply, &exitReason);
+                    printf("webReplyGetExitReason(): 0x%x", rc);
+                    if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
+                    printf("\n");
+                }
+            }
+}
 
 bool tienezero = false;
 std::string capit(std::string b) {
@@ -896,6 +966,33 @@ int main(int argc, char **argv)
 
 							}
 							break;
+							case SDLK_y:
+
+							switch (statenow)
+							{
+							case programationstate:
+
+
+								break;
+							case downloadstate:
+								
+
+
+								break;
+							case chapterstate:
+							{std::string tempurl = temporallink + std::to_string(capmore) + "/";
+							onlinejkanimevideo(tempurl);
+							}
+
+								break;
+							case searchstate:
+								
+
+								break;
+
+
+							}
+							break;
 							case SDLK_x:
 
 							switch (statenow)
@@ -1174,6 +1271,32 @@ int main(int argc, char **argv)
 
 							}
                         }
+						else if (e.jbutton.button == 3) {
+                            // (X) button down
+                           	
+							switch (statenow)
+							{
+							case programationstate:
+
+
+								break;
+							case downloadstate:
+
+
+								break;
+							case chapterstate:
+								{std::string tempurl = temporallink + std::to_string(capmore) + "/";
+							onlinejkanimevideo(tempurl);
+							}
+
+								break;
+							case searchstate:
+								
+								break;
+
+
+							}
+                        }
 						else if (e.jbutton.button == 7) {
                             // (R) button down
                            switch (statenow)
@@ -1383,6 +1506,16 @@ int main(int argc, char **argv)
 						gTextTexture.loadFromRenderedText(gFont, "Presiona \"X\" para cambiar la calidad del video. (ACTUAL: ALTA)", textColor);
 						gTextTexture.render(posxbase, SCREEN_HEIGHT - 160);
 					}
+					SDL_Rect fillRect = { posxbase - 5, SCREEN_HEIGHT - 202, 700, 20 };
+					SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+					SDL_RenderFillRect(gRenderer, &fillRect);
+					fillRect = { posxbase - 5, SCREEN_HEIGHT - 142, 430, 20 };
+					SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+					SDL_RenderFillRect(gRenderer, &fillRect);
+					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Y\" para ver Online.", textColor);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 220);
+					gTextTexture.loadFromRenderedText(gFont, "(Solo puedes ver Online si abriste la app desde el Forwader y con Atmosphere.)", textColor);
+					gTextTexture.render(posxbase, SCREEN_HEIGHT - 200);
 					gTextTexture.loadFromRenderedText(gFont, "(A veces la calidad ALTA y MEDIA son lo mismo.)", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 140);
 					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Left\" para restar 1, \"Down\" para restar 10. ", textColor);
@@ -1490,7 +1623,7 @@ int main(int argc, char **argv)
 					mayus(temptext);
 					gTextTexture.loadFromRenderedText(gFont,"Descargando actualmente:", textColor);
 					gTextTexture.render(posxbase, posybase );
-					gTextTexture.loadFromRenderedText(gFont, temptext, textColor);
+					gTextTexture.loadFromRenderedText(gFont3, temptext, textColor);
 					gTextTexture.render(posxbase , posybase + 20);
 				
 					gTextTexture.loadFromRenderedText(gFont2, std::to_string(porcendown) + "\%", textColor);

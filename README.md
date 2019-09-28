@@ -9,6 +9,10 @@ En Atmosphere: abre cualquier juego que tengas mientras mantienes presionado el 
 
 En SX OS: abre cualquier juego que tengas mientras mantienes presionado el botón R. en vez de abrirse tu juego se ejecutará homebrew menu, entonces desde ahí abres RipJKAnimeNX.
 
+Ver Online
+----------------------------------------
+Ver Online solo está soportado por Atmosphere, y para que funcione debes instalar el RipJKForwader.nsp y ejecutar el homebrew desde ahí.
+
 Advertencia:
 ----------------------------------------
 Si la app se cierra al intentar abrirla, es porque se cayó JKAnime y debes intentar más tarde.
