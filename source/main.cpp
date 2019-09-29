@@ -706,6 +706,7 @@ int main(int argc, char **argv)
 
 {	romfsInit();
 	socketInitializeDefault();
+	 //nxlinkStdio();
 	std::string content = gethtml("https://jkanime.net");
 	
 	int val1 = 1;
@@ -1618,7 +1619,7 @@ int main(int argc, char **argv)
 						gTextTexture.loadFromRenderedText(gFont, "\"X\" para cambiar la calidad del video. (ACTUAL: ALTA)", textColor);
 						gTextTexture.render(posxbase, SCREEN_HEIGHT - 160);
 					}
-					SDL_Rect fillRect = { posxbase - 5, SCREEN_HEIGHT - 202, 700, 20 };
+					SDL_Rect fillRect = { posxbase - 5, SCREEN_HEIGHT - 202, 760, 20 };
 					SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 					SDL_RenderFillRect(gRenderer, &fillRect);
 					fillRect = { posxbase - 5, SCREEN_HEIGHT - 142, 430, 20 };
@@ -1626,7 +1627,7 @@ int main(int argc, char **argv)
 					SDL_RenderFillRect(gRenderer, &fillRect);
 					gTextTexture.loadFromRenderedText(gFont, "\"Y\" para ver Online.", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 220);
-					gTextTexture.loadFromRenderedText(gFont, "(Solo puedes ver Online si abriste la app desde el Forwader y con Atmosphere.)", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "(Para Online debes abrir la app desde el Forwader. *En SXOS desactiva Stealth Mode*)", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 200);
 					gTextTexture.loadFromRenderedText(gFont, "(A veces la calidad ALTA y MEDIA son lo mismo.)", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 140);
