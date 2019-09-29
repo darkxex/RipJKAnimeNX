@@ -11,7 +11,7 @@ En SX OS: abre cualquier juego que tengas mientras mantienes presionado el botó
 
 Ver Online
 ----------------------------------------
-Ver Online solo está soportado por Atmosphere, y para que funcione debes instalar el RipJKForwader.nsp y ejecutar el homebrew desde ahí.
+Ver Online funciona bien en Atmosphere, en SX OS debes desactivar Stealth Mode y para que funcione debes instalar el RipJKForwader.nsp y ejecutar el homebrew desde ahí.
 
 Advertencia:
 ----------------------------------------
