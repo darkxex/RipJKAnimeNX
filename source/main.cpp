@@ -204,7 +204,7 @@ bool LTexture::loadFromRenderedText(TTF_Font *fuente,std::string textureText, SD
 	free();
 
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Blended(fuente, textureText.c_str(), textColor);
+	SDL_Surface* textSurface = TTF_RenderUTF8_Blended(fuente, textureText.c_str(), textColor);
 	if (textSurface == NULL)
 	{
 		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
@@ -678,6 +678,30 @@ std::string capit(std::string b) {
 std::vector<std::string> arraychapter;
 std::vector<std::string> arraysearch;
 
+void refrescarpro()
+{
+	int val1 = 1;
+	int val2;
+	int val0 = 0;
+	std::string temporal = "";
+	std::string content = gethtml("https://jkanime.net");
+	while (val0 != -1) {
+		val0 = content.find("play-button", val1);
+		if (val0 == -1) { break; }
+
+		val1 = 19 + content.find("play-button", val1);
+		val2 = (content.find('"', val1));
+		std::string gdrive = content.substr(val1, val2 - val1);
+
+
+		arraychapter.push_back(gdrive);
+		//std::cout << arraycount << ". " << gdrive << std::endl;
+		temporal = temporal + gdrive + "\n";
+		
+		val1++;
+	}
+	printf(temporal.c_str());
+}
 int main(int argc, char **argv)
 
 {	romfsInit();
@@ -688,7 +712,7 @@ int main(int argc, char **argv)
 	int val2;
 	int val0 = 0;
 	int arrayselect = 0;
-	int arraycount = 0;
+	
 	int searchcount = 0;
 	int maxcapit = 1;
 	int mincapit = 0;
@@ -708,7 +732,7 @@ int main(int argc, char **argv)
 		arraychapter.push_back(gdrive);
 		//std::cout << arraycount << ". " << gdrive << std::endl;
 		temporal = temporal + gdrive + "\n";
-		arraycount++;
+		
 		val1++;
 	}
 	
@@ -820,15 +844,23 @@ int main(int argc, char **argv)
 
 										std::cout << searchchapter << std::endl;
 									}
+									else {
+										searchchapter = 0;
+									}
+
 								break;
 
 								case programationstate:
-								if (selectchapter < arraycount - 1)
+								if (selectchapter < arraychapter.size() - 1)
 								{
 									selectchapter++;
 
 									std::cout << selectchapter << std::endl;
 								}
+								else {
+									selectchapter = 0;
+								}
+
 								break;
 							
 								case chapterstate:
@@ -855,6 +887,9 @@ int main(int argc, char **argv)
 									selectchapter--;
 									std::cout << selectchapter << std::endl;
 								}
+								else {
+									selectchapter = arraychapter.size() - 1;
+								}
 								break;
 							case chapterstate:
 								if (capmore < maxcapit)
@@ -872,6 +907,9 @@ int main(int argc, char **argv)
 								{
 									searchchapter--;
 									std::cout << searchchapter << std::endl;
+								}
+								else {
+									searchchapter = arraysearch.size() - 1;
 								}
 								break;
 
@@ -987,6 +1025,40 @@ int main(int argc, char **argv)
 								break;
 							case searchstate:
 								
+
+								break;
+
+
+							}
+							break;
+							case SDLK_l:
+
+							switch (statenow)
+							{
+							case programationstate:
+								//refrescar();
+
+							{
+								
+
+							
+							selectchapter = 0;
+							arraychapter.clear(); 
+							refrescarpro();
+							
+							}
+								break;
+							case downloadstate:
+
+
+
+								break;
+							case chapterstate:
+							
+
+							break;
+							case searchstate:
+
 
 								break;
 
@@ -1210,7 +1282,37 @@ int main(int argc, char **argv)
                             // (+) button down
 							cancelcurl = 1;
                             quit = 1;
-                        }else if (e.jbutton.button == 1) {
+                        }
+						else if (e.jbutton.button == 6) {
+                            // (L) button down
+							switch (statenow)
+							{
+							case programationstate:
+								
+							selectchapter = 0;
+							arraychapter.clear(); 
+							refrescarpro();
+							
+							
+								break;
+							case downloadstate:
+
+
+
+								break;
+							case chapterstate:
+							
+
+							break;
+							case searchstate:
+
+
+								break;
+
+
+							}
+                        }
+						else if (e.jbutton.button == 1) {
                             // (B) button down
                            	switch (statenow)
 							{
@@ -1304,6 +1406,7 @@ int main(int argc, char **argv)
 							case programationstate:
 							    arraysearch.clear();
 								statenow = searchstate;
+								searchchapter = 0;
 							char *buf = (char*)malloc(256);
 							
 							strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
@@ -1403,6 +1506,9 @@ int main(int argc, char **argv)
 									selectchapter--;
 									std::cout << selectchapter << std::endl;
 								}
+								else {
+									selectchapter = arraychapter.size() - 1;
+								}
 								break;
 							case chapterstate:
 								if (capmore < maxcapit)
@@ -1420,6 +1526,8 @@ int main(int argc, char **argv)
 								{
 									searchchapter--;
 									std::cout << searchchapter << std::endl;
+								}else {
+									searchchapter = arraysearch.size() - 1;
 								}
 								break;
 
@@ -1434,15 +1542,19 @@ int main(int argc, char **argv)
 										searchchapter++;
 
 										std::cout << searchchapter << std::endl;
+									}else {
+										searchchapter = 0;
 									}
 								break;
 
 								case programationstate:
-								if (selectchapter < arraycount - 1)
+								if (selectchapter < arraychapter.size() - 1)
 								{
 									selectchapter++;
 
 									std::cout << selectchapter << std::endl;
+								}else {
+									selectchapter = 0;
 								}
 								break;
 							
@@ -1494,16 +1606,16 @@ int main(int argc, char **argv)
 					mayus(temptext); 
 					gTextTexture.loadFromRenderedText(gFont3, temptext + ":", textColor);
 					gTextTexture.render(posxbase, posybase);
-					gTextTexture.loadFromRenderedText(gFont, "Por favor escoge un capitulo entre: " + std::to_string(mincapit) + " - " + std::to_string(maxcapit), textColor);
+					gTextTexture.loadFromRenderedText(gFont, "Por favor escoge un capítulo entre: " + std::to_string(mincapit) + " - " + std::to_string(maxcapit), textColor);
 					gTextTexture.render(posxbase, posybase + 50);
 						if (ahorro == true)
 					{
-						gTextTexture.loadFromRenderedText(gFont, "Presiona \"X\" para cambiar la calidad del video. (ACTUAL: MEDIA)", textColor);
+						gTextTexture.loadFromRenderedText(gFont, "\"X\" para cambiar la calidad del video. (ACTUAL: MEDIA)", textColor);
 						gTextTexture.render(posxbase, SCREEN_HEIGHT - 160);
 					}
 					else
 					{
-						gTextTexture.loadFromRenderedText(gFont, "Presiona \"X\" para cambiar la calidad del video. (ACTUAL: ALTA)", textColor);
+						gTextTexture.loadFromRenderedText(gFont, "\"X\" para cambiar la calidad del video. (ACTUAL: ALTA)", textColor);
 						gTextTexture.render(posxbase, SCREEN_HEIGHT - 160);
 					}
 					SDL_Rect fillRect = { posxbase - 5, SCREEN_HEIGHT - 202, 700, 20 };
@@ -1512,21 +1624,21 @@ int main(int argc, char **argv)
 					fillRect = { posxbase - 5, SCREEN_HEIGHT - 142, 430, 20 };
 					SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 					SDL_RenderFillRect(gRenderer, &fillRect);
-					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Y\" para ver Online.", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "\"Y\" para ver Online.", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 220);
 					gTextTexture.loadFromRenderedText(gFont, "(Solo puedes ver Online si abriste la app desde el Forwader y con Atmosphere.)", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 200);
 					gTextTexture.loadFromRenderedText(gFont, "(A veces la calidad ALTA y MEDIA son lo mismo.)", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 140);
-					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Left\" para restar 1, \"Down\" para restar 10. ", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "\"Left\" para restar 1, \"Down\" para restar 10. ", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 100);
-					gTextTexture.loadFromRenderedText(gFont, "Presiona \"Right\" para sumar 1 y \"Up\" para sumar 10.", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "\"Right\" para sumar 1 y \"Up\" para sumar 10.", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 80);
-					gTextTexture.loadFromRenderedText(gFont, "Presiona \"B\" para volver a la programacion.", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "\"B\" para volver a la programación.", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 60);
-					gTextTexture.loadFromRenderedText(gFont, "Presiona \"A\" para empezar la descarga.", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "\"A\" para empezar la descarga.", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
-					gTextTexture.loadFromRenderedText(gFont2,"Capitulo: " + std::to_string(capmore), textColor);
+					gTextTexture.loadFromRenderedText(gFont2,"Capítulo: " + std::to_string(capmore), textColor);
 					gTextTexture.render(posxbase, posybase + 200);
 				}
 
@@ -1534,7 +1646,7 @@ int main(int argc, char **argv)
 
 
 				case programationstate:
-					for (int x = 0; x < arraycount; x++) {
+					for (int x = 0; x < arraychapter.size(); x++) {
 						std::string temptext = arraychapter[x];
 						replace(temptext, "https://jkanime.net/", "");
 						replace(temptext, "/", " ");
@@ -1569,7 +1681,7 @@ int main(int argc, char **argv)
 						
 					}
 					textColor = { 50, 50, 50 };
-					gTextTexture.loadFromRenderedText(gFont, "Presiona \"A\" para Descargar y \"R\" para Buscar...", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"L\" para Recargar programación -\"R\" para Buscar", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
 				
 					
@@ -1611,7 +1723,7 @@ int main(int argc, char **argv)
 
 					}
 					textColor = { 50, 50, 50 };
-					gTextTexture.loadFromRenderedText(gFont, "Presiona \"A\" para Descargar y \"B\" para volver...", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"B\" para volver", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
 
 					break;
@@ -1633,7 +1745,7 @@ int main(int argc, char **argv)
 					
 					gTextTexture.loadFromRenderedText(gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 					gTextTexture.render(posxbase, posybase + 260);
-					gTextTexture.loadFromRenderedText(gFont, "Para cancelar la descarga presiona \"B\" y \"+\" para salir.", textColor);
+					gTextTexture.loadFromRenderedText(gFont, "Cancelar la descarga \"B\" - \"+\" para salir", textColor);
 					gTextTexture.render(posxbase, SCREEN_HEIGHT - 50);
 
 					if (std::to_string(porcendown) == "100") {
@@ -1641,7 +1753,7 @@ int main(int argc, char **argv)
 						SDL_Rect fillRect = { posxbase + 98, posybase + 400, 580, 50};
 						SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 						SDL_RenderFillRect(gRenderer, &fillRect);
-						gTextTexture.loadFromRenderedText(gFont3, "Descarga Completada! Revisa tu SD.", textColor);
+						gTextTexture.loadFromRenderedText(gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 						gTextTexture.render(posxbase + 100 , posybase + 400);
 					}
 					break;
