@@ -97,6 +97,9 @@ int sizeestimated = 0;
 std::string temporallink = "";
 bool ahorro = false;
 int cancelcurl = 0;
+bool preview = false;
+int searchchapter = 0;
+int selectchapter = 0;
 //Texture wrapper class
 class LTexture
 {
@@ -109,7 +112,7 @@ public:
 
 	//Loads image at specified path
 	bool loadFromFile(std::string path);
-
+	bool loadFromFileCustom(std::string path,int h, int w);
 	//Creates image from font string
 	bool loadFromRenderedText(TTF_Font *fuente, std::string textureText, SDL_Color textColor);
 	//Creates image from font string
@@ -161,6 +164,7 @@ LTexture gTextTexture;
 LTexture Farest;
 LTexture Heart;
 
+LTexture TPreview;
 LTexture::LTexture()
 {
 	//Initialize
@@ -215,7 +219,46 @@ bool LTexture::loadFromFile(std::string path)
 	mTexture = newTexture;
 	return mTexture != NULL;
 }
+bool LTexture::loadFromFileCustom(std::string path, int h, int w)
+{
+	//Get rid of preexisting texture
+	free();
 
+	//The final texture
+	SDL_Texture* newTexture = NULL;
+
+	//Load image at specified path
+	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+	if (loadedSurface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+	}
+	else
+	{
+		//Color key image
+		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
+
+		//Create texture from surface pixels
+		newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+		if (newTexture == NULL)
+		{
+			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+		}
+		else
+		{
+			//Get image dimensions
+			mWidth = w;
+			mHeight = h;
+		}
+
+		//Get rid of old loaded surface
+		SDL_FreeSurface(loadedSurface);
+	}
+
+	//Return success
+	mTexture = newTexture;
+	return mTexture != NULL;
+}
 bool LTexture::loadFromRenderedText(TTF_Font *fuente, std::string textureText, SDL_Color textColor)
 {
 	//Get rid of preexisting texture
@@ -351,7 +394,8 @@ void close()
 	gTextTexture.free();
 	Farest.free();
 	Heart.free();
-
+	TPreview.free();
+	
 	//Free global font
 	TTF_CloseFont(gFont);
 	gFont = NULL;
@@ -393,6 +437,8 @@ void replace(std::string& subject, const std::string& search,
 		pos += replace.length();
 	}
 }
+
+
 void mayus(std::string &s)
 {
 	bool cap = true;
@@ -751,13 +797,81 @@ std::string capit(std::string b) {
 
 
 };
+std::vector<std::string> arrayimages;
 std::vector<std::string> arraychapter;
 std::vector<std::string> arraysearch;
+std::vector<std::string> arraysearchimages;
+void callimage()
+{
+	CURL *curl;
+	FILE *fp;
+	CURLcode res;
 
+
+	curl = curl_easy_init();
+	if (curl) {
+		std::string tempima = arrayimages[selectchapter];
+		std::cout << tempima <<selectchapter << std::endl;
+#ifdef __SWITCH__
+		std::string directorydownloadimage = "sdmc:/preview.jpg" ;
+#else
+		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/preview.jpg";
+#endif // SWITCH
+
+		fp = fopen(directorydownloadimage.c_str(), "wb");
+		curl_easy_setopt(curl, CURLOPT_URL, tempima.c_str());
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+		res = curl_easy_perform(curl);
+		/* always cleanup */
+		curl_easy_cleanup(curl);
+		fclose(fp);
+
+		TPreview.loadFromFileCustom(directorydownloadimage.c_str(),550,400);
+	}
+}
+void callimagesearch()
+{
+	CURL *curl;
+	FILE *fp;
+	CURLcode res;
+
+
+	curl = curl_easy_init();
+	if (curl) {
+		std::string tempima = arraysearchimages[searchchapter];
+		std::cout << tempima << selectchapter << std::endl;
+#ifdef __SWITCH__
+		std::string directorydownloadimage = "sdmc:/preview.jpg";
+#else
+		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/preview.jpg";
+#endif // SWITCH
+
+		fp = fopen(directorydownloadimage.c_str(), "wb");
+		curl_easy_setopt(curl, CURLOPT_URL, tempima.c_str());
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+		res = curl_easy_perform(curl);
+		/* always cleanup */
+		curl_easy_cleanup(curl);
+		fclose(fp);
+
+		TPreview.loadFromFileCustom(directorydownloadimage.c_str(), 550, 400);
+	}
+}
 void refrescarpro()
 {
 	int val1 = 1;
 	int val2;
+	int val3, val4;
 	int val0 = 0;
 	std::string temporal = "";
 	std::string content = gethtml("https://jkanime.net");
@@ -769,11 +883,14 @@ void refrescarpro()
 		val2 = (content.find('"', val1));
 		std::string gdrive = content.substr(val1, val2 - val1);
 
-
 		arraychapter.push_back(gdrive);
+		val3 = content.rfind("<img src=", val2) + 10;
+		val4 = content.find('"', val3);
+		std::string gpreview = content.substr(val3, val4 - val3);
+		arrayimages.push_back(gpreview);
 		//std::cout << arraycount << ". " << gdrive << std::endl;
 		temporal = temporal + gdrive + "\n";
-
+		temporal = temporal + gpreview + "\n";
 		val1++;
 	}
 	printf(temporal.c_str());
@@ -794,6 +911,7 @@ int main(int argc, char **argv)
 	int val1 = 1;
 	int val2;
 	int val0 = 0;
+	int val3, val4;
 	int arrayselect = 0;
 
 	int searchcount = 0;
@@ -811,10 +929,14 @@ int main(int argc, char **argv)
 		val2 = (content.find('"', val1));
 		std::string gdrive = content.substr(val1, val2 - val1);
 
-
 		arraychapter.push_back(gdrive);
+		val3 = content.rfind("<img src=", val2) + 10;
+		val4 = content.find('"', val3);
+		std::string gpreview = content.substr(val3, val4 - val3);
+		arrayimages.push_back(gpreview);
 		//std::cout << arraycount << ". " << gdrive << std::endl;
 		temporal = temporal + gdrive + "\n";
+		temporal = temporal + gpreview + "\n";
 
 		val1++;
 	}
@@ -881,8 +1003,7 @@ int main(int argc, char **argv)
 	}
 
 
-	int searchchapter = 0;
-	int selectchapter = 0;
+
 	int posxbase = 20;
 	int posybase = 10;
 
@@ -895,6 +1016,7 @@ int main(int argc, char **argv)
 
 	Farest.loadFromFile("romfs:/texture.png");
 	Heart.loadFromFile("romfs:/heart.png");
+
 #else
 	gFont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy.ttf", 16);
 	gFont2 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 150);
@@ -903,6 +1025,8 @@ int main(int argc, char **argv)
 
 	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
 	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
+	
+	
 #endif // SWITCH
 
 	SDL_Color textColor = { 50, 50, 50 };
@@ -946,6 +1070,8 @@ int main(int argc, char **argv)
 					switch (statenow)
 					{
 					case searchstate:
+						preview = false;
+						TPreview.free();
 						if (searchchapter < searchcount - 1)
 						{
 							searchchapter++;
@@ -959,6 +1085,8 @@ int main(int argc, char **argv)
 						break;
 
 					case programationstate:
+						preview = false;
+						TPreview.free();
 						if (selectchapter < arraychapter.size() - 1)
 						{
 							selectchapter++;
@@ -968,10 +1096,11 @@ int main(int argc, char **argv)
 						else {
 							selectchapter = 0;
 						}
-
+						
 						break;
 
 					case chapterstate:
+						
 						if (capmore > 10)
 						{
 							capmore = capmore - 10;
@@ -990,6 +1119,8 @@ int main(int argc, char **argv)
 					switch (statenow)
 					{
 					case programationstate:
+						preview = false;
+						TPreview.free();
 						if (selectchapter > 0)
 						{
 							selectchapter--;
@@ -998,8 +1129,11 @@ int main(int argc, char **argv)
 						else {
 							selectchapter = arraychapter.size() - 1;
 						}
+
+						
 						break;
 					case chapterstate:
+						
 						if (capmore < maxcapit)
 						{
 							capmore = capmore + 10;
@@ -1011,6 +1145,8 @@ int main(int argc, char **argv)
 						break;
 
 					case searchstate:
+						preview = false;
+						TPreview.free();
 						if (searchchapter > 0)
 						{
 							searchchapter--;
@@ -1107,6 +1243,8 @@ int main(int argc, char **argv)
 						break;
 					case searchstate:
 						statenow = programationstate;
+						preview = false;
+						TPreview.free();
 						break;
 
 
@@ -1152,6 +1290,7 @@ int main(int argc, char **argv)
 
 						selectchapter = 0;
 						arraychapter.clear();
+						arrayimages.clear();
 						refrescarpro();
 
 					}
@@ -1167,6 +1306,62 @@ int main(int argc, char **argv)
 						break;
 					case searchstate:
 
+
+						break;
+
+
+					}
+					break;
+
+				case SDLK_z:
+
+					switch (statenow)
+					{
+					case programationstate:
+						//refrescar();
+
+
+
+					{
+						if (preview == false)
+						{
+							preview = true;
+						
+							callimage();
+							
+						}
+						else
+						{
+							
+							//preview = false;
+							//TPreview.free();
+						}
+
+					}
+					break;
+					case downloadstate:
+
+
+
+						break;
+					case chapterstate:
+
+
+						break;
+					case searchstate:
+						if (preview == false)
+						{
+							preview = true;
+
+							callimagesearch();
+
+						}
+						else
+						{
+
+							//preview = false;
+							//TPreview.free();
+						}
 
 						break;
 
@@ -1232,6 +1427,8 @@ int main(int argc, char **argv)
 					switch (statenow)
 					{
 					case programationstate:
+						preview = false;
+						TPreview.free();
 						arraysearch.clear();
 						statenow = searchstate;
 						char *buf = (char*)malloc(256);
@@ -1241,6 +1438,10 @@ int main(int argc, char **argv)
 
 						
 						std::string tempbus(buf);
+#ifndef __SWITCH__
+						tempbus = "fairy";
+#endif // SWITCH
+
 						replace(tempbus, " ", "_");
 						replace(tempbus, "!", "");
 						replace(tempbus, ";", "");
@@ -1266,7 +1467,11 @@ int main(int argc, char **argv)
 								std::cout << searchcount << ". " << gdrive << std::endl;
 
 								arraysearch.push_back(gdrive);
-
+								val3 = content.find("<img src=", val2) + 10;
+								val4 = content.find('"', val3);
+								std::string gsearchpreview = content.substr(val3, val4 - val3);
+								arraysearchimages.push_back(gsearchpreview);
+								std::cout << gsearchpreview << std::endl;
 								searchcount++;
 								val1++;
 							}
@@ -1406,6 +1611,7 @@ int main(int argc, char **argv)
 
 							selectchapter = 0;
 							arraychapter.clear();
+							arrayimages.clear();
 							refrescarpro();
 
 
@@ -1421,6 +1627,57 @@ int main(int argc, char **argv)
 							break;
 						case searchstate:
 
+
+							break;
+
+
+						}
+					}
+					else if (e.jbutton.button == 8) {
+						// (ZL) button down
+						switch (statenow)
+						{
+						case programationstate:
+
+							if (preview == false)
+							{
+								preview = true;
+
+								callimage();
+
+							}
+							else
+							{
+
+								//preview = false;
+								//TPreview.free();
+							}
+
+
+							break;
+						case downloadstate:
+
+
+
+							break;
+						case chapterstate:
+
+
+							break;
+						case searchstate:
+							if (preview == false)
+						{
+							preview = true;
+
+							callimagesearch();
+
+						}
+						else
+						{
+
+							//preview = false;
+							//TPreview.free();
+						}
 
 							break;
 
@@ -1449,6 +1706,8 @@ int main(int argc, char **argv)
 							break;
 						case searchstate:
 							statenow = programationstate;
+							preview = false;
+							TPreview.free();
 							break;
 
 
@@ -1519,7 +1778,10 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case programationstate:
+							preview = false;
+							TPreview.free();
 							arraysearch.clear();
+							arraysearchimages.clear();
 							statenow = searchstate;
 							searchchapter = 0;
 							char *buf = (char*)malloc(256);
@@ -1551,7 +1813,11 @@ int main(int argc, char **argv)
 									std::cout << searchcount << ". " << gdrive << std::endl;
 
 									arraysearch.push_back(gdrive);
-
+									val3 = content.find("<img src=", val2) + 10;
+									val4 = content.find('"', val3);
+									std::string gsearchpreview = content.substr(val3, val4 - val3);
+									arraysearchimages.push_back(gsearchpreview);
+									std::cout << gsearchpreview << std::endl;
 									searchcount++;
 									val1++;
 								}
@@ -1616,6 +1882,8 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case programationstate:
+							preview = false;
+							TPreview.free();
 							if (selectchapter > 0)
 							{
 								selectchapter--;
@@ -1637,6 +1905,8 @@ int main(int argc, char **argv)
 							break;
 
 						case searchstate:
+							preview = false;
+							TPreview.free();
 							if (searchchapter > 0)
 							{
 								searchchapter--;
@@ -1654,6 +1924,8 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case searchstate:
+							preview = false;
+							TPreview.free();
 							if (searchchapter < searchcount - 1)
 							{
 								searchchapter++;
@@ -1666,6 +1938,8 @@ int main(int argc, char **argv)
 							break;
 
 						case programationstate:
+							preview = false;
+							TPreview.free();
 							if (selectchapter < arraychapter.size() - 1)
 							{
 								selectchapter++;
@@ -1783,7 +2057,7 @@ int main(int argc, char **argv)
 				replace(temptext, "-", " ");
 				mayus(temptext);
 				if (x == selectchapter) {
-					Heart.render(posxbase + 5, posybase + (x * 22));
+					Heart.render(posxbase + 12, posybase  - 4 + (x * 22));
 					textColor = { 120, 120, 120 };
 
 				}
@@ -1810,10 +2084,29 @@ int main(int argc, char **argv)
 				}
 
 			}
-			textColor = { 50, 50, 50 };
-			gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"L\" para Recargar programación -\"R\" para Buscar", textColor);
-			gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
+			if (preview == true)
+			{
+				{SDL_Rect fillRect = { 768, 68, 404, 554 };
+				SDL_SetRenderDrawColor(gRenderer, 255,255,255, 255);
 
+				SDL_RenderFillRect(gRenderer, &fillRect); 
+				TPreview.render(posxbase + 750, posybase + 60);
+				}
+			}
+
+			{SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
+			SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+			
+			SDL_RenderFillRect(gRenderer, &fillRect); }
+			
+			textColor = { 50, 50, 50 };
+			gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"L\" para Recargar programación - \"R\" para Buscar - \"ZL\" para ver Portada", textColor);
+			gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
+			
+
+			
+			
+			
 
 			break;
 		case searchstate:
@@ -1825,7 +2118,7 @@ int main(int argc, char **argv)
 				replace(temptext, "-", " ");
 				mayus(temptext);
 				if (x == searchchapter) {
-					Heart.render(posxbase + 5, posybase + (x * 22));
+					Heart.render(posxbase + 12, posybase - 4 + (x * 22));
 					textColor = { 120, 120, 120 };
 
 				}
@@ -1853,7 +2146,21 @@ int main(int argc, char **argv)
 
 			}
 			textColor = { 50, 50, 50 };
-			gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"B\" para volver", textColor);
+			if (preview == true)
+			{
+				{SDL_Rect fillRect = { 768, 68, 404, 554 };
+				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+
+				SDL_RenderFillRect(gRenderer, &fillRect);
+				TPreview.render(posxbase + 750, posybase + 60);
+				}
+			}
+
+			{SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
+			SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+
+			SDL_RenderFillRect(gRenderer, &fillRect); }
+			gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"ZL\" para ver Portada - \"B\" para volver", textColor);
 			gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
 
 			break;
