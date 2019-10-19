@@ -100,6 +100,7 @@ int cancelcurl = 0;
 bool preview = false;
 int searchchapter = 0;
 int selectchapter = 0;
+bool fulldownloaded = false;
 //Texture wrapper class
 class LTexture
 {
@@ -112,7 +113,7 @@ public:
 
 	//Loads image at specified path
 	bool loadFromFile(std::string path);
-	bool loadFromFileCustom(std::string path,int h, int w);
+	bool loadFromFileCustom(std::string path, int h, int w);
 	//Creates image from font string
 	bool loadFromRenderedText(TTF_Font *fuente, std::string textureText, SDL_Color textColor);
 	//Creates image from font string
@@ -153,6 +154,11 @@ SDL_Window* gWindow = NULL;
 
 //The window renderer
 SDL_Renderer* gRenderer = NULL;
+#ifdef __SWITCH__
+HidsysNotificationLedPattern blinkLedPattern(u8 times);
+void blinkLed(u8 times);
+#endif // ___SWITCH___
+
 
 //Globally used font
 TTF_Font *gFont = NULL;
@@ -299,7 +305,7 @@ bool LTexture::loadFromRenderedTextWrap(TTF_Font *fuente, std::string textureTex
 	free();
 
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderUTF8_Blended_Wrapped(fuente, textureText.c_str(), textColor,size);
+	SDL_Surface* textSurface = TTF_RenderUTF8_Blended_Wrapped(fuente, textureText.c_str(), textColor, size);
 
 	if (textSurface == NULL)
 	{
@@ -383,7 +389,48 @@ int LTexture::getHeight()
 {
 	return mHeight;
 }
+//LED
+#ifdef __SWITCH__
+HidsysNotificationLedPattern blinkLedPattern(u8 times)
+{
+	HidsysNotificationLedPattern pattern;
+	memset(&pattern, 0, sizeof(pattern));
 
+	pattern.baseMiniCycleDuration = 0x1;             // 12.5ms.
+	pattern.totalMiniCycles = 0x2;                   // 2 mini cycles.
+	pattern.totalFullCycles = times;                 // Repeat n times.
+	pattern.startIntensity = 0x0;                    // 0%.
+
+	pattern.miniCycles[0].ledIntensity = 0xF;        // 100%.
+	pattern.miniCycles[0].transitionSteps = 0xF;     // 15 steps. Total 187.5ms.
+	pattern.miniCycles[0].finalStepDuration = 0x0;   // Forced 12.5ms.
+	pattern.miniCycles[1].ledIntensity = 0x0;        // 0%.
+	pattern.miniCycles[1].transitionSteps = 0xF;     // 15 steps. Total 187.5ms.
+	pattern.miniCycles[1].finalStepDuration = 0x0;   // Forced 12.5ms.
+
+	return pattern;
+}
+
+void blinkLed(u8 times)
+{
+	hidsysInitialize();
+	size_t n;
+	u64 uniquePadIds[2];
+	HidsysNotificationLedPattern pattern = blinkLedPattern(times);
+	memset(uniquePadIds, 0, sizeof(uniquePadIds));
+	Result res = hidsysGetUniquePadsFromNpad(hidGetHandheldMode() ? CONTROLLER_HANDHELD : CONTROLLER_PLAYER_1, uniquePadIds, 2, &n);
+	if (R_SUCCEEDED(res))
+	{
+		for (size_t i = 0; i < n; i++)
+		{
+			hidsysSetNotificationLedPattern(&pattern, uniquePadIds[i]);
+		}
+	}
+
+
+
+}
+#endif
 
 
 
@@ -395,7 +442,7 @@ void close()
 	Farest.free();
 	Heart.free();
 	TPreview.free();
-	
+
 	//Free global font
 	TTF_CloseFont(gFont);
 	gFont = NULL;
@@ -652,7 +699,7 @@ int downloadjkanimevideo(void* data)
 void onlinejkanimevideo(std::string onlineenlace)
 {
 #ifdef __SWITCH__
-Result rc = 0;
+	Result rc = 0;
 #endif //  SWITCH
 
 
@@ -724,7 +771,7 @@ Result rc = 0;
 		}
 	}
 #endif //  SWITCH
-	
+
 }
 
 bool tienezero = false;
@@ -811,9 +858,9 @@ void callimage()
 	curl = curl_easy_init();
 	if (curl) {
 		std::string tempima = arrayimages[selectchapter];
-		std::cout << tempima <<selectchapter << std::endl;
+		std::cout << tempima << selectchapter << std::endl;
 #ifdef __SWITCH__
-		std::string directorydownloadimage = "sdmc:/preview.jpg" ;
+		std::string directorydownloadimage = "sdmc:/preview.jpg";
 #else
 		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/preview.jpg";
 #endif // SWITCH
@@ -831,7 +878,7 @@ void callimage()
 		curl_easy_cleanup(curl);
 		fclose(fp);
 
-		TPreview.loadFromFileCustom(directorydownloadimage.c_str(),550,400);
+		TPreview.loadFromFileCustom(directorydownloadimage.c_str(), 550, 400);
 	}
 }
 void callimagesearch()
@@ -905,7 +952,7 @@ int main(int argc, char **argv)
 
 #endif 
 
-	
+
 	std::string content = gethtml("https://jkanime.net");
 
 	int val1 = 1;
@@ -964,7 +1011,7 @@ int main(int argc, char **argv)
 		gWindow = SDL_CreateWindow("RipJKNX", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 #endif // SWITCH
 
-		
+
 		if (gWindow == NULL)
 		{
 			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -1025,13 +1072,13 @@ int main(int argc, char **argv)
 
 	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
 	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
-	
-	
+
+
 #endif // SWITCH
 
 	SDL_Color textColor = { 50, 50, 50 };
 
-	
+
 	//Main loop flag
 	int quit = 0;
 
@@ -1047,7 +1094,7 @@ int main(int argc, char **argv)
 	}
 #endif // SWITCH
 
-	
+
 	//While application is running
 	while (!quit)
 	{
@@ -1096,11 +1143,11 @@ int main(int argc, char **argv)
 						else {
 							selectchapter = 0;
 						}
-						
+
 						break;
 
 					case chapterstate:
-						
+
 						if (capmore > 10)
 						{
 							capmore = capmore - 10;
@@ -1130,10 +1177,10 @@ int main(int argc, char **argv)
 							selectchapter = arraychapter.size() - 1;
 						}
 
-						
+
 						break;
 					case chapterstate:
-						
+
 						if (capmore < maxcapit)
 						{
 							capmore = capmore + 10;
@@ -1215,6 +1262,7 @@ int main(int argc, char **argv)
 						statenow = downloadstate;
 						cancelcurl = 0;
 						urltodownload = temporallink + std::to_string(capmore) + "/";
+						fulldownloaded = false;
 						threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
 						break;
 
@@ -1326,13 +1374,13 @@ int main(int argc, char **argv)
 						if (preview == false)
 						{
 							preview = true;
-						
+
 							callimage();
-							
+
 						}
 						else
 						{
-							
+
 							//preview = false;
 							//TPreview.free();
 						}
@@ -1436,7 +1484,7 @@ int main(int argc, char **argv)
 						strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
 #endif // SWITCH
 
-						
+
 						std::string tempbus(buf);
 #ifndef __SWITCH__
 						tempbus = "fairy";
@@ -1592,6 +1640,7 @@ int main(int argc, char **argv)
 							statenow = downloadstate;
 							cancelcurl = 0;
 							urltodownload = temporallink + std::to_string(capmore) + "/";
+							fulldownloaded = false;
 							threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
 							break;
 
@@ -1639,6 +1688,8 @@ int main(int argc, char **argv)
 						{
 						case programationstate:
 
+							blinkLed(1);//LED
+
 							if (preview == false)
 							{
 								preview = true;
@@ -1666,18 +1717,18 @@ int main(int argc, char **argv)
 							break;
 						case searchstate:
 							if (preview == false)
-						{
-							preview = true;
+							{
+								preview = true;
 
-							callimagesearch();
+								callimagesearch();
 
-						}
-						else
-						{
+							}
+							else
+							{
 
-							//preview = false;
-							//TPreview.free();
-						}
+								//preview = false;
+								//TPreview.free();
+							}
 
 							break;
 
@@ -2040,8 +2091,8 @@ int main(int argc, char **argv)
 		gTextTexture.render(posxbase + 649, posybase + 589);
 		gTextTexture.loadFromRenderedText(gFontcapit, "Capítulo: " + std::to_string(capmore), textColor);
 		gTextTexture.render(posxbase + 650, posybase + 590);
-		gTextTexture.loadFromRenderedTextWrap(gFont, rese, { 255, 255, 255 },750);
-		gTextTexture.render(posxbase - 1 , posybase + 54);
+		gTextTexture.loadFromRenderedTextWrap(gFont, rese, { 255, 255, 255 }, 750);
+		gTextTexture.render(posxbase - 1, posybase + 54);
 		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
 		gTextTexture.render(posxbase, posybase + 55);
 		}
@@ -2056,29 +2107,23 @@ int main(int argc, char **argv)
 				replace(temptext, "/", " ");
 				replace(temptext, "-", " ");
 				mayus(temptext);
-				if (x == selectchapter) {
-					Heart.render(posxbase + 12, posybase  - 4 + (x * 22));
-					textColor = { 120, 120, 120 };
+				
 
-				}
-				else
-				{
-					textColor = { 50, 50, 50 };
-				}
-
-
-
-				gTextTexture.loadFromRenderedText(gFont, temptext, textColor);
 
 				if (x == selectchapter) {
-
+					gTextTexture.loadFromRenderedText(gFont, temptext, { 128,13,5 });
 					gTextTexture.render(posxbase + 30, posybase + (x * 22));
 
+
+					Heart.render(posxbase + 10, posybase - 4 + (x * 22));
+					Heart.render(posxbase + gTextTexture.getWidth() + 25, posybase - 4 + (x * 22));
+
+
 				}
 				else
 				{
 
-
+					gTextTexture.loadFromRenderedText(gFont, temptext, textColor);
 					gTextTexture.render(posxbase, posybase + (x * 22));
 
 				}
@@ -2087,26 +2132,26 @@ int main(int argc, char **argv)
 			if (preview == true)
 			{
 				{SDL_Rect fillRect = { 768, 68, 404, 554 };
-				SDL_SetRenderDrawColor(gRenderer, 255,255,255, 255);
+				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
-				SDL_RenderFillRect(gRenderer, &fillRect); 
+				SDL_RenderFillRect(gRenderer, &fillRect);
 				TPreview.render(posxbase + 750, posybase + 60);
 				}
 			}
 
 			{SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
 			SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-			
+
 			SDL_RenderFillRect(gRenderer, &fillRect); }
-			
+
 			textColor = { 50, 50, 50 };
 			gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"L\" para Recargar programación - \"R\" para Buscar - \"ZL\" para ver Portada", textColor);
 			gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
-			
 
-			
-			
-			
+
+
+
+
 
 			break;
 		case searchstate:
@@ -2186,6 +2231,17 @@ int main(int argc, char **argv)
 			gTextTexture.render(posxbase, SCREEN_HEIGHT - 50);
 
 			if (std::to_string(porcendown) == "100") {
+
+
+#ifdef __SWITCH__
+				if (fulldownloaded == false)
+				{
+					blinkLed(8);//LED
+					fulldownloaded = true;
+			}
+#endif // __SWITCH__
+
+				
 				//Render red filled quad
 				SDL_Rect fillRect = { posxbase + 98, posybase + 400, 580, 50 };
 				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
@@ -2211,12 +2267,13 @@ int main(int argc, char **argv)
 
 	//Free resources and close SDL
 #ifdef __SWITCH__
+	hidsysExit();
 	socketExit();
 	romfsExit();
 #endif // SWITCH
 
 
-	
+
 	close();
 
 	return 0;
