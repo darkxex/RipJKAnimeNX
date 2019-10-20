@@ -21,17 +21,20 @@
 #include <math.h> 
 
 #include <errno.h>
-#include <sys/stat.h>
 #include <stdio.h>
 #include <string>
 #include <cmath>
 #include <iostream>
 #include <math.h>  
 #include <Vector>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 
-// Empty strings are invalid.
+
 #ifdef __SWITCH__
+#include <unistd.h>
+
 SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
 	if (strcmp(string, "") == 0) {
 		strncpy(string, "The name cannot be empty.", size);
@@ -101,6 +104,12 @@ bool preview = false;
 int searchchapter = 0;
 int selectchapter = 0;
 bool fulldownloaded = false;
+bool reloading = false;
+bool reloadingsearch = false;
+int porcentajereload = 0;
+bool activatefirstimage = true;
+bool activatefirstsearchimage = true;
+std::string searchtext = "";
 //Texture wrapper class
 class LTexture
 {
@@ -171,6 +180,7 @@ LTexture Farest;
 LTexture Heart;
 
 LTexture TPreview;
+LTexture TSearchPreview;
 LTexture::LTexture()
 {
 	//Initialize
@@ -442,7 +452,7 @@ void close()
 	Farest.free();
 	Heart.free();
 	TPreview.free();
-
+	TSearchPreview.free();
 	//Free global font
 	TTF_CloseFont(gFont);
 	gFont = NULL;
@@ -776,6 +786,7 @@ void onlinejkanimevideo(std::string onlineenlace)
 
 bool tienezero = false;
 std::string rese = "";
+bool enemision = false;
 std::string capit(std::string b) {
 	tienezero = false;
 
@@ -793,6 +804,15 @@ std::string capit(std::string b) {
 	replace(terese, "<br/>", "");
 	rese = terese;
 	std::cout << rese << std::endl;
+	if (a.find("<b>En emision</b>") != -1)
+	{
+		enemision = true;
+	}
+	else
+	{
+		enemision = false;
+	}
+
 	int val0, val1, val2, val3;
 
 	int zero1, zero2;
@@ -815,6 +835,7 @@ std::string capit(std::string b) {
 		std::cout << "no contiene" << std::endl;
 		tienezero = false;
 	}
+
 
 
 
@@ -850,72 +871,39 @@ std::vector<std::string> arraysearch;
 std::vector<std::string> arraysearchimages;
 void callimage()
 {
-	CURL *curl;
-	FILE *fp;
-	CURLcode res;
-
-
-	curl = curl_easy_init();
-	if (curl) {
-		std::string tempima = arrayimages[selectchapter];
-		std::cout << tempima << selectchapter << std::endl;
 #ifdef __SWITCH__
-		std::string directorydownloadimage = "sdmc:/preview.jpg";
+	std::string directorydownloadimage = "sdmc:/RipJKAnime/";
+	directorydownloadimage.append(std::to_string(selectchapter));
+	directorydownloadimage.append(".jpg");
 #else
-		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/preview.jpg";
+	std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/";
+	directorydownloadimage.append(std::to_string(selectchapter));
+	directorydownloadimage.append(".jpg");
 #endif // SWITCH
-
-		fp = fopen(directorydownloadimage.c_str(), "wb");
-		curl_easy_setopt(curl, CURLOPT_URL, tempima.c_str());
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-		res = curl_easy_perform(curl);
-		/* always cleanup */
-		curl_easy_cleanup(curl);
-		fclose(fp);
-
-		TPreview.loadFromFileCustom(directorydownloadimage.c_str(), 550, 400);
-	}
+	TPreview.loadFromFileCustom(directorydownloadimage.c_str(), 550, 400);
 }
 void callimagesearch()
 {
-	CURL *curl;
-	FILE *fp;
-	CURLcode res;
-
-
-	curl = curl_easy_init();
-	if (curl) {
-		std::string tempima = arraysearchimages[searchchapter];
-		std::cout << tempima << selectchapter << std::endl;
+	
 #ifdef __SWITCH__
-		std::string directorydownloadimage = "sdmc:/preview.jpg";
+		std::string directorydownloadimage = "sdmc:/RipJKAnime/s";
+		directorydownloadimage.append(std::to_string(searchchapter));
+		directorydownloadimage.append(".jpg");
 #else
-		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/preview.jpg";
+		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/s";
+		directorydownloadimage.append(std::to_string(searchchapter));
+		directorydownloadimage.append(".jpg");
 #endif // SWITCH
 
-		fp = fopen(directorydownloadimage.c_str(), "wb");
-		curl_easy_setopt(curl, CURLOPT_URL, tempima.c_str());
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-		res = curl_easy_perform(curl);
-		/* always cleanup */
-		curl_easy_cleanup(curl);
-		fclose(fp);
-
-		TPreview.loadFromFileCustom(directorydownloadimage.c_str(), 550, 400);
-	}
+		
+		TSearchPreview.loadFromFileCustom(directorydownloadimage.c_str(), 550, 400);
+	
 }
-void refrescarpro()
+int refrescarpro(void* data)
 {
+	activatefirstimage = true;
+	reloading = true;
+	porcentajereload = 0;
 	int val1 = 1;
 	int val2;
 	int val3, val4;
@@ -938,9 +926,153 @@ void refrescarpro()
 		//std::cout << arraycount << ". " << gdrive << std::endl;
 		temporal = temporal + gdrive + "\n";
 		temporal = temporal + gpreview + "\n";
+		
 		val1++;
+
 	}
 	printf(temporal.c_str());
+
+	CURL *curl;
+	FILE *fp;
+	CURLcode res;
+
+	for (int x = 0; x < arrayimages.size(); x++)
+	{
+
+	curl = curl_easy_init();
+	if (curl) {
+		std::string tempima = arrayimages[x];
+		std::cout << tempima << selectchapter << std::endl;
+#ifdef __SWITCH__
+		std::string directorydownloadimage = "sdmc:/RipJKAnime/";
+		directorydownloadimage.append(std::to_string(x));
+		directorydownloadimage.append(".jpg");
+#else
+		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/" ;
+		directorydownloadimage.append(std::to_string(x));
+		directorydownloadimage.append(".jpg");
+#endif // SWITCH
+
+		fp = fopen(directorydownloadimage.c_str(), "wb");
+		curl_easy_setopt(curl, CURLOPT_URL, tempima.c_str());
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+		res = curl_easy_perform(curl);
+		/* always cleanup */
+		curl_easy_cleanup(curl);
+		fclose(fp);
+     
+		
+	}
+	porcentajereload = ((x+1) * 100) / arrayimages.size();
+	}
+	
+	reloading = false;
+	preview = true;
+
+	return 0;
+}
+
+
+int searchjk(void* data)
+{
+	porcentajereload = 0;
+	activatefirstsearchimage = true;
+	reloadingsearch = true;
+	int val1 = 1;
+	int val2;
+	int val0 = 0;
+	int val3, val4;
+	int arrayselect = 0;
+
+	
+#ifndef __SWITCH__
+	searchtext = "fairy";
+#endif 
+
+	replace(searchtext, " ", "_");
+	replace(searchtext, "!", "");
+	replace(searchtext, ";", "");
+	if (searchtext.length() >= 3) {
+		std::string content = gethtml("https://jkanime.net/buscar/" + searchtext + "/1/");
+		content = content + gethtml("https://jkanime.net/buscar/" + searchtext + "/2/");
+		int val1 = 1;
+		int val2;
+		int val0 = 0;
+
+		
+
+
+
+
+		while (val0 != -1) {
+			val0 = content.find("portada-title", val1);
+			if (val0 == -1) { break; }
+
+			val1 = 6 + content.find("href=", val0);
+			val2 = (content.find('"', val1));
+			std::string gdrive = content.substr(val1, val2 - val1);
+		
+
+			arraysearch.push_back(gdrive);
+			val3 = content.find("<img src=", val2) + 10;
+			val4 = content.find('"', val3);
+			std::string gsearchpreview = content.substr(val3, val4 - val3);
+			arraysearchimages.push_back(gsearchpreview);
+			std::cout << gsearchpreview << std::endl;
+			
+			val1++;
+		}
+		
+		for (int x = 0; x < arraysearchimages.size(); x++) {
+			CURL *curl;
+			FILE *fp;
+			CURLcode res;
+
+
+			curl = curl_easy_init();
+			if (curl) {
+				std::string tempima = arraysearchimages[x];
+				std::cout << tempima << selectchapter << std::endl;
+#ifdef __SWITCH__
+				std::string directorydownloadimage = "sdmc:/RipJKAnime/s";
+				directorydownloadimage.append(std::to_string(x));
+				directorydownloadimage.append(".jpg");
+#else
+				std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/s";
+				directorydownloadimage.append(std::to_string(x));
+				directorydownloadimage.append(".jpg");
+#endif // SWITCH
+
+				fp = fopen(directorydownloadimage.c_str(), "wb");
+				curl_easy_setopt(curl, CURLOPT_URL, tempima.c_str());
+				curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+				res = curl_easy_perform(curl);
+				/* always cleanup */
+				curl_easy_cleanup(curl);
+				fclose(fp);
+
+				
+			}
+
+			porcentajereload = ((x + 1) * 100) / arraysearchimages.size();
+		}
+	}
+	else
+	{
+		statenow = programationstate;
+	}
+	reloadingsearch = false;
+	return 0;
 }
 int main(int argc, char **argv)
 
@@ -949,11 +1081,15 @@ int main(int argc, char **argv)
 	romfsInit();
 	socketInitializeDefault();
 	//nxlinkStdio();
+	struct stat st = { 0 };
 
+	if (stat("sdmc:/RipJKAnime", &st) == -1) {
+		mkdir("sdmc:/RipJKAnime", 0777);
+	}
 #endif 
 
-
-	std::string content = gethtml("https://jkanime.net");
+	
+	
 
 	int val1 = 1;
 	int val2;
@@ -966,8 +1102,11 @@ int main(int argc, char **argv)
 	int mincapit = 0;
 	int capmore = 1;
 	SDL_Thread* threadID = NULL;
+	SDL_Thread* prothread = NULL;
+	SDL_Thread* searchthread = NULL;
 	std::string temporal = "";
-
+	
+	/*std::string content = gethtml("https://jkanime.net");
 	while (val0 != -1) {
 		val0 = content.find("play-button", val1);
 		if (val0 == -1) { break; }
@@ -989,6 +1128,8 @@ int main(int argc, char **argv)
 	}
 
 	printf(temporal.c_str());
+	*/
+	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
 	//Start up SDL and create window
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0)
@@ -1078,6 +1219,8 @@ int main(int argc, char **argv)
 
 	SDL_Color textColor = { 50, 50, 50 };
 
+	// execute first
+
 
 	//Main loop flag
 	int quit = 0;
@@ -1117,33 +1260,42 @@ int main(int argc, char **argv)
 					switch (statenow)
 					{
 					case searchstate:
-						preview = false;
-						TPreview.free();
-						if (searchchapter < searchcount - 1)
+						if (reloadingsearch == false)
 						{
-							searchchapter++;
+							TSearchPreview.free();
+							if (searchchapter < arraysearch.size() - 1)
+							{
+								searchchapter++;
 
-							std::cout << searchchapter << std::endl;
+								std::cout << searchchapter << std::endl;
+							}
+							else {
+								searchchapter = 0;
+							}
+							callimagesearch();
+						
 						}
-						else {
-							searchchapter = 0;
-						}
-
 						break;
 
 					case programationstate:
-						preview = false;
-						TPreview.free();
-						if (selectchapter < arraychapter.size() - 1)
+						if (reloading == false)
 						{
-							selectchapter++;
+							TPreview.free();
 
-							std::cout << selectchapter << std::endl;
-						}
-						else {
-							selectchapter = 0;
-						}
 
+							if (selectchapter < arraychapter.size() - 1)
+							{
+								selectchapter++;
+
+								std::cout << selectchapter << std::endl;
+							}
+							else {
+								selectchapter = 0;
+							}
+
+							callimage();
+							
+						}
 						break;
 
 					case chapterstate:
@@ -1166,18 +1318,21 @@ int main(int argc, char **argv)
 					switch (statenow)
 					{
 					case programationstate:
-						preview = false;
-						TPreview.free();
-						if (selectchapter > 0)
+						if (reloading == false)
 						{
-							selectchapter--;
-							std::cout << selectchapter << std::endl;
+							TPreview.free();
+							if (selectchapter > 0)
+							{
+								selectchapter--;
+								std::cout << selectchapter << std::endl;
+							}
+							else {
+								selectchapter = arraychapter.size() - 1;
+							}
+							callimage();
+							
 						}
-						else {
-							selectchapter = arraychapter.size() - 1;
-						}
-
-
+						
 						break;
 					case chapterstate:
 
@@ -1192,15 +1347,19 @@ int main(int argc, char **argv)
 						break;
 
 					case searchstate:
-						preview = false;
-						TPreview.free();
-						if (searchchapter > 0)
+						if (reloadingsearch == false)
 						{
-							searchchapter--;
-							std::cout << searchchapter << std::endl;
-						}
-						else {
-							searchchapter = arraysearch.size() - 1;
+							TSearchPreview.free();
+							if (searchchapter > 0)
+							{
+								searchchapter--;
+								std::cout << searchchapter << std::endl;
+							}
+							else {
+								searchchapter = arraysearch.size() - 1;
+							}
+							callimagesearch();
+							
 						}
 						break;
 
@@ -1212,6 +1371,7 @@ int main(int argc, char **argv)
 					{
 					case programationstate:
 
+					{if (reloading == false)
 					{
 						statenow = chapterstate;
 						temporallink = arraychapter[selectchapter];
@@ -1232,29 +1392,31 @@ int main(int argc, char **argv)
 						}
 						std::cout << maxcapit << std::endl;
 
-
+					}
 					}
 					break;
 
 					case searchstate:
 					{
-						statenow = chapterstate;
-						temporallink = arraysearch[searchchapter];
-
-						std::cout << temporallink << std::endl;
-						maxcapit = atoi(capit(temporallink).c_str());
-						if (tienezero == true) {
-							maxcapit = maxcapit - 1;
-							mincapit = 0;
-							capmore = maxcapit;
-						}
-						else
+						if (reloadingsearch == false)
 						{
-							mincapit = 1;
-							capmore = maxcapit;
-						}
-						std::cout << maxcapit << std::endl;
+							statenow = chapterstate;
+							temporallink = arraysearch[searchchapter];
 
+							std::cout << temporallink << std::endl;
+							maxcapit = atoi(capit(temporallink).c_str());
+							if (tienezero == true) {
+								maxcapit = maxcapit - 1;
+								mincapit = 0;
+								capmore = maxcapit;
+							}
+							else
+							{
+								mincapit = 1;
+								capmore = maxcapit;
+							}
+							std::cout << maxcapit << std::endl;
+						}
 
 					}
 					break;
@@ -1290,9 +1452,12 @@ int main(int argc, char **argv)
 
 						break;
 					case searchstate:
-						statenow = programationstate;
-						preview = false;
-						TPreview.free();
+						if (reloadingsearch == false)
+						{
+							statenow = programationstate;
+
+							TSearchPreview.free();
+						}
 						break;
 
 
@@ -1330,19 +1495,24 @@ int main(int argc, char **argv)
 					switch (statenow)
 					{
 					case programationstate:
-						//refrescar();
 
-					{
+						if (reloading == false)
+						{
+							{
+#ifdef __SWITCH__
+								blinkLed(1);//LED
+#endif // __SWITCH__
 
 
+								selectchapter = 0;
+								arraychapter.clear();
+								arrayimages.clear();
+								//refrescarpro();
+								prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
 
-						selectchapter = 0;
-						arraychapter.clear();
-						arrayimages.clear();
-						refrescarpro();
-
-					}
-					break;
+							}
+						}
+						break;
 					case downloadstate:
 
 
@@ -1356,7 +1526,6 @@ int main(int argc, char **argv)
 
 
 						break;
-
 
 					}
 					break;
@@ -1371,19 +1540,13 @@ int main(int argc, char **argv)
 
 
 					{
-						if (preview == false)
-						{
+						
 							preview = true;
-
+							TPreview.free();
 							callimage();
 
-						}
-						else
-						{
-
-							//preview = false;
-							//TPreview.free();
-						}
+						
+						
 
 					}
 					break;
@@ -1397,19 +1560,12 @@ int main(int argc, char **argv)
 
 						break;
 					case searchstate:
-						if (preview == false)
-						{
+						
 							preview = true;
-
+							TSearchPreview.free();
 							callimagesearch();
 
-						}
-						else
-						{
-
-							//preview = false;
-							//TPreview.free();
-						}
+					
 
 						break;
 
@@ -1475,62 +1631,29 @@ int main(int argc, char **argv)
 					switch (statenow)
 					{
 					case programationstate:
-						preview = false;
-						TPreview.free();
-						arraysearch.clear();
-						statenow = searchstate;
-						char *buf = (char*)malloc(256);
-#ifdef __SWITCH__
-						strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
-#endif // SWITCH
-
-
-						std::string tempbus(buf);
-#ifndef __SWITCH__
-						tempbus = "fairy";
-#endif // SWITCH
-
-						replace(tempbus, " ", "_");
-						replace(tempbus, "!", "");
-						replace(tempbus, ";", "");
-						if (tempbus.length() >= 3) {
-							std::string content = gethtml("https://jkanime.net/buscar/" + tempbus + "/1/");
-							content = content + gethtml("https://jkanime.net/buscar/" + tempbus + "/2/");
-							int val1 = 1;
-							int val2;
-							int val0 = 0;
-
-							searchcount = 0;
-
-
-
-
-							while (val0 != -1) {
-								val0 = content.find("portada-title", val1);
-								if (val0 == -1) { break; }
-
-								val1 = 6 + content.find("href=", val0);
-								val2 = (content.find('"', val1));
-								std::string gdrive = content.substr(val1, val2 - val1);
-								std::cout << searchcount << ". " << gdrive << std::endl;
-
-								arraysearch.push_back(gdrive);
-								val3 = content.find("<img src=", val2) + 10;
-								val4 = content.find('"', val3);
-								std::string gsearchpreview = content.substr(val3, val4 - val3);
-								arraysearchimages.push_back(gsearchpreview);
-								std::cout << gsearchpreview << std::endl;
-								searchcount++;
-								val1++;
-							}
-						}
-						else
+						if (reloadingsearch == false)
 						{
-							statenow = programationstate;
+#ifdef __SWITCH__
+							blinkLed(1);//LED
+#endif // __SWITCH__
+							TSearchPreview.free();
+							arraysearch.clear();
+							statenow = searchstate;
+							char *buf = (char*)malloc(256);
+#ifdef __SWITCH__
+							strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
+#endif // SWITCH
+
+
+							std::string tempbus(buf);
+							searchtext = tempbus;
+
+							searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
+
+							break;
+
+
 						}
-						break;
-
-
 					}
 
 					break;
@@ -1590,6 +1713,7 @@ int main(int argc, char **argv)
 						{
 						case programationstate:
 
+						{if (reloading == false)
 						{
 							statenow = chapterstate;
 							temporallink = arraychapter[selectchapter];
@@ -1610,29 +1734,31 @@ int main(int argc, char **argv)
 							}
 							std::cout << maxcapit << std::endl;
 
-
+						}
 						}
 						break;
 
 						case searchstate:
 						{
-							statenow = chapterstate;
-							temporallink = arraysearch[searchchapter];
-
-							std::cout << temporallink << std::endl;
-							maxcapit = atoi(capit(temporallink).c_str());
-							if (tienezero == true) {
-								maxcapit = maxcapit - 1;
-								mincapit = 0;
-								capmore = maxcapit;
-							}
-							else
+							if (reloadingsearch == false)
 							{
-								mincapit = 1;
-								capmore = maxcapit;
-							}
-							std::cout << maxcapit << std::endl;
+								statenow = chapterstate;
+								temporallink = arraysearch[searchchapter];
 
+								std::cout << temporallink << std::endl;
+								maxcapit = atoi(capit(temporallink).c_str());
+								if (tienezero == true) {
+									maxcapit = maxcapit - 1;
+									mincapit = 0;
+									capmore = maxcapit;
+								}
+								else
+								{
+									mincapit = 1;
+									capmore = maxcapit;
+								}
+								std::cout << maxcapit << std::endl;
+							}
 
 						}
 						break;
@@ -1645,6 +1771,8 @@ int main(int argc, char **argv)
 							break;
 
 
+
+
 						}
 					}
 					else if (e.jbutton.button == 10) {
@@ -1654,33 +1782,7 @@ int main(int argc, char **argv)
 					}
 					else if (e.jbutton.button == 6) {
 						// (L) button down
-						switch (statenow)
-						{
-						case programationstate:
-
-							selectchapter = 0;
-							arraychapter.clear();
-							arrayimages.clear();
-							refrescarpro();
-
-
-							break;
-						case downloadstate:
-
-
-
-							break;
-						case chapterstate:
-
-
-							break;
-						case searchstate:
-
-
-							break;
-
-
-						}
+					
 					}
 					else if (e.jbutton.button == 8) {
 						// (ZL) button down
@@ -1688,22 +1790,7 @@ int main(int argc, char **argv)
 						{
 						case programationstate:
 
-							blinkLed(1);//LED
-
-							if (preview == false)
-							{
-								preview = true;
-
-								callimage();
-
-							}
-							else
-							{
-
-								//preview = false;
-								//TPreview.free();
-							}
-
+							
 
 							break;
 						case downloadstate:
@@ -1716,20 +1803,7 @@ int main(int argc, char **argv)
 
 							break;
 						case searchstate:
-							if (preview == false)
-							{
-								preview = true;
-
-								callimagesearch();
-
-							}
-							else
-							{
-
-								//preview = false;
-								//TPreview.free();
-							}
-
+							
 							break;
 
 
@@ -1756,10 +1830,14 @@ int main(int argc, char **argv)
 
 							break;
 						case searchstate:
-							statenow = programationstate;
-							preview = false;
-							TPreview.free();
+							if (reloadingsearch == false)
+							{
+								statenow = programationstate;
+
+								TSearchPreview.free();
+							}
 							break;
+
 
 
 						}
@@ -1829,56 +1907,29 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case programationstate:
-							preview = false;
-							TPreview.free();
-							arraysearch.clear();
-							arraysearchimages.clear();
-							statenow = searchstate;
-							searchchapter = 0;
-							char *buf = (char*)malloc(256);
-
-							strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
-							std::string tempbus(buf);
-							replace(tempbus, " ", "_");
-							replace(tempbus, "!", "");
-							replace(tempbus, ";", "");
-							if (tempbus.length() >= 3) {
-								std::string content = gethtml("https://jkanime.net/buscar/" + tempbus + "/1/");
-								content = content + gethtml("https://jkanime.net/buscar/" + tempbus + "/2/");
-								int val1 = 1;
-								int val2;
-								int val0 = 0;
-
-								searchcount = 0;
-
-
-
-
-								while (val0 != -1) {
-									val0 = content.find("portada-title", val1);
-									if (val0 == -1) { break; }
-
-									val1 = 6 + content.find("href=", val0);
-									val2 = (content.find('"', val1));
-									std::string gdrive = content.substr(val1, val2 - val1);
-									std::cout << searchcount << ". " << gdrive << std::endl;
-
-									arraysearch.push_back(gdrive);
-									val3 = content.find("<img src=", val2) + 10;
-									val4 = content.find('"', val3);
-									std::string gsearchpreview = content.substr(val3, val4 - val3);
-									arraysearchimages.push_back(gsearchpreview);
-									std::cout << gsearchpreview << std::endl;
-									searchcount++;
-									val1++;
-								}
-							}
-							else
+							if (reloadingsearch == false)
 							{
-								statenow = programationstate;
-							}
-							break;
+#ifdef __SWITCH__
+								blinkLed(1);//LED
+#endif // __SWITCH__
+								TSearchPreview.free();
+								arraysearch.clear();
+								statenow = searchstate;
+								char *buf = (char*)malloc(256);
+#ifdef __SWITCH__
+								strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
+#endif // SWITCH
 
+
+								std::string tempbus(buf);
+								searchtext = tempbus;
+
+								searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
+
+								break;
+
+
+							}
 
 						}
 
@@ -1933,18 +1984,24 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case programationstate:
-							preview = false;
-							TPreview.free();
-							if (selectchapter > 0)
+							if (reloading == false)
 							{
-								selectchapter--;
-								std::cout << selectchapter << std::endl;
+								TPreview.free();
+								if (selectchapter > 0)
+								{
+									selectchapter--;
+									std::cout << selectchapter << std::endl;
+								}
+								else {
+									selectchapter = arraychapter.size() - 1;
+								}
+								callimage();
+
 							}
-							else {
-								selectchapter = arraychapter.size() - 1;
-							}
+
 							break;
 						case chapterstate:
+
 							if (capmore < maxcapit)
 							{
 								capmore = capmore + 10;
@@ -1956,17 +2013,22 @@ int main(int argc, char **argv)
 							break;
 
 						case searchstate:
-							preview = false;
-							TPreview.free();
-							if (searchchapter > 0)
+							if (reloadingsearch == false)
 							{
-								searchchapter--;
-								std::cout << searchchapter << std::endl;
-							}
-							else {
-								searchchapter = arraysearch.size() - 1;
+								TSearchPreview.free();
+								if (searchchapter > 0)
+								{
+									searchchapter--;
+									std::cout << searchchapter << std::endl;
+								}
+								else {
+									searchchapter = arraysearch.size() - 1;
+								}
+								callimagesearch();
+
 							}
 							break;
+
 
 						}
 					}
@@ -1974,35 +2036,48 @@ int main(int argc, char **argv)
 						// (down) button down
 						switch (statenow)
 						{
-						case searchstate:
-							preview = false;
-							TPreview.free();
-							if (searchchapter < searchcount - 1)
-							{
-								searchchapter++;
 
-								std::cout << searchchapter << std::endl;
-							}
-							else {
-								searchchapter = 0;
+						case searchstate:
+							if (reloadingsearch == false)
+							{
+								TSearchPreview.free();
+								if (searchchapter < arraysearch.size() - 1)
+								{
+									searchchapter++;
+
+									std::cout << searchchapter << std::endl;
+								}
+								else {
+									searchchapter = 0;
+								}
+								callimagesearch();
+							
 							}
 							break;
 
 						case programationstate:
-							preview = false;
-							TPreview.free();
-							if (selectchapter < arraychapter.size() - 1)
+							if (reloading == false)
 							{
-								selectchapter++;
+								TPreview.free();
 
-								std::cout << selectchapter << std::endl;
-							}
-							else {
-								selectchapter = 0;
+
+								if (selectchapter < arraychapter.size() - 1)
+								{
+									selectchapter++;
+
+									std::cout << selectchapter << std::endl;
+								}
+								else {
+									selectchapter = 0;
+								}
+
+								callimage();
+								
 							}
 							break;
 
 						case chapterstate:
+
 							if (capmore > 10)
 							{
 								capmore = capmore - 10;
@@ -2010,7 +2085,7 @@ int main(int argc, char **argv)
 							if (capmore < mincapit)
 							{
 								capmore = mincapit;
-							}
+						}
 							break;
 
 						}
@@ -2091,6 +2166,21 @@ int main(int argc, char **argv)
 		gTextTexture.render(posxbase + 649, posybase + 589);
 		gTextTexture.loadFromRenderedText(gFontcapit, "Capítulo: " + std::to_string(capmore), textColor);
 		gTextTexture.render(posxbase + 650, posybase + 590);
+		if (enemision == true)
+		{
+			gTextTexture.loadFromRenderedText(gFont3, "Estado: En Emisión", {0,0,0});
+			gTextTexture.render(posxbase + 650, posybase + 547);
+			gTextTexture.loadFromRenderedText(gFont3, "Estado: En Emisión", { 16,191,0 });
+			gTextTexture.render(posxbase + 650, posybase + 548);
+		}
+		else
+		{
+			gTextTexture.loadFromRenderedText(gFont3, "Estado: Concluido", {0,0,0});
+			gTextTexture.render(posxbase + 650, posybase + 547);
+			gTextTexture.loadFromRenderedText(gFont3, "Estado: Concluido", { 140,0,0 });
+			gTextTexture.render(posxbase + 650, posybase + 548);
+		}
+
 		gTextTexture.loadFromRenderedTextWrap(gFont, rese, { 255, 255, 255 }, 750);
 		gTextTexture.render(posxbase - 1, posybase + 54);
 		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
@@ -2101,114 +2191,132 @@ int main(int argc, char **argv)
 
 
 		case programationstate:
-			for (int x = 0; x < arraychapter.size(); x++) {
-				std::string temptext = arraychapter[x];
-				replace(temptext, "https://jkanime.net/", "");
-				replace(temptext, "/", " ");
-				replace(temptext, "-", " ");
-				mayus(temptext);
-				
+			if (reloading == false) {
+
+				for (int x = 0; x < arraychapter.size(); x++) {
+					std::string temptext = arraychapter[x];
+					replace(temptext, "https://jkanime.net/", "");
+					replace(temptext, "/", " ");
+					replace(temptext, "-", " ");
+					mayus(temptext);
 
 
-				if (x == selectchapter) {
-					gTextTexture.loadFromRenderedText(gFont, temptext, { 128,13,5 });
-					gTextTexture.render(posxbase + 30, posybase + (x * 22));
+
+					if (x == selectchapter) {
+						gTextTexture.loadFromRenderedText(gFont, temptext, { 128,13,5 });
+						gTextTexture.render(posxbase + 30, posybase + (x * 22));
 
 
-					Heart.render(posxbase + 10, posybase - 4 + (x * 22));
-					Heart.render(posxbase + gTextTexture.getWidth() + 25, posybase - 4 + (x * 22));
+						Heart.render(posxbase + 10, posybase - 4 + (x * 22));
+						Heart.render(posxbase + gTextTexture.getWidth() + 25, posybase - 4 + (x * 22));
 
+
+					}
+					else
+					{
+
+						gTextTexture.loadFromRenderedText(gFont, temptext, textColor);
+						gTextTexture.render(posxbase, posybase + (x * 22));
+
+					}
 
 				}
-				else
+				if (activatefirstimage == true)
 				{
+					TPreview.free();
+					callimage();
+					activatefirstimage = false;
+				}
+				if (preview == true)
+				{
+					{SDL_Rect fillRect = { 768, 68, 404, 554 };
+					SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
-					gTextTexture.loadFromRenderedText(gFont, temptext, textColor);
-					gTextTexture.render(posxbase, posybase + (x * 22));
-
+					SDL_RenderFillRect(gRenderer, &fillRect);
+					TPreview.render(posxbase + 750, posybase + 60);
+					}
 				}
 
-			}
-			if (preview == true)
-			{
-				{SDL_Rect fillRect = { 768, 68, 404, 554 };
+				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
 				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
-				SDL_RenderFillRect(gRenderer, &fillRect);
-				TPreview.render(posxbase + 750, posybase + 60);
-				}
+				SDL_RenderFillRect(gRenderer, &fillRect); }
+
+				textColor = { 50, 50, 50 };
+				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"L\" para Recargar programación - \"R\" para Buscar", textColor);
+				gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
+
+
+
+
+
 			}
+			else
+			{
+				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
+				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
-			{SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
-			SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+				SDL_RenderFillRect(gRenderer, &fillRect); }
 
-			SDL_RenderFillRect(gRenderer, &fillRect); }
-
-			textColor = { 50, 50, 50 };
-			gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"L\" para Recargar programación - \"R\" para Buscar - \"ZL\" para ver Portada", textColor);
-			gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
-
-
-
-
-
-
+				textColor = { 50, 50, 50 };
+				gTextTexture.loadFromRenderedText(gFont3, "Cargando programación... (" + std::to_string(porcentajereload) + "%)", textColor);
+				gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
+			}
 			break;
 		case searchstate:
+			if (reloadingsearch == false) {
+				for (int x = 0; x < arraysearch.size(); x++) {
+					std::string temptext = arraysearch[x];
+					std::cout << temptext << std::endl;
+					replace(temptext, "https://jkanime.net/", "");
+					replace(temptext, "/", " ");
+					replace(temptext, "-", " ");
+					mayus(temptext);
+					if (x == searchchapter) {
+						gTextTexture.loadFromRenderedText(gFont, temptext, { 128,13,5 });
+						gTextTexture.render(posxbase + 30, posybase + (x * 22));
 
-			for (int x = 0; x < searchcount; x++) {
-				std::string temptext = arraysearch[x];
-				replace(temptext, "https://jkanime.net/", "");
-				replace(temptext, "/", " ");
-				replace(temptext, "-", " ");
-				mayus(temptext);
-				if (x == searchchapter) {
-					Heart.render(posxbase + 12, posybase - 4 + (x * 22));
-					textColor = { 120, 120, 120 };
+
+						Heart.render(posxbase + 10, posybase - 4 + (x * 22));
+						Heart.render(posxbase + gTextTexture.getWidth() + 25, posybase - 4 + (x * 22));
+
+
+					}
+					else
+					{
+
+						gTextTexture.loadFromRenderedText(gFont, temptext, textColor);
+						gTextTexture.render(posxbase, posybase + (x * 22));
+
+					}
 
 				}
-				else
+				
+
+				if (activatefirstsearchimage == true)
 				{
-					textColor = { 50, 50, 50 };
+					TSearchPreview.free();
+					callimagesearch();
+					activatefirstsearchimage = false;
 				}
-
-
-
-				gTextTexture.loadFromRenderedText(gFont, temptext, textColor);
-
-				if (x == searchchapter) {
-
-					gTextTexture.render(posxbase + 30, posybase + (x * 22));
-
-				}
-				else
+				if (preview == true)
 				{
+					{SDL_Rect fillRect = { 768, 68, 404, 554 };
+					SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
-
-					gTextTexture.render(posxbase, posybase + (x * 22));
-
+					SDL_RenderFillRect(gRenderer, &fillRect);
+					TSearchPreview.render(posxbase + 750, posybase + 60);
+					}
 				}
 
-			}
-			textColor = { 50, 50, 50 };
-			if (preview == true)
-			{
-				{SDL_Rect fillRect = { 768, 68, 404, 554 };
+				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
 				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
-				SDL_RenderFillRect(gRenderer, &fillRect);
-				TPreview.render(posxbase + 750, posybase + 60);
-				}
-			}
+				SDL_RenderFillRect(gRenderer, &fillRect); }
+				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"B\" para volver", textColor);
+				gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
 
-			{SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
-			SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-
-			SDL_RenderFillRect(gRenderer, &fillRect); }
-			gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"ZL\" para ver Portada - \"B\" para volver", textColor);
-			gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
-
-			break;
+				break;
 		case downloadstate:
 			std::string temptext = urltodownload;
 			replace(temptext, "https://jkanime.net/", "");
@@ -2236,12 +2344,12 @@ int main(int argc, char **argv)
 #ifdef __SWITCH__
 				if (fulldownloaded == false)
 				{
-					blinkLed(8);//LED
+					blinkLed(6);//LED
 					fulldownloaded = true;
-			}
+				}
 #endif // __SWITCH__
 
-				
+
 				//Render red filled quad
 				SDL_Rect fillRect = { posxbase + 98, posybase + 400, 580, 50 };
 				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
@@ -2249,6 +2357,19 @@ int main(int argc, char **argv)
 				gTextTexture.loadFromRenderedText(gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 				gTextTexture.render(posxbase + 100, posybase + 400);
 			}
+			}
+				else
+			{
+				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT / 2 - 25, 1280, 50 };
+				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+
+				SDL_RenderFillRect(gRenderer, &fillRect); }
+
+				textColor = { 50, 50, 50 };
+				gTextTexture.loadFromRenderedText(gFont3, "Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)", textColor);
+				gTextTexture.render(SCREEN_WIDTH / 2 - gTextTexture.getWidth() / 2, SCREEN_HEIGHT / 2 - gTextTexture.getHeight() / 2);
+			}
+
 			break;
 
 
@@ -2263,8 +2384,8 @@ int main(int argc, char **argv)
 
 	}
 	SDL_WaitThread(threadID, NULL);
-
-
+	SDL_WaitThread(prothread, NULL);
+	SDL_WaitThread(searchthread, NULL);
 	//Free resources and close SDL
 #ifdef __SWITCH__
 	hidsysExit();
