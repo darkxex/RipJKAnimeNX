@@ -1496,22 +1496,7 @@ int main(int argc, char **argv)
 					{
 					case programationstate:
 
-						if (reloading == false)
-						{
-							{
-#ifdef __SWITCH__
-								blinkLed(1);//LED
-#endif // __SWITCH__
-
-
-								selectchapter = 0;
-								arraychapter.clear();
-								arrayimages.clear();
-								//refrescarpro();
-								prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
-
-							}
-						}
+						
 						break;
 					case downloadstate:
 
@@ -2243,7 +2228,7 @@ int main(int argc, char **argv)
 				SDL_RenderFillRect(gRenderer, &fillRect); }
 
 				textColor = { 50, 50, 50 };
-				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"L\" para Recargar programación - \"R\" para Buscar", textColor);
+				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"R\" para Buscar", textColor);
 				gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
 
 
@@ -2267,7 +2252,7 @@ int main(int argc, char **argv)
 			if (reloadingsearch == false) {
 				for (int x = 0; x < arraysearch.size(); x++) {
 					std::string temptext = arraysearch[x];
-					std::cout << temptext << std::endl;
+				
 					replace(temptext, "https://jkanime.net/", "");
 					replace(temptext, "/", " ");
 					replace(temptext, "-", " ");
