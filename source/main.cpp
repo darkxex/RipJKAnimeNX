@@ -94,6 +94,8 @@ const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 enum states { programationstate, downloadstate, chapterstate, searchstate };
 int statenow = programationstate;
+enum statesreturn { toprogramation, tosearch };
+int returnnow = toprogramation;
 std::string  urltodownload = "";
 int porcendown = 0;
 int sizeestimated = 0;
@@ -1070,6 +1072,7 @@ int searchjk(void* data)
 	else
 	{
 		statenow = programationstate;
+		returnnow = toprogramation;
 	}
 	reloadingsearch = false;
 	return 0;
@@ -1447,15 +1450,23 @@ int main(int argc, char **argv)
 						break;
 					case chapterstate:
 						cancelcurl = 1;
-						statenow = programationstate;
-
+						switch (returnnow)
+						{
+						case toprogramation:
+							statenow = programationstate;
+							break;
+						case tosearch:
+							statenow = searchstate;
+							break;
+						}
 
 						break;
 					case searchstate:
 						if (reloadingsearch == false)
 						{
+							
+							returnnow = toprogramation;
 							statenow = programationstate;
-
 							TSearchPreview.free();
 						}
 						break;
@@ -1618,12 +1629,15 @@ int main(int argc, char **argv)
 					case programationstate:
 						if (reloadingsearch == false)
 						{
+							searchchapter = 0;
 #ifdef __SWITCH__
 							blinkLed(1);//LED
 #endif // __SWITCH__
 							TSearchPreview.free();
 							arraysearch.clear();
+							arraysearchimages.clear();
 							statenow = searchstate;
+							returnnow = tosearch;
 							char *buf = (char*)malloc(256);
 #ifdef __SWITCH__
 							strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
@@ -1810,15 +1824,23 @@ int main(int argc, char **argv)
 							break;
 						case chapterstate:
 							cancelcurl = 1;
-							statenow = programationstate;
-
+							switch (returnnow)
+							{
+							case toprogramation:
+								statenow = programationstate;
+								break;
+							case tosearch:
+								statenow = searchstate;
+								break;
+							}
 
 							break;
 						case searchstate:
 							if (reloadingsearch == false)
 							{
-								statenow = programationstate;
 
+								returnnow = toprogramation;
+								statenow = programationstate;
 								TSearchPreview.free();
 							}
 							break;
@@ -1897,9 +1919,12 @@ int main(int argc, char **argv)
 #ifdef __SWITCH__
 								blinkLed(1);//LED
 #endif // __SWITCH__
+								searchchapter = 0;
 								TSearchPreview.free();
 								arraysearch.clear();
+								arraysearchimages.clear();
 								statenow = searchstate;
+								returnnow = tosearch;
 								char *buf = (char*)malloc(256);
 #ifdef __SWITCH__
 								strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
@@ -2227,10 +2252,12 @@ int main(int argc, char **argv)
 
 				SDL_RenderFillRect(gRenderer, &fillRect); }
 
-				textColor = { 50, 50, 50 };
+			
 				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"R\" para Buscar", textColor);
 				gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
-
+				
+				gTextTexture.loadFromRenderedText(gFont, "(Ver 1.7.3)", {100,0,0});
+				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, SCREEN_HEIGHT - 30);
 
 
 
@@ -2243,7 +2270,7 @@ int main(int argc, char **argv)
 
 				SDL_RenderFillRect(gRenderer, &fillRect); }
 
-				textColor = { 50, 50, 50 };
+				
 				gTextTexture.loadFromRenderedText(gFont3, "Cargando programación... (" + std::to_string(porcentajereload) + "%)", textColor);
 				gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
 			}
@@ -2280,6 +2307,7 @@ int main(int argc, char **argv)
 
 				if (activatefirstsearchimage == true)
 				{
+					
 					TSearchPreview.free();
 					callimagesearch();
 					activatefirstsearchimage = false;
@@ -2368,9 +2396,28 @@ int main(int argc, char **argv)
 
 
 	}
-	SDL_WaitThread(threadID, NULL);
-	SDL_WaitThread(prothread, NULL);
-	SDL_WaitThread(searchthread, NULL);
+
+	if (NULL == threadID) {
+		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+	}
+	else {
+		SDL_WaitThread(threadID, NULL);
+
+	}
+	if (NULL == prothread) {
+		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+	}
+	else {
+		SDL_WaitThread(prothread, NULL);
+
+	}
+	if (NULL == searchthread) {
+		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+	}
+	else {
+		SDL_WaitThread(searchthread,NULL);
+		
+	}
 	//Free resources and close SDL
 #ifdef __SWITCH__
 	hidsysExit();
