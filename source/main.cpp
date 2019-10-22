@@ -633,66 +633,7 @@ int downloadjkanimevideo(void* data)
 	content = gethtml(enlacejk.c_str());
 	int val1 = 0, val2 = 0;
 
-	val1 = content.find("https://jkanime.net/jkrapid.php");
-	if (val1 != -1) {
-		val2 = content.find('"', val1);
-
-
-
-
-		videourl = content.substr(val1, val2 - val1);
-		replace(videourl, "\\", "");
-		replace(videourl, "https://jkanime.net/jkrapid.php?u=", "https://www.rapidvideo.com/e/");
-		videourl = videourl + "/";
-		std::cout << videourl << std::endl;
-
-		videourl = gethtml(videourl);
-		val1 = videourl.find("720p");
-		if (val1 != -1)
-		{
-			std::string temporal = "";
-			val1 = videourl.rfind("https://", val1);
-			val2 = videourl.find('"', val1);
-			temporal = videourl.substr(val1, val2 - val1);
-			std::cout << "intentando 720" << std::endl;
-		}
-		else {
-			val1 = videourl.find("480p");
-			if (val1 != -1)
-			{
-				std::string temporal = "";
-				val1 = videourl.rfind("https://", val1);
-				val2 = videourl.find('"', val1);
-				temporal = videourl.substr(val1, val2 - val1);
-				std::cout << "intentando 480" << std::endl;
-			}
-			else {
-				std::string temporal = "";
-				val1 = videourl.find("video/mp4");
-				val1 = videourl.rfind("https://", val1);
-				val2 = videourl.find('"', val1);
-				temporal = videourl.substr(val1, val2 - val1);
-				std::cout << "la minima" << std::endl;
-			}
-
-		}
-		//ahorrotrue
-		if (ahorro == true) {
-			std::string temporal = "";
-			val1 = videourl.find("video/mp4");
-			val1 = videourl.rfind("https://", val1);
-			val2 = videourl.find('"', val1);
-			temporal = videourl.substr(val1, val2 - val1);
-			std::cout << "la minima" << std::endl;
-		}
-
-		videourl = videourl.substr(val1, val2 - val1);
-
-		downloadfile(videourl, directorydownload);
-
-	}
-	else
-	{
+	
 		val1 = content.find("https://jkanime.net/jk.php?");
 		if (val1 != -1)
 		{
@@ -705,7 +646,7 @@ int downloadjkanimevideo(void* data)
 			std::cout << videourl << std::endl;
 			downloadfile(videourl, directorydownload);
 		}
-	}
+	
 	return 0;
 }
 void onlinejkanimevideo(std::string onlineenlace)
@@ -993,7 +934,7 @@ int searchjk(void* data)
 
 	
 #ifndef __SWITCH__
-	searchtext = "fairy";
+	searchtext = "boruto";
 #endif 
 
 	replace(searchtext, " ", "_");
