@@ -111,7 +111,9 @@ bool reloadingsearch = false;
 int porcentajereload = 0;
 bool activatefirstimage = true;
 bool activatefirstsearchimage = true;
+std::string serverenlace = "";
 std::string searchtext = "";
+std::string tempimage = "";
 //Texture wrapper class
 class LTexture
 {
@@ -180,7 +182,7 @@ TTF_Font *gFont3 = NULL;
 LTexture gTextTexture;
 LTexture Farest;
 LTexture Heart;
-
+LTexture TChapters;
 LTexture TPreview;
 LTexture TSearchPreview;
 LTexture::LTexture()
@@ -454,6 +456,7 @@ void close()
 	Farest.free();
 	Heart.free();
 	TPreview.free();
+	TChapters.free();
 	TSearchPreview.free();
 	//Free global font
 	TTF_CloseFont(gFont);
@@ -633,19 +636,62 @@ int downloadjkanimevideo(void* data)
 	content = gethtml(enlacejk.c_str());
 	int val1 = 0, val2 = 0;
 
-	
-		val1 = content.find("https://jkanime.net/jk.php?");
+	val1 = content.find("https://www.mediafire.com/file/");
+	if (val1 != -1)
+	{
+		val2 = content.find('"', val1);
+		
+		videourl = content.substr(val1, val2 - val1);
+		replace(videourl, "\\", "");
+		std::string tempmedia = gethtml(videourl);
+		val1 = tempmedia.find("https://download");
 		if (val1 != -1)
 		{
-			val2 = content.find('"', val1);
+			val2 = tempmedia.find('"', val1);
 
-			videourl = content.substr(val1, val2 - val1);
+			videourl = tempmedia.substr(val1, val2 - val1);
 			replace(videourl, "\\", "");
-			replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
-
 			std::cout << videourl << std::endl;
+			serverenlace = videourl;
 			downloadfile(videourl, directorydownload);
+
 		}
+		else
+		{
+			val1 = content.find("https://jkanime.net/jk.php?");
+			if (val1 != -1)
+			{
+				val2 = content.find('"', val1);
+
+				videourl = content.substr(val1, val2 - val1);
+				replace(videourl, "\\", "");
+				replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
+
+				std::cout << videourl << std::endl;
+				serverenlace = videourl;
+				downloadfile(videourl, directorydownload);
+			}
+		}
+		
+	
+	}
+	else
+
+	{
+		val1 = content.find("https://jkanime.net/jk.php?");
+	if (val1 != -1)
+	{
+		val2 = content.find('"', val1);
+
+		videourl = content.substr(val1, val2 - val1);
+		replace(videourl, "\\", "");
+		replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
+
+		std::cout << videourl << std::endl;
+		serverenlace = videourl;
+		downloadfile(videourl, directorydownload);
+	}
+	}
 	
 	return 0;
 }
@@ -824,6 +870,7 @@ void callimage()
 	directorydownloadimage.append(".jpg");
 #endif // SWITCH
 	TPreview.loadFromFileCustom(directorydownloadimage.c_str(), 550, 400);
+	tempimage = directorydownloadimage;
 }
 void callimagesearch()
 {
@@ -840,6 +887,7 @@ void callimagesearch()
 
 		
 		TSearchPreview.loadFromFileCustom(directorydownloadimage.c_str(), 550, 400);
+		tempimage = directorydownloadimage;
 	
 }
 int refrescarpro(void* data)
@@ -934,7 +982,7 @@ int searchjk(void* data)
 
 	
 #ifndef __SWITCH__
-	searchtext = "boruto";
+	searchtext = "h2o";
 #endif 
 
 	replace(searchtext, " ", "_");
@@ -1317,6 +1365,8 @@ int main(int argc, char **argv)
 
 					{if (reloading == false)
 					{
+						TChapters.free();
+						TChapters.loadFromFileCustom(tempimage, 550, 400);
 						statenow = chapterstate;
 						temporallink = arraychapter[selectchapter];
 
@@ -1344,6 +1394,8 @@ int main(int argc, char **argv)
 					{
 						if (reloadingsearch == false)
 						{
+							TChapters.free();
+							TChapters.loadFromFileCustom(tempimage, 550, 400);
 							statenow = chapterstate;
 							temporallink = arraysearch[searchchapter];
 
@@ -1655,6 +1707,8 @@ int main(int argc, char **argv)
 
 						{if (reloading == false)
 						{
+							TChapters.free();
+							TChapters.loadFromFileCustom(tempimage, 550, 400);
 							statenow = chapterstate;
 							temporallink = arraychapter[selectchapter];
 
@@ -1682,6 +1736,8 @@ int main(int argc, char **argv)
 						{
 							if (reloadingsearch == false)
 							{
+								TChapters.free();
+								TChapters.loadFromFileCustom(tempimage, 550, 400);
 								statenow = chapterstate;
 								temporallink = arraysearch[searchchapter];
 
@@ -2080,9 +2136,9 @@ int main(int argc, char **argv)
 		gTextTexture.loadFromRenderedText(gFont3, temptext + ":", textColor);
 		gTextTexture.render(posxbase, posybase);
 		gTextTexture.loadFromRenderedText(gFont, "Por favor escoge un capítulo entre: " + std::to_string(mincapit) + " - " + std::to_string(maxcapit), { 255, 255, 255 });
-		gTextTexture.render(posxbase + 649, posybase + 589);
+		gTextTexture.render(posxbase + 800, posybase + 589);
 		gTextTexture.loadFromRenderedText(gFont, "Por favor escoge un capítulo entre: " + std::to_string(mincapit) + " - " + std::to_string(maxcapit), textColor);
-		gTextTexture.render(posxbase + 650, posybase + 590);
+		gTextTexture.render(posxbase + 800, posybase + 590);
 		if (ahorro == true)
 		{
 			gTextTexture.loadFromRenderedText(gFont, "\"X\" para cambiar la calidad del video. (ACTUAL: MEDIA)", textColor);
@@ -2093,7 +2149,7 @@ int main(int argc, char **argv)
 			gTextTexture.loadFromRenderedText(gFont, "\"X\" para cambiar la calidad del video. (ACTUAL: ALTA)", textColor);
 			gTextTexture.render(posxbase, SCREEN_HEIGHT - 160);
 		}
-		SDL_Rect fillRect = { posxbase - 5, SCREEN_HEIGHT - 202, 760, 20 };
+		SDL_Rect fillRect = { posxbase - 5, SCREEN_HEIGHT - 202, 320, 20 };
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 		SDL_RenderFillRect(gRenderer, &fillRect);
 		fillRect = { posxbase - 5, SCREEN_HEIGHT - 142, 430, 20 };
@@ -2101,7 +2157,7 @@ int main(int argc, char **argv)
 		SDL_RenderFillRect(gRenderer, &fillRect);
 		gTextTexture.loadFromRenderedText(gFont, "\"Y\" para ver Online.", textColor);
 		gTextTexture.render(posxbase, SCREEN_HEIGHT - 220);
-		gTextTexture.loadFromRenderedText(gFont, "(Para Online debes abrir la app desde el Forwader. *En SXOS desactiva Stealth Mode*)", textColor);
+		gTextTexture.loadFromRenderedText(gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
 		gTextTexture.render(posxbase, SCREEN_HEIGHT - 200);
 		gTextTexture.loadFromRenderedText(gFont, "(A veces la calidad ALTA y MEDIA son lo mismo.)", textColor);
 		gTextTexture.render(posxbase, SCREEN_HEIGHT - 140);
@@ -2117,21 +2173,29 @@ int main(int argc, char **argv)
 		gTextTexture.render(posxbase + 649, posybase + 589);
 		gTextTexture.loadFromRenderedText(gFontcapit, "Capítulo: " + std::to_string(capmore), textColor);
 		gTextTexture.render(posxbase + 650, posybase + 590);
+		
+		{SDL_Rect fillRect = { SCREEN_WIDTH - 462,SCREEN_HEIGHT / 2 - 352, 404, 554 };
+		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+
+		SDL_RenderFillRect(gRenderer, &fillRect); 
+		TChapters.render(SCREEN_WIDTH - 460, SCREEN_HEIGHT / 2 - 350); 
+		}
+		
 		if (enemision == true)
 		{
 			gTextTexture.loadFromRenderedText(gFont3, "Estado: En Emisión", {0,0,0});
-			gTextTexture.render(posxbase + 650, posybase + 547);
+			gTextTexture.render(posxbase + 800, posybase + 547);
 			gTextTexture.loadFromRenderedText(gFont3, "Estado: En Emisión", { 16,191,0 });
-			gTextTexture.render(posxbase + 650, posybase + 548);
+			gTextTexture.render(posxbase + 800, posybase + 548);
 		}
 		else
 		{
 			gTextTexture.loadFromRenderedText(gFont3, "Estado: Concluido", {0,0,0});
-			gTextTexture.render(posxbase + 650, posybase + 547);
+			gTextTexture.render(posxbase + 800, posybase + 547);
 			gTextTexture.loadFromRenderedText(gFont3, "Estado: Concluido", { 140,0,0 });
-			gTextTexture.render(posxbase + 650, posybase + 548);
+			gTextTexture.render(posxbase + 800, posybase + 548);
 		}
-
+		
 		gTextTexture.loadFromRenderedTextWrap(gFont, rese, { 255, 255, 255 }, 750);
 		gTextTexture.render(posxbase - 1, posybase + 54);
 		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
@@ -2197,7 +2261,7 @@ int main(int argc, char **argv)
 				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"R\" para Buscar", textColor);
 				gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
 				
-				gTextTexture.loadFromRenderedText(gFont, "(Ver 1.7.3)", {100,0,0});
+				gTextTexture.loadFromRenderedText(gFont, "(Ver 1.7.5)", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, SCREEN_HEIGHT - 30);
 
 
@@ -2287,6 +2351,9 @@ int main(int argc, char **argv)
 			gTextTexture.loadFromRenderedText(gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
 			gTextTexture.render(posxbase + 100, posybase + 220);
 
+
+			gTextTexture.loadFromRenderedText(gFont, serverenlace, {168,0,0});
+			gTextTexture.render(posxbase , posybase + 280);
 			gTextTexture.loadFromRenderedText(gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 			gTextTexture.render(posxbase, posybase + 260);
 			gTextTexture.loadFromRenderedText(gFont, "Cancelar la descarga \"B\" - \"+\" para salir", textColor);
