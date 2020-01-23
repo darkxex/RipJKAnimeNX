@@ -1773,12 +1773,46 @@ int main(int argc, char **argv)
 					}
 					else if (e.jbutton.button == 10) {
 						// (+) button down
-						cancelcurl = 1;
-						quit = 1;
+						//cancelcurl = 1;
+						//quit = 1;
 					}
 					else if (e.jbutton.button == 6) {
 						// (L) button down
-					
+#ifdef __SWITCH__
+						Result rc = 0;
+#endif //  SWITCH
+#ifdef __SWITCH__
+						WebCommonConfig config;
+						WebCommonReply reply;
+						WebExitReason exitReason = (WebExitReason)0;
+
+						// Create the config. There's a number of web*Create() funcs, see libnx web.h.
+						// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
+						rc = webPageCreate(&config, "https://m.animeflv.net");
+						printf("webPageCreate(): 0x%x\n", rc);
+
+						if (R_SUCCEEDED(rc)) {
+							// At this point you can use any webConfigSet* funcs you want.
+
+							rc = webConfigSetWhitelist(&config, "^http*"); // Set the whitelist, adjust as needed. If you're only using a single domain, you could remove this and use webNewsCreate for the above (see web.h for webNewsCreate).
+							printf("webConfigSetWhitelist(): 0x%x\n", rc);
+
+							if (R_SUCCEEDED(rc)) { // Launch the applet and wait for it to exit.
+								printf("Running webConfigShow...\n");
+								rc = webConfigShow(&config, &reply); // If you don't use reply you can pass NULL for it.
+								printf("webConfigShow(): 0x%x\n", rc);
+							}
+
+							if (R_SUCCEEDED(rc)) { // Normally you can ignore exitReason.
+								rc = webReplyGetExitReason(&reply, &exitReason);
+								printf("webReplyGetExitReason(): 0x%x", rc);
+								if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
+								printf("\n");
+							}
+						}
+#endif //  SWITCH
+
+
 					}
 					else if (e.jbutton.button == 8) {
 						// (ZL) button down
@@ -2258,10 +2292,10 @@ int main(int argc, char **argv)
 				SDL_RenderFillRect(gRenderer, &fillRect); }
 
 			
-				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"R\" para Buscar", textColor);
+				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Descargar - \"R\" para Buscar - \"L\" para AnimeFLV", textColor);
 				gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
 				
-				gTextTexture.loadFromRenderedText(gFont, "(Ver 1.7.5)", {100,0,0});
+				gTextTexture.loadFromRenderedText(gFont, "(Ver 1.7.6)", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, SCREEN_HEIGHT - 30);
 
 
