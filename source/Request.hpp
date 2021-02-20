@@ -485,6 +485,7 @@ int searchjk(void* data)
 bool tienezero = false;
 std::string rese = "";
 bool enemision = false;
+std::string nextdate = "";
 std::string capit(std::string b) {
 	tienezero = false;
 
@@ -501,8 +502,19 @@ std::string capit(std::string b) {
 	std::string terese = a.substr(re1, re2 - re1);
 	replace(terese, "<br/>", "");
 	rese = terese;
+
+	//find next date
+	re1 = a.find("<b>Próximo episodio</b>") + 25;
+	re2 = a.find("<i class", re1);
+
+	//utf-8
+	nextdate = "";
+	nextdate = a.substr(re1, re2 - re1);
+	replace(nextdate, "á","a");
+	replace(nextdate, "ó","o");
+
 	std::cout << rese << std::endl;
-	if (a.find("<b>En emision</b>"))
+	if ((int)a.find("<b>En emision</b>") != -1)
 	{
 		enemision = true;
 	}
