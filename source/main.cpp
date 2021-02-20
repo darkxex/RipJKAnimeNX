@@ -1088,7 +1088,7 @@ quit=1;
 						}
 
 					}
-					else if (e.jbutton.button == 6) {
+					else if (e.jbutton.button == 6 || e.jbutton.button == 8) {
 						// (L) button down
 #ifdef __SWITCH__
 						Result rc = 0;
@@ -1100,7 +1100,11 @@ quit=1;
 
 						// Create the config. There's a number of web*Create() funcs, see libnx web.h.
 						// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
-						rc = webPageCreate(&config, "https://m.animeflv.net");
+						if (e.jbutton.button == 6)
+						rc = webPageCreate(&config, "https://animeflv.net");
+						else 
+						rc = webPageCreate(&config, "https://jkanime.net");
+						
 						printf("webPageCreate(): 0x%x\n", rc);
 
 						if (R_SUCCEEDED(rc)) {
@@ -1359,7 +1363,7 @@ quit=1;
 						case chapterstate:
 							if (capmore > mincapit)
 							{
-								capmore = capmore - 1;
+								capmore--;
 							}
 							if (capmore < mincapit)
 							{
@@ -1382,7 +1386,7 @@ quit=1;
 						case chapterstate:
 							if (capmore < maxcapit)
 							{
-								capmore = capmore + 1;
+								capmore++;
 							}
 							if (capmore > maxcapit)
 							{
@@ -1501,7 +1505,7 @@ quit=1;
 
 						case chapterstate:
 
-							if (capmore > 10)
+							if (capmore > 1)
 							{
 								capmore = capmore - 10;
 							}
@@ -1559,16 +1563,11 @@ quit=1;
 
 		{//draw preview image
 		SDL_Rect fillRect = { SCREEN_WIDTH - 462,SCREEN_HEIGHT / 2 - 352, 404, 595 };
-		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 
 		SDL_RenderFillRect(gRenderer, &fillRect); 
 		TChapters.render(SCREEN_WIDTH - 460, SCREEN_HEIGHT / 2 - 350);
 		
-		//draw status
-		gTextTexture.loadFromRenderedText(gFont3, temptext + ":", { 255, 255, 255 });
-		gTextTexture.render(posxbase - 1, posybase - 1);
-		gTextTexture.loadFromRenderedText(gFont3, temptext + ":", textColor);
-		gTextTexture.render(posxbase, posybase);
 		}
 
 		//warning , only display in sxos ToDo
@@ -1611,29 +1610,39 @@ quit=1;
 		
 		if (enemision == true)
 		{
-			gTextTexture.loadFromRenderedText(gFont3, "Estado: En Emisión", {0,0,0});
+			gTextTexture.loadFromRenderedText(gFont3, "En Emisión ", {0,0,0});
 			gTextTexture.render(posxbase + 800, posybase + 547);
-			gTextTexture.loadFromRenderedText(gFont3, "Estado: En Emisión", { 16,191,0 });
+			gTextTexture.loadFromRenderedText(gFont3, "En Emisión ", { 16,191,0 });
 			gTextTexture.render(posxbase + 800, posybase + 548);
+			gTextTexture.loadFromRenderedText(gFont, nextdate, { 255,255,255 });
+			gTextTexture.render(posxbase + 1000, posybase + 565);
 		}
 		else
 		{
-			gTextTexture.loadFromRenderedText(gFont3, "Estado: Concluido", {0,0,0});
+			gTextTexture.loadFromRenderedText(gFont3, "Concluido", {0,0,0});
 			gTextTexture.render(posxbase + 800, posybase + 547);
-			gTextTexture.loadFromRenderedText(gFont3, "Estado: Concluido", { 140,0,0 });
+			gTextTexture.loadFromRenderedText(gFont3, "Concluido", { 140,0,0 });
 			gTextTexture.render(posxbase + 800, posybase + 548);
 		}
 		
-		gTextTexture.loadFromRenderedTextWrap(gFont, rese, { 255, 255, 255 }, 750);
+		
+		
+		//draw Title
+/*		gTextTexture.loadFromRenderedText(gFont3, temptext + ":", { 255, 255, 255 });
+		gTextTexture.render(posxbase - 1, posybase - 1);*/
+		gTextTexture.loadFromRenderedText(gFont3, temptext.substr(0,48)+ ":", textColor);
+		gTextTexture.render(posxbase, posybase);
+		//draw description
+/*		gTextTexture.loadFromRenderedTextWrap(gFont, rese, { 255, 255, 255 }, 750);
 		gTextTexture.render(posxbase - 1, posybase + 54);
+*/		
 		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
-		gTextTexture.render(posxbase, posybase + 55);
+		gTextTexture.render(posxbase, posybase + 65);
 		
 		//Draw Footer Buttons
 		int dist = 1120,posdist = 130;
 		DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Ver Online");dist -= posdist;
 		DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Atras");dist -= posdist;
-		DrawImageFile(gRenderer,"romfs:/buttons/L.png",dist, 680,"AnimeFLV");dist -= posdist;
 		DrawImageFile(gRenderer,"romfs:/buttons/L.png",dist, 680,"AnimeFLV");dist -= posdist;
 		if(!txtyase.length()){
 			DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Favorito");dist -= posdist;
@@ -1665,14 +1674,14 @@ quit=1;
 
 
 					if (x == selectchapter) {
-						gTextTexture.loadFromRenderedText(digifont, temptext, { 3,96,153 });
-						gTextTexture.render(posxbase + 30, posybase + (x * 22));
+						gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
+						{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
+						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
+						SDL_RenderFillRect(gRenderer, &HeaderRect);}
+						gTextTexture.render(posxbase, posybase + (x * 22));
 
-
-						Heart.render(posxbase + 10, posybase +5 + (x * 22));
-						Heart.render(posxbase + gTextTexture.getWidth() + 25, posybase +5 + (x * 22));
-
-
+						gTextTexture.loadFromRenderedText(digifont, ">", { 0,0,0 });
+						gTextTexture.render(posxbase-10, posybase + (x * 22));
 					}
 					else
 					{
@@ -1758,14 +1767,14 @@ quit=1;
 					replace(temptext, "-", " ");
 					mayus(temptext);
 					if (x == searchchapter) {
-						gTextTexture.loadFromRenderedText(digifont, temptext, { 3,96,153 });
-						gTextTexture.render(posxbase + 30, posybase + (x * 22));
+						gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
+						{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
+						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
+						SDL_RenderFillRect(gRenderer, &HeaderRect);}
+						gTextTexture.render(posxbase, posybase + (x * 22));
 
-
-						Heart.render(posxbase + 10, posybase + 5 + (x * 22));
-						Heart.render(posxbase + gTextTexture.getWidth() + 25, posybase + 5 + (x * 22));
-
-
+						gTextTexture.loadFromRenderedText(digifont, ">", { 0,0,0 });
+						gTextTexture.render(posxbase-10, posybase + (x * 22));
 					}
 					else
 					{
@@ -1822,14 +1831,14 @@ quit=1;
 				replace(temptext, "-", " ");
 				mayus(temptext);
 				if (x == favchapter) {
-					gTextTexture.loadFromRenderedText(digifont, temptext, { 3,96,153 });
-					gTextTexture.render(posxbase + 30, posybase + (x * 22));
+						gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
+						{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
+						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
+						SDL_RenderFillRect(gRenderer, &HeaderRect);}
+						gTextTexture.render(posxbase, posybase + (x * 22));
 
-
-					Heart.render(posxbase + 10, posybase + 5 + (x * 22));
-					Heart.render(posxbase + gTextTexture.getWidth() + 25, posybase + 5 + (x * 22));
-
-
+						gTextTexture.loadFromRenderedText(digifont, ">", { 0,0,0 });
+						gTextTexture.render(posxbase-10, posybase + (x * 22));
 				}
 				else
 				{
@@ -1841,7 +1850,6 @@ quit=1;
 
 
 			}
-
 				{//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
