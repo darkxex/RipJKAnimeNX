@@ -1743,9 +1743,12 @@ quit=1;
 		case searchstate:
 			if (reloadingsearch == false) {
 				{//Draw a rectagle to a nice view
-				SDL_SetRenderDrawColor(gRenderer, 200, 200, 100, 105);
+				SDL_SetRenderDrawColor(gRenderer, 100, 100, 100, 105);
 				SDL_Rect HeaderRect = {0,0, 620, 670};
 				SDL_RenderFillRect(gRenderer, &HeaderRect);}
+				//Draw Header
+				gTextTexture.loadFromRenderedText(gFont, "Busqueda", {100,0,0});
+				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 
 				for (int x = 0; x < (int)arraysearch.size(); x++) {
 					std::string temptext = arraysearch[x];
@@ -1805,9 +1808,12 @@ quit=1;
 
 		case favoritesstate:
 				{//Draw a rectagle to a nice view
-				SDL_SetRenderDrawColor(gRenderer, 200, 100, 200, 105);
+				SDL_SetRenderDrawColor(gRenderer, 150, 150, 150, 105);
 				SDL_Rect HeaderRect = {0,0, 620, 670};
 				SDL_RenderFillRect(gRenderer, &HeaderRect);}
+				//Draw Header
+				gTextTexture.loadFromRenderedText(gFont, "Favoritos", {100,0,0});
+				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 			for (int x = 0; x < (int)arrayfavorites.size(); x++) {
 				std::string temptext = arrayfavorites[x];
 
@@ -1905,6 +1911,7 @@ quit=1;
 
 
 		//Update screen
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 		SDL_RenderPresent(gRenderer);
 
