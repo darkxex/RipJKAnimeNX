@@ -1,0 +1,15 @@
+build/
+Build/
+Output/
+*.nso
+*.nro
+*.nsp
+*.elf
+.vscode/
+.vs/
+bin/
+obj/
+target/
+.settings/
+.classpath
+.project
