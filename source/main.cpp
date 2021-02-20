@@ -338,7 +338,7 @@ if (AppletMode) {
 		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
 		SDL_RenderFillRect(gRenderer, &fillRect); 
-		gTextTexture.loadFromRenderedText(gFont3, "Esta App No funciona en Modo Applet ", textColor);
+		gTextTexture.loadFromRenderedText(gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
 		gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
 		SDL_RenderPresent(gRenderer);
 		SDL_Delay(3000);
