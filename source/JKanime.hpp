@@ -174,14 +174,20 @@ int ydistance = 448;
 void callimage()
 {
 #ifdef __SWITCH__
+	std::string temp = arrayimages[selectchapter];
+	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
+	replace(temp,".jpg0", "");
+	replace(temp,".jpg", "");
+
 	std::string directorydownloadimage = "sdmc:/switch/RipJKAnime_NX/DATA/";
-	directorydownloadimage.append(std::to_string(selectchapter));
+	directorydownloadimage.append(temp);
 	directorydownloadimage.append(".jpg");
 #else
 	std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/";
-	directorydownloadimage.append(std::to_string(selectchapter));
+	directorydownloadimage.append(temp);
 	directorydownloadimage.append(".jpg");
 #endif // SWITCH
+	printf("# %d imagen: %s \n",selectchapter,directorydownloadimage.c_str());
 	TPreview.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
 	tempimage = directorydownloadimage;
 }
@@ -189,16 +195,20 @@ void callimagesearch()
 {
 	
 #ifdef __SWITCH__
-		std::string directorydownloadimage = "sdmc:/switch/RipJKAnime_NX/DATA/s";
-		directorydownloadimage.append(std::to_string(searchchapter));
+		std::string temp = arraysearchimages[searchchapter];
+		replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
+		replace(temp,".jpg0", "");
+		replace(temp,".jpg", "");
+		std::string directorydownloadimage = "sdmc:/switch/RipJKAnime_NX/DATA/";
+		directorydownloadimage.append(temp);
 		directorydownloadimage.append(".jpg");
 #else
-		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/s";
-		directorydownloadimage.append(std::to_string(searchchapter));
+		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/";
+		directorydownloadimage.append(temp);
 		directorydownloadimage.append(".jpg");
 #endif // SWITCH
 
-		
+
 		TSearchPreview.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
 		tempimage = directorydownloadimage;
 	
@@ -224,31 +234,34 @@ int refrescarpro(void* data)
 		val4 = content.find('"', val3);
 		std::string gpreview = content.substr(val3, val4 - val3);
 		arrayimages.push_back(gpreview);
+		
 		//std::cout << arraycount << ". " << gdrive << std::endl;
 		temporal = temporal + gdrive + "\n";
 		temporal = temporal + gpreview + "\n";
 		
+		
 		val1++;
-
 	}
 	printf(temporal.c_str());
 	for (int x = 0; x < (int)arrayimages.size(); x++)
 	{
 
 		std::string tempima = arrayimages[x];
-		std::cout << tempima << selectchapter << std::endl;
+		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
+		replace(tempima,".jpg0", "");
+		replace(tempima,".jpg", "");
 #ifdef __SWITCH__
 		std::string directorydownloadimage = "sdmc:/switch/RipJKAnime_NX/DATA/";
-		directorydownloadimage.append(std::to_string(x));
+		directorydownloadimage.append(tempima);
 		directorydownloadimage.append(".jpg");
 #else
 		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/" ;
-		directorydownloadimage.append(std::to_string(x));
+		directorydownloadimage.append(tempima);
 		directorydownloadimage.append(".jpg");
 #endif // SWITCH
-
-
-	downloadfile(tempima,directorydownloadimage,false);
+	printf("# %d imagen: %s \n",x,tempima.c_str());
+	if(!isFileExist(directorydownloadimage.c_str()))
+	downloadfile(arrayimages[x],directorydownloadimage,false);
 	
 	porcentajereload = ((x+1) * 100) / arrayimages.size();
 	}
@@ -284,11 +297,6 @@ int searchjk(void* data)
 		int val2;
 		int val0 = 0;
 
-		
-
-
-
-
 		while (val0 != -1) {
 			val0 = content.find("portada-title", val1);
 			if (val0 == -1) { break; }
@@ -309,19 +317,21 @@ int searchjk(void* data)
 		}
 		
 		for (int x = 0; x < (int)arraysearchimages.size(); x++) {
-
 				std::string tempima = arraysearchimages[x];
-				std::cout << tempima << selectchapter << std::endl;
+				replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
+				replace(tempima,".jpg0", "");
+				replace(tempima,".jpg", "");
 #ifdef __SWITCH__
-				std::string directorydownloadimage = "sdmc:/switch/RipJKAnime_NX/DATA/s";
-				directorydownloadimage.append(std::to_string(x));
+				std::string directorydownloadimage = "sdmc:/switch/RipJKAnime_NX/DATA/";
+				directorydownloadimage.append(tempima);
 				directorydownloadimage.append(".jpg");
 #else
-				std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/s";
-				directorydownloadimage.append(std::to_string(x));
+				std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/";
+				directorydownloadimage.append(tempima);
 				directorydownloadimage.append(".jpg");
 #endif // SWITCH
-			downloadfile(tempima,directorydownloadimage,false);
+			if(!isFileExist(directorydownloadimage.c_str()))
+			downloadfile(arraysearchimages[x],directorydownloadimage,false);
 
 			porcentajereload = ((x + 1) * 100) / arraysearchimages.size();
 		}
@@ -427,3 +437,40 @@ std::string capit(std::string b) {
 
 
 };
+
+bool isFavorite(std::string fav){
+	static std::string limit = "";
+	if (limit == fav){
+		return gFAV;
+	} else limit = fav;
+	std::ifstream file(favoritosdirectory);
+	std::string str;
+	while (std::getline(file, str)) {
+	//	std::cout << str << "\n";
+		if (str.find("jkanime"))
+		{printf("-%s--   -%s--\n",fav.c_str(),str.c_str());
+			if (fav == str){file.close(); return true;}
+		}
+	}
+file.close();
+return false;
+}
+void delFavorite(int inst = -1){
+
+	std::string tmp="";
+	if (inst > 0){//delete all if is -1  delFavorite();
+		std::ifstream file(favoritosdirectory);
+		std::string str = "";
+
+		int index = 0;
+		while (std::getline(file, str)) {
+			if (inst != index){tmp += str+"\n";}
+			index++;
+		}
+		file.close();	
+	}
+
+	std::ofstream outfile(favoritosdirectory);
+	outfile << tmp;
+	outfile.close();
+}

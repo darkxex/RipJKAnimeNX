@@ -28,7 +28,7 @@
 #include <sys/stat.h>
 #include <fstream>
 #include "Networking.hpp"
-
+#include "SDLWork.hpp"
 #ifdef __SWITCH__
 #include <unistd.h>
 
@@ -114,12 +114,13 @@ std::string searchtext = "";
 std::string tempimage = "";
 std::string txtyase = "";
 
+bool gFAV = false;
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
 
 #ifdef __SWITCH__
-std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/DATA/favoritos.txt";
+std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
 #else
 std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
 #endif // SWITCH
@@ -127,9 +128,32 @@ Mix_Music* gMusic = NULL;
 std::ofstream outfile;
 //Frees media and shuts down SDL
 void close();
+#ifdef __SWITCH__
+HidsysNotificationLedPattern blinkLedPattern(u8 times);
+void blinkLed(u8 times);
+#endif // ___SWITCH___
+
 
 //make some includes to clean alittle the main
-#include "SDLWork.hpp"
+//Globally used font
+TTF_Font *gFont = NULL;
+TTF_Font* digifont = NULL;
+TTF_Font *gFontcapit = NULL;
+TTF_Font *gFont2 = NULL;
+TTF_Font *gFont3 = NULL;
+//Rendered texture
+LTexture gTextTexture;
+LTexture Farest;
+LTexture Heart;
+LTexture TChapters;
+LTexture TPreview;
+LTexture TSearchPreview;
+//The window we'll be rendering to
+SDL_Window* gWindow = NULL;
+
+//The window renderer
+SDL_Renderer* gRenderer = NULL;
+
 #include "utils.hpp"
 #include "JKanime.hpp"
 
@@ -364,7 +388,7 @@ quit=1;
 					switch (statenow)
 					{
 					case searchstate:
-						if (reloadingsearch == false)
+						if (!reloadingsearch)
 						{
 							TSearchPreview.free();
 							if (searchchapter < (int)arraysearch.size() - 1)
@@ -382,7 +406,7 @@ quit=1;
 						break;
 
 					case programationstate:
-						if (reloading == false)
+						if (!reloading)
 						{
 							TPreview.free();
 
@@ -434,7 +458,7 @@ quit=1;
 					switch (statenow)
 					{
 					case programationstate:
-						if (reloading == false)
+						if (!reloading)
 						{
 							TPreview.free();
 							if (selectchapter > 0)
@@ -463,7 +487,7 @@ quit=1;
 						break;
 
 					case searchstate:
-						if (reloadingsearch == false)
+						if (!reloadingsearch)
 						{
 							TSearchPreview.free();
 							if (searchchapter > 0)
@@ -499,7 +523,7 @@ quit=1;
 					{
 					case programationstate:
 
-					{if (reloading == false)
+					{if (!reloading&&arraychapter.size()>=1)
 					{
 						TChapters.free();
 						TChapters.loadFromFileCustom(tempimage, 550, 400);
@@ -528,7 +552,7 @@ quit=1;
 
 					case searchstate:
 					{
-						if (reloadingsearch == false)
+						if (!reloadingsearch&&arraysearch.size()>=1)
 						{
 							TChapters.free();
 							TChapters.loadFromFileCustom(tempimage, 550, 400);
@@ -615,7 +639,7 @@ quit=1;
 
 						break;
 					case searchstate:
-						if (reloadingsearch == false)
+						if (!reloadingsearch)
 						{
 							
 							returnnow = toprogramation;
@@ -646,11 +670,12 @@ quit=1;
 						break;
 					case chapterstate:
 					{//AGREGAR A FAVORITOS
-
+						if(!isFavorite(temporallink)){
 						outfile.open(favoritosdirectory, std::ios_base::app); // append instead of overwrite
 						outfile << temporallink;
 						outfile << "\n";
 						outfile.close();
+						}
 						txtyase = "(Ya se agregó)";
 					}
 
@@ -663,7 +688,7 @@ quit=1;
 
 						ofs.close();
 						
-						if (reloading == false)
+						if (!reloading)
 						{
 							arrayfavorites.clear();
 							statenow = favoritesstate;
@@ -719,7 +744,7 @@ quit=1;
 					switch (statenow)
 					{
 					case programationstate:
-						if (reloading == false)
+						if (!reloading)
 						{
 							arrayfavorites.clear();
 							statenow = favoritesstate;
@@ -884,7 +909,7 @@ quit=1;
 					switch (statenow)
 					{
 					case programationstate:
-						if (reloadingsearch == false)
+						if (!reloadingsearch)
 						{
 							searchchapter = 0;
 
@@ -967,7 +992,7 @@ quit=1;
 						{
 						case programationstate:
 
-						{if (reloading == false)
+						{if (!reloading&&arraychapter.size()>=1)
 						{
 							TChapters.free();
 							TChapters.loadFromFileCustom(tempimage, 550, 400);
@@ -996,7 +1021,7 @@ quit=1;
 
 						case searchstate:
 						{
-							if (reloadingsearch == false)
+							if (!reloadingsearch && arraysearch.size()>=1)
 							{
 								TChapters.free();
 								TChapters.loadFromFileCustom(tempimage, 550, 400);
@@ -1023,7 +1048,7 @@ quit=1;
 
 						case favoritesstate:
 						{
-
+							if ((int)arrayfavorites.size() >= 1 ){
 							TChapters.free();
 							TChapters.loadFromFileCustom(tempimage, 550, 400);
 							statenow = chapterstate;
@@ -1042,6 +1067,7 @@ quit=1;
 								capmore = maxcapit;
 							}
 							std::cout << maxcapit << std::endl;
+							}
 
 
 						}
@@ -1133,44 +1159,21 @@ quit=1;
 						switch (statenow)
 						{
 						case programationstate:
-							if (reloading == false)
-							{
-								arrayfavorites.clear();
-								statenow = favoritesstate;
-								std::string temp;
-								std::ifstream infile;
-
-								std::ifstream file(favoritosdirectory);
-								std::string str;
-								while (std::getline(file, str)) {
-									std::cout << str << "\n";
-									if (str.find("jkanime"))
-									{
-										arrayfavorites.push_back(str);
-									}
-								}
-								file.close();
-
-
-							}
 
 							break;
 						case downloadstate:
 
-
-
 							break;
 						case chapterstate:
-
 
 							break;
 						case searchstate:
 
-
 							break;
 						case favoritesstate:
-
-							statenow = programationstate;
+							delFavorite();
+							favchapter=0;
+							arrayfavorites.clear();
 							break;
 
 						}
@@ -1204,7 +1207,7 @@ quit=1;
 
 							break;
 						case searchstate:
-							if (reloadingsearch == false)
+							if (!reloadingsearch)
 							{
 
 								returnnow = toprogramation;
@@ -1260,8 +1263,26 @@ quit=1;
 						switch (statenow)
 						{
 						case programationstate:
+							if (!reloading)
+							{
+								arrayfavorites.clear();
+								statenow = favoritesstate;
+								std::string temp;
+								std::ifstream infile;
+
+								std::ifstream file(favoritosdirectory);
+								std::string str;
+								while (std::getline(file, str)) {
+									std::cout << str << "\n";
+									if (str.find("jkanime"))
+									{
+										arrayfavorites.push_back(str);
+									}
+								}
+								file.close();
 
 
+							}
 							break;
 						case downloadstate:
 
@@ -1270,25 +1291,24 @@ quit=1;
 							break;
 						case chapterstate:
 						{//AGREGAR A FAVORITOS
-
-							outfile.open(favoritosdirectory, std::ios_base::app); // append instead of overwrite
-							outfile << temporallink;
-							outfile << "\n";
-							outfile.close();
+							if(!isFavorite(temporallink)){
+								outfile.open(favoritosdirectory, std::ios_base::app); // append instead of overwrite
+								outfile << temporallink;
+								outfile << "\n";
+								outfile.close();
 							txtyase = "(Ya se agregó)";
+							}
+							gFAV = true;
 						}
 
 						break;
 						case favoritesstate:
 
-							std::ofstream ofs(favoritosdirectory, std::ofstream::trunc);
+							delFavorite(favchapter);
 
-							ofs << "";
-
-							ofs.close();
-
-							if (reloading == false)
+							if (!reloading)
 							{
+								favchapter--;
 								arrayfavorites.clear();
 								statenow = favoritesstate;
 								std::string temp;
@@ -1319,7 +1339,7 @@ quit=1;
 						switch (statenow)
 						{
 						case programationstate:
-							if (reloadingsearch == false)
+							if (!reloadingsearch)
 							{
 #ifdef __SWITCH__
 								//blinkLed(1);//LED
@@ -1332,7 +1352,7 @@ quit=1;
 								returnnow = tosearch;
 								char *buf = (char*)malloc(256);
 #ifdef __SWITCH__
-								strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", ""));
+								strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", searchtext.c_str()));
 #endif // SWITCH
 
 
@@ -1399,7 +1419,7 @@ quit=1;
 						switch (statenow)
 						{
 						case programationstate:
-							if (reloading == false)
+							if (!reloading)
 							{
 								TPreview.free();
 								if (selectchapter > 0)
@@ -1428,7 +1448,7 @@ quit=1;
 							break;
 
 						case searchstate:
-							if (reloadingsearch == false)
+							if (!reloadingsearch)
 							{
 								TSearchPreview.free();
 								if (searchchapter > 0)
@@ -1463,7 +1483,7 @@ quit=1;
 						switch (statenow)
 						{
 						case searchstate:
-							if (reloadingsearch == false)
+							if (!reloadingsearch)
 							{
 								TSearchPreview.free();
 								if (searchchapter < (int)arraysearch.size() - 1)
@@ -1481,7 +1501,7 @@ quit=1;
 							break;
 
 						case programationstate:
-							if (reloading == false)
+							if (!reloading)
 							{
 								TPreview.free();
 
@@ -1637,18 +1657,20 @@ quit=1;
 		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
 		gTextTexture.render(posxbase, posybase + 65);
 		
+		
+		gFAV = isFavorite(temporallink);
+		
 		//Draw Footer Buttons
 		int dist = 1120,posdist = 130;
 		DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Ver Online");dist -= posdist;
 		DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Atras");dist -= posdist;
 		DrawImageFile(gRenderer,"romfs:/buttons/L.png",dist, 680,"AnimeFLV");dist -= posdist;
-		if(!txtyase.length()){
-			DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Favorito");dist -= posdist;
-		}else {
+		if(gFAV){
 			DrawImageFile(gRenderer,"romfs:/buttons/FAV.png",dist, 680,"Favorito");dist -= posdist;
+		}else {
+			DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Favorito");dist -= posdist;
 		}
-		DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",dist, 680,"Música");dist -= posdist;
-		DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",dist, 680,"Salir");dist -= posdist;
+
 
 		}
 
@@ -1656,7 +1678,7 @@ quit=1;
 
 
 		case programationstate:
-			if (reloading == false) {
+			if (!reloading&&arraychapter.size()>=1) {
 				{//Draw a rectagle to a nice view
 				SDL_SetRenderDrawColor(gRenderer, 200, 200, 200, 105);
 				SDL_Rect HeaderRect = {0,0, 620, 670};
@@ -1678,8 +1700,7 @@ quit=1;
 						SDL_RenderFillRect(gRenderer, &HeaderRect);}
 						gTextTexture.render(posxbase, posybase + (x * 22));
 
-						gTextTexture.loadFromRenderedText(digifont, ">", { 0,0,0 });
-						gTextTexture.render(posxbase-10, posybase + (x * 22));
+						Heart.render(posxbase - 18, posybase + 3 + (x * 22));
 					}
 					else
 					{
@@ -1713,9 +1734,7 @@ quit=1;
 				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
 				DrawImageFile(gRenderer,"romfs:/buttons/R.png",dist, 680,"Buscar");dist -= posdist;
 				DrawImageFile(gRenderer,"romfs:/buttons/L.png",dist, 680,"AnimeFLV");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/ZR.png",dist, 680,"Favoritos");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",dist, 680,"Música");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",dist, 680,"Salir");dist -= posdist;
+				DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Favoritos");dist -= posdist;
 				/*{
 				SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
 				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
@@ -1748,112 +1767,121 @@ quit=1;
 			}
 			break;
 		case searchstate:
-			if (reloadingsearch == false) {
-				{//Draw a rectagle to a nice view
-				SDL_SetRenderDrawColor(gRenderer, 100, 100, 100, 105);
-				SDL_Rect HeaderRect = {0,0, 620, 670};
-				SDL_RenderFillRect(gRenderer, &HeaderRect);}
+			if (!reloadingsearch) {
 				//Draw Header
 				gTextTexture.loadFromRenderedText(gFont, "Busqueda", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
+				if ((int)arraysearch.size() >= 1){
+					
+					
+					{//Draw a rectagle to a nice view
+					SDL_SetRenderDrawColor(gRenderer, 100, 100, 100, 105);
+					SDL_Rect HeaderRect = {0,0, 620, 670};
+					SDL_RenderFillRect(gRenderer, &HeaderRect);}
 
-				for (int x = 0; x < (int)arraysearch.size(); x++) {
-					std::string temptext = arraysearch[x];
-				
-					replace(temptext, "https://jkanime.net/", "");
-					replace(temptext, "/", " ");
-					replace(temptext, "-", " ");
-					mayus(temptext);
-					if (x == searchchapter) {
-						gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
-						{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
-						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
-						SDL_RenderFillRect(gRenderer, &HeaderRect);}
-						gTextTexture.render(posxbase, posybase + (x * 22));
+					for (int x = 0; x < (int)arraysearch.size(); x++) {
+						std::string temptext = arraysearch[x];
+					
+						replace(temptext, "https://jkanime.net/", "");
+						replace(temptext, "/", " ");
+						replace(temptext, "-", " ");
+						mayus(temptext);
+						if (x == searchchapter) {
+							gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
+							{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
+							SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
+							SDL_RenderFillRect(gRenderer, &HeaderRect);}
+							gTextTexture.render(posxbase, posybase + (x * 22));
 
-						gTextTexture.loadFromRenderedText(digifont, ">", { 0,0,0 });
-						gTextTexture.render(posxbase-10, posybase + (x * 22));
+							Heart.render(posxbase - 18, posybase + 3 + (x * 22));
+						}
+						else
+						{
+
+							gTextTexture.loadFromRenderedText(digifont, temptext, textColor);
+							gTextTexture.render(posxbase, posybase + (x * 22));
+
+						}
+
 					}
-					else
+					
+
+					if (activatefirstsearchimage == true)
 					{
-
-						gTextTexture.loadFromRenderedText(digifont, temptext, textColor);
-						gTextTexture.render(posxbase, posybase + (x * 22));
-
+						TSearchPreview.free();
+						callimagesearch();
+						activatefirstsearchimage = false;
 					}
+					if (preview == true)
+					{
+						{int ajuX = -390, ajuY = -450;
+						SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
+						SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 200);
 
-				}
-				
+						SDL_RenderFillRect(gRenderer, &fillRect);
+						TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
+						
+					}
+				}else DrawImageFile(gRenderer,"romfs:/nop.png",230, 355,"");
 
-				if (activatefirstsearchimage == true)
-				{
-					
-					TSearchPreview.free();
-					callimagesearch();
-					activatefirstsearchimage = false;
-				}
-				if (preview == true)
-				{
-					{int ajuX = -390, ajuY = -450;
-					SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
-					SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 200);
-
-					SDL_RenderFillRect(gRenderer, &fillRect);
-					TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
-					
-				}
 
 				
 				{//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Volver");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",dist, 680,"Música");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",dist, 680,"Salir");dist -= posdist;}
+				DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Volver");dist -= posdist;}
 				
 				break;
 
 		case favoritesstate:
+			//Draw Header
+			gTextTexture.loadFromRenderedText(gFont, "Favoritos", {100,0,0});
+			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
+			if ((int)arrayfavorites.size() >= 1 ){
+
 				{//Draw a rectagle to a nice view
 				SDL_SetRenderDrawColor(gRenderer, 150, 150, 150, 105);
 				SDL_Rect HeaderRect = {0,0, 620, 670};
 				SDL_RenderFillRect(gRenderer, &HeaderRect);}
-				//Draw Header
-				gTextTexture.loadFromRenderedText(gFont, "Favoritos", {100,0,0});
-				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
-			for (int x = 0; x < (int)arrayfavorites.size(); x++) {
-				std::string temptext = arrayfavorites[x];
 
-				replace(temptext, "https://jkanime.net/", "");
-				replace(temptext, "/", " ");
-				replace(temptext, "-", " ");
-				mayus(temptext);
-				if (x == favchapter) {
-						gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
-						{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
-						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
-						SDL_RenderFillRect(gRenderer, &HeaderRect);}
+				for (int x = 0; x < (int)arrayfavorites.size(); x++) {
+					std::string temptext = arrayfavorites[x];
+
+					replace(temptext, "https://jkanime.net/", "");
+					replace(temptext, "/", "");
+					std::string machu ="sdmc:/switch/RipJKAnime_NX/DATA/"+temptext+".jpg";
+					replace(temptext, "-", " ");
+					mayus(temptext);
+					if (x == favchapter) {
+						tempimage = machu;
+							gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
+							{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
+							SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
+							SDL_RenderFillRect(gRenderer, &HeaderRect);}
+							gTextTexture.render(posxbase, posybase + (x * 22));
+								
+							int scroll = posybase + (x * 22);
+							DrawImageCover(gRenderer,tempimage,620,scroll > 570 ? 570 : scroll ,"");
+							Heart.render(posxbase - 18, posybase + 3 + (x * 22));
+					}
+					else
+					{
+						gTextTexture.loadFromRenderedText(digifont, temptext, textColor);
 						gTextTexture.render(posxbase, posybase + (x * 22));
-
-						gTextTexture.loadFromRenderedText(digifont, ">", { 0,0,0 });
-						gTextTexture.render(posxbase-10, posybase + (x * 22));
-				}
-				else
-				{
-
-					gTextTexture.loadFromRenderedText(digifont, temptext, textColor);
-					gTextTexture.render(posxbase, posybase + (x * 22));
+						
+					}
 
 				}
-
-
 			}
-				{//Draw footer buttons
+			{//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
 				DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Volver");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",dist, 680,"Música");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",dist, 680,"Salir");dist -= posdist;}
+				if ((int)arrayfavorites.size() >= 1){
+					DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Borrar#"+std::to_string(favchapter+1));dist -= posdist;
+					DrawImageFile(gRenderer,"romfs:/buttons/ZR.png",dist, 680,"Limpiar");dist -= posdist;
+				}else DrawImageFile(gRenderer,"romfs:/nop.png",230, 355,"");
+			}
 			break;
 		case downloadstate:
 			std::string temptext = urltodownload;
@@ -1915,7 +1943,8 @@ quit=1;
 		}
 
 
-
+		DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",160, 680,"Salir");
+		DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",10, 680,"Música");
 		//Update screen
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
