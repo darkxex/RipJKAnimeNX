@@ -7,9 +7,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-
 //test
-
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_image.h>
@@ -29,10 +27,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
-
+#include "Networking.hpp"
 
 #ifdef __SWITCH__
 #include <unistd.h>
+
 extern u32 __nx_applet_exit_mode;
 
 SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
@@ -75,9 +74,7 @@ const char *Keyboard_GetText(const char *guide_text, const char *initial_text) {
 #endif 
 
 
-
-
-bool	isFileExist(const char *file)
+bool isFileExist(const char *file)
 {
 	struct stat	st = { 0 };
 
@@ -122,7 +119,7 @@ bool isSXOS=false;
 bool hasStealth=false;
 
 #ifdef __SWITCH__
-std::string favoritosdirectory = "sdmc:/favoritos.txt";
+std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/DATA/favoritos.txt";
 #else
 std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
 #endif // SWITCH
@@ -134,7 +131,7 @@ void close();
 //make some includes to clean alittle the main
 #include "SDLWork.hpp"
 #include "utils.hpp"
-#include "Request.hpp"
+#include "JKanime.hpp"
 
 
 //MAIN INT
@@ -145,15 +142,16 @@ int main(int argc, char **argv)
 	socketInitializeDefault();
 	//nxlinkStdio();
 	struct stat st = { 0 };
-
-	if (stat("sdmc:/RipJKAnime", &st) == -1) {
-		mkdir("sdmc:/RipJKAnime", 0777);
+	nxlinkStdio();
+	printf("printf output now goes to nxlink server\n");
+	mkdir("sdmc:/switch/RipJKAnime_NX", 0777);
+	mkdir("sdmc:/switch/RipJKAnime_NX/DATA", 0777);
+	if (stat("sdmc:/RipJKAnime", &st) != -1) {
+		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");		
 	}
-#endif 
-
-	
 AppletType at = appletGetAppletType();
 if (at != AppletType_Application && at != AppletType_SystemApplication) {AppletMode=true;}
+#endif 
 
 
 //	int val1 = 1;
