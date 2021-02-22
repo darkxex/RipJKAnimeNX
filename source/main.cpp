@@ -396,8 +396,8 @@ quit=1;
 				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 				// seek for joystick #0
 				if (e.jbutton.which == 0) {
-					if (e.jbutton.button == 0) {
-						// (A) button down
+					if (e.jbutton.button == 0) {// (A) button down
+						
 						switch (statenow)
 						{
 							case programationstate:
@@ -503,13 +503,13 @@ quit=1;
 							break;
 						}
 					}
-					else if (e.jbutton.button == 10) {
-						// (+) button down close to home menu
+					else if (e.jbutton.button == 10) {// (+) button down close to home menu
+						
 						cancelcurl = 1;
 						quit = 1;
 					}
-					else if (e.jbutton.button == 11) {
-						// (-) button down
+					else if (e.jbutton.button == 11) {// (-) button down
+						
 						//cancelcurl = 1;
 						//quit = 1;
 						if (Mix_PlayingMusic() == 0)
@@ -535,22 +535,31 @@ quit=1;
 						}
 
 					}
-					else if (e.jbutton.button == 6 || e.jbutton.button == 8) {
-						// (L) button down
+					else if (e.jbutton.button == 6 || e.jbutton.button == 8) {// (L) button down
+						
 #ifdef __SWITCH__
 						Result rc = 0;
 #endif //  SWITCH
 #ifdef __SWITCH__
+						const char* url ="";
+						if (e.jbutton.button == 6)
+						url="https://animeflv.net";
+						else 
+						url="https://jkanime.net";
+
+						char *buf = (char*)malloc(256);
+						strcpy(buf, Keyboard_GetText("Escribir URL http://", url));
+						std::string tempbus(buf);
+						printf("URL %s\n", buf);
+						if (strlen(buf) <= 0) break;
+						
 						WebCommonConfig config;
 						WebCommonReply reply;
 						WebExitReason exitReason = (WebExitReason)0;
 
 						// Create the config. There's a number of web*Create() funcs, see libnx web.h.
 						// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
-						if (e.jbutton.button == 6)
-						rc = webPageCreate(&config, "https://animeflv.net");
-						else 
-						rc = webPageCreate(&config, "https://jkanime.net");
+						rc = webPageCreate(&config, buf);
 						
 						printf("webPageCreate(): 0x%x\n", rc);
 
@@ -577,8 +586,8 @@ quit=1;
 
 
 					}
-					else if (e.jbutton.button == 9) {
-						// (ZR) button down
+					else if (e.jbutton.button == 9) {// (ZR) button down
+						
 						switch (statenow)
 						{
 						case programationstate:
@@ -601,8 +610,8 @@ quit=1;
 
 						}
 					}
-					else if (e.jbutton.button == 1) {
-						// (B) button down
+					else if (e.jbutton.button == 1) {// (B) button down
+						
 						switch (statenow)
 						{
 						case programationstate:
@@ -646,8 +655,8 @@ quit=1;
 
 						}
 					}
-					else if (e.jbutton.button == 2) {
-						// (X) button down
+					else if (e.jbutton.button == 2) {// (X) button down
+						
 
 						switch (statenow)
 						{
@@ -709,8 +718,8 @@ quit=1;
 
 						}
 					}
-					else if (e.jbutton.button == 3) {
-						// (Y) button down
+					else if (e.jbutton.button == 3) {// (Y) button down
+						
 
 						switch (statenow)
 						{
@@ -763,8 +772,8 @@ quit=1;
 
 						}
 					}
-					else if (e.jbutton.button == 7) {
-						// (R) button down
+					else if (e.jbutton.button == 7) {// (R) button down
+						
 						switch (statenow)
 						{
 						case programationstate:
@@ -798,8 +807,8 @@ quit=1;
 						}
 
 					}
-					else if (e.jbutton.button == 12 || e.jbutton.button == 16) {
-						// (left) button down
+					else if (e.jbutton.button == 12 || e.jbutton.button == 16) {// (left) button down
+						
 						switch (statenow)
 						{
 						case downloadstate:
@@ -819,8 +828,8 @@ quit=1;
 							break;
 						}
 					}
-					else if (e.jbutton.button == 14 || e.jbutton.button == 18) {
-						// (right) button down
+					else if (e.jbutton.button == 14 || e.jbutton.button == 18) {// (right) button down
+						
 						switch (statenow)
 						{
 						case programationstate:
@@ -843,8 +852,8 @@ quit=1;
 
 						}
 					}
-					else if (e.jbutton.button == 17 || e.jbutton.button == 13) {
-						// (up) button down
+					else if (e.jbutton.button == 17 || e.jbutton.button == 13) {// (up) button down
+						
 						switch (statenow)
 						{
 						case programationstate:
@@ -907,8 +916,8 @@ quit=1;
 
 						}
 					}
-					else if (e.jbutton.button == 19 || e.jbutton.button == 15) {
-						// (down) button down
+					else if (e.jbutton.button == 19 || e.jbutton.button == 15) {// (down) button down
+						
 						switch (statenow)
 						{
 						case searchstate:
