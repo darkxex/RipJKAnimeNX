@@ -29,119 +29,12 @@
 #include <fstream>
 #include "Networking.hpp"
 #include "SDLWork.hpp"
-#ifdef __SWITCH__
-#include <unistd.h>
-
-extern u32 __nx_applet_exit_mode;
-
-SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
-	if (strcmp(string, "") == 0) {
-		strncpy(string, "The name cannot be empty.", size);
-		return SwkbdTextCheckResult_Bad;
-	}
-
-	return SwkbdTextCheckResult_OK;
-}
-
-const char *Keyboard_GetText(const char *guide_text, const char *initial_text) {
-	Result ret = 0;
-	SwkbdConfig swkbd;
-	static char input_string[256];
-
-	if (R_FAILED(ret = swkbdCreate(&swkbd, 0))) {
-		swkbdClose(&swkbd);
-		return "";
-	}
-
-	swkbdConfigMakePresetDefault(&swkbd);
-
-	if (strlen(guide_text) != 0)
-		swkbdConfigSetGuideText(&swkbd, guide_text);
-
-	if (strlen(initial_text) != 0)
-		swkbdConfigSetInitialText(&swkbd, initial_text);
-
-	swkbdConfigSetTextCheckCallback(&swkbd, Keyboard_ValidateText);
-
-	if (R_FAILED(ret = swkbdShow(&swkbd, input_string, sizeof(input_string)))) {
-		swkbdClose(&swkbd);
-		return "";
-	}
-
-	swkbdClose(&swkbd);
-	return input_string;
-}
-#endif 
-
-
-bool isFileExist(const char *file)
-{
-	struct stat	st = { 0 };
-
-	if (stat(file, &st) == -1) {
-		return (false);
-	}
-
-	return (true);
-}
+#include "applet.hpp"
 
 //////////////////////////////////aquí empieza el pc.
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
-enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
-int statenow = programationstate;
-enum statesreturn { toprogramation, tosearch, tofavorite };
-int returnnow = toprogramation;
-std::string  urltodownload = "";
-int porcendown = 0;
-int sizeestimated = 0;
-std::string temporallink = "";
-bool ahorro = false;
-int cancelcurl = 0;
-bool preview = false;
-int searchchapter = 0;
-int favchapter = 0;
-int selectchapter = 0;
-bool fulldownloaded = false;
-bool reloading = false;
-bool reloadingsearch = false;
-int porcentajereload = 0;
-int porcentajebuffer = 0;
-bool activatefirstimage = true;
-bool activatefirstsearchimage = true;
-std::string serverenlace = "";
-std::string searchtext = "";
-std::string tempimage = "";
-std::string txtyase = "";
-
-bool gFAV = false;
-bool AppletMode=false;
-bool isSXOS=false;
-bool hasStealth=false;
-
-#ifdef __SWITCH__
-std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
-#else
-std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
-#endif // SWITCH
-Mix_Music* gMusic = NULL;
-std::ofstream outfile;
-//Frees media and shuts down SDL
-void close();
-#ifdef __SWITCH__
-HidsysNotificationLedPattern blinkLedPattern(u8 times);
-void blinkLed(u8 times);
-#endif // ___SWITCH___
-
-
-//make some includes to clean alittle the main
-//Globally used font
-TTF_Font *gFont = NULL;
-TTF_Font* digifont = NULL;
-TTF_Font *gFontcapit = NULL;
-TTF_Font *gFont2 = NULL;
-TTF_Font *gFont3 = NULL;
 //Rendered texture
 LTexture gTextTexture;
 LTexture Farest;
@@ -149,19 +42,77 @@ LTexture Heart;
 LTexture TChapters;
 LTexture TPreview;
 LTexture TSearchPreview;
+//Globally used font
+TTF_Font *gFont = NULL;
+TTF_Font* digifont = NULL;
+TTF_Font *gFontcapit = NULL;
+TTF_Font *gFont2 = NULL;
+TTF_Font *gFont3 = NULL;
+Mix_Music* gMusic = NULL;
+	
+//Gui
+enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
+int statenow = programationstate;
+enum statesreturn { toprogramation, tosearch, tofavorite };
+int returnnow = toprogramation;
+//net
+std::string  urltodownload = "";
+int porcendown = 0;
+int sizeestimated = 0;
+std::string temporallink = "";
+int cancelcurl = 0;
+bool fulldownloaded = false;
+
+//img
+bool reloading = false;
+bool preview = false;
+int selectchapter = 0;
+int porcentajereload = 0;
+int porcentajebuffer = 0;
+bool activatefirstimage = true;
+
+//search
+int searchchapter = 0;
+bool reloadingsearch = false;
+bool activatefirstsearchimage = true;
+std::string serverenlace = "";
+std::string searchtext = "";
+std::string tempimage = "";
+//favs
+int favchapter = 0;
+bool gFAV = false;
+#ifdef __SWITCH__
+std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
+#else
+std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
+#endif // SWITCH
+
+
+//my vars
+bool AppletMode=false;
+bool isSXOS=false;
+bool hasStealth=false;
+AccountUid uid;
+
+
+#ifdef __SWITCH__
+HidsysNotificationLedPattern blinkLedPattern(u8 times);
+void blinkLed(u8 times);
+#endif // ___SWITCH___
+
+
+
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
 //The window renderer
 SDL_Renderer* gRenderer = NULL;
 
-SDL_Thread* threadID = NULL;
-//Main loop flag
 int quit = 0;
 
+//make some includes to clean alittle the main
 #include "utils.hpp"
 #include "JKanime.hpp"
-
 
 //MAIN INT
 int main(int argc, char **argv)
@@ -178,165 +129,42 @@ int main(int argc, char **argv)
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");		
 	}
-AppletType at = appletGetAppletType();
-if (at != AppletType_Application && at != AppletType_SystemApplication) {AppletMode=true;}
-#endif 
+	
+	Result rc = 0;	
+	rc =  accountInitialize(AccountServiceType_Application);
+	if (R_SUCCEEDED(rc)) {
+		//accountGetServiceSession ();
+		accountGetPreselectedUser(&uid);
+		printf("Goted user\n");
+		accountExit();       
+	} else printf("failed tu get user \n"); 
+	
+	AppletMode=GetAppletMode();
+#endif
 
-
-//	int val1 = 1;
-//	int val2;
-//	int val0 = 0;
-//	int val3, val4;
-//	int arrayselect = 0;
-
-//	int searchcount = 0;
 	int maxcapit = 1;
 	int mincapit = 0;
 	int capmore = 1;
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
-	std::string temporal = "";
-	
-	/*std::string content = gethtml("https://jkanime.net");
-	while (val0 != -1) {
-		val0 = content.find("play-button", val1);
-		if (val0 == -1) { break; }
+	SDL_Thread* threadID = NULL;
 
-		val1 = 19 + content.find("play-button", val1);
-		val2 = (content.find('"', val1));
-		std::string gdrive = content.substr(val1, val2 - val1);
-
-		arraychapter.push_back(gdrive);
-		val3 = content.rfind("<img src=", val2) + 10;
-		val4 = content.find('"', val3);
-		std::string gpreview = content.substr(val3, val4 - val3);
-		arrayimages.push_back(gpreview);
-		//std::cout << arraycount << ". " << gdrive << std::endl;
-		temporal = temporal + gdrive + "\n";
-		temporal = temporal + gpreview + "\n";
-
-		val1++;
-	}
-
-	printf(temporal.c_str());
-	*/
+	//Set main Thread get images and descriptions
 	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
-	//Start up SDL and create window
-	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
-	{
-		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 
-	}
-	else
-	{
-		//Set texture filtering to linear
-		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
-		{
-			printf("Warning: Linear texture filtering not enabled!");
-		}
-
-		//Create window
+	SDL_intC();//init the SDL
 #ifdef __SWITCH__
-		gWindow = SDL_CreateWindow("sdl2_gles2", 0, 0, 1280, 720, 0);
-#else
-		gWindow = SDL_CreateWindow("RipJKNX", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-#endif // SWITCH
-
-
-		if (gWindow == NULL)
-		{
-			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-
-		}
-		else
-		{
-			//Create vsynced renderer for window
-			gRenderer = SDL_CreateRenderer(gWindow, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-			if (gRenderer == NULL)
-			{
-				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-
-			}
-			else
-			{
-				//Initialize renderer color
-				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-				//Initialize PNG loading
-				int imgFlags = IMG_INIT_PNG;
-				if (!(IMG_Init(imgFlags) & imgFlags))
-				{
-					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-
-				}
-
-				//Initialize SDL_ttf
-				if (TTF_Init() == -1)
-				{
-					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-
-				}
-				//Initialize SDL_mixer
-				if (Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
-				{
-					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-					
-				}
-				//Load music
-#ifdef __SWITCH__
-				gMusic = Mix_LoadMUS("romfs:/wada.ogg");
-#else
-				gMusic = Mix_LoadMUS("C:/respaldo2017/C++/test/Debug/wada.ogg");
-#endif // SWITCH
-				
-				if (gMusic == NULL)
-				{
-					printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
-					
-				}
-				if (Mix_PlayingMusic() == 0)
-				{
-					//Play the music
-					Mix_PlayMusic(gMusic, -1);
-				}
-			}
-		}
-	}
-
-
-
-	int posxbase = 20;
-	int posybase = 10;
-
-#ifdef __SWITCH__
-
-	gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
-	gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
-	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
-	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
-	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
 	Farest.loadFromFile("romfs:/texture.png");
 	Heart.loadFromFile("romfs:/heart.png");
-
 #else
-	gFont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy.ttf", 16);
-	digifont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\digifont.otf", 16);
-	gFont2 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 150);
-	gFontcapit = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 100);
-	gFont3 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 40);
-
 	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
 	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
-
-
 #endif // SWITCH
 
 	SDL_Color textColor = { 50, 50, 50 };
-
-	// execute first
-
-
+	
+	int posxbase = 20;
+	int posybase = 10;
 
 	//Event handler
 	SDL_Event e;
@@ -351,7 +179,7 @@ if (at != AppletType_Application && at != AppletType_SystemApplication) {AppletM
 #endif // SWITCH
 
 if (AppletMode) {
-			//Clear screen
+		//Clear screen
 		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(gRenderer);
 
@@ -410,7 +238,7 @@ quit=1;
 									int val1 = temporallink.find("/", 20);
 									temporallink = temporallink.substr(0, val1 + 1);
 									printf("q wea es esto? %s  : %d\n",temporallink.c_str() ,selectchapter);
-									if (selectchapter > (int)con_rese.size()-1)
+									if (selectchapter > (int)con_maxcapit.size()-1)
 									{
 										maxcapit = atoi(capit(temporallink).c_str());
 									}else {
@@ -513,9 +341,6 @@ quit=1;
 						quit = 1;
 					}
 					else if (e.jbutton.button == 11) {// (-) button down
-						
-						//cancelcurl = 1;
-						//quit = 1;
 						if (Mix_PlayingMusic() == 0)
 						{
 							//Play the music
@@ -542,49 +367,10 @@ quit=1;
 					else if (e.jbutton.button == 6 || e.jbutton.button == 8) {// (L & ZL) button down
 						if (statenow == programationstate)
 						{
-								
-							Result rc = 0;
-							const char* url ="";
 							if (e.jbutton.button == 6)
-							url="https://animeflv.net";
+								WebBrowserCall("https://animeflv.net",true);
 							else 
-							url="https://jkanime.net";
-
-							char *buf = (char*)malloc(256);
-							strcpy(buf, Keyboard_GetText("Escribir URL http://", url));
-							std::string tempbus(buf);
-							printf("URL %s\n", buf);
-							if (strlen(buf) <= 0) break;
-							
-							WebCommonConfig config;
-							WebCommonReply reply;
-							WebExitReason exitReason = (WebExitReason)0;
-
-							// Create the config. There's a number of web*Create() funcs, see libnx web.h.
-							// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
-							rc = webPageCreate(&config, buf);
-							
-							printf("webPageCreate(): 0x%x\n", rc);
-
-							if (R_SUCCEEDED(rc)) {
-								// At this point you can use any webConfigSet* funcs you want.
-
-								rc = webConfigSetWhitelist(&config, "^http*"); // Set the whitelist, adjust as needed. If you're only using a single domain, you could remove this and use webNewsCreate for the above (see web.h for webNewsCreate).
-								printf("webConfigSetWhitelist(): 0x%x\n", rc);
-
-								if (R_SUCCEEDED(rc)) { // Launch the applet and wait for it to exit.
-									printf("Running webConfigShow...\n");
-									rc = webConfigShow(&config, &reply); // If you don't use reply you can pass NULL for it.
-									printf("webConfigShow(): 0x%x\n", rc);
-								}
-
-								if (R_SUCCEEDED(rc)) { // Normally you can ignore exitReason.
-									rc = webReplyGetExitReason(&reply, &exitReason);
-									printf("webReplyGetExitReason(): 0x%x", rc);
-									if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
-									printf("\n");
-								}
-							}
+								WebBrowserCall("https://jkanime.net",true);
 						}
 					}
 					else if (e.jbutton.button == 9) {// (ZR) button down
@@ -627,7 +413,6 @@ quit=1;
 							break;
 						case chapterstate:
 							cancelcurl = 1;
-							txtyase = "";
 							switch (returnnow)
 							{
 							case toprogramation:
@@ -676,22 +461,11 @@ quit=1;
 							break;
 						case chapterstate:
 
-							if (ahorro)
-							{
-								ahorro = false;
-							}
-							else
-							{
-								ahorro = true;
-							}
 								//just for test
 								statenow = downloadstate;
 								cancelcurl = 0;
 								urltodownload = temporallink + std::to_string(capmore) + "/";
 								threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
-								
-							
-
 
 							break;
 						case searchstate:
@@ -760,12 +534,11 @@ quit=1;
 						case chapterstate:
 						{//AGREGAR A FAVORITOS
 							if(!isFavorite(temporallink)){
+								std::ofstream outfile;
 								outfile.open(favoritosdirectory, std::ios_base::app); // append instead of overwrite
 								outfile << temporallink;
 								outfile << "\n";
 								outfile.close();
-							
-							txtyase = "(Ya se agregó)";
 							}
 
 							gFAV = true;
@@ -797,15 +570,9 @@ quit=1;
 								arraysearchimages.clear();
 								statenow = searchstate;
 								returnnow = tosearch;
-								char *buf = (char*)malloc(256);
 #ifdef __SWITCH__
-								strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", searchtext.c_str()));
+								searchtext = KeyboardCall("Buscar Anime (3 letras minimo.)",searchtext);
 #endif // SWITCH
-
-
-								std::string tempbus(buf);
-								searchtext = tempbus;
-
 								searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
 
 								break;
@@ -1388,7 +1155,6 @@ quit=1;
 		DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",160, 680,"Salir");
 		DrawImageFile(gRenderer,Mix_PausedMusic() == 1 ? "romfs:/buttons/MINUSD.png":"romfs:/buttons/MINUS.png",10, 680,"Música");
 		//Update screen
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 		SDL_RenderPresent(gRenderer);
 
@@ -1418,16 +1184,12 @@ quit=1;
 	}
 	//Free resources and close SDL
 #ifdef __SWITCH__
+	accountExit();
 	hidsysExit();
 	socketExit();
 	romfsExit();
-	__nx_applet_exit_mode = 1;
+	
 #endif // SWITCH
-
-
-
 	close();
-
 	return 0;
-
 }

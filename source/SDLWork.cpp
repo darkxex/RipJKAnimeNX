@@ -16,9 +16,17 @@
 #include <Vector>
 #include "SDLWork.hpp"
 
-extern LTexture gTextTexture;
+//Globally used font
 extern TTF_Font *gFont;
+extern TTF_Font* digifont;
+extern TTF_Font *gFontcapit;
+extern TTF_Font *gFont2;
+extern TTF_Font *gFont3;
+//some vars
+extern Mix_Music* gMusic;
 extern SDL_Renderer* gRenderer;
+extern SDL_Window* gWindow;
+
 LTexture::LTexture()
 {
 	//Initialize
@@ -32,6 +40,109 @@ LTexture::~LTexture()
 	//Deallocate
 	free();
 }
+
+void SDL_intC (){
+		//Start up SDL and create window
+	//Initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
+	{
+		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+
+	}
+	else
+	{
+		//Set texture filtering to linear
+		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+		{
+			printf("Warning: Linear texture filtering not enabled!");
+		}
+
+		//Create window
+#ifdef __SWITCH__
+		gWindow = SDL_CreateWindow("sdl2_gles2", 0, 0, 1280, 720, 0);
+#else
+		gWindow = SDL_CreateWindow("RipJKNX", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+#endif // SWITCH
+
+
+		if (gWindow == NULL)
+		{
+			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
+
+		}
+		else
+		{
+			//Create vsynced renderer for window
+			gRenderer = SDL_CreateRenderer(gWindow, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+			if (gRenderer == NULL)
+			{
+				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+
+			}
+			else
+			{
+				//Initialize renderer color
+				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+				//Initialize PNG loading
+				int imgFlags = IMG_INIT_PNG;
+				if (!(IMG_Init(imgFlags) & imgFlags))
+				{
+					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+
+				}
+
+				//Initialize SDL_ttf
+				if (TTF_Init() == -1)
+				{
+					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+
+				}
+				//Initialize SDL_mixer
+				if (Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
+				{
+					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+					
+				}
+				//Load music
+#ifdef __SWITCH__
+				gMusic = Mix_LoadMUS("romfs:/wada.ogg");
+#else
+				gMusic = Mix_LoadMUS("C:/respaldo2017/C++/test/Debug/wada.ogg");
+#endif // SWITCH
+				
+				if (gMusic == NULL)
+				{
+					printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+					
+				}
+				if (Mix_PlayingMusic() == 0)
+				{
+					//Play the music
+					Mix_PlayMusic(gMusic, -1);
+				}
+			}
+		}
+	}
+
+#ifdef __SWITCH__
+
+	gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
+	gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
+	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
+	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
+	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
+
+#else
+	gFont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy.ttf", 16);
+	digifont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\digifont.otf", 16);
+	gFont2 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 150);
+	gFontcapit = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 100);
+	gFont3 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 40);
+#endif // SWITCH
+}
+
+
 
 bool LTexture::loadFromFile(std::string path)
 {
@@ -239,6 +350,10 @@ int LTexture::getHeight()
 	return mHeight;
 }
 
+
+
+
+
 void DrawImageFile(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::string Text){
 
 		SDL_Surface* DrawImg;
@@ -259,11 +374,25 @@ void DrawImageFile(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::st
 		}
 		
 		if (Text.length()){
-			SDL_Color textColor = { 50, 50, 50 };
-			gTextTexture.loadFromRenderedText(gFont, Text.c_str(), textColor);
-			gTextTexture.render(X+DW+3, Y +(DH/3));
+			SDL_Surface* textSurface = TTF_RenderText_Blended(gFont, Text.c_str(), { 50, 50, 50 });
+			if (textSurface == NULL)
+			{
+				printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+			}
+			else
+			{
+				SDL_Rect TextRect = {X+DW+3, Y +(DH/3), textSurface->w, textSurface->h};
+				//Create texture from surface pixels
+				SDL_Texture* TextureT = SDL_CreateTextureFromSurface(gRenderer, textSurface);
+				//Render to screen
+				SDL_RenderCopy(gRenderer, TextureT, NULL, &TextRect);
+				SDL_DestroyTexture(TextureT);
+			}
+			SDL_FreeSurface(textSurface);
 		}
 		SDL_FreeSurface(DrawImg);
+		
+		
 }
 
 void DrawImageCover(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::string Text,int HS){
@@ -292,11 +421,22 @@ void DrawImageCover(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::s
 
 		}
 
-		
 		if (Text.length()){
-			SDL_Color textColor = { 50, 50, 50 };
-			gTextTexture.loadFromRenderedText(gFont, Text.c_str(), textColor);
-			gTextTexture.render(X+WS+3, Y +(HS/3));
+			SDL_Surface* textSurface = TTF_RenderText_Blended(gFont, Text.c_str(), { 50, 50, 50 });
+			if (textSurface == NULL)
+			{
+				printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+			}
+			else
+			{
+				SDL_Rect TextRect = {X+WS+3, Y +(HS/3), textSurface->w, textSurface->h};
+				//Create texture from surface pixels
+				SDL_Texture* TextureT = SDL_CreateTextureFromSurface(gRenderer, textSurface);
+				//Render to screen
+				SDL_RenderCopy(gRenderer, TextureT, NULL, &TextRect);
+				SDL_DestroyTexture(TextureT);
+			}
+			SDL_FreeSurface(textSurface);
 		}
 		SDL_FreeSurface(DrawImg);
 }

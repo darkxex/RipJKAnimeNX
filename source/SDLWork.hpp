@@ -44,6 +44,7 @@ private:
 	int mHeight;
 };
 
+void SDL_intC();
 void DrawImageCover(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::string Text = "",int HS = 100);
 void DrawImageFile(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::string Text = "");
 
