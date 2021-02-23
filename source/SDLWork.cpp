@@ -354,7 +354,7 @@ int LTexture::getHeight()
 
 
 
-void DrawImageFile(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::string Text){
+void DrawImageFile(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::string Text,bool off){
 
 		SDL_Surface* DrawImg;
 		DrawImg = IMG_Load(path.c_str());
@@ -365,6 +365,7 @@ void DrawImageFile(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::st
 		}else{
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_Texture* CLUST = SDL_CreateTextureFromSurface(gRenderer, DrawImg);
+		if (off){SDL_SetTextureColorMod(CLUST, 150, 150, 150);}
 
 		SDL_Rect ImagetRect2 = {X, Y, DrawImg->w, DrawImg->h};
 		SDL_RenderCopy(gRenderer, CLUST , NULL, &ImagetRect2);

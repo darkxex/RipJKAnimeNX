@@ -142,9 +142,7 @@ int main(int argc, char **argv)
 	AppletMode=GetAppletMode();
 #endif
 
-	int maxcapit = 1;
-	int mincapit = 0;
-	int capmore = 1;
+	
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* threadID = NULL;
@@ -165,6 +163,9 @@ int main(int argc, char **argv)
 	
 	int posxbase = 20;
 	int posybase = 10;
+	int maxcapit = 1;
+	int mincapit = 0;
+	int capmore = 1;
 
 	//Event handler
 	SDL_Event e;
@@ -178,12 +179,11 @@ int main(int argc, char **argv)
 	}
 #endif // SWITCH
 
-if (AppletMode) {
+if (AppletMode) {//close on applet mode
 		//Clear screen
 		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(gRenderer);
 
-		//Render current frame
 		//wallpaper
 		Farest.render((0), (0));
 		SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
@@ -193,9 +193,10 @@ if (AppletMode) {
 		gTextTexture.loadFromRenderedText(gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
 		gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
 		SDL_RenderPresent(gRenderer);
+		quit=1;
 		SDL_Delay(3000);
-quit=1;
 }
+
 	//While application is running
 	while (!quit)
 	{
@@ -788,10 +789,6 @@ quit=1;
 		SDL_Rect HeaderRect = {0,0, 1280, 720};
 		SDL_RenderFillRect(gRenderer, &HeaderRect);}
 		
-		{SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 100);
-		SDL_Rect HeaderRect = {15,60, 770, 400};
-		SDL_RenderFillRect(gRenderer, &HeaderRect);}
-		
 		std::string temptext = temporallink;
 		replace(temptext, "https://jkanime.net/", "");
 		replace(temptext, "/", " ");
@@ -805,10 +802,16 @@ quit=1;
 
 		//draw Title
 		gTextTexture.loadFromRenderedText(gFont3, temptext.substr(0,62)+ ":", textColor);
-		gTextTexture.render(posxbase, posybase);
-		//draw description
+		gTextTexture.render(posxbase+10, posybase);
+		
+		{//draw description
+		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 100);
+		SDL_Rect HeaderRect = {25,60, 770, 400};
+		SDL_RenderFillRect(gRenderer, &HeaderRect);
+		
 		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
-		gTextTexture.render(posxbase, posybase + 65);
+		gTextTexture.render(posxbase+15, posybase + 65);
+		}
 		
 		{//draw preview image
 		SDL_Rect fillRect = { SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 };
@@ -863,8 +866,8 @@ quit=1;
 				DrawImageFile(gRenderer,"romfs:/buttons/UP.png",280+XS, 530+YS,"+10");
 				DrawImageFile(gRenderer,"romfs:/buttons/DOWN.png",280+XS, 630+YS,"-10");
 			}
-			DrawImageFile(gRenderer,capmore > mincapit ? "romfs:/buttons/LEFT.png" : "romfs:/buttons/LEFTD.png",80+XS, 580+YS,std::to_string(mincapit));
-			DrawImageFile(gRenderer,capmore < maxcapit ? "romfs:/buttons/RIGHT.png" : "romfs:/buttons/RIGHTD.png",480+XS, 580+YS,std::to_string(maxcapit));
+			DrawImageFile(gRenderer,"romfs:/buttons/LEFT.png",80+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
+			DrawImageFile(gRenderer,"romfs:/buttons/RIGHT.png",480+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 		}
 		
 		
@@ -1152,8 +1155,8 @@ quit=1;
 			break;
 		}
 
-		DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",160, 680,"Salir");
-		DrawImageFile(gRenderer,Mix_PausedMusic() == 1 ? "romfs:/buttons/MINUSD.png":"romfs:/buttons/MINUS.png",10, 680,"Música");
+		DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",160, 680,"Salir",quit);
+		DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",10, 680,"Música",Mix_PausedMusic() == 1);
 		//Update screen
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 		SDL_RenderPresent(gRenderer);

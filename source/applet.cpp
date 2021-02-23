@@ -38,7 +38,7 @@ const char *Keyboard_GetText(const char *guide_text, const char *initial_text) {
 	}
 
 	swkbdConfigMakePresetDefault(&swkbd);
-
+	swkbdConfigSetInitialCursorPos (&swkbd, 0);
 	if (strlen(guide_text) != 0)
 		swkbdConfigSetGuideText(&swkbd, guide_text);
 
