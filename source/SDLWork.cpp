@@ -258,7 +258,6 @@ void DrawImageFile(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::st
 		DH=DrawImg->h;
 		}
 		
-		
 		if (Text.length()){
 			SDL_Color textColor = { 50, 50, 50 };
 			gTextTexture.loadFromRenderedText(gFont, Text.c_str(), textColor);
@@ -267,11 +266,12 @@ void DrawImageFile(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::st
 		SDL_FreeSurface(DrawImg);
 }
 
-void DrawImageCover(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::string Text,int scale){
+void DrawImageCover(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::string Text,int HS){
 
 		SDL_Surface* DrawImg;
 		DrawImg = IMG_Load(path.c_str());
-		int DW=0,DH=0;
+		int WS=0;
+		
 		if (DrawImg == NULL)
 		{
 			printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
@@ -279,19 +279,24 @@ void DrawImageCover(SDL_Renderer* gRenderer,std::string path,int X, int Y,std::s
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_Texture* CLUST = SDL_CreateTextureFromSurface(gRenderer, DrawImg);
 			
-		int WS = (DrawImg->w * (scale * 1000 /DrawImg->h) /1000);
-		SDL_Rect ImagetRect2 = {X, Y, WS, scale};
+		WS = (DrawImg->w * (HS * 1000 /DrawImg->h) /1000);
+		
+		
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 100);
+		SDL_Rect HeaderRect = {X+5,Y+5, WS+6, HS+6};
+		SDL_RenderFillRect(gRenderer, &HeaderRect);
+		
+		SDL_Rect ImagetRect2 = {X, Y, WS, HS};
 		SDL_RenderCopy(gRenderer, CLUST , NULL, &ImagetRect2);
 		SDL_DestroyTexture(CLUST);
-		DW=DrawImg->w;
-		DH=DrawImg->h;
+
 		}
 
 		
 		if (Text.length()){
 			SDL_Color textColor = { 50, 50, 50 };
 			gTextTexture.loadFromRenderedText(gFont, Text.c_str(), textColor);
-			gTextTexture.render(X+DW+3, Y +(DH/3));
+			gTextTexture.render(X+WS+3, Y +(HS/3));
 		}
 		SDL_FreeSurface(DrawImg);
 }

@@ -536,24 +536,30 @@ int MKcapitBuffer(void* data) {
 
 
 bool isFavorite(std::string fav){
-	static std::string limit = "";
-	if (limit == fav){
-		return gFAV;
-	} else limit = fav;
+	/*
+		static std::string limit = "";
+		if (limit == fav){
+			return gFAV;
+		} else limit = fav;
+	*/
 	std::ifstream file(favoritosdirectory);
 	std::string str;
 	while (std::getline(file, str)) {
 	//	std::cout << str << "\n";
 		if (str.find("jkanime"))
-		{printf("-%s--   -%s--\n",fav.c_str(),str.c_str());
+		{
+			printf("---\n");
+			printf("%s---\n",fav.c_str());
+			printf("%s\n",str.c_str());
 			if (fav == str){file.close(); return true;}
 		}
 	}
 file.close();
 return false;
 }
-void delFavorite(int inst = -1){
 
+
+void delFavorite(int inst = -1){
 	std::string tmp="";
 	if (inst >= 0){//delete all if is -1  delFavorite();
 		std::ifstream file(favoritosdirectory);
@@ -566,7 +572,6 @@ void delFavorite(int inst = -1){
 		}
 		file.close();	
 	} else gFAV=false;
-
 	std::ofstream outfile(favoritosdirectory);
 	outfile << tmp;
 	outfile.close();
