@@ -29,119 +29,12 @@
 #include <fstream>
 #include "Networking.hpp"
 #include "SDLWork.hpp"
-#ifdef __SWITCH__
-#include <unistd.h>
-
-extern u32 __nx_applet_exit_mode;
-
-SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
-	if (strcmp(string, "") == 0) {
-		strncpy(string, "The name cannot be empty.", size);
-		return SwkbdTextCheckResult_Bad;
-	}
-
-	return SwkbdTextCheckResult_OK;
-}
-
-const char *Keyboard_GetText(const char *guide_text, const char *initial_text) {
-	Result ret = 0;
-	SwkbdConfig swkbd;
-	static char input_string[256];
-
-	if (R_FAILED(ret = swkbdCreate(&swkbd, 0))) {
-		swkbdClose(&swkbd);
-		return "";
-	}
-
-	swkbdConfigMakePresetDefault(&swkbd);
-
-	if (strlen(guide_text) != 0)
-		swkbdConfigSetGuideText(&swkbd, guide_text);
-
-	if (strlen(initial_text) != 0)
-		swkbdConfigSetInitialText(&swkbd, initial_text);
-
-	swkbdConfigSetTextCheckCallback(&swkbd, Keyboard_ValidateText);
-
-	if (R_FAILED(ret = swkbdShow(&swkbd, input_string, sizeof(input_string)))) {
-		swkbdClose(&swkbd);
-		return "";
-	}
-
-	swkbdClose(&swkbd);
-	return input_string;
-}
-#endif 
-
-
-bool isFileExist(const char *file)
-{
-	struct stat	st = { 0 };
-
-	if (stat(file, &st) == -1) {
-		return (false);
-	}
-
-	return (true);
-}
+#include "applet.hpp"
 
 //////////////////////////////////aquí empieza el pc.
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
-enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
-int statenow = programationstate;
-enum statesreturn { toprogramation, tosearch };
-int returnnow = toprogramation;
-std::string  urltodownload = "";
-int porcendown = 0;
-int sizeestimated = 0;
-std::string temporallink = "";
-bool ahorro = false;
-int cancelcurl = 0;
-bool preview = false;
-int searchchapter = 0;
-int favchapter = 0;
-int selectchapter = 0;
-bool fulldownloaded = false;
-bool reloading = false;
-bool reloadingsearch = false;
-int porcentajereload = 0;
-int porcentajebuffer = 0;
-bool activatefirstimage = true;
-bool activatefirstsearchimage = true;
-std::string serverenlace = "";
-std::string searchtext = "";
-std::string tempimage = "";
-std::string txtyase = "";
-
-bool gFAV = false;
-bool AppletMode=false;
-bool isSXOS=false;
-bool hasStealth=false;
-
-#ifdef __SWITCH__
-std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
-#else
-std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
-#endif // SWITCH
-Mix_Music* gMusic = NULL;
-std::ofstream outfile;
-//Frees media and shuts down SDL
-void close();
-#ifdef __SWITCH__
-HidsysNotificationLedPattern blinkLedPattern(u8 times);
-void blinkLed(u8 times);
-#endif // ___SWITCH___
-
-
-//make some includes to clean alittle the main
-//Globally used font
-TTF_Font *gFont = NULL;
-TTF_Font* digifont = NULL;
-TTF_Font *gFontcapit = NULL;
-TTF_Font *gFont2 = NULL;
-TTF_Font *gFont3 = NULL;
 //Rendered texture
 LTexture gTextTexture;
 LTexture Farest;
@@ -149,19 +42,78 @@ LTexture Heart;
 LTexture TChapters;
 LTexture TPreview;
 LTexture TSearchPreview;
+//Globally used font
+TTF_Font *gFont = NULL;
+TTF_Font* digifont = NULL;
+TTF_Font *gFontcapit = NULL;
+TTF_Font *gFont2 = NULL;
+TTF_Font *gFont3 = NULL;
+Mix_Music* gMusic = NULL;
+	
+//Gui
+enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
+int statenow = programationstate;
+enum statesreturn { toprogramation, tosearch, tofavorite };
+int returnnow = toprogramation;
+//net
+std::string  urltodownload = "";
+int porcendown = 0;
+int sizeestimated = 0;
+std::string temporallink = "";
+int cancelcurl = 0;
+bool fulldownloaded = false;
+
+//img
+bool reloading = false;
+bool preview = false;
+int selectchapter = 0;
+int porcentajereload = 0;
+int imgNumbuffer = 0;
+int porcentajebuffer = 0;
+bool activatefirstimage = true;
+
+//search
+int searchchapter = 0;
+bool reloadingsearch = false;
+bool activatefirstsearchimage = true;
+std::string serverenlace = "";
+std::string searchtext = "";
+std::string tempimage = "";
+//favs
+int favchapter = 0;
+bool gFAV = false;
+#ifdef __SWITCH__
+std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
+#else
+std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
+#endif // SWITCH
+
+//my vars
+std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/DATA/";
+bool AppletMode=false;
+bool isSXOS=false;
+bool hasStealth=false;
+AccountUid uid;
+
+
+#ifdef __SWITCH__
+HidsysNotificationLedPattern blinkLedPattern(u8 times);
+void blinkLed(u8 times);
+#endif // ___SWITCH___
+
+
+
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
 //The window renderer
 SDL_Renderer* gRenderer = NULL;
 
-SDL_Thread* threadID = NULL;
-//Main loop flag
 int quit = 0;
 
+//make some includes to clean alittle the main
 #include "utils.hpp"
 #include "JKanime.hpp"
-
 
 //MAIN INT
 int main(int argc, char **argv)
@@ -178,165 +130,43 @@ int main(int argc, char **argv)
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");		
 	}
-AppletType at = appletGetAppletType();
-if (at != AppletType_Application && at != AppletType_SystemApplication) {AppletMode=true;}
-#endif 
+	
+	Result rc = 0;	
+	rc =  accountInitialize(AccountServiceType_Application);
+	if (R_SUCCEEDED(rc)) {
+		//accountGetServiceSession ();
+		accountGetPreselectedUser(&uid);
+		printf("Goted user\n");
+		accountExit();       
+	} else printf("failed tu get user \n"); 
+	
+	AppletMode=GetAppletMode();
+#endif
 
-
-//	int val1 = 1;
-//	int val2;
-//	int val0 = 0;
-//	int val3, val4;
-//	int arrayselect = 0;
-
-//	int searchcount = 0;
-	int maxcapit = 1;
-	int mincapit = 0;
-	int capmore = 1;
+	
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
-	std::string temporal = "";
-	
-	/*std::string content = gethtml("https://jkanime.net");
-	while (val0 != -1) {
-		val0 = content.find("play-button", val1);
-		if (val0 == -1) { break; }
+	SDL_Thread* threadID = NULL;
 
-		val1 = 19 + content.find("play-button", val1);
-		val2 = (content.find('"', val1));
-		std::string gdrive = content.substr(val1, val2 - val1);
-
-		arraychapter.push_back(gdrive);
-		val3 = content.rfind("<img src=", val2) + 10;
-		val4 = content.find('"', val3);
-		std::string gpreview = content.substr(val3, val4 - val3);
-		arrayimages.push_back(gpreview);
-		//std::cout << arraycount << ". " << gdrive << std::endl;
-		temporal = temporal + gdrive + "\n";
-		temporal = temporal + gpreview + "\n";
-
-		val1++;
-	}
-
-	printf(temporal.c_str());
-	*/
+	//Set main Thread get images and descriptions
 	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
-	//Start up SDL and create window
-	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
-	{
-		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 
-	}
-	else
-	{
-		//Set texture filtering to linear
-		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
-		{
-			printf("Warning: Linear texture filtering not enabled!");
-		}
-
-		//Create window
+	SDL_intC();//init the SDL
 #ifdef __SWITCH__
-		gWindow = SDL_CreateWindow("sdl2_gles2", 0, 0, 1280, 720, 0);
-#else
-		gWindow = SDL_CreateWindow("RipJKNX", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-#endif // SWITCH
-
-
-		if (gWindow == NULL)
-		{
-			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-
-		}
-		else
-		{
-			//Create vsynced renderer for window
-			gRenderer = SDL_CreateRenderer(gWindow, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-			if (gRenderer == NULL)
-			{
-				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-
-			}
-			else
-			{
-				//Initialize renderer color
-				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-				//Initialize PNG loading
-				int imgFlags = IMG_INIT_PNG;
-				if (!(IMG_Init(imgFlags) & imgFlags))
-				{
-					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-
-				}
-
-				//Initialize SDL_ttf
-				if (TTF_Init() == -1)
-				{
-					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-
-				}
-				//Initialize SDL_mixer
-				if (Mix_OpenAudio(48000, MIX_DEFAULT_FORMAT, 2, 4096) < 0)
-				{
-					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-					
-				}
-				//Load music
-#ifdef __SWITCH__
-				gMusic = Mix_LoadMUS("romfs:/wada.ogg");
-#else
-				gMusic = Mix_LoadMUS("C:/respaldo2017/C++/test/Debug/wada.ogg");
-#endif // SWITCH
-				
-				if (gMusic == NULL)
-				{
-					printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
-					
-				}
-				if (Mix_PlayingMusic() == 0)
-				{
-					//Play the music
-					Mix_PlayMusic(gMusic, -1);
-				}
-			}
-		}
-	}
-
-
-
-	int posxbase = 20;
-	int posybase = 10;
-
-#ifdef __SWITCH__
-
-	gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
-	gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
-	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
-	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
-	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
 	Farest.loadFromFile("romfs:/texture.png");
 	Heart.loadFromFile("romfs:/heart.png");
-
 #else
-	gFont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy.ttf", 16);
-	digifont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\digifont.otf", 16);
-	gFont2 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 150);
-	gFontcapit = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 100);
-	gFont3 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 40);
-
 	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
 	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
-
-
 #endif // SWITCH
 
 	SDL_Color textColor = { 50, 50, 50 };
-
-	// execute first
-
-
+	
+	int posxbase = 20;
+	int posybase = 10;
+	int maxcapit = 1;
+	int mincapit = 0;
+	int capmore = 1;
 
 	//Event handler
 	SDL_Event e;
@@ -350,12 +180,11 @@ if (at != AppletType_Application && at != AppletType_SystemApplication) {AppletM
 	}
 #endif // SWITCH
 
-if (AppletMode) {
-			//Clear screen
+if (AppletMode) {//close on applet mode
+		//Clear screen
 		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(gRenderer);
 
-		//Render current frame
 		//wallpaper
 		Farest.render((0), (0));
 		SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
@@ -365,9 +194,10 @@ if (AppletMode) {
 		gTextTexture.loadFromRenderedText(gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
 		gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
 		SDL_RenderPresent(gRenderer);
+		quit=1;
 		SDL_Delay(3000);
-quit=1;
 }
+
 	//While application is running
 	while (!quit)
 	{
@@ -403,14 +233,14 @@ quit=1;
 							case programationstate:
 							{
 								if (!reloading&&arraychapter.size()>=1)
-								{
+								{activatefirstimage=true;
 									TChapters.free();
 									TChapters.loadFromFileCustom(tempimage, 550, 400);
 									temporallink = arraychapter[selectchapter];
 									int val1 = temporallink.find("/", 20);
 									temporallink = temporallink.substr(0, val1 + 1);
 									printf("q wea es esto? %s  : %d\n",temporallink.c_str() ,selectchapter);
-									if (selectchapter > (int)con_rese.size()-1)
+									if (selectchapter > (int)con_maxcapit.size()-1)
 									{
 										maxcapit = atoi(capit(temporallink).c_str());
 									}else {
@@ -420,7 +250,7 @@ quit=1;
 											enemision = con_enemision[selectchapter];
 											tienezero = con_tienezero[selectchapter];										
 											maxcapit = con_maxcapit[selectchapter];
-											printf("goted %d\n",selectchapter);
+											printf("Goted %d\n",selectchapter);
 										}catch(...){
 											printf("Error \n");
 										}
@@ -428,7 +258,7 @@ quit=1;
 									
 									
 									statenow = chapterstate;
-									if (tienezero == true) {
+									if (tienezero) {
 										maxcapit = maxcapit - 1;
 										mincapit = 0;
 										capmore = maxcapit;
@@ -439,13 +269,14 @@ quit=1;
 										capmore = maxcapit;
 									}
 									std::cout << maxcapit << std::endl;
-
+								gFAV = isFavorite(temporallink);
 								}
 							}
 							break;
 
 							case searchstate:
 							{
+								activatefirstimage=true;
 								if (!reloadingsearch && arraysearch.size()>=1)
 								{
 									TChapters.free();
@@ -455,7 +286,7 @@ quit=1;
 
 									std::cout << temporallink << std::endl;
 									maxcapit = atoi(capit(temporallink).c_str());
-									if (tienezero == true) {
+									if (tienezero) {
 										maxcapit = maxcapit - 1;
 										mincapit = 0;
 										capmore = maxcapit;
@@ -466,6 +297,7 @@ quit=1;
 										capmore = maxcapit;
 									}
 									std::cout << maxcapit << std::endl;
+									gFAV = isFavorite(temporallink);
 								}
 
 							}
@@ -473,15 +305,17 @@ quit=1;
 
 							case favoritesstate:
 							{
+								activatefirstimage=true;
 								if ((int)arrayfavorites.size() >= 1 ){
 								TChapters.free();
+								CheckImgNet(tempimage);
 								TChapters.loadFromFileCustom(tempimage, 550, 400);
 								temporallink = arrayfavorites[favchapter];
 
 								std::cout << temporallink << std::endl;
 								maxcapit = atoi(capit(temporallink).c_str());
 								statenow = chapterstate;
-								if (tienezero == true) {
+								if (tienezero) {
 									maxcapit = maxcapit - 1;
 									mincapit = 0;
 									capmore = maxcapit;
@@ -492,9 +326,8 @@ quit=1;
 									capmore = maxcapit;
 								}
 								std::cout << maxcapit << std::endl;
+								gFAV = true;
 								}
-
-
 							}
 							break;
 							case chapterstate:
@@ -504,14 +337,10 @@ quit=1;
 						}
 					}
 					else if (e.jbutton.button == 10) {// (+) button down close to home menu
-						
 						cancelcurl = 1;
 						quit = 1;
 					}
 					else if (e.jbutton.button == 11) {// (-) button down
-						
-						//cancelcurl = 1;
-						//quit = 1;
 						if (Mix_PlayingMusic() == 0)
 						{
 							//Play the music
@@ -533,100 +362,35 @@ quit=1;
 								Mix_PauseMusic();
 							}
 						}
-
 					}
-					else if (e.jbutton.button == 6 || e.jbutton.button == 8) {// (L) button down
-						
-#ifdef __SWITCH__
-						Result rc = 0;
-#endif //  SWITCH
-#ifdef __SWITCH__
-						const char* url ="";
-						if (e.jbutton.button == 6)
-						url="https://animeflv.net";
-						else 
-						url="https://jkanime.net";
-
-						char *buf = (char*)malloc(256);
-						strcpy(buf, Keyboard_GetText("Escribir URL http://", url));
-						std::string tempbus(buf);
-						printf("URL %s\n", buf);
-						if (strlen(buf) <= 0) break;
-						
-						WebCommonConfig config;
-						WebCommonReply reply;
-						WebExitReason exitReason = (WebExitReason)0;
-
-						// Create the config. There's a number of web*Create() funcs, see libnx web.h.
-						// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
-						rc = webPageCreate(&config, buf);
-						
-						printf("webPageCreate(): 0x%x\n", rc);
-
-						if (R_SUCCEEDED(rc)) {
-							// At this point you can use any webConfigSet* funcs you want.
-
-							rc = webConfigSetWhitelist(&config, "^http*"); // Set the whitelist, adjust as needed. If you're only using a single domain, you could remove this and use webNewsCreate for the above (see web.h for webNewsCreate).
-							printf("webConfigSetWhitelist(): 0x%x\n", rc);
-
-							if (R_SUCCEEDED(rc)) { // Launch the applet and wait for it to exit.
-								printf("Running webConfigShow...\n");
-								rc = webConfigShow(&config, &reply); // If you don't use reply you can pass NULL for it.
-								printf("webConfigShow(): 0x%x\n", rc);
-							}
-
-							if (R_SUCCEEDED(rc)) { // Normally you can ignore exitReason.
-								rc = webReplyGetExitReason(&reply, &exitReason);
-								printf("webReplyGetExitReason(): 0x%x", rc);
-								if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
-								printf("\n");
-							}
+					else if (e.jbutton.button == 6 || e.jbutton.button == 8) {// (L & ZL) button down
+						if (statenow == programationstate)
+						{
+							if (e.jbutton.button == 6)
+								WebBrowserCall("https://animeflv.net",true);
+							else 
+								WebBrowserCall("https://jkanime.net",true);
 						}
-#endif //  SWITCH
-
-
 					}
 					else if (e.jbutton.button == 9) {// (ZR) button down
-						
 						switch (statenow)
 						{
-						case programationstate:
-
-							break;
-						case downloadstate:
-
-							break;
-						case chapterstate:
-
-							break;
-						case searchstate:
-
-							break;
 						case favoritesstate:
 							delFavorite();
 							favchapter=0;
 							arrayfavorites.clear();
 							break;
-
 						}
 					}
 					else if (e.jbutton.button == 1) {// (B) button down
-						
 						switch (statenow)
 						{
-						case programationstate:
-
-
-							break;
 						case downloadstate:
 							cancelcurl = 1;
 							statenow = chapterstate;
-
-
 							break;
 						case chapterstate:
 							cancelcurl = 1;
-							txtyase = "";
 							switch (returnnow)
 							{
 							case toprogramation:
@@ -635,13 +399,14 @@ quit=1;
 							case tosearch:
 								statenow = searchstate;
 								break;
+							case tofavorite:
+								statenow = favoritesstate;
+								break;
 							}
-
 							break;
 						case searchstate:
 							if (!reloadingsearch)
 							{
-
 								returnnow = toprogramation;
 								statenow = programationstate;
 								TSearchPreview.free();
@@ -649,44 +414,20 @@ quit=1;
 							break;
 
 						case favoritesstate:
+							returnnow = toprogramation;
 							statenow = programationstate;
 							break;
-
-
 						}
 					}
 					else if (e.jbutton.button == 2) {// (X) button down
-						
-
 						switch (statenow)
 						{
-						case programationstate:
-
-
-							break;
-						case downloadstate:
-
-
-							break;
 						case chapterstate:
-
-							if (ahorro == true)
-							{
-								ahorro = false;
-							}
-							else
-							{
-								ahorro = true;
-							}
-								//just for test
-								statenow = downloadstate;
-								cancelcurl = 0;
-								urltodownload = temporallink + std::to_string(capmore) + "/";
-								threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
-								
-							
-
-
+							//just for test
+							statenow = downloadstate;
+							cancelcurl = 0;
+							urltodownload = temporallink + std::to_string(capmore) + "/";
+							threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
 							break;
 						case searchstate:
 
@@ -694,7 +435,6 @@ quit=1;
 						case favoritesstate:
 
 							delFavorite(favchapter);
-
 							if (!reloading)
 							{
 								if (favchapter > 0) favchapter--;
@@ -725,7 +465,8 @@ quit=1;
 						{
 						case programationstate:
 							if (!reloading)
-							{
+							{activatefirstimage=true;
+								returnnow = tofavorite;
 								arrayfavorites.clear();
 								statenow = favoritesstate;
 								std::string temp;
@@ -753,12 +494,13 @@ quit=1;
 						case chapterstate:
 						{//AGREGAR A FAVORITOS
 							if(!isFavorite(temporallink)){
+								std::ofstream outfile;
 								outfile.open(favoritosdirectory, std::ios_base::app); // append instead of overwrite
 								outfile << temporallink;
 								outfile << "\n";
 								outfile.close();
-							txtyase = "(Ya se agregó)";
 							}
+
 							gFAV = true;
 						}
 
@@ -772,13 +514,24 @@ quit=1;
 
 						}
 					}
+					else if (e.jbutton.button == 5) {// (R3) button down
+						switch (statenow)
+						{//only for test 
+							case chapterstate:
+								std::string tempurl = temporallink + std::to_string(capmore) + "/";
+								WebBrowserCall(tempurl);
+							break;
+						}
+
+					}
 					else if (e.jbutton.button == 7) {// (R) button down
 						
 						switch (statenow)
 						{
 						case programationstate:
+						case searchstate:
 							if (!reloadingsearch)
-							{
+							{activatefirstimage=true;
 #ifdef __SWITCH__
 								//blinkLed(1);//LED
 #endif // __SWITCH__
@@ -788,20 +541,13 @@ quit=1;
 								arraysearchimages.clear();
 								statenow = searchstate;
 								returnnow = tosearch;
-								char *buf = (char*)malloc(256);
 #ifdef __SWITCH__
-								strcpy(buf, Keyboard_GetText("Buscar Anime (3 letras minimo.)", searchtext.c_str()));
-#endif // SWITCH
-
-
-								std::string tempbus(buf);
-								searchtext = tempbus;
-
+								searchtext = KeyboardCall("Buscar Anime (2 letras mínimo.)",searchtext);
+#endif // SWITCH				
+								if (searchtext.length() > 1)
 								searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
 
 								break;
-
-
 							}
 
 						}
@@ -811,11 +557,6 @@ quit=1;
 						
 						switch (statenow)
 						{
-						case downloadstate:
-
-
-							break;
-
 						case chapterstate:
 							if (capmore > mincapit)
 							{
@@ -832,13 +573,6 @@ quit=1;
 						
 						switch (statenow)
 						{
-						case programationstate:
-
-							break;
-						case downloadstate:
-
-
-							break;
 						case chapterstate:
 							if (capmore < maxcapit)
 							{
@@ -849,7 +583,6 @@ quit=1;
 								capmore = maxcapit;
 							}
 							break;
-
 						}
 					}
 					else if (e.jbutton.button == 17 || e.jbutton.button == 13) {// (up) button down
@@ -1008,113 +741,100 @@ quit=1;
 		case chapterstate:
 		{
 		//Draw a bacground to a nice view
-		SDL_SetRenderDrawColor(gRenderer, 170, 170, 170, 100);
+		{SDL_SetRenderDrawColor(gRenderer, 170, 170, 170, 100);
 		SDL_Rect HeaderRect = {0,0, 1280, 720};
-		SDL_RenderFillRect(gRenderer, &HeaderRect);
+		SDL_RenderFillRect(gRenderer, &HeaderRect);}
+		
 		std::string temptext = temporallink;
 		replace(temptext, "https://jkanime.net/", "");
 		replace(temptext, "/", " ");
 		replace(temptext, "-", " ");
 		mayus(temptext);
 
-		{//draw preview image
-		SDL_Rect fillRect = { SCREEN_WIDTH - 462,SCREEN_HEIGHT / 2 - 352, 404, 595 };
-		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-
-		SDL_RenderFillRect(gRenderer, &fillRect); 
-		TChapters.render(SCREEN_WIDTH - 460, SCREEN_HEIGHT / 2 - 350);
-		
-		}
 
 		//warning , only display in sxos ToDo
 		gTextTexture.loadFromRenderedText(gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
 		gTextTexture.render(posxbase, 0 );
 
-		int XS=0 , YS =0;//use this to move the element
+		//draw Title
+		gTextTexture.loadFromRenderedText(gFont3, temptext.substr(0,62)+ ":", textColor);
+		gTextTexture.render(posxbase+10, posybase);
+		
+		{//draw description
+		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 100);
+		SDL_Rect HeaderRect = {25,60, 770, 400};
+		SDL_RenderFillRect(gRenderer, &HeaderRect);
+		
+		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
+		gTextTexture.render(posxbase+15, posybase + 65);
+		}
+		
+		{//draw preview image
+		SDL_Rect fillRect = { SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 };
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 200);
+
+		SDL_RenderFillRect(gRenderer, &fillRect); 
+		TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
+		
+		}
+		
+		if (enemision)
+		{
+			gTextTexture.loadFromRenderedText(gFont3, "En Emisión ", { 16,191,0 });
+			gTextTexture.render(posxbase + 820, posybase + 598);
+			gTextTexture.loadFromRenderedText(gFont, nextdate, { 255,255,255 });
+			gTextTexture.render(posxbase + 1020, posybase + 615);
+		}
+		else
+		{
+			gTextTexture.loadFromRenderedText(gFont3, "Concluido", { 140,0,0 });
+			gTextTexture.render(posxbase + 820, posybase + 598);
+		}
+
+		//use this to move the element
 		{//draw caps Scroll
-			SDL_Rect fillRect = {posxbase + 90+XS, posybase + 570+YS, 420, 35 };
+		int XS=100 , YS =0;
+		SDL_Rect fillRect = {posxbase + 70+XS, posybase + 570+YS, 420, 35 };
 			SDL_SetRenderDrawColor(gRenderer, 50, 50, 50, 80);
 			SDL_RenderFillRect(gRenderer, &fillRect);
 			if (capmore-2 >= mincapit) {
 				gTextTexture.loadFromRenderedText(gFont3,  std::to_string(capmore-2), textColor);
-				gTextTexture.render(posxbase + 150 +XS, posybase + 558+YS);
+				gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			if (capmore-1 >= mincapit) {
 				gTextTexture.loadFromRenderedText(gFont3,  std::to_string(capmore-1), textColor);
-				gTextTexture.render(posxbase + 215+XS, posybase + 558+YS);
+				gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			
 			gTextTexture.loadFromRenderedText(gFont3, std::to_string(capmore), { 255, 255, 255 });
-			gTextTexture.render(posxbase + 280+XS, posybase + 558+YS);
+			gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 
 			if (capmore+1 <= maxcapit) {
 				gTextTexture.loadFromRenderedText(gFont3,  std::to_string(capmore+1), textColor);
-				gTextTexture.render(posxbase + 345+XS, posybase + 558+YS);
+				gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			if (capmore+2 <= maxcapit) {
 				gTextTexture.loadFromRenderedText(gFont3,  std::to_string(capmore+2), textColor);
-				gTextTexture.render(posxbase + 410+XS, posybase + 558+YS);
+				gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 
 			if (maxcapit >= 10){
-				DrawImageFile(gRenderer,"romfs:/buttons/UP.png",300+XS, 530+YS,"+10");
-				DrawImageFile(gRenderer,"romfs:/buttons/DOWN.png",300+XS, 630+YS,"-10");
+				DrawImageFile(gRenderer,"romfs:/buttons/UP.png",280+XS, 530+YS,"+10");
+				DrawImageFile(gRenderer,"romfs:/buttons/DOWN.png",280+XS, 630+YS,"-10");
 			}
-			if (capmore > mincapit) DrawImageFile(gRenderer,"romfs:/buttons/LEFT.png",100+XS, 580+YS,std::to_string(mincapit));
-			if (capmore < maxcapit)DrawImageFile(gRenderer,"romfs:/buttons/RIGHT.png",500+XS, 580+YS,std::to_string(maxcapit));
+			DrawImageFile(gRenderer,"romfs:/buttons/LEFT.png",80+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
+			DrawImageFile(gRenderer,"romfs:/buttons/RIGHT.png",480+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 		}
-		
-		if (enemision == true)
-		{
-			gTextTexture.loadFromRenderedText(gFont3, "En Emisión ", {0,0,0});
-			gTextTexture.render(posxbase + 800, posybase + 547);
-			gTextTexture.loadFromRenderedText(gFont3, "En Emisión ", { 16,191,0 });
-			gTextTexture.render(posxbase + 800, posybase + 548);
-			gTextTexture.loadFromRenderedText(gFont, nextdate, { 255,255,255 });
-			gTextTexture.render(posxbase + 1000, posybase + 565);
-		}
-		else
-		{
-			gTextTexture.loadFromRenderedText(gFont3, "Concluido", {0,0,0});
-			gTextTexture.render(posxbase + 800, posybase + 547);
-			gTextTexture.loadFromRenderedText(gFont3, "Concluido", { 140,0,0 });
-			gTextTexture.render(posxbase + 800, posybase + 548);
-		}
-		
-		
-		
-		//draw Title
-/*		gTextTexture.loadFromRenderedText(gFont3, temptext + ":", { 255, 255, 255 });
-		gTextTexture.render(posxbase - 1, posybase - 1);*/
-		gTextTexture.loadFromRenderedText(gFont3, temptext.substr(0,48)+ ":", textColor);
-		gTextTexture.render(posxbase, posybase);
-		//draw description
-/*		gTextTexture.loadFromRenderedTextWrap(gFont, rese, { 255, 255, 255 }, 750);
-		gTextTexture.render(posxbase - 1, posybase + 54);
-*/		
-		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
-		gTextTexture.render(posxbase, posybase + 65);
-		
-		
-		gFAV = isFavorite(temporallink);
-		
+				
 		//Draw Footer Buttons
-		int dist = 1120,posdist = 130;
+		int dist = 1120,posdist = 160;
 		DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Ver Online");dist -= posdist;
 		DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Atras");dist -= posdist;
-		DrawImageFile(gRenderer,"romfs:/buttons/L.png",dist, 680,"AnimeFLV");dist -= posdist;
-		if(gFAV){
-			DrawImageFile(gRenderer,"romfs:/buttons/FAV.png",dist, 680,"Favorito");dist -= posdist;
-		}else {
-			DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Favorito");dist -= posdist;
-		}
-
-
+		if(gFAV){DrawImageFile(gRenderer,"romfs:/buttons/FAV.png",1190, 70,"");}
+		else {DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Favorito");}
 		}
 
 		break;
-
-
 		case programationstate:
 			if (!reloading&&arraychapter.size()>=1) {
 				{//Draw a rectagle to a nice view
@@ -1129,10 +849,8 @@ quit=1;
 					replace(temptext, "-", " ");
 					mayus(temptext);
 
-
-
 					if (x == selectchapter) {
-						gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
+						gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
 						{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
 						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
 						SDL_RenderFillRect(gRenderer, &HeaderRect);}
@@ -1142,24 +860,23 @@ quit=1;
 					}
 					else
 					{
-
-						gTextTexture.loadFromRenderedText(digifont, temptext, textColor);
+						gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), textColor);
 						gTextTexture.render(posxbase, posybase + (x * 22));
 
 					}
 
 				}
-				if (activatefirstimage == true)
+				if (activatefirstimage)
 				{
 					TPreview.free();
 					callimage();
 					activatefirstimage = false;
 				}
-				if (preview == true)
+				if (preview)
 				{
 					
 					{int ajuX = -390, ajuY = -450;
-					SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
+					SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 24};
 					SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 200);
 
 					SDL_RenderFillRect(gRenderer, &fillRect);
@@ -1187,10 +904,16 @@ quit=1;
 				//Draw Header
 				gTextTexture.loadFromRenderedText(gFont, "(Ver 1.8) #KASTXUPALO", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
-				if (porcentajebuffer > 0 && porcentajebuffer < 100 ){
+				if (imgNumbuffer > 0){
+					gTextTexture.loadFromRenderedText(gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
+					Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
+				}
+				if (porcentajebuffer > 0){
 					gTextTexture.loadFromRenderedText(gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/30)", {0,100,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
-					Heart.render(posxbase + 570, posybase + 3 + (porcentajebuffer * 22));
+					Heart.render(posxbase + 570, posybase + 3 + (porcentajebuffer-1) * 22);
+					Heart.render(posxbase + 550, posybase + 3 + (porcentajebuffer-1) * 22);
 				}
 
 
@@ -1204,7 +927,7 @@ quit=1;
 				SDL_RenderFillRect(gRenderer, &fillRect); }
 
 				
-				gTextTexture.loadFromRenderedText(gFont3, "Cargando programación... (" + std::to_string(porcentajereload) + "%)", textColor);
+				gTextTexture.loadFromRenderedText(gFont3, "Cargando programación... ", textColor);
 				gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
 			}
 			break;
@@ -1215,13 +938,17 @@ quit=1;
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				if ((int)arraysearch.size() >= 1){
 					
-					
 					{//Draw a rectagle to a nice view
 					SDL_SetRenderDrawColor(gRenderer, 100, 100, 100, 105);
 					SDL_Rect HeaderRect = {0,0, 620, 670};
 					SDL_RenderFillRect(gRenderer, &HeaderRect);}
 
-					for (int x = 0; x < (int)arraysearch.size(); x++) {
+					int of = searchchapter < 28 ? 0 : searchchapter - 28;
+					if (arraysearch.size() > 30) {
+						gTextTexture.loadFromRenderedText(gFont, std::to_string(searchchapter+1)+"/"+std::to_string(arraysearch.size()), {0,0,0});
+						gTextTexture.render(400, 690);
+					}
+					for (int x = of; x < (int)arraysearch.size(); x++) {
 						std::string temptext = arraysearch[x];
 					
 						replace(temptext, "https://jkanime.net/", "");
@@ -1229,32 +956,31 @@ quit=1;
 						replace(temptext, "-", " ");
 						mayus(temptext);
 						if (x == searchchapter) {
-							gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
+							gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
 							{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
-							SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
+							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, gTextTexture.getHeight()};
 							SDL_RenderFillRect(gRenderer, &HeaderRect);}
-							gTextTexture.render(posxbase, posybase + (x * 22));
+							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 
-							Heart.render(posxbase - 18, posybase + 3 + (x * 22));
+							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
 						}
-						else
+						else if ((x-of)<30)
 						{
 
-							gTextTexture.loadFromRenderedText(digifont, temptext, textColor);
-							gTextTexture.render(posxbase, posybase + (x * 22));
+							gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), textColor);
+							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 
 						}
 
 					}
-					
 
-					if (activatefirstsearchimage == true)
+					if (activatefirstsearchimage)
 					{
 						TSearchPreview.free();
 						callimagesearch();
 						activatefirstsearchimage = false;
 					}
-					if (preview == true)
+					if (preview)
 					{
 						{int ajuX = -390, ajuY = -450;
 						SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
@@ -1264,55 +990,68 @@ quit=1;
 						TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
 						
 					}
-				}else DrawImageFile(gRenderer,"romfs:/nop.png",230, 355,"");
-
-
+				}else DrawImageFile(gRenderer,"romfs:/nop.png",230, 355,searchtext);
 				
 				{//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Volver");dist -= posdist;}
-				
-				break;
+				DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Volver");dist -= posdist;
+				DrawImageFile(gRenderer,"romfs:/buttons/R.png",dist, 680,"Buscar");dist -= posdist;}
+			}
+			else
+			{
+				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT / 2 - 25, 1280, 50 };
+				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
+				SDL_RenderFillRect(gRenderer, &fillRect); }
+
+				textColor = { 50, 50, 50 };
+				gTextTexture.loadFromRenderedText(gFont3, "Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)", textColor);
+				gTextTexture.render(SCREEN_WIDTH / 2 - gTextTexture.getWidth() / 2, SCREEN_HEIGHT / 2 - gTextTexture.getHeight() / 2);
+			}
+			break;
 		case favoritesstate:
+		{
 			//Draw Header
 			gTextTexture.loadFromRenderedText(gFont, "Favoritos", {100,0,0});
 			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 			if ((int)arrayfavorites.size() >= 1 ){
 
-				{//Draw a rectagle to a nice view
-				SDL_SetRenderDrawColor(gRenderer, 150, 150, 150, 105);
-				SDL_Rect HeaderRect = {0,0, 620, 670};
-				SDL_RenderFillRect(gRenderer, &HeaderRect);}
+			{//Draw a rectagle to a nice view
+			SDL_SetRenderDrawColor(gRenderer, 150, 150, 150, 105);
+			SDL_Rect HeaderRect = {0,0, 620, 670};
+			SDL_RenderFillRect(gRenderer, &HeaderRect);}
+			int of = favchapter < 28 ? 0 : favchapter - 28;
+			if (arrayfavorites.size() > 30) {
+				gTextTexture.loadFromRenderedText(gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
+				gTextTexture.render(400, 690);
+			}
+			for (int x = of; x < (int)arrayfavorites.size(); x++) {
+				std::string temptext = arrayfavorites[x];
 
-				for (int x = 0; x < (int)arrayfavorites.size(); x++) {
-					std::string temptext = arrayfavorites[x];
-
-					replace(temptext, "https://jkanime.net/", "");
-					replace(temptext, "/", "");
-					std::string machu ="sdmc:/switch/RipJKAnime_NX/DATA/"+temptext+".jpg";
-					replace(temptext, "-", " ");
+				replace(temptext, "https://jkanime.net/", "");
+				replace(temptext, "/", "");
+				std::string machu = rootdirectory+temptext+".jpg";
+				replace(temptext, "-", " ");
 					mayus(temptext);
+					CheckImgNet(machu);
 					if (x == favchapter) {
 						tempimage = machu;
-							gTextTexture.loadFromRenderedText(digifont, temptext, { 255,255,255 });
+							gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
 							{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
-							SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
+							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, gTextTexture.getHeight()};
 							SDL_RenderFillRect(gRenderer, &HeaderRect);}
-							gTextTexture.render(posxbase, posybase + (x * 22));
-								
+							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
+									
 							int scroll = posybase + (x * 22);
-							DrawImageCover(gRenderer,tempimage,620,scroll > 570 ? 570 : scroll ,"");
-							Heart.render(posxbase - 18, posybase + 3 + (x * 22));
+							DrawImageCover(gRenderer,machu,610,scroll > 570 ? 570 : scroll ,"");
+							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
 					}
-					else
+					else if((x-of) < 30)
 					{
-						gTextTexture.loadFromRenderedText(digifont, temptext, textColor);
-						gTextTexture.render(posxbase, posybase + (x * 22));
-						
+						gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), textColor);
+						gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 					}
-
 				}
 			}
 			{//Draw footer buttons
@@ -1320,11 +1059,13 @@ quit=1;
 				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
 				DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Volver");dist -= posdist;
 				if ((int)arrayfavorites.size() >= 1){
-					DrawImageFile(gRenderer,"romfs:/buttons/X.png",dist, 680,"Borrar#"+std::to_string(favchapter+1));dist -= posdist;
+					DrawImageFile(gRenderer,"romfs:/buttons/X.png",dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
 					DrawImageFile(gRenderer,"romfs:/buttons/ZR.png",dist, 680,"Limpiar");dist -= posdist;
 				}else DrawImageFile(gRenderer,"romfs:/nop.png",230, 355,"");
 			}
-			break;
+			
+		}
+		break;
 		case downloadstate:
 			std::string temptext = urltodownload;
 			replace(temptext, "https://jkanime.net/", "");
@@ -1357,7 +1098,7 @@ quit=1;
 
 
 #ifdef __SWITCH__
-				if (fulldownloaded == false)
+				if (!fulldownloaded)
 				{
 					//blinkLed(6);//LED
 					fulldownloaded = true;
@@ -1372,26 +1113,12 @@ quit=1;
 				gTextTexture.loadFromRenderedText(gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 				gTextTexture.render(posxbase + 100, posybase + 400);
 			}
-			}
-				else
-			{
-				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT / 2 - 25, 1280, 50 };
-				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-
-				SDL_RenderFillRect(gRenderer, &fillRect); }
-
-				textColor = { 50, 50, 50 };
-				gTextTexture.loadFromRenderedText(gFont3, "Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)", textColor);
-				gTextTexture.render(SCREEN_WIDTH / 2 - gTextTexture.getWidth() / 2, SCREEN_HEIGHT / 2 - gTextTexture.getHeight() / 2);
-			}
-
 			break;
 		}
 
-		DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",160, 680,"Salir");
-		DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",10, 680,"Música");
+		DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",160, 680,"Salir",quit);
+		DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",10, 680,"Música",Mix_PausedMusic() == 1);
 		//Update screen
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 		SDL_RenderPresent(gRenderer);
 
@@ -1421,16 +1148,12 @@ quit=1;
 	}
 	//Free resources and close SDL
 #ifdef __SWITCH__
+	accountExit();
 	hidsysExit();
 	socketExit();
 	romfsExit();
-	__nx_applet_exit_mode = 1;
+	
 #endif // SWITCH
-
-
-
 	close();
-
 	return 0;
-
 }
