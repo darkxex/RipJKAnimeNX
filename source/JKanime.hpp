@@ -223,7 +223,6 @@ int refrescarpro(void* data)
 	
 	printf(temporal.c_str());
 	reloading = false;
-	preview = true;
 	for (int x = 0; x < (int)arrayimages.size(); x++)
 	{	
 		imgNumbuffer = x+1;
@@ -241,7 +240,8 @@ int refrescarpro(void* data)
 		downloadfile(arrayimages[x],directorydownloadimage,false);
 		activatefirstimage=true;
 	} else printf("-");
-	
+	preview = true;
+
 //	porcentajereload = ((x+1) * 100) / arrayimages.size();
 	}
 	printf("#\nEnd Image Download\n");
