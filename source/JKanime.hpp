@@ -273,7 +273,7 @@ int searchjk(void* data)
 	replace(searchtext, " ", "_");
 	replace(searchtext, "!", "");
 	replace(searchtext, ";", "");
-	if (searchtext.length() >= 3) {
+	if (searchtext.length() >= 2) {
 		std::string content = gethtml("https://jkanime.net/buscar/" + searchtext + "/1/");
 		content = content + gethtml("https://jkanime.net/buscar/" + searchtext + "/2/");
 		int val1 = 1;

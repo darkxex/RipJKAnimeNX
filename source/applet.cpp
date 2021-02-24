@@ -20,7 +20,7 @@ bool GetAppletMode()
 
 SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
 	if (strcmp(string, "") == 0) {
-		strncpy(string, "The name cannot be empty.", size);
+		strncpy(string, "No has escrito nada!.", size);
 		return SwkbdTextCheckResult_Bad;
 	}
 

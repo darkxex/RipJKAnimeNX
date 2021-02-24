@@ -542,8 +542,9 @@ if (AppletMode) {//close on applet mode
 								statenow = searchstate;
 								returnnow = tosearch;
 #ifdef __SWITCH__
-								searchtext = KeyboardCall("Buscar Anime (3 letras minimo.)",searchtext);
-#endif // SWITCH
+								searchtext = KeyboardCall("Buscar Anime (2 letras mínimo.)",searchtext);
+#endif // SWITCH				
+								if (searchtext.length() > 1)
 								searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
 
 								break;
