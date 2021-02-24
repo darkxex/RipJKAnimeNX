@@ -16,7 +16,7 @@
 extern int porcendown;
 extern int sizeestimated;
 extern int cancelcurl;
-
+extern bool isFileExist(const char *file);
 //Write file in mem to increase download speed on 3 or 5 times
 
 struct MemoryStruct
@@ -123,7 +123,7 @@ std::string gethtml(std::string enlace)
 	}
 	return Buffer;
 }
-void downloadfile(std::string enlace, std::string directorydown,bool progress)
+bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 {
 
 	CURL *curl;
@@ -158,8 +158,20 @@ void downloadfile(std::string enlace, std::string directorydown,bool progress)
 			free(chunk.memory);
 		}
 	fclose(fp);
-	if (res != CURLE_OK){printf("\n%s\n",curl_easy_strerror(res));}
+	if (res == CURLE_OK){return true;}else{printf("\n%s\n",curl_easy_strerror(res));}
+	
 	}
+return false;
 }
 
 
+bool CheckImgNet(std::string image){
+	struct stat st = { 0 };
+	if (stat(image.c_str(), &st) == -1) {
+//	if(!isFileExist(image.c_str())){
+		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
+		printf("# Missing %s Downloading\n",image.c_str());
+		return downloadfile(tmp,image,false);
+	}
+return true;
+}
