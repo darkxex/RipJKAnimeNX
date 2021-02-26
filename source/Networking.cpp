@@ -12,13 +12,13 @@
 #include <cstring>
 #include <sys/stat.h>
 #include "Networking.hpp"
+#include "utils.hpp"
 
 extern int porcendown;
 extern int sizeestimated;
 extern int cancelcurl;
-extern bool isFileExist(const char *file);
-//Write file in mem to increase download speed on 3 or 5 times
 
+//Write file in mem to increase download speed on 3 or 5 times
 struct MemoryStruct
 {
   char *memory;
@@ -109,7 +109,6 @@ std::string gethtml(std::string enlace)
 
 	curl = curl_easy_init();
 	if (curl) {
-
 		curl_easy_setopt(curl, CURLOPT_URL, enlace.c_str());
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -125,13 +124,11 @@ std::string gethtml(std::string enlace)
 }
 bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 {
-
 	CURL *curl;
-	FILE *fp = fopen(directorydown.c_str(), "wb");;
 	CURLcode res = CURLE_OK;
-
 	curl = curl_easy_init();
 	if (curl) {
+	FILE *fp = fopen(directorydown.c_str(), "wb");;
 		if(fp){
 			struct MemoryStruct chunk;
             chunk.memory = (char*)malloc(1);
@@ -152,14 +149,13 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 			}
 			
 			res = curl_easy_perform(curl);
-            fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+            if (res == CURLE_OK) fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
 			/* always cleanup */
 			curl_easy_cleanup(curl);
 			free(chunk.memory);
 		}
 	fclose(fp);
 	if (res == CURLE_OK){return true;}else{printf("\n%s\n",curl_easy_strerror(res));}
-	
 	}
 return false;
 }
@@ -167,7 +163,7 @@ return false;
 
 bool CheckImgNet(std::string image){
 	struct stat st = { 0 };
-	if (stat(image.c_str(), &st) == -1) {
+	if (!isFileExist(image.c_str())) {
 //	if(!isFileExist(image.c_str())){
 		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
 		printf("# Missing %s Downloading\n",image.c_str());
