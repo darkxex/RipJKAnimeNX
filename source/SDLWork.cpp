@@ -166,18 +166,13 @@ void SDLB::Image(std::string path,int X, int Y,std::string Text,bool off){
 
 void SDLB::Cover(std::string path,int X, int Y,std::string Text,int HS){
 
-		static SDL_Surface* DrawImg;
-		static std::string trigerC = "";
-		if (trigerC != path&&DrawImg != NULL){
-			DrawImg = IMG_Load(path.c_str());
-			trigerC = path;
-		}
-
+		SDL_Surface* DrawImg = NULL;
+		DrawImg = IMG_Load(path.c_str());
 		int WS=0;
 		
 		if (DrawImg == NULL)
 		{
-			printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+			printf("Unable to load image %s ! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
 		}else{
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		SDL_Texture* CLUST = SDL_CreateTextureFromSurface(gRenderer, DrawImg);

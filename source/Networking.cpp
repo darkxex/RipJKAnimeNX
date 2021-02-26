@@ -162,9 +162,7 @@ return false;
 
 
 bool CheckImgNet(std::string image){
-	struct stat st = { 0 };
 	if (!isFileExist(image.c_str())) {
-//	if(!isFileExist(image.c_str())){
 		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
 		printf("# Missing %s Downloading\n",image.c_str());
 		return downloadfile(tmp,image,false);

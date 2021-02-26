@@ -44,6 +44,8 @@ LTexture Heart;
 LTexture TChapters;
 LTexture TPreview;
 LTexture TSearchPreview;///////
+LTexture TFavorite;
+
 LTexture B_A;
 LTexture B_B;
 LTexture B_Y;
@@ -162,14 +164,14 @@ int main(int argc, char **argv)
 	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
 
 	GOD.intA();//init the SDL
-	if (isFileExist(rootdirectory+"wada.ogg")){
-		GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
+	if (isFileExist("wada.ogg")){
+		GOD.gMusic = Mix_LoadMUS("wada.ogg");
 		Mix_PlayMusic(GOD.gMusic, -1);
 	}
 #ifdef __SWITCH__
 	
-	if (isFileExist(rootdirectory+"texture.png")){
-		Farest.loadFromFile(rootdirectory+"texture.png");
+	if (isFileExist("texture.png")){
+		Farest.loadFromFile("texture.png");
 	} else {
 		Farest.loadFromFile("romfs:/texture.png");
 	}
@@ -520,6 +522,7 @@ if (AppletMode) {//close on applet mode
 									}
 								}
 								file.close();
+								callimagefavorites(favchapter);
 
 
 							}
@@ -673,6 +676,7 @@ if (AppletMode) {//close on applet mode
 
 						case favoritesstate:
 
+							TFavorite.free();
 							if (favchapter > 0)
 							{
 								favchapter--;
@@ -681,6 +685,7 @@ if (AppletMode) {//close on applet mode
 							else {
 								favchapter = (int)arrayfavorites.size() - 1;
 							}
+							callimagefavorites(favchapter);
 							break;
 
 						}
@@ -741,6 +746,7 @@ if (AppletMode) {//close on applet mode
 							break;
 
 						case favoritesstate:
+							TFavorite.free();
 							if (favchapter < (int)arrayfavorites.size() - 1)
 							{
 								favchapter++;
@@ -750,6 +756,7 @@ if (AppletMode) {//close on applet mode
 							else {
 								favchapter = 0;
 							}
+							callimagefavorites(favchapter);
 							break;
 
 						}
@@ -969,7 +976,7 @@ if (AppletMode) {//close on applet mode
 					SDL_Rect HeaderRect = {0,0, 620, 670};
 					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 
-					int of = searchchapter < 28 ? 0 : searchchapter - 28;
+					int of = searchchapter < 28 ? 0 : searchchapter - 26;
 					if (arraysearch.size() > 30) {
 						gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(arraysearch.size()), {0,0,0});
 						gTextTexture.render(400, 690);
@@ -1047,7 +1054,7 @@ if (AppletMode) {//close on applet mode
 			SDL_SetRenderDrawColor(GOD.gRenderer, 150, 150, 150, 105);
 			SDL_Rect HeaderRect = {0,0, 620, 670};
 			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-			int of = favchapter < 28 ? 0 : favchapter - 28;
+			int of = favchapter < 28 ? 0 : favchapter - 26;
 			if (arrayfavorites.size() > 30) {
 				gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
 				gTextTexture.render(400, 690);
@@ -1057,21 +1064,28 @@ if (AppletMode) {//close on applet mode
 
 				replace(temptext, "https://jkanime.net/", "");
 				replace(temptext, "/", "");
-				std::string machu = rootdirectory+temptext+".jpg";
+//				std::string machu = rootdirectory+temptext+".jpg";
 				replace(temptext, "-", " ");
 					mayus(temptext);
 					if (x == favchapter) {
-					CheckImgNet(machu);
-						tempimage = machu;
+//						CheckImgNet(machu);
+//						tempimage = machu;
 							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 							{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
 							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, gTextTexture.getHeight()};
 							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
-									
-							int scroll = posybase + (x * 22);
-							GOD.Cover(machu,610,scroll > 570 ? 570 : scroll ,"",200);
-							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
+							
+							{int ajuX = -390, ajuY = -450;
+
+							SDL_Rect HeaderRect = {posxbase + xdistance + ajuX+5,posybase + ydistance + ajuY+5, TFavorite.getWidth()+6, TFavorite.getHeight()+6};
+							SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 100);
+							
+							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+							TFavorite.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
+
+//							GOD.Cover(machu,610,scroll > 570 ? 570 : scroll ,"",200);
+							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));}
 					}
 					else if((x-of) < 30)
 					{

@@ -189,11 +189,23 @@ void callimagesearch(int cain)
 		directorydownloadimage.append(temp);
 #endif // SWITCH
 
-
 		TSearchPreview.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
 		tempimage = directorydownloadimage;
 }
 
+void callimagefavorites(int cain)
+{
+		std::string temp = arrayfavorites[cain];
+		replace(temp,"https://jkanime.net/","");
+		replace(temp,"/","");
+		std::string directorydownloadimage = rootdirectory;
+		directorydownloadimage.append(temp+".jpg");
+		
+		printf("# %d callimage imagen: %s \n",cain,directorydownloadimage.c_str());
+		TFavorite.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
+		tempimage = directorydownloadimage;
+}
+//
 //BEGUING THREAD CHAIN
 std::vector<std::string> con_full;
 SDL_Thread* first = NULL;
