@@ -140,6 +140,7 @@ void onlinejkanimevideo(std::string onlineenlace)
 #endif //  SWITCH
 
 }
+
 std::vector<std::string> arrayimages;
 std::vector<std::string> arraychapter;
 std::vector<std::string> arraysearch;
@@ -150,10 +151,10 @@ int sizeportraity = 180;
 int sizeportraitx = 225;
 int xdistance = 1000;
 int ydistance = 448;
-void callimage()
+void callimage(int cain)
 {
 #ifdef __SWITCH__
-	std::string temp = arrayimages[selectchapter];
+	std::string temp = arrayimages[cain];
 	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
 
 	std::string directorydownloadimage = rootdirectory;
@@ -163,22 +164,23 @@ void callimage()
 	directorydownloadimage.append(temp);
 #endif // SWITCH
 
-	if(isFileExist(directorydownloadimage.c_str())){
-		//printf("# %d imagen: %s \n",selectchapter,directorydownloadimage.c_str());
+	if(isFileExist(directorydownloadimage)){
+		//printf("# %d imagen: %s \n",cain,directorydownloadimage.c_str());
 		
 	} else {
 		directorydownloadimage="romfs:/nop.png";
-		printf("# %d imagen: %s \n",selectchapter,directorydownloadimage.c_str());
+		printf("# %d callimage imagen: %s \n",cain,directorydownloadimage.c_str());
 	}
 	
 	TPreview.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
 	tempimage = directorydownloadimage;
 }
-void callimagesearch()
+
+void callimagesearch(int cain)
 {
 	
 #ifdef __SWITCH__
-		std::string temp = arraysearchimages[searchchapter];
+		std::string temp = arraysearchimages[cain];
 		replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
 		std::string directorydownloadimage = rootdirectory;
 		directorydownloadimage.append(temp);
@@ -187,13 +189,42 @@ void callimagesearch()
 		directorydownloadimage.append(temp);
 #endif // SWITCH
 
-
 		TSearchPreview.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
 		tempimage = directorydownloadimage;
-	
 }
-int refrescarpro(void* data)
+
+void callimagefavorites(int cain)
 {
+		std::string temp = arrayfavorites[cain];
+		replace(temp,"https://jkanime.net/","");
+		replace(temp,"/","");
+		std::string directorydownloadimage = rootdirectory;
+		directorydownloadimage.append(temp+".jpg");
+		
+		printf("# %d callimage imagen: %s \n",cain,directorydownloadimage.c_str());
+		TFavorite.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
+		tempimage = directorydownloadimage;
+}
+//
+//BEGUING THREAD CHAIN
+std::vector<std::string> con_full;
+SDL_Thread* first = NULL;
+
+int GETCONT(void* d){
+	for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
+	{
+		porcentajebufferA = x+1;
+		std::string link = arraychapter[x];
+		int trace = link.find("/", 20);
+		link = link.substr(0, trace + 1);
+		con_full.push_back(gethtml(link));
+		printf("con_full %d -> %s\n",x,link.c_str());
+	}
+return 0;
+}
+
+
+int refrescarpro(void* data){
 	activatefirstimage = true;
 	reloading = true;
 	porcentajereload = 0;
@@ -223,6 +254,9 @@ int refrescarpro(void* data)
 	
 	printf(temporal.c_str());
 	reloading = false;
+	
+	first = SDL_CreateThread(GETCONT,"ContentThread",(void*)NULL);printf("firstCreated...\n");;
+
 	for (int x = 0; x < (int)arrayimages.size(); x++)
 	{	
 		imgNumbuffer = x+1;
@@ -235,7 +269,7 @@ int refrescarpro(void* data)
 		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/" ;
 		directorydownloadimage.append(tempima);
 #endif // SWITCH
-	if(!isFileExist(directorydownloadimage.c_str())){
+	if(!isFileExist(directorydownloadimage)){
 		printf("\n# %d imagen: %s \n",x,tempima.c_str());
 		downloadfile(arrayimages[x],directorydownloadimage,false);
 		activatefirstimage=true;
@@ -252,6 +286,135 @@ int refrescarpro(void* data)
 	MKcapitBuffer();
 	return 0;
 }
+
+int MKfavimgfix(){
+	std::ifstream file(favoritosdirectory);
+	std::string str;
+	std::string machu ="";
+		while (std::getline(file, str)) {
+		std::cout << str << "\n";
+		if (str.find("jkanime"))
+		{
+			machu=str;
+			replace(machu, "https://jkanime.net/", "");
+			replace(machu, "/", "");
+			CheckImgNet(rootdirectory+machu+".jpg");
+		}
+	}
+	file.close();
+	return 0;
+}
+
+std::vector<std::string> con_rese;
+std::vector<std::string> con_nextdate;
+std::vector<bool> con_enemision;
+std::vector<bool> con_tienezero;
+std::vector<int> con_maxcapit;
+
+
+int MKcapitBuffer() {
+	con_rese.clear();
+	con_nextdate.clear();
+	con_enemision.clear();
+	con_tienezero.clear();
+	con_maxcapit.clear();
+	std::string a = "";
+	for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
+	{
+		porcentajebuffer = x+1;
+		if (x > (int)con_full.size()-1) printf("Wait for vector...\n");
+		while (x > (int)con_full.size()-1){printf("-");SDL_Delay(500);}
+		printf("Get from vector...\n");
+		a = con_full[x];
+		
+		//find sinopsis
+		int re1, re2;
+		re1 = a.find("Sinopsis: </strong>") + 19;
+		re2 = a.find("</p>", re1);
+
+		std::string terese = a.substr(re1, re2 - re1);
+		replace(terese, "<br/>", "");
+		con_rese.push_back(terese);
+
+		//find next date
+		re1 = a.find("<b>Próximo episodio</b>") + 25;
+		re2 = a.find("<i class", re1);
+
+		terese = "";
+		terese = a.substr(re1, re2 - re1);
+		replace(terese, "á","a");
+		replace(terese, "ó","o");
+		con_nextdate.push_back(terese);
+	//	std::cout << rese << std::endl;
+		if ((int)a.find("<b>En emision</b>") != -1)
+		{
+			con_enemision.push_back(true);
+		}
+		else
+		{
+			con_enemision.push_back(false);
+		}
+
+		int val0, val1, val2, val3;
+
+		int zero1, zero2;
+		std::string zerocontainer = "";
+		std::string zerocontainer2 = "";
+		zero1 = a.rfind("ajax/pagination_episodes/");
+		zero2 = a.find("'", zero1);
+		zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
+		//std::cout << zerocontainer << std::endl;
+
+		zerocontainer2 = gethtml(zerocontainer);
+		int tempzero = zerocontainer2.find("\"0\"");
+		if (tempzero != -1) {
+
+			//std::cout << "Si contiene" << std::endl;
+			con_tienezero.push_back(true);
+		}
+		else {
+
+			//std::cout << "no contiene" << std::endl;
+			con_tienezero.push_back(false);
+		}
+
+		val0 = a.rfind("href=\"#pag");
+
+		if (val0 != -1) {
+
+			val1 = a.find(">", val0);
+			val1 = val1 + 1;
+			val2 = a.find("<", val1);
+
+			std::string urlx;
+
+
+			urlx = (a.substr(val1, val2 - val1));
+			val3 = urlx.find(" - ") + 3;
+			urlx = urlx.substr(val3);
+			con_maxcapit.push_back(atoi(urlx.c_str()));
+		}
+		else
+		{
+			con_maxcapit.push_back(1);//return "1";
+		}
+	}
+	
+	if (NULL == first) {
+		printf("SDL_CreateThread NULL %s\n", SDL_GetError());
+	}
+	else {
+		printf("firstwait END...\n");
+		int returnval;
+		SDL_WaitThread(first, &returnval);
+		printf("first END ... %d\n",returnval);
+	}
+	porcentajebuffer = 0;
+	porcentajebufferA = 0;
+	con_full.clear();
+	return true;
+}
+//END THREAD CHAIN
 
 
 int searchjk(void* data)
@@ -309,7 +472,7 @@ int searchjk(void* data)
 				std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/";
 				directorydownloadimage.append(tempima);
 #endif // SWITCH
-			if(!isFileExist(directorydownloadimage.c_str()))
+			if(!isFileExist(directorydownloadimage))
 			downloadfile(arraysearchimages[x],directorydownloadimage,false);
 
 			porcentajereload = ((x + 1) * 100) / arraysearchimages.size();
@@ -414,120 +577,6 @@ std::string capit(std::string b) {
 }
 
 
-int MKfavimgfix(){
-	std::ifstream file(favoritosdirectory);
-	std::string str;
-	std::string machu ="";
-		while (std::getline(file, str)) {
-		std::cout << str << "\n";
-		if (str.find("jkanime"))
-		{
-			machu=str;
-			replace(machu, "https://jkanime.net/", "");
-			replace(machu, "/", "");
-			CheckImgNet(rootdirectory+machu+".jpg");
-		}
-	}
-	file.close();
-	return 0;
-}
-
-std::vector<std::string> con_rese;
-std::vector<std::string> con_nextdate;
-std::vector<bool> con_enemision;
-std::vector<bool> con_tienezero;
-std::vector<int> con_maxcapit;
-int MKcapitBuffer() {
-	con_rese.clear();
-	con_nextdate.clear();
-	con_enemision.clear();
-	con_tienezero.clear();
-	con_maxcapit.clear();
-	for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
-	{
-		porcentajebuffer = x+1;
-		std::string link = arraychapter[x];
-		int trace = link.find("/", 20);
-		link = link.substr(0, trace + 1);
-		std::string a = "";
-		printf("%s\n",link.c_str());
-		a = gethtml(link);
-
-		//find sinopsis
-		int re1, re2;
-		re1 = a.find("Sinopsis: </strong>") + 19;
-		re2 = a.find("</p>", re1);
-
-		std::string terese = a.substr(re1, re2 - re1);
-		replace(terese, "<br/>", "");
-		con_rese.push_back(terese);
-
-		//find next date
-		re1 = a.find("<b>Próximo episodio</b>") + 25;
-		re2 = a.find("<i class", re1);
-
-		terese = "";
-		terese = a.substr(re1, re2 - re1);
-		replace(terese, "á","a");
-		replace(terese, "ó","o");
-		con_nextdate.push_back(terese);
-	//	std::cout << rese << std::endl;
-		if ((int)a.find("<b>En emision</b>") != -1)
-		{
-			con_enemision.push_back(true);
-		}
-		else
-		{
-			con_enemision.push_back(false);
-		}
-
-		int val0, val1, val2, val3;
-
-		int zero1, zero2;
-		std::string zerocontainer = "";
-		std::string zerocontainer2 = "";
-		zero1 = a.rfind("ajax/pagination_episodes/");
-		zero2 = a.find("'", zero1);
-		zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
-		//std::cout << zerocontainer << std::endl;
-
-		zerocontainer2 = gethtml(zerocontainer);
-		int tempzero = zerocontainer2.find("\"0\"");
-		if (tempzero != -1) {
-
-			//std::cout << "Si contiene" << std::endl;
-			con_tienezero.push_back(true);
-		}
-		else {
-
-			//std::cout << "no contiene" << std::endl;
-			con_tienezero.push_back(false);
-		}
-
-		val0 = a.rfind("href=\"#pag");
-
-		if (val0 != -1) {
-
-			val1 = a.find(">", val0);
-			val1 = val1 + 1;
-			val2 = a.find("<", val1);
-
-			std::string urlx;
-
-
-			urlx = (a.substr(val1, val2 - val1));
-			val3 = urlx.find(" - ") + 3;
-			urlx = urlx.substr(val3);
-			con_maxcapit.push_back(atoi(urlx.c_str()));
-		}
-		else
-		{
-			con_maxcapit.push_back(1);//return "1";
-		}
-	}
-	porcentajebuffer = 0;
-	return true;
-}
 
 
 bool isFavorite(std::string fav){

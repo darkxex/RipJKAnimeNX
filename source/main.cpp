@@ -30,6 +30,8 @@
 #include "Networking.hpp"
 #include "SDLWork.hpp"
 #include "applet.hpp"
+#include <thread>
+#include "utils.hpp"
 
 //////////////////////////////////aquí empieza el pc.
 //Screen dimension constants
@@ -41,19 +43,35 @@ LTexture Farest;
 LTexture Heart;
 LTexture TChapters;
 LTexture TPreview;
-LTexture TSearchPreview;
-//Globally used font
-TTF_Font *gFont = NULL;
-TTF_Font* digifont = NULL;
-TTF_Font *gFontcapit = NULL;
-TTF_Font *gFont2 = NULL;
-TTF_Font *gFont3 = NULL;
-Mix_Music* gMusic = NULL;
+LTexture TSearchPreview;///////
+LTexture TFavorite;
+
+LTexture B_A;
+LTexture B_B;
+LTexture B_Y;
+LTexture B_X;
+LTexture B_L;
+LTexture B_R;
+LTexture B_ZR;
+LTexture B_M;
+LTexture B_P;
+
+LTexture B_RIGHT;
+LTexture B_LEFT;
+LTexture B_UP;
+LTexture B_DOWN;
+
+
+LTexture FAV;
+LTexture NOP;
+
+//main SLD funct
+SDLB GOD;
 	
 //Gui
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
-int statenow = programationstate;
 enum statesreturn { toprogramation, tosearch, tofavorite };
+int statenow = programationstate;
 int returnnow = toprogramation;
 //net
 std::string  urltodownload = "";
@@ -70,6 +88,7 @@ int selectchapter = 0;
 int porcentajereload = 0;
 int imgNumbuffer = 0;
 int porcentajebuffer = 0;
+int porcentajebufferA = 0;
 bool activatefirstimage = true;
 
 //search
@@ -103,16 +122,9 @@ void blinkLed(u8 times);
 
 
 
-//The window we'll be rendering to
-SDL_Window* gWindow = NULL;
-
-//The window renderer
-SDL_Renderer* gRenderer = NULL;
-
 int quit = 0;
 
 //make some includes to clean alittle the main
-#include "utils.hpp"
 #include "JKanime.hpp"
 
 //MAIN INT
@@ -142,7 +154,7 @@ int main(int argc, char **argv)
 	
 	AppletMode=GetAppletMode();
 #endif
-
+	
 	
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
@@ -151,14 +163,42 @@ int main(int argc, char **argv)
 	//Set main Thread get images and descriptions
 	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
 
-	SDL_intC();//init the SDL
+	GOD.intA();//init the SDL
+	if (isFileExist("wada.ogg")){
+		GOD.gMusic = Mix_LoadMUS("wada.ogg");
+		Mix_PlayMusic(GOD.gMusic, -1);
+	}
 #ifdef __SWITCH__
-	Farest.loadFromFile("romfs:/texture.png");
+	
+	if (isFileExist("texture.png")){
+		Farest.loadFromFile("texture.png");
+	} else {
+		Farest.loadFromFile("romfs:/texture.png");
+	}
+	
 	Heart.loadFromFile("romfs:/heart.png");
 #else
 	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
 	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
 #endif // SWITCH
+
+	//images that not change
+	B_A.loadFromFile("romfs:/buttons/A.png");
+	B_B.loadFromFile("romfs:/buttons/B.png");
+	B_Y.loadFromFile("romfs:/buttons/Y.png");
+	B_X.loadFromFile("romfs:/buttons/X.png");
+	B_L.loadFromFile("romfs:/buttons/L.png");
+	B_R.loadFromFile("romfs:/buttons/R.png");
+	B_M.loadFromFile("romfs:/buttons/MINUS.png");
+	B_P.loadFromFile("romfs:/buttons/PLUS.png");
+	B_ZR.loadFromFile("romfs:/buttons/ZR.png");
+	B_RIGHT.loadFromFile("romfs:/buttons/RIGHT.png");/////
+	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
+	B_UP.loadFromFile("romfs:/buttons/UP.png");
+	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
+	FAV.loadFromFile("romfs:/buttons/FAV.png");/////
+	NOP.loadFromFile("romfs:/nop.png");
+
 
 	SDL_Color textColor = { 50, 50, 50 };
 	
@@ -181,21 +221,21 @@ int main(int argc, char **argv)
 #endif // SWITCH
 
 if (AppletMode) {//close on applet mode
-		//Clear screen
-		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(gRenderer);
+	//Clear screen
+	SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(GOD.gRenderer);
 
-		//wallpaper
-		Farest.render((0), (0));
-		SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
-		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	//wallpaper
+	Farest.render((0), (0));
+	SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
+	SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
 
-		SDL_RenderFillRect(gRenderer, &fillRect); 
-		gTextTexture.loadFromRenderedText(gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
-		gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
-		SDL_RenderPresent(gRenderer);
-		quit=1;
-		SDL_Delay(3000);
+	SDL_RenderFillRect(GOD.gRenderer, &fillRect); 
+	gTextTexture.loadFromRenderedText(GOD.gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
+	gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
+	SDL_RenderPresent(GOD.gRenderer);
+	quit=1;
+	SDL_Delay(3000);
 }
 
 	//While application is running
@@ -344,7 +384,7 @@ if (AppletMode) {//close on applet mode
 						if (Mix_PlayingMusic() == 0)
 						{
 							//Play the music
-							Mix_PlayMusic(gMusic, -1);
+							Mix_PlayMusic(GOD.gMusic, -1);
 						}
 						//If music is being played
 						else
@@ -482,6 +522,7 @@ if (AppletMode) {//close on applet mode
 									}
 								}
 								file.close();
+								callimagefavorites(favchapter);
 
 
 							}
@@ -533,20 +574,18 @@ if (AppletMode) {//close on applet mode
 							if (!reloadingsearch)
 							{activatefirstimage=true;
 #ifdef __SWITCH__
+								searchtext = KeyboardCall("Buscar Anime (2 letras mínimo.)",searchtext);
 								//blinkLed(1);//LED
 #endif // __SWITCH__
-								searchchapter = 0;
-								TSearchPreview.free();
-								arraysearch.clear();
-								arraysearchimages.clear();
-								statenow = searchstate;
-								returnnow = tosearch;
-#ifdef __SWITCH__
-								searchtext = KeyboardCall("Buscar Anime (2 letras mínimo.)",searchtext);
-#endif // SWITCH				
-								if (searchtext.length() > 1)
-								searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
-
+								if (searchtext.length() > 1){
+									searchchapter = 0;
+									TSearchPreview.free();
+									arraysearch.clear();
+									arraysearchimages.clear();
+									statenow = searchstate;
+									returnnow = tosearch;
+									searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
+								}
 								break;
 							}
 
@@ -601,7 +640,7 @@ if (AppletMode) {//close on applet mode
 								else {
 									selectchapter = arraychapter.size() - 1;
 								}
-								callimage();
+								callimage(selectchapter);
 
 							}
 
@@ -630,13 +669,14 @@ if (AppletMode) {//close on applet mode
 								else {
 									searchchapter = arraysearch.size() - 1;
 								}
-								callimagesearch();
+								callimagesearch(searchchapter);
 
 							}
 							break;
 
 						case favoritesstate:
 
+							TFavorite.free();
 							if (favchapter > 0)
 							{
 								favchapter--;
@@ -645,6 +685,7 @@ if (AppletMode) {//close on applet mode
 							else {
 								favchapter = (int)arrayfavorites.size() - 1;
 							}
+							callimagefavorites(favchapter);
 							break;
 
 						}
@@ -666,7 +707,7 @@ if (AppletMode) {//close on applet mode
 								else {
 									searchchapter = 0;
 								}
-								callimagesearch();
+								callimagesearch(searchchapter);
 
 							}
 							break;
@@ -687,7 +728,7 @@ if (AppletMode) {//close on applet mode
 									selectchapter = 0;
 								}
 
-								callimage();
+								callimage(selectchapter);
 
 							}
 							break;
@@ -705,6 +746,7 @@ if (AppletMode) {//close on applet mode
 							break;
 
 						case favoritesstate:
+							TFavorite.free();
 							if (favchapter < (int)arrayfavorites.size() - 1)
 							{
 								favchapter++;
@@ -714,6 +756,7 @@ if (AppletMode) {//close on applet mode
 							else {
 								favchapter = 0;
 							}
+							callimagefavorites(favchapter);
 							break;
 
 						}
@@ -730,8 +773,8 @@ if (AppletMode) {//close on applet mode
 
 
 		//Clear screen
-		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(gRenderer);
+		SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(GOD.gRenderer);
 
 		//Render current frame
 		//wallpaper
@@ -741,9 +784,9 @@ if (AppletMode) {//close on applet mode
 		case chapterstate:
 		{
 		//Draw a bacground to a nice view
-		{SDL_SetRenderDrawColor(gRenderer, 170, 170, 170, 100);
+		{SDL_SetRenderDrawColor(GOD.gRenderer, 170, 170, 170, 100);
 		SDL_Rect HeaderRect = {0,0, 1280, 720};
-		SDL_RenderFillRect(gRenderer, &HeaderRect);}
+		SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 		
 		std::string temptext = temporallink;
 		replace(temptext, "https://jkanime.net/", "");
@@ -753,41 +796,41 @@ if (AppletMode) {//close on applet mode
 
 
 		//warning , only display in sxos ToDo
-		gTextTexture.loadFromRenderedText(gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
+		gTextTexture.loadFromRenderedText(GOD.gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
 		gTextTexture.render(posxbase, 0 );
 
 		//draw Title
-		gTextTexture.loadFromRenderedText(gFont3, temptext.substr(0,62)+ ":", textColor);
+		gTextTexture.loadFromRenderedText(GOD.gFont3, temptext.substr(0,62)+ ":", textColor);
 		gTextTexture.render(posxbase+10, posybase);
 		
 		{//draw description
-		SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 100);
+		SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 100);
 		SDL_Rect HeaderRect = {25,60, 770, 400};
-		SDL_RenderFillRect(gRenderer, &HeaderRect);
+		SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
 		
-		gTextTexture.loadFromRenderedTextWrap(gFont, rese, textColor, 750);
+		gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
 		gTextTexture.render(posxbase+15, posybase + 65);
 		}
 		
 		{//draw preview image
 		SDL_Rect fillRect = { SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 };
-		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 200);
+		SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
 
-		SDL_RenderFillRect(gRenderer, &fillRect); 
+		SDL_RenderFillRect(GOD.gRenderer, &fillRect); 
 		TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
 		
 		}
 		
 		if (enemision)
 		{
-			gTextTexture.loadFromRenderedText(gFont3, "En Emisión ", { 16,191,0 });
+			gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
 			gTextTexture.render(posxbase + 820, posybase + 598);
-			gTextTexture.loadFromRenderedText(gFont, nextdate, { 255,255,255 });
+			gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
 			gTextTexture.render(posxbase + 1020, posybase + 615);
 		}
 		else
 		{
-			gTextTexture.loadFromRenderedText(gFont3, "Concluido", { 140,0,0 });
+			gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
 			gTextTexture.render(posxbase + 820, posybase + 598);
 		}
 
@@ -795,52 +838,52 @@ if (AppletMode) {//close on applet mode
 		{//draw caps Scroll
 		int XS=100 , YS =0;
 		SDL_Rect fillRect = {posxbase + 70+XS, posybase + 570+YS, 420, 35 };
-			SDL_SetRenderDrawColor(gRenderer, 50, 50, 50, 80);
-			SDL_RenderFillRect(gRenderer, &fillRect);
+			SDL_SetRenderDrawColor(GOD.gRenderer, 50, 50, 50, 80);
+			SDL_RenderFillRect(GOD.gRenderer, &fillRect);
 			if (capmore-2 >= mincapit) {
-				gTextTexture.loadFromRenderedText(gFont3,  std::to_string(capmore-2), textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textColor);
 				gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			if (capmore-1 >= mincapit) {
-				gTextTexture.loadFromRenderedText(gFont3,  std::to_string(capmore-1), textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-1), textColor);
 				gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			
-			gTextTexture.loadFromRenderedText(gFont3, std::to_string(capmore), { 255, 255, 255 });
+			gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
 			gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 
 			if (capmore+1 <= maxcapit) {
-				gTextTexture.loadFromRenderedText(gFont3,  std::to_string(capmore+1), textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+1), textColor);
 				gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			if (capmore+2 <= maxcapit) {
-				gTextTexture.loadFromRenderedText(gFont3,  std::to_string(capmore+2), textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+2), textColor);
 				gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 
 			if (maxcapit >= 10){
-				DrawImageFile(gRenderer,"romfs:/buttons/UP.png",280+XS, 530+YS,"+10");
-				DrawImageFile(gRenderer,"romfs:/buttons/DOWN.png",280+XS, 630+YS,"-10");
+				B_UP.render_T(280+XS, 530+YS,"+10");
+				B_DOWN.render_T(280+XS, 630+YS,"-10");
 			}
-			DrawImageFile(gRenderer,"romfs:/buttons/LEFT.png",80+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
-			DrawImageFile(gRenderer,"romfs:/buttons/RIGHT.png",480+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
+			B_LEFT.render_T(80+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
+			B_RIGHT.render_T(480+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 		}
 				
 		//Draw Footer Buttons
 		int dist = 1120,posdist = 160;
-		DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Ver Online");dist -= posdist;
-		DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Atras");dist -= posdist;
-		if(gFAV){DrawImageFile(gRenderer,"romfs:/buttons/FAV.png",1190, 70,"");}
-		else {DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Favorito");}
+		B_A.render_T(dist, 680,"Ver Online");dist -= posdist;
+		B_B.render_T(dist, 680,"Atras");dist -= posdist;
+		if(gFAV){FAV.render_T(1190, 70,"");}
+		else {B_Y.render_T(dist, 680,"Favorito");}
 		}
 
 		break;
 		case programationstate:
 			if (!reloading&&arraychapter.size()>=1) {
 				{//Draw a rectagle to a nice view
-				SDL_SetRenderDrawColor(gRenderer, 200, 200, 200, 105);
+				SDL_SetRenderDrawColor(GOD.gRenderer, 200, 200, 200, 105);
 				SDL_Rect HeaderRect = {0,0, 620, 670};
-				SDL_RenderFillRect(gRenderer, &HeaderRect);}
+				SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 				
 				for (int x = 0; x < (int)arraychapter.size(); x++) {
 					std::string temptext = arraychapter[x];
@@ -850,17 +893,17 @@ if (AppletMode) {//close on applet mode
 					mayus(temptext);
 
 					if (x == selectchapter) {
-						gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
-						{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
+						gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+						{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
 						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
-						SDL_RenderFillRect(gRenderer, &HeaderRect);}
+						SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 						gTextTexture.render(posxbase, posybase + (x * 22));
 
 						Heart.render(posxbase - 18, posybase + 3 + (x * 22));
 					}
 					else
 					{
-						gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), textColor);
+						gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
 						gTextTexture.render(posxbase, posybase + (x * 22));
 
 					}
@@ -869,7 +912,7 @@ if (AppletMode) {//close on applet mode
 				if (activatefirstimage)
 				{
 					TPreview.free();
-					callimage();
+					callimage(selectchapter);
 					activatefirstimage = false;
 				}
 				if (preview)
@@ -877,43 +920,33 @@ if (AppletMode) {//close on applet mode
 					
 					{int ajuX = -390, ajuY = -450;
 					SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 24};
-					SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 200);
+					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
 
-					SDL_RenderFillRect(gRenderer, &fillRect);
+					SDL_RenderFillRect(GOD.gRenderer, &fillRect);
 					TPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
 					}
 				}
 				
 				//Draw footer buttons
-				int dist = 1100,posdist = 160;;
-				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/R.png",dist, 680,"Buscar");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/L.png",dist, 680,"AnimeFLV");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/Y.png",dist, 680,"Favoritos");dist -= posdist;
-				/*{
-				SDL_Rect fillRect = { 0, SCREEN_HEIGHT - 35, 1280, 25 };
-				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-
-				SDL_RenderFillRect(gRenderer, &fillRect); 
-				
-				gTextTexture.loadFromRenderedText(gFont, "\"A\" para Confirmar - \"R\" para Buscar - \"L\" para AnimeFLV -  \"ZR\" para Favoritos.", textColor);
-				gTextTexture.render(posxbase, SCREEN_HEIGHT - 30);
-				}*/
-
+				int dist = 1100,posdist = 160;
+				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+				B_B.render_T(dist, 680,"Buscar");dist -= posdist;
+				B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
+				B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
 			
 				//Draw Header
-				gTextTexture.loadFromRenderedText(gFont, "(Ver 1.8) #KASTXUPALO", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8) #KASTXUPALO", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				if (imgNumbuffer > 0){
-					gTextTexture.loadFromRenderedText(gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
 					Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
 				}
 				if (porcentajebuffer > 0){
-					gTextTexture.loadFromRenderedText(gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/30)", {0,100,0});
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/30)", {0,100,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
 					Heart.render(posxbase + 570, posybase + 3 + (porcentajebuffer-1) * 22);
-					Heart.render(posxbase + 550, posybase + 3 + (porcentajebuffer-1) * 22);
+					Heart.render(posxbase + 550, posybase + 3 + (porcentajebufferA-1) * 22);
 				}
 
 
@@ -922,30 +955,30 @@ if (AppletMode) {//close on applet mode
 			else
 			{
 				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
-				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+				SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
 
-				SDL_RenderFillRect(gRenderer, &fillRect); }
+				SDL_RenderFillRect(GOD.gRenderer, &fillRect); }
 
 				
-				gTextTexture.loadFromRenderedText(gFont3, "Cargando programación... ", textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando programación... ", textColor);
 				gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
 			}
 			break;
 		case searchstate:
 			if (!reloadingsearch) {
 				//Draw Header
-				gTextTexture.loadFromRenderedText(gFont, "Busqueda", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Busqueda", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				if ((int)arraysearch.size() >= 1){
 					
 					{//Draw a rectagle to a nice view
-					SDL_SetRenderDrawColor(gRenderer, 100, 100, 100, 105);
+					SDL_SetRenderDrawColor(GOD.gRenderer, 100, 100, 100, 105);
 					SDL_Rect HeaderRect = {0,0, 620, 670};
-					SDL_RenderFillRect(gRenderer, &HeaderRect);}
+					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 
-					int of = searchchapter < 28 ? 0 : searchchapter - 28;
+					int of = searchchapter < 28 ? 0 : searchchapter - 26;
 					if (arraysearch.size() > 30) {
-						gTextTexture.loadFromRenderedText(gFont, std::to_string(searchchapter+1)+"/"+std::to_string(arraysearch.size()), {0,0,0});
+						gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(arraysearch.size()), {0,0,0});
 						gTextTexture.render(400, 690);
 					}
 					for (int x = of; x < (int)arraysearch.size(); x++) {
@@ -956,10 +989,10 @@ if (AppletMode) {//close on applet mode
 						replace(temptext, "-", " ");
 						mayus(temptext);
 						if (x == searchchapter) {
-							gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
-							{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
+							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+							{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
 							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, gTextTexture.getHeight()};
-							SDL_RenderFillRect(gRenderer, &HeaderRect);}
+							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 
 							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
@@ -967,7 +1000,7 @@ if (AppletMode) {//close on applet mode
 						else if ((x-of)<30)
 						{
 
-							gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), textColor);
+							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
 							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 
 						}
@@ -977,53 +1010,53 @@ if (AppletMode) {//close on applet mode
 					if (activatefirstsearchimage)
 					{
 						TSearchPreview.free();
-						callimagesearch();
+						callimagesearch(searchchapter);
 						activatefirstsearchimage = false;
 					}
 					if (preview)
 					{
 						{int ajuX = -390, ajuY = -450;
 						SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
-						SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 200);
+						SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
 
-						SDL_RenderFillRect(gRenderer, &fillRect);
+						SDL_RenderFillRect(GOD.gRenderer, &fillRect);
 						TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
 						
 					}
-				}else DrawImageFile(gRenderer,"romfs:/nop.png",230, 355,searchtext);
+				}else NOP.render_T(230, 355,searchtext);
 				
 				{//Draw footer buttons
 				int dist = 1100,posdist = 160;
-				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Volver");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/R.png",dist, 680,"Buscar");dist -= posdist;}
+				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+				B_B.render_T(dist, 680,"Atras");dist -= posdist;
+				B_R.render_T(dist, 680,"Buscar");dist -= posdist;}
 			}
 			else
 			{
 				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT / 2 - 25, 1280, 50 };
-				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+				SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
 
-				SDL_RenderFillRect(gRenderer, &fillRect); }
+				SDL_RenderFillRect(GOD.gRenderer, &fillRect); }
 
 				textColor = { 50, 50, 50 };
-				gTextTexture.loadFromRenderedText(gFont3, "Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)", textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)", textColor);
 				gTextTexture.render(SCREEN_WIDTH / 2 - gTextTexture.getWidth() / 2, SCREEN_HEIGHT / 2 - gTextTexture.getHeight() / 2);
 			}
 			break;
 		case favoritesstate:
 		{
 			//Draw Header
-			gTextTexture.loadFromRenderedText(gFont, "Favoritos", {100,0,0});
+			gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
 			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 			if ((int)arrayfavorites.size() >= 1 ){
 
 			{//Draw a rectagle to a nice view
-			SDL_SetRenderDrawColor(gRenderer, 150, 150, 150, 105);
+			SDL_SetRenderDrawColor(GOD.gRenderer, 150, 150, 150, 105);
 			SDL_Rect HeaderRect = {0,0, 620, 670};
-			SDL_RenderFillRect(gRenderer, &HeaderRect);}
-			int of = favchapter < 28 ? 0 : favchapter - 28;
+			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
+			int of = favchapter < 28 ? 0 : favchapter - 26;
 			if (arrayfavorites.size() > 30) {
-				gTextTexture.loadFromRenderedText(gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
+				gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
 				gTextTexture.render(400, 690);
 			}
 			for (int x = of; x < (int)arrayfavorites.size(); x++) {
@@ -1031,37 +1064,44 @@ if (AppletMode) {//close on applet mode
 
 				replace(temptext, "https://jkanime.net/", "");
 				replace(temptext, "/", "");
-				std::string machu = rootdirectory+temptext+".jpg";
+//				std::string machu = rootdirectory+temptext+".jpg";
 				replace(temptext, "-", " ");
 					mayus(temptext);
-					CheckImgNet(machu);
 					if (x == favchapter) {
-						tempimage = machu;
-							gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
-							{SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 105);
+//						CheckImgNet(machu);
+//						tempimage = machu;
+							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+							{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
 							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, gTextTexture.getHeight()};
-							SDL_RenderFillRect(gRenderer, &HeaderRect);}
+							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
-									
-							int scroll = posybase + (x * 22);
-							DrawImageCover(gRenderer,machu,610,scroll > 570 ? 570 : scroll ,"");
-							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
+							
+							{int ajuX = -390, ajuY = -450;
+
+							SDL_Rect HeaderRect = {posxbase + xdistance + ajuX+5,posybase + ydistance + ajuY+5, TFavorite.getWidth()+6, TFavorite.getHeight()+6};
+							SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 100);
+							
+							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+							TFavorite.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
+
+//							GOD.Cover(machu,610,scroll > 570 ? 570 : scroll ,"",200);
+							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));}
 					}
 					else if((x-of) < 30)
 					{
-						gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), textColor);
+						gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
 						gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 					}
 				}
 			}
 			{//Draw footer buttons
 				int dist = 1100,posdist = 160;
-				DrawImageFile(gRenderer,"romfs:/buttons/A.png",dist, 680,"Aceptar");dist -= posdist;
-				DrawImageFile(gRenderer,"romfs:/buttons/B.png",dist, 680,"Volver");dist -= posdist;
+				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+				B_B.render_T(dist, 680,"Buscar");dist -= posdist;
 				if ((int)arrayfavorites.size() >= 1){
-					DrawImageFile(gRenderer,"romfs:/buttons/X.png",dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
-					DrawImageFile(gRenderer,"romfs:/buttons/ZR.png",dist, 680,"Limpiar");dist -= posdist;
-				}else DrawImageFile(gRenderer,"romfs:/nop.png",230, 355,"");
+					B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
+					B_ZR.render_T(dist, 680,"Limpiar");dist -= posdist;
+				}else NOP.render_T(230, 355,"");
 			}
 			
 		}
@@ -1072,26 +1112,26 @@ if (AppletMode) {//close on applet mode
 			replace(temptext, "/", " ");
 			replace(temptext, "-", " ");
 			mayus(temptext);
-			gTextTexture.loadFromRenderedText(gFont, "Descargando actualmente:", textColor);
+			gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando actualmente:", textColor);
 			gTextTexture.render(posxbase, posybase);
-			gTextTexture.loadFromRenderedText(gFont3, temptext, textColor);
+			gTextTexture.loadFromRenderedText(GOD.gFont3, temptext, textColor);
 			gTextTexture.render(posxbase, posybase + 20);
 
-			gTextTexture.loadFromRenderedText(gFont2, std::to_string(porcendown) + "\%", textColor);
+			gTextTexture.loadFromRenderedText(GOD.gFont2, std::to_string(porcendown) + "\%", textColor);
 			gTextTexture.render(posxbase + 40, posybase + 40);
-			gTextTexture.loadFromRenderedText(gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
+			gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
 			gTextTexture.render(posxbase + 100, posybase + 220);
 
 
-			gTextTexture.loadFromRenderedText(gFont, serverenlace, {168,0,0});
+			gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
 			gTextTexture.render(posxbase , posybase + 280);
-			gTextTexture.loadFromRenderedText(gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
+			gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 			gTextTexture.render(posxbase, posybase + 260);
 			
 			{	
-				DrawImageFile(gRenderer,"romfs:/buttons/B.png",1000, 680,"Cancelar la descarga");
+				B_B.render_T(1000, 680,"Cancelar la descarga");
 			}/*
-			gTextTexture.loadFromRenderedText(gFont, "Cancelar la descarga \"B\" - \"+\" para salir", textColor);
+			gTextTexture.loadFromRenderedText(GOD.gFont, "Cancelar la descarga \"B\" - \"+\" para salir", textColor);
 			gTextTexture.render(posxbase, SCREEN_HEIGHT - 50);*/
 
 			if (std::to_string(porcendown) == "100") {
@@ -1108,19 +1148,19 @@ if (AppletMode) {//close on applet mode
 
 				//Render red filled quad
 				SDL_Rect fillRect = { posxbase + 98, posybase + 400, 580, 50 };
-				SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-				SDL_RenderFillRect(gRenderer, &fillRect);
-				gTextTexture.loadFromRenderedText(gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
+				SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
+				SDL_RenderFillRect(GOD.gRenderer, &fillRect);
+				gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 				gTextTexture.render(posxbase + 100, posybase + 400);
 			}
 			break;
 		}
 
-		DrawImageFile(gRenderer,"romfs:/buttons/PLUS.png",160, 680,"Salir",quit);
-		DrawImageFile(gRenderer,"romfs:/buttons/MINUS.png",10, 680,"Música",Mix_PausedMusic() == 1);
+		B_P.render_T(160, 680,"Salir",quit);
+		B_M.render_T(10, 680,"Música",Mix_PausedMusic() == 1);
 		//Update screen
-		SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
-		SDL_RenderPresent(gRenderer);
+		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
+		SDL_RenderPresent(GOD.gRenderer);
 
 
 	}
@@ -1154,6 +1194,31 @@ if (AppletMode) {//close on applet mode
 	romfsExit();
 	
 #endif // SWITCH
-	close();
+	
+	//Free loaded images
+	gTextTexture.free();
+	Farest.free();
+	Heart.free();
+	TPreview.free();
+	TChapters.free();
+	TSearchPreview.free();
+	B_A.free();
+	B_B.free();
+	B_Y.free();
+	B_X.free();
+	B_L.free();
+	B_R.free();
+	B_ZR.free();
+	B_M.free();
+	B_P.free();
+	B_RIGHT.free();
+	B_LEFT.free();
+	B_UP.free();
+	B_DOWN.free();
+	FAV.free();
+	NOP.free();	
+	
+	GOD.deint();
+
 	return 0;
 }
