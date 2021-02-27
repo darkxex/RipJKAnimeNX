@@ -125,7 +125,7 @@ void blinkLed(u8 times);
 #endif // ___SWITCH___
 
 std::vector<std::string> arrayservers= {
-"Okru",	"Desu", "Xtreme S", "Fembed",
+"Desu", "Xtreme S", "Okru",  "Fembed",
 "MixDrop", "Nozomi", "Mega"
 };
 
