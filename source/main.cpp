@@ -101,6 +101,10 @@ std::string tempimage = "";
 //favs
 int favchapter = 0;
 bool gFAV = false;
+//server
+int selectserver = 0;
+bool serverpront = false;
+
 #ifdef __SWITCH__
 std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
 #else
@@ -120,7 +124,10 @@ HidsysNotificationLedPattern blinkLedPattern(u8 times);
 void blinkLed(u8 times);
 #endif // ___SWITCH___
 
-
+std::vector<std::string> arrayservers= {
+"Okru",	"Desu", "Xtreme S", "Fembed",
+"MixDrop", "Nozomi", "Mega"
+};
 
 int quit = 0;
 
@@ -201,6 +208,7 @@ int main(int argc, char **argv)
 
 
 	SDL_Color textColor = { 50, 50, 50 };
+	SDL_Color textWhite = { 255, 255, 255 };
 	
 	int posxbase = 20;
 	int posybase = 10;
@@ -220,23 +228,23 @@ int main(int argc, char **argv)
 	}
 #endif // SWITCH
 
-if (AppletMode) {//close on applet mode
-	//Clear screen
-	SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(GOD.gRenderer);
+	if (AppletMode) {//close on applet mode
+		//Clear screen
+		SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(GOD.gRenderer);
 
-	//wallpaper
-	Farest.render((0), (0));
-	SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
-	SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
+		//wallpaper
+		Farest.render((0), (0));
+		SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
+		SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
 
-	SDL_RenderFillRect(GOD.gRenderer, &fillRect); 
-	gTextTexture.loadFromRenderedText(GOD.gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
-	gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
-	SDL_RenderPresent(GOD.gRenderer);
-	quit=1;
-	SDL_Delay(3000);
-}
+		SDL_RenderFillRect(GOD.gRenderer, &fillRect); 
+		gTextTexture.loadFromRenderedText(GOD.gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
+		gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
+		SDL_RenderPresent(GOD.gRenderer);
+		quit=1;
+		SDL_Delay(3000);
+	}
 
 	//While application is running
 	while (!quit)
@@ -371,8 +379,13 @@ if (AppletMode) {//close on applet mode
 							}
 							break;
 							case chapterstate:
+							if(serverpront){
 								std::string tempurl = temporallink + std::to_string(capmore) + "/";
-								onlinejkanimevideo(tempurl);
+								if(!onlinejkanimevideo(tempurl,arrayservers[selectserver]))
+									serverpront = false;
+							}else {
+								serverpront = true;
+							}
 							break;
 						}
 					}
@@ -417,7 +430,9 @@ if (AppletMode) {//close on applet mode
 						{
 						case favoritesstate:
 							delFavorite();
+							TFavorite.free();
 							favchapter=0;
+							statenow = programationstate;
 							arrayfavorites.clear();
 							break;
 						}
@@ -431,17 +446,21 @@ if (AppletMode) {//close on applet mode
 							break;
 						case chapterstate:
 							cancelcurl = 1;
-							switch (returnnow)
-							{
-							case toprogramation:
-								statenow = programationstate;
-								break;
-							case tosearch:
-								statenow = searchstate;
-								break;
-							case tofavorite:
-								statenow = favoritesstate;
-								break;
+							if(serverpront){
+								serverpront=false;
+							} else {
+								switch (returnnow)
+								{
+								case toprogramation:
+									statenow = programationstate;
+									break;
+								case tosearch:
+									statenow = searchstate;
+									break;
+								case tofavorite:
+									statenow = favoritesstate;
+									break;
+								}
 							}
 							break;
 						case searchstate:
@@ -473,8 +492,8 @@ if (AppletMode) {//close on applet mode
 
 							break;
 						case favoritesstate:
-
 							delFavorite(favchapter);
+							TFavorite.free();
 							if (!reloading)
 							{
 								if (favchapter > 0) favchapter--;
@@ -494,7 +513,8 @@ if (AppletMode) {//close on applet mode
 								}
 								file.close();
 							}
-							break;
+							callimagefavorites(favchapter);
+						break;
 
 						}
 					}
@@ -559,8 +579,12 @@ if (AppletMode) {//close on applet mode
 						switch (statenow)
 						{//only for test 
 							case chapterstate:
+							if(serverpront){
+								arrayservers.push_back("test");
+							} else {
 								std::string tempurl = temporallink + std::to_string(capmore) + "/";
 								WebBrowserCall(tempurl);
+							}
 							break;
 						}
 
@@ -597,14 +621,16 @@ if (AppletMode) {//close on applet mode
 						switch (statenow)
 						{
 						case chapterstate:
-							if (capmore > mincapit)
-							{
-								capmore--;
-							}
-							if (capmore < mincapit)
-							{
-								capmore = mincapit;
-							}
+							if(!serverpront){
+								if (capmore > mincapit)
+								{
+									capmore--;
+								}
+								if (capmore < mincapit)
+								{
+									capmore = mincapit;
+								}
+							} else serverpront = false;
 							break;
 						}
 					}
@@ -613,14 +639,16 @@ if (AppletMode) {//close on applet mode
 						switch (statenow)
 						{
 						case chapterstate:
-							if (capmore < maxcapit)
-							{
-								capmore++;
-							}
-							if (capmore > maxcapit)
-							{
-								capmore = maxcapit;
-							}
+							if(!serverpront){
+								if (capmore < maxcapit)
+								{
+									capmore++;
+								}
+								if (capmore > maxcapit)
+								{
+									capmore = maxcapit;
+								}
+							} else serverpront = false;
 							break;
 						}
 					}
@@ -646,14 +674,20 @@ if (AppletMode) {//close on applet mode
 
 							break;
 						case chapterstate:
-
-							if (capmore < maxcapit)
-							{
-								capmore = capmore + 10;
-							}
-							if (capmore > maxcapit)
-							{
-								capmore = maxcapit;
+							if(!serverpront){//selectserver
+								if (capmore < maxcapit)
+								{
+									capmore = capmore + 10;
+								}
+								if (capmore > maxcapit)
+								{
+									capmore = maxcapit;
+								}
+							} else {
+								if (selectserver > 0) 
+								{
+									selectserver--;
+								}
 							}
 							break;
 
@@ -708,7 +742,6 @@ if (AppletMode) {//close on applet mode
 									searchchapter = 0;
 								}
 								callimagesearch(searchchapter);
-
 							}
 							break;
 
@@ -734,14 +767,21 @@ if (AppletMode) {//close on applet mode
 							break;
 
 						case chapterstate:
+							if(!serverpront){//selectserver
+								if (capmore > 1)
+								{
+									capmore = capmore - 10;
+								}
+								if (capmore < mincapit)
+								{
+									capmore = mincapit;
+								}
+							} else {
+								if (selectserver < (int)arrayservers.size()-1) 
+								{
+									selectserver++;
+								}
 
-							if (capmore > 1)
-							{
-								capmore = capmore - 10;
-							}
-							if (capmore < mincapit)
-							{
-								capmore = mincapit;
 							}
 							break;
 
@@ -768,7 +808,6 @@ if (AppletMode) {//close on applet mode
 				break;
 			}
 #endif // SWITCH
-
 		}
 
 
@@ -812,15 +851,32 @@ if (AppletMode) {//close on applet mode
 		gTextTexture.render(posxbase+15, posybase + 65);
 		}
 		
-		{//draw preview image
+		{//draw back rectangle
 		SDL_Rect fillRect = { SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 };
 		SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
-
 		SDL_RenderFillRect(GOD.gRenderer, &fillRect); 
+
+		//draw preview image
 		TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
-		
+		}
+
+		if(serverpront){
+			//Draw the play select
+			{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 100);
+			SDL_Rect HeaderRect = {0,0, 1280, 720};
+			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
+
+			int sizefix = (int)arrayservers.size() * 52;
+			SDL_SetRenderDrawColor(GOD.gRenderer, 190, 190, 190, 220);
+			SDL_Rect HeaderRect = {840,610-sizefix, 190, sizefix};
+			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+			for (int x = 0; x < (int)arrayservers.size(); x++) {
+				gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x], x == selectserver ? textWhite : textColor);
+				gTextTexture.render(posxbase+840, 610 - sizefix + (x * 52));
+			}
 		}
 		
+
 		if (enemision)
 		{
 			gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
@@ -868,11 +924,19 @@ if (AppletMode) {//close on applet mode
 			B_LEFT.render_T(80+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
 			B_RIGHT.render_T(480+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 		}
-				
+		
 		//Draw Footer Buttons
-		int dist = 1120,posdist = 160;
-		B_A.render_T(dist, 680,"Ver Online");dist -= posdist;
-		B_B.render_T(dist, 680,"Atras");dist -= posdist;
+		int dist = 1100,posdist = 160;
+		if(serverpront){
+			B_A.render_T(dist, 680,"Ver Online");dist -= posdist;
+			B_B.render_T(dist, 680,"Cerrar");dist -= posdist;
+		} else {
+			B_A.render_T(dist, 680,"Seleccionar");dist -= posdist;
+			B_B.render_T(dist, 680,"Atras");dist -= posdist;
+		}
+		
+		
+		
 		if(gFAV){FAV.render_T(1190, 70,"");}
 		else {B_Y.render_T(dist, 680,"Favorito");}
 		}
@@ -885,7 +949,7 @@ if (AppletMode) {//close on applet mode
 				SDL_Rect HeaderRect = {0,0, 620, 670};
 				SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 				
-				for (int x = 0; x < (int)arraychapter.size(); x++) {
+				for (int x = 0; x < (int)arraychapter.size()-1; x++) {
 					std::string temptext = arraychapter[x];
 					replace(temptext, "https://jkanime.net/", "");
 					replace(temptext, "/", " ");
@@ -930,7 +994,7 @@ if (AppletMode) {//close on applet mode
 				//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
-				B_B.render_T(dist, 680,"Buscar");dist -= posdist;
+				B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 				B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 				B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
 			

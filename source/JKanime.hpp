@@ -95,51 +95,6 @@ int downloadjkanimevideo(void* data)
 }
 
 
-void onlinejkanimevideo(std::string onlineenlace)
-{
-	std::string videourl = "";
-	std::string content = "";
-
-
-	std::string enlacejk = onlineenlace;
-
-	content = gethtml(enlacejk.c_str());
-	int val1 = 0, val2 = 0;
-
-	val1 = content.find("https://jkanime.net/um.php?");
-	if (val1 != -1)
-	{
-		val2 = content.find('"', val1);
-
-		videourl = content.substr(val1, val2 - val1);
-		replace(videourl, "\\", "");
-
-
-		std::cout << videourl << std::endl;
-
-
-
-	}
-	else
-	{
-		val1 = content.find("https://jkanime.net/jk.php?");
-		if (val1 != -1)
-		{
-			val2 = content.find('"', val1);
-
-			videourl = content.substr(val1, val2 - val1);
-			replace(videourl, "\\", "");
-
-
-			std::cout << videourl << std::endl;
-
-		}
-	}
-#ifdef __SWITCH__
-	WebBrowserCall(videourl);
-#endif //  SWITCH
-
-}
 
 std::vector<std::string> arrayimages;
 std::vector<std::string> arraychapter;
@@ -211,7 +166,8 @@ std::vector<std::string> con_full;
 SDL_Thread* first = NULL;
 
 int GETCONT(void* d){
-	for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
+con_full.clear();
+for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
 	{
 		porcentajebufferA = x+1;
 		std::string link = arraychapter[x];

@@ -12,9 +12,65 @@
 #include <switch.h>
 #include <thread>
 #include "utils.hpp"
+#include "Networking.hpp"
+#include "applet.hpp"
 
+std::string scrapElement(std::string content, std::string get){
+	int val1 = 0, val2 = 0;
+	std::string Element = "";
+	val1 = content.find(get);
+	if (val1 != -1)
+	{
+		val2 = content.find('"', val1);
 
+		Element = content.substr(val1, val2 - val1);
+		replace(Element, "\\", "");
 
+		std::cout << Element << std::endl;
+	}
+return Element;
+}
+
+bool onlinejkanimevideo(std::string onlineenlace,std::string server)
+{
+	std::string videourl = "";
+	std::string content = "";
+	content = gethtml(onlineenlace);
+	
+	if (server == "Okru"){
+		videourl = scrapElement(content,"https://jkanime.net/jkokru.php?");
+		replace(videourl, "https://jkanime.net/jkokru.php?u=", "https://ok.ru/videoembed/");
+	}
+	if (server == "Desu"){
+		videourl = scrapElement(content,"https://jkanime.net/um.php?");
+	}
+	if (server == "Fembed"){
+		videourl = scrapElement(content,"https://jkanime.net/jkfembed.php?u=");
+		replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/v/");
+	}
+	if (server == "Xtreme S"){
+		videourl = scrapElement(content,"https://jkanime.net/jk.php?");
+	}
+	if (server == "MixDrop"){
+		videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
+		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
+	}
+	if (server == "Nozomi"){
+		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
+	}
+	if (server == "Mega"){
+		videourl = scrapElement(content,"https://mega.nz/embed/");
+	}
+
+#ifdef __SWITCH__
+if (videourl.length() != 0)	
+{
+	WebBrowserCall(videourl);
+	return true;
+}
+#endif //  SWITCH
+return false;
+}
 
 bool isFileExist(std::string file)
 {
