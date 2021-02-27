@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <switch.h>
 #include <dirent.h>
-#endif 
+#endif
 #ifndef __SWITCH__
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -16,13 +16,13 @@
 #include <string>
 #include <curl/curl.h>
 #include <SDL_mixer.h>
-#include <math.h> 
+#include <math.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string>
 #include <cmath>
 #include <iostream>
-#include <math.h>  
+#include <math.h>
 #include <Vector>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -67,7 +67,7 @@ LTexture NOP;
 
 //main SLD funct
 SDLB GOD;
-	
+
 //Gui
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
 enum statesreturn { toprogramation, tosearch, tofavorite };
@@ -147,22 +147,22 @@ int main(int argc, char **argv)
 	mkdir("sdmc:/switch/RipJKAnime_NX", 0777);
 	mkdir("sdmc:/switch/RipJKAnime_NX/DATA", 0777);
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
-		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");		
+		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
 	}
-	
-	Result rc = 0;	
+
+	Result rc = 0;
 	rc =  accountInitialize(AccountServiceType_Application);
 	if (R_SUCCEEDED(rc)) {
 		//accountGetServiceSession ();
 		accountGetPreselectedUser(&uid);
 		printf("Goted user\n");
-		accountExit();       
-	} else printf("failed tu get user \n"); 
-	
+		accountExit();
+	} else printf("failed tu get user \n");
+
 	AppletMode=GetAppletMode();
 #endif
-	
-	
+
+
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* threadID = NULL;
@@ -176,13 +176,13 @@ int main(int argc, char **argv)
 		Mix_PlayMusic(GOD.gMusic, -1);
 	}
 #ifdef __SWITCH__
-	
+
 	if (isFileExist("texture.png")){
 		Farest.loadFromFile("texture.png");
 	} else {
 		Farest.loadFromFile("romfs:/texture.png");
 	}
-	
+
 	Heart.loadFromFile("romfs:/heart.png");
 #else
 	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
@@ -209,7 +209,7 @@ int main(int argc, char **argv)
 
 	SDL_Color textColor = { 50, 50, 50 };
 	SDL_Color textWhite = { 255, 255, 255 };
-	
+
 	int posxbase = 20;
 	int posybase = 10;
 	int maxcapit = 1;
@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 		SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
 		SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
 
-		SDL_RenderFillRect(GOD.gRenderer, &fillRect); 
+		SDL_RenderFillRect(GOD.gRenderer, &fillRect);
 		gTextTexture.loadFromRenderedText(GOD.gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
 		gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
 		SDL_RenderPresent(GOD.gRenderer);
@@ -275,7 +275,7 @@ int main(int argc, char **argv)
 				// seek for joystick #0
 				if (e.jbutton.which == 0) {
 					if (e.jbutton.button == 0) {// (A) button down
-						
+
 						switch (statenow)
 						{
 							case programationstate:
@@ -296,15 +296,15 @@ int main(int argc, char **argv)
 											rese = con_rese[selectchapter];
 											nextdate = con_nextdate[selectchapter];
 											enemision = con_enemision[selectchapter];
-											tienezero = con_tienezero[selectchapter];										
+											tienezero = con_tienezero[selectchapter];
 											maxcapit = con_maxcapit[selectchapter];
 											printf("Goted %d\n",selectchapter);
 										}catch(...){
 											printf("Error \n");
 										}
 									}
-									
-									
+
+
 									statenow = chapterstate;
 									if (tienezero) {
 										maxcapit = maxcapit - 1;
@@ -421,7 +421,7 @@ int main(int argc, char **argv)
 						{
 							if (e.jbutton.button == 6)
 								WebBrowserCall("https://animeflv.net",true);
-							else 
+							else
 								WebBrowserCall("https://jkanime.net",true);
 						}
 					}
@@ -519,7 +519,7 @@ int main(int argc, char **argv)
 						}
 					}
 					else if (e.jbutton.button == 3) {// (Y) button down
-						
+
 
 						switch (statenow)
 						{
@@ -577,7 +577,7 @@ int main(int argc, char **argv)
 					}
 					else if (e.jbutton.button == 5) {// (R3) button down
 						switch (statenow)
-						{//only for test 
+						{//only for test
 							case chapterstate:
 							if(serverpront){
 								arrayservers.push_back("test");
@@ -590,7 +590,7 @@ int main(int argc, char **argv)
 
 					}
 					else if (e.jbutton.button == 7) {// (R) button down
-						
+
 						switch (statenow)
 						{
 						case programationstate:
@@ -617,7 +617,7 @@ int main(int argc, char **argv)
 
 					}
 					else if (e.jbutton.button == 12 || e.jbutton.button == 16) {// (left) button down
-						
+
 						switch (statenow)
 						{
 						case chapterstate:
@@ -635,7 +635,7 @@ int main(int argc, char **argv)
 						}
 					}
 					else if (e.jbutton.button == 14 || e.jbutton.button == 18) {// (right) button down
-						
+
 						switch (statenow)
 						{
 						case chapterstate:
@@ -653,7 +653,7 @@ int main(int argc, char **argv)
 						}
 					}
 					else if (e.jbutton.button == 17 || e.jbutton.button == 13) {// (up) button down
-						
+
 						switch (statenow)
 						{
 						case programationstate:
@@ -684,7 +684,7 @@ int main(int argc, char **argv)
 									capmore = maxcapit;
 								}
 							} else {
-								if (selectserver > 0) 
+								if (selectserver > 0)
 								{
 									selectserver--;
 								}
@@ -725,7 +725,7 @@ int main(int argc, char **argv)
 						}
 					}
 					else if (e.jbutton.button == 19 || e.jbutton.button == 15) {// (down) button down
-						
+
 						switch (statenow)
 						{
 						case searchstate:
@@ -777,7 +777,7 @@ int main(int argc, char **argv)
 									capmore = mincapit;
 								}
 							} else {
-								if (selectserver < (int)arrayservers.size()-1) 
+								if (selectserver < (int)arrayservers.size()-1)
 								{
 									selectserver++;
 								}
@@ -826,7 +826,7 @@ int main(int argc, char **argv)
 		{SDL_SetRenderDrawColor(GOD.gRenderer, 170, 170, 170, 100);
 		SDL_Rect HeaderRect = {0,0, 1280, 720};
 		SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-		
+
 		std::string temptext = temporallink;
 		replace(temptext, "https://jkanime.net/", "");
 		replace(temptext, "/", " ");
@@ -841,20 +841,20 @@ int main(int argc, char **argv)
 		//draw Title
 		gTextTexture.loadFromRenderedText(GOD.gFont3, temptext.substr(0,62)+ ":", textColor);
 		gTextTexture.render(posxbase+10, posybase);
-		
+
 		{//draw description
 		SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 100);
 		SDL_Rect HeaderRect = {25,60, 770, 400};
 		SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
-		
+
 		gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
 		gTextTexture.render(posxbase+15, posybase + 65);
 		}
-		
+
 		{//draw back rectangle
 		SDL_Rect fillRect = { SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 };
 		SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
-		SDL_RenderFillRect(GOD.gRenderer, &fillRect); 
+		SDL_RenderFillRect(GOD.gRenderer, &fillRect);
 
 		//draw preview image
 		TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
@@ -875,7 +875,7 @@ int main(int argc, char **argv)
 				gTextTexture.render(posxbase+840, 610 - sizefix + (x * 52));
 			}
 		}
-		
+
 
 		if (enemision)
 		{
@@ -904,7 +904,7 @@ int main(int argc, char **argv)
 				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-1), textColor);
 				gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
-			
+
 			gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
 			gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 
@@ -924,7 +924,7 @@ int main(int argc, char **argv)
 			B_LEFT.render_T(80+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
 			B_RIGHT.render_T(480+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 		}
-		
+
 		//Draw Footer Buttons
 		int dist = 1100,posdist = 160;
 		if(serverpront){
@@ -934,9 +934,9 @@ int main(int argc, char **argv)
 			B_A.render_T(dist, 680,"Seleccionar");dist -= posdist;
 			B_B.render_T(dist, 680,"Atras");dist -= posdist;
 		}
-		
-		
-		
+
+
+
 		if(gFAV){FAV.render_T(1190, 70,"");}
 		else {B_Y.render_T(dist, 680,"Favorito");}
 		}
@@ -948,8 +948,8 @@ int main(int argc, char **argv)
 				SDL_SetRenderDrawColor(GOD.gRenderer, 200, 200, 200, 105);
 				SDL_Rect HeaderRect = {0,0, 620, 670};
 				SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-				
-				for (int x = 0; x < (int)arraychapter.size()-1; x++) {
+
+				for (int x = 0; x < (int)arraychapter.size(); x++) {
 					std::string temptext = arraychapter[x];
 					replace(temptext, "https://jkanime.net/", "");
 					replace(temptext, "/", " ");
@@ -981,7 +981,7 @@ int main(int argc, char **argv)
 				}
 				if (preview)
 				{
-					
+
 					{int ajuX = -390, ajuY = -450;
 					SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 24};
 					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
@@ -990,16 +990,16 @@ int main(int argc, char **argv)
 					TPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
 					}
 				}
-				
+
 				//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 				B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 				B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 				B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
-			
+
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8.1) #KASTXUPALO", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8.2) #KASTXUPALO", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				if (imgNumbuffer > 0){
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
@@ -1023,7 +1023,7 @@ int main(int argc, char **argv)
 
 				SDL_RenderFillRect(GOD.gRenderer, &fillRect); }
 
-				
+
 				gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando programación... ", textColor);
 				gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
 			}
@@ -1034,7 +1034,7 @@ int main(int argc, char **argv)
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Busqueda", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				if ((int)arraysearch.size() >= 1){
-					
+
 					{//Draw a rectagle to a nice view
 					SDL_SetRenderDrawColor(GOD.gRenderer, 100, 100, 100, 105);
 					SDL_Rect HeaderRect = {0,0, 620, 670};
@@ -1047,7 +1047,7 @@ int main(int argc, char **argv)
 					}
 					for (int x = of; x < (int)arraysearch.size(); x++) {
 						std::string temptext = arraysearch[x];
-					
+
 						replace(temptext, "https://jkanime.net/", "");
 						replace(temptext, "/", " ");
 						replace(temptext, "-", " ");
@@ -1085,10 +1085,10 @@ int main(int argc, char **argv)
 
 						SDL_RenderFillRect(GOD.gRenderer, &fillRect);
 						TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
-						
+
 					}
 				}else NOP.render_T(230, 355,searchtext);
-				
+
 				{//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
@@ -1139,12 +1139,12 @@ int main(int argc, char **argv)
 							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, gTextTexture.getHeight()};
 							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
-							
+
 							{int ajuX = -390, ajuY = -450;
 
 							SDL_Rect HeaderRect = {posxbase + xdistance + ajuX+5,posybase + ydistance + ajuY+5, TFavorite.getWidth()+6, TFavorite.getHeight()+6};
 							SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 100);
-							
+
 							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
 							TFavorite.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
 
@@ -1167,7 +1167,7 @@ int main(int argc, char **argv)
 					B_ZR.render_T(dist, 680,"Limpiar");dist -= posdist;
 				}else NOP.render_T(230, 355,"");
 			}
-			
+
 		}
 		break;
 		case downloadstate:
@@ -1191,8 +1191,8 @@ int main(int argc, char **argv)
 			gTextTexture.render(posxbase , posybase + 280);
 			gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 			gTextTexture.render(posxbase, posybase + 260);
-			
-			{	
+
+			{
 				B_B.render_T(1000, 680,"Cancelar la descarga");
 			}/*
 			gTextTexture.loadFromRenderedText(GOD.gFont, "Cancelar la descarga \"B\" - \"+\" para salir", textColor);
@@ -1248,7 +1248,7 @@ int main(int argc, char **argv)
 	}
 	else {
 		SDL_WaitThread(searchthread,NULL);
-		
+
 	}
 	//Free resources and close SDL
 #ifdef __SWITCH__
@@ -1256,9 +1256,9 @@ int main(int argc, char **argv)
 	hidsysExit();
 	socketExit();
 	romfsExit();
-	
+
 #endif // SWITCH
-	
+
 	//Free loaded images
 	gTextTexture.free();
 	Farest.free();
@@ -1280,8 +1280,8 @@ int main(int argc, char **argv)
 	B_UP.free();
 	B_DOWN.free();
 	FAV.free();
-	NOP.free();	
-	
+	NOP.free();
+
 	GOD.deint();
 
 	return 0;
