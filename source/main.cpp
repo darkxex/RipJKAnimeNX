@@ -634,7 +634,7 @@ int main(int argc, char **argv)
 							if (!reloadingsearch)
 							{activatefirstimage=true;
 #ifdef __SWITCH__
-								searchtext = KeyboardCall("Buscar Anime (2 letras mínimo.)",searchtext);
+								searchtext = KeyboardCall("Buscar Anime (2 letras minimo.)",searchtext);
 								//blinkLed(1);//LED
 #endif // __SWITCH__
 								if (searchtext.length() > 1){
@@ -1027,8 +1027,8 @@ int main(int argc, char **argv)
 				if (preview)
 				{
 
-					{int ajuX = -390, ajuY = -450;
-					SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 24};
+					{int ajuX = -350, ajuY = -450;
+					SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
 					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
 
 					SDL_RenderFillRect(GOD.gRenderer, &fillRect);
@@ -1087,7 +1087,7 @@ int main(int argc, char **argv)
 					SDL_Rect HeaderRect = {0,0, 620, 670};
 					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 
-					int of = searchchapter < 28 ? 0 : searchchapter - 26;
+					int of = searchchapter < 30 ? 0 : searchchapter - 26;
 					if (arraysearch.size() > 30) {
 						gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(arraysearch.size()), {0,0,0});
 						gTextTexture.render(400, 690);
@@ -1126,7 +1126,7 @@ int main(int argc, char **argv)
 					}
 					if (preview)
 					{
-						{int ajuX = -390, ajuY = -450;
+						{int ajuX = -350, ajuY = -450;
 						SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
 						SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
 
@@ -1167,7 +1167,7 @@ int main(int argc, char **argv)
 			SDL_SetRenderDrawColor(GOD.gRenderer, 150, 150, 150, 105);
 			SDL_Rect HeaderRect = {0,0, 620, 670};
 			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-			int of = favchapter < 28 ? 0 : favchapter - 26;
+			int of = favchapter < 30 ? 0 : favchapter - 26;
 			if (arrayfavorites.size() > 30) {
 				gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
 				gTextTexture.render(400, 690);
@@ -1189,10 +1189,10 @@ int main(int argc, char **argv)
 							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
 							T_T.render(posxbase, posybase + ((x-of) * 22));
 
-							{int ajuX = -390, ajuY = -450;
+							{int ajuX = -350, ajuY = -450;
 
-							SDL_Rect HeaderRect = {posxbase + xdistance + ajuX+5,posybase + ydistance + ajuY+5, TFavorite.getWidth()+6, TFavorite.getHeight()+6};
-							SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 100);
+							SDL_Rect HeaderRect = {posxbase + xdistance + ajuX -2,posybase + ydistance + ajuY -2, TFavorite.getWidth()+4, TFavorite.getHeight()+4};
+							SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
 
 							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
 							TFavorite.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
