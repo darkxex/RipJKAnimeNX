@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <math.h> 
+#include <math.h>
 #include <stdio.h>
 #include <string>
 #include <cmath>
