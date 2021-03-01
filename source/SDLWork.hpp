@@ -12,6 +12,9 @@ TTF_Font *gFontcapit = NULL;
 TTF_Font *gFont2 = NULL;
 TTF_Font *gFont3 = NULL;
 Mix_Music* gMusic = NULL;
+int TouchX=-1;
+int TouchY=-1;
+int GenState=-1;
 void Image(std::string path,int X, int Y,std::string Text = "",bool off=false);
 void Cover(std::string path,int X, int Y,std::string Text = "",int HS = 100);
 void deint();
@@ -49,9 +52,14 @@ public:
 	//Renders texture at given point
 	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void render_T(int x, int y, std::string text="", bool presed=false);
+	bool render_AH(int x, int y, int w, int h, bool type);
+	//get touch
+	bool SP();
 	//Gets image dimensions
 	int getWidth();
 	int getHeight();
+	int getX();
+	int getY();
 
 private:
 	//The actual hardware texture
@@ -60,6 +68,9 @@ private:
 	//Image dimensions
 	int mWidth;
 	int mHeight;
+	int mX;
+	int mY;
+	int SelIns;
 };
 
 
