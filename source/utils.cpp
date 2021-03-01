@@ -36,16 +36,10 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	std::string videourl = "";
 	std::string content = "";
 	content = gethtml(onlineenlace);
-
+	
 	if (server == "Okru"){
 		videourl = scrapElement(content,"https://jkanime.net/jkokru.php?");
 		replace(videourl, "https://jkanime.net/jkokru.php?u=", "https://ok.ru/videoembed/");
-
-		if (videourl == "")
-            {
-                std::cout << "Server no encontrado..."<< std::endl;
-            videourl = scrapElement(content,"https://jkanime.net/um.php?");
-            }
 	}
 	if (server == "Desu"){
 		videourl = scrapElement(content,"https://jkanime.net/um.php?");
@@ -53,57 +47,28 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	if (server == "Fembed"){
 		videourl = scrapElement(content,"https://jkanime.net/jkfembed.php?u=");
 		replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/v/");
-
-		if (videourl == "")
-            {
-                std::cout << "Server no encontrado..."<< std::endl;
-            videourl = scrapElement(content,"https://jkanime.net/um.php?");
-            }
 	}
 	if (server == "Xtreme S"){
 		videourl = scrapElement(content,"https://jkanime.net/jk.php?");
-
-		if (videourl == "")
-            {
-                std::cout << "Server no encontrado..."<< std::endl;
-            videourl = scrapElement(content,"https://jkanime.net/um.php?");
-            }
 	}
 	if (server == "MixDrop"){
 		videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
 		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
-
-		if (videourl == "")
-            {
-                std::cout << "Server no encontrado..."<< std::endl;
-            videourl = scrapElement(content,"https://jkanime.net/um.php?");
-            }
 	}
 	if (server == "Nozomi"){
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
-
-		if (videourl == "")
-            {
-                std::cout << "Server no encontrado..."<< std::endl;
-            videourl = scrapElement(content,"https://jkanime.net/um.php?");
-            }
 	}
 	if (server == "Mega"){
 		videourl = scrapElement(content,"https://mega.nz/embed/");
-
-		if (videourl == "")
-            {
-                std::cout << "Server no encontrado..."<< std::endl;
-            videourl = scrapElement(content,"https://jkanime.net/um.php?");
-            }
 	}
-
 
 #ifdef __SWITCH__
 if (videourl.length() != 0)
 {
 	WebBrowserCall(videourl);
 	return true;
+} else {
+	std::cout << "Server no encontrado..." << onlineenlace << std::endl;
 }
 #endif //  SWITCH
 return false;

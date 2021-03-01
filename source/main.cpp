@@ -16,7 +16,6 @@
 #include <string>
 #include <curl/curl.h>
 #include <SDL_mixer.h>
-#include <math.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string>
@@ -65,9 +64,12 @@ LTexture B_DOWN;
 LTexture FAV;
 LTexture NOP;
 
+LTexture Slider;
+LTexture T_T;
+
 //main SLD funct
 SDLB GOD;
-
+	
 //Gui
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
 enum statesreturn { toprogramation, tosearch, tofavorite };
@@ -125,9 +127,18 @@ void blinkLed(u8 times);
 #endif // ___SWITCH___
 
 std::vector<std::string> arrayservers= {
-"Desu", "Xtreme S", "Okru",  "Fembed",
+"Desu", "Xtreme S", "Okru",  "Fembed"
+};
+
+std::vector<std::string> arrayserversbak= {
+"Desu", "Xtreme S", "Okru",  "Fembed"
+};
+/*
+std::vector<std::string> arrayserversbak= {
+"Okru",	"Desu", "Xtreme S", "Fembed",
 "MixDrop", "Nozomi", "Mega"
 };
+*/
 
 int quit = 0;
 
@@ -209,6 +220,7 @@ int main(int argc, char **argv)
 
 	SDL_Color textColor = { 50, 50, 50 };
 	SDL_Color textWhite = { 255, 255, 255 };
+	SDL_Color textGray = { 200, 200, 200 };
 
 	int posxbase = 20;
 	int posybase = 10;
@@ -260,17 +272,37 @@ int main(int argc, char **argv)
 			}
 			//#include "keyboard.h"
 #ifdef __SWITCH__
-
+			int Width = 1280;//
+			int Height = 720;//
+			
+			GOD.GenState = statenow;
 			switch (e.type) {
 			case SDL_JOYAXISMOTION:
-				SDL_Log("Joystick %d axis %d value: %d\n",
-					e.jaxis.which,
-					e.jaxis.axis, e.jaxis.value);
+				//SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
 				break;
-
-			case SDL_JOYBUTTONDOWN:
-				SDL_Log("Joystick %d button %d down\n",
-					e.jbutton.which, e.jbutton.button);
+			case SDL_FINGERDOWN:
+			GOD.TouchX = e.tfinger.x * Width;
+			GOD.TouchY = e.tfinger.y * Height;
+			e.jbutton.button=-1;
+			if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() || TSearchPreview.SP() || TFavorite.SP()) e.jbutton.button = 0;
+			if (B_B.SP()) e.jbutton.button = 1;
+			if (B_X.SP()) e.jbutton.button = 2;
+			if (B_Y.SP()) e.jbutton.button = 3;
+			if (B_L.SP()) e.jbutton.button = 6;
+			if (B_R.SP()) e.jbutton.button = 7;
+//			if (B_ZR.SP()) e.jbutton.button = 9;
+			if (B_P.SP()) e.jbutton.button = 10;
+			if (B_M.SP()) e.jbutton.button = 11;
+			if (B_LEFT.SP()) e.jbutton.button = 12;
+			if (B_RIGHT.SP()) e.jbutton.button = 18;
+			if (B_UP.SP()) e.jbutton.button = 13;
+			if (B_DOWN.SP()) e.jbutton.button = 15;
+			SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
+			GOD.TouchX = -1;
+			GOD.TouchY = -1;
+			
+			case SDL_JOYBUTTONDOWN :
+				//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 				// seek for joystick #0
 				if (e.jbutton.which == 0) {
@@ -298,6 +330,7 @@ int main(int argc, char **argv)
 											enemision = con_enemision[selectchapter];
 											tienezero = con_tienezero[selectchapter];
 											maxcapit = con_maxcapit[selectchapter];
+											generos = con_generos[selectchapter];
 											printf("Goted %d\n",selectchapter);
 										}catch(...){
 											printf("Error \n");
@@ -381,10 +414,13 @@ int main(int argc, char **argv)
 							case chapterstate:
 							if(serverpront){
 								std::string tempurl = temporallink + std::to_string(capmore) + "/";
-								if(!onlinejkanimevideo(tempurl,arrayservers[selectserver]))
-									serverpront = false;
+								if(!onlinejkanimevideo(tempurl,arrayservers[selectserver])){
+									arrayservers.erase(arrayservers.begin()+selectserver);
+									//serverpront = false;
+								}
 							}else {
 								serverpront = true;
+								arrayservers=arrayserversbak;
 							}
 							break;
 						}
@@ -419,10 +455,10 @@ int main(int argc, char **argv)
 					else if (e.jbutton.button == 6 || e.jbutton.button == 8) {// (L & ZL) button down
 						if (statenow == programationstate)
 						{
-							if (e.jbutton.button == 6)
-								WebBrowserCall("https://animeflv.net",true);
-							else
+							if (e.jbutton.button == 8)
 								WebBrowserCall("https://jkanime.net",true);
+							else 
+								WebBrowserCall("https://animeflv.net",true);
 						}
 					}
 					else if (e.jbutton.button == 9) {// (ZR) button down
@@ -577,7 +613,7 @@ int main(int argc, char **argv)
 					}
 					else if (e.jbutton.button == 5) {// (R3) button down
 						switch (statenow)
-						{//only for test
+						{//only for test 
 							case chapterstate:
 							if(serverpront){
 								arrayservers.push_back("test");
@@ -621,16 +657,15 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case chapterstate:
-							if(!serverpront){
-								if (capmore > mincapit)
-								{
-									capmore--;
-								}
-								if (capmore < mincapit)
-								{
-									capmore = mincapit;
-								}
-							} else serverpront = false;
+							if(serverpront){serverpront = false;}
+							if (capmore > mincapit)
+							{
+								capmore--;
+							}
+							if (capmore < mincapit)
+							{
+								capmore = mincapit;
+							}
 							break;
 						}
 					}
@@ -639,16 +674,16 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case chapterstate:
-							if(!serverpront){
-								if (capmore < maxcapit)
-								{
-									capmore++;
-								}
-								if (capmore > maxcapit)
-								{
-									capmore = maxcapit;
-								}
-							} else serverpront = false;
+						
+							if(serverpront){serverpront = false;}
+							if (capmore < maxcapit)
+							{
+								capmore++;
+							}
+							if (capmore > maxcapit)
+							{
+								capmore = maxcapit;
+							}
 							break;
 						}
 					}
@@ -780,7 +815,7 @@ int main(int argc, char **argv)
 								if (selectserver < (int)arrayservers.size()-1)
 								{
 									selectserver++;
-								}
+								}else if(serverpront){serverpront = false;selectserver=0;}
 
 							}
 							break;
@@ -844,13 +879,16 @@ int main(int argc, char **argv)
 
 		{//draw description
 		SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 100);
-		SDL_Rect HeaderRect = {25,60, 770, 400};
+		SDL_Rect HeaderRect = {25,60, 770, 340};
 		SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
 
 		gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
 		gTextTexture.render(posxbase+15, posybase + 65);
-		}
 
+		gTextTexture.loadFromRenderedTextWrap(GOD.gFont3, generos, textColor,750);
+		gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
+		}
+		
 		{//draw back rectangle
 		SDL_Rect fillRect = { SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 };
 		SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
@@ -859,24 +897,6 @@ int main(int argc, char **argv)
 		//draw preview image
 		TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
 		}
-
-		if(serverpront){
-			//Draw the play select
-			{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 100);
-			SDL_Rect HeaderRect = {0,0, 1280, 720};
-			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-
-			int sizefix = (int)arrayservers.size() * 52;
-			SDL_SetRenderDrawColor(GOD.gRenderer, 190, 190, 190, 220);
-			SDL_Rect HeaderRect = {840,610-sizefix, 190, sizefix};
-			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
-			for (int x = 0; x < (int)arrayservers.size(); x++) {
-				gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x], x == selectserver ? textWhite : textColor);
-				gTextTexture.render(posxbase+840, 610 - sizefix + (x * 52));
-			}
-		}
-
-
 		if (enemision)
 		{
 			gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
@@ -890,41 +910,66 @@ int main(int argc, char **argv)
 			gTextTexture.render(posxbase + 820, posybase + 598);
 		}
 
+
+		int sizefix = 0;
+		sizefix = (int)arrayservers.size() * 52;
+		bool anend = Slider.render_AH(310, 610, 190, sizefix, serverpront);
+//		bool anend = Heart.render_AH(840, 610, 190, sizefix, serverpront);
+		if(serverpront){
+			if (anend){
+				for (int x = 0; x < (int)arrayservers.size(); x++) {
+					if (x == selectserver){
+						T_T.loadFromRenderedText(GOD.gFont3, arrayservers[x], textWhite);
+						T_T.render(posxbase+310, 610 - sizefix + (x * 52));
+					} else {
+						gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x],textGray);
+						gTextTexture.render(posxbase+310, 610 - sizefix + (x * 52));
+					}
+				}
+			}
+		}
+		
 		//use this to move the element
 		{//draw caps Scroll
-		int XS=100 , YS =0;
+		int XS=100 , YS =30;
 		SDL_Rect fillRect = {posxbase + 70+XS, posybase + 570+YS, 420, 35 };
-			SDL_SetRenderDrawColor(GOD.gRenderer, 50, 50, 50, 80);
+			SDL_SetRenderDrawColor(GOD.gRenderer, 50, 50, 50, 200);
 			SDL_RenderFillRect(GOD.gRenderer, &fillRect);
 			if (capmore-2 >= mincapit) {
-				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
 				gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			if (capmore-1 >= mincapit) {
-				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-1), textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-1), textGray);
 				gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
-
-			gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
-			gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+			
+			if (serverpront){
+				gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
+				gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+			} else {
+				T_T.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
+				T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
+			}
 
 			if (capmore+1 <= maxcapit) {
-				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+1), textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+1), textGray);
 				gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			if (capmore+2 <= maxcapit) {
-				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+2), textColor);
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+2), textGray);
 				gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 
-			if (maxcapit >= 10){
-				B_UP.render_T(280+XS, 530+YS,"+10");
-				B_DOWN.render_T(280+XS, 630+YS,"-10");
+			if (maxcapit >= 10 && !serverpront){
+				B_UP.render_T(280+XS, 530+YS,"+10",serverpront);
+				B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
 			}
-			B_LEFT.render_T(80+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
-			B_RIGHT.render_T(480+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
+			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"",serverpront);
+			B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
+			B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 		}
-
+				
 		//Draw Footer Buttons
 		int dist = 1100,posdist = 160;
 		if(serverpront){
@@ -957,11 +1002,11 @@ int main(int argc, char **argv)
 					mayus(temptext);
 
 					if (x == selectchapter) {
-						gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+						T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 						{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
-						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, gTextTexture.getHeight()};
+						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, T_T.getHeight()};
 						SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-						gTextTexture.render(posxbase, posybase + (x * 22));
+						T_T.render(posxbase, posybase + (x * 22));
 
 						Heart.render(posxbase - 18, posybase + 3 + (x * 22));
 					}
@@ -997,9 +1042,11 @@ int main(int argc, char **argv)
 				B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 				B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 				B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
-
+				B_UP.render_T(580, 5,"");
+				B_DOWN.render_T(580, 630,"");
+			
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8.3) #KASTXUPALO", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8) #KASTXUPALO", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				if (imgNumbuffer > 0){
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
@@ -1034,7 +1081,7 @@ int main(int argc, char **argv)
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Busqueda", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				if ((int)arraysearch.size() >= 1){
-
+					
 					{//Draw a rectagle to a nice view
 					SDL_SetRenderDrawColor(GOD.gRenderer, 100, 100, 100, 105);
 					SDL_Rect HeaderRect = {0,0, 620, 670};
@@ -1047,17 +1094,17 @@ int main(int argc, char **argv)
 					}
 					for (int x = of; x < (int)arraysearch.size(); x++) {
 						std::string temptext = arraysearch[x];
-
+					
 						replace(temptext, "https://jkanime.net/", "");
 						replace(temptext, "/", " ");
 						replace(temptext, "-", " ");
 						mayus(temptext);
 						if (x == searchchapter) {
-							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 							{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
-							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, gTextTexture.getHeight()};
+							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()};
 							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
+							T_T.render(posxbase, posybase + ((x-of) * 22));
 
 							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
 						}
@@ -1085,15 +1132,17 @@ int main(int argc, char **argv)
 
 						SDL_RenderFillRect(GOD.gRenderer, &fillRect);
 						TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
-
+						
 					}
 				}else NOP.render_T(230, 355,searchtext);
-
+				
 				{//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 				B_B.render_T(dist, 680,"Atras");dist -= posdist;
 				B_R.render_T(dist, 680,"Buscar");dist -= posdist;}
+				B_UP.render_T(580, 5,"");
+				B_DOWN.render_T(580, 630,"");
 			}
 			else
 			{
@@ -1134,11 +1183,11 @@ int main(int argc, char **argv)
 					if (x == favchapter) {
 //						CheckImgNet(machu);
 //						tempimage = machu;
-							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 							{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
-							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, gTextTexture.getHeight()};
+							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()};
 							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
+							T_T.render(posxbase, posybase + ((x-of) * 22));
 
 							{int ajuX = -390, ajuY = -450;
 
@@ -1161,13 +1210,15 @@ int main(int argc, char **argv)
 			{//Draw footer buttons
 				int dist = 1100,posdist = 160;
 				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
-				B_B.render_T(dist, 680,"Buscar");dist -= posdist;
+				B_B.render_T(dist, 680,"Volver");dist -= posdist;
 				if ((int)arrayfavorites.size() >= 1){
 					B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
 					B_ZR.render_T(dist, 680,"Limpiar");dist -= posdist;
 				}else NOP.render_T(230, 355,"");
+				
+				B_UP.render_T(580, 5,"");
+				B_DOWN.render_T(580, 630,"");
 			}
-
 		}
 		break;
 		case downloadstate:
@@ -1234,21 +1285,18 @@ int main(int argc, char **argv)
 	}
 	else {
 		SDL_WaitThread(threadID, NULL);
-
 	}
 	if (NULL == prothread) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(prothread, NULL);
-
 	}
 	if (NULL == searchthread) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(searchthread,NULL);
-
 	}
 	//Free resources and close SDL
 #ifdef __SWITCH__
@@ -1256,7 +1304,6 @@ int main(int argc, char **argv)
 	hidsysExit();
 	socketExit();
 	romfsExit();
-
 #endif // SWITCH
 
 	//Free loaded images

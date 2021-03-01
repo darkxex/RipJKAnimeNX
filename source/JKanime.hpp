@@ -94,8 +94,6 @@ int downloadjkanimevideo(void* data)
 	return 0;
 }
 
-
-
 std::vector<std::string> arrayimages;
 std::vector<std::string> arraychapter;
 std::vector<std::string> arraysearch;
@@ -156,7 +154,7 @@ void callimagefavorites(int cain)
 		std::string directorydownloadimage = rootdirectory;
 		directorydownloadimage.append(temp+".jpg");
 		
-		printf("# %d callimage imagen: %s \n",cain,directorydownloadimage.c_str());
+//		printf("# %d callimage imagen: %s \n",cain,directorydownloadimage.c_str());
 		TFavorite.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
 		tempimage = directorydownloadimage;
 }
@@ -164,7 +162,6 @@ void callimagefavorites(int cain)
 //BEGUING THREAD CHAIN
 std::vector<std::string> con_full;
 SDL_Thread* first = NULL;
-
 int GETCONT(void* d){
 con_full.clear();
 for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
@@ -174,12 +171,10 @@ for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
 		int trace = link.find("/", 20);
 		link = link.substr(0, trace + 1);
 		con_full.push_back(gethtml(link));
-		printf("con_full %d -> %s\n",x,link.c_str());
+		//printf("con_full %d -> %s\n",x,link.c_str());
 	}
 return 0;
 }
-
-
 int refrescarpro(void* data){
 	activatefirstimage = true;
 	reloading = true;
@@ -242,13 +237,12 @@ int refrescarpro(void* data){
 	MKcapitBuffer();
 	return 0;
 }
-
 int MKfavimgfix(){
 	std::ifstream file(favoritosdirectory);
 	std::string str;
 	std::string machu ="";
 		while (std::getline(file, str)) {
-		std::cout << str << "\n";
+		//std::cout << str << "\n";
 		if (str.find("jkanime"))
 		{
 			machu=str;
@@ -260,14 +254,12 @@ int MKfavimgfix(){
 	file.close();
 	return 0;
 }
-
 std::vector<std::string> con_rese;
 std::vector<std::string> con_nextdate;
 std::vector<bool> con_enemision;
 std::vector<bool> con_tienezero;
 std::vector<int> con_maxcapit;
-
-
+std::vector<std::string> con_generos;
 int MKcapitBuffer() {
 	con_rese.clear();
 	con_nextdate.clear();
@@ -278,9 +270,12 @@ int MKcapitBuffer() {
 	for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
 	{
 		porcentajebuffer = x+1;
-		if (x > (int)con_full.size()-1) printf("Wait for vector...\n");
-		while (x > (int)con_full.size()-1){printf("-");SDL_Delay(500);}
-		printf("Get from vector...\n");
+		//if (x > (int)con_full.size()-1) printf("Wait for vector...\n");
+		while (x > (int)con_full.size()-1){
+			//printf("-");
+			SDL_Delay(500);
+		}
+		//printf("Get from vector...\n");
 		a = con_full[x];
 		
 		//find sinopsis
@@ -302,6 +297,32 @@ int MKcapitBuffer() {
 		replace(terese, "ó","o");
 		con_nextdate.push_back(terese);
 	//	std::cout << rese << std::endl;
+
+		int indx1 = 1, indx2, indx3, indx4;
+		indx4 = a.find("<strong>Generos:</strong>", indx1);
+		std::string generosTMP="";
+		while (indx1 != -1) {
+			indx1 = a.find("https://jkanime.net/genero", indx1);
+			if (indx1 == -1) { break; }
+			if(indx4 < indx1) break;
+			indx2 = a.find(">",indx1);
+			indx3 = a.find("</a>", indx1);
+			generosTMP += a.substr(indx2+1, indx3 - indx2-1)+"   ";
+			//std::cout << generosTMP << std::endl;
+			indx1++;
+		}
+		replace(generosTMP, "á","a");
+		replace(generosTMP, "à","a");
+		replace(generosTMP, "é","e");
+		replace(generosTMP, "è","e");
+		replace(generosTMP, "í","i");
+		replace(generosTMP, "ì","i");
+		replace(generosTMP, "ó","o");
+		replace(generosTMP, "ò","o");
+		replace(generosTMP, "ú","u");
+		replace(generosTMP, "ù","u");
+		con_generos.push_back(generosTMP);
+
 		if ((int)a.find("<b>En emision</b>") != -1)
 		{
 			con_enemision.push_back(true);
@@ -360,7 +381,7 @@ int MKcapitBuffer() {
 		printf("SDL_CreateThread NULL %s\n", SDL_GetError());
 	}
 	else {
-		printf("firstwait END...\n");
+		//printf("firstwait END...\n");
 		int returnval;
 		SDL_WaitThread(first, &returnval);
 		printf("first END ... %d\n",returnval);
@@ -371,7 +392,6 @@ int MKcapitBuffer() {
 	return true;
 }
 //END THREAD CHAIN
-
 
 int searchjk(void* data)
 {
@@ -446,6 +466,7 @@ bool tienezero = false;
 std::string rese = "";
 bool enemision = false;
 std::string nextdate = "";
+std::string generos = "";
 std::string capit(std::string b) {
 	tienezero = false;
 	std::string a = "";
@@ -468,7 +489,39 @@ std::string capit(std::string b) {
 	nextdate = a.substr(re1, re2 - re1);
 	replace(nextdate, "á","a");
 	replace(nextdate, "ó","o");
+	replace(nextdate, "í","i");
 
+	int indx1 = 1, indx2, indx3, indx4;
+	indx4 = a.find("<strong>Generos:</strong>", indx1);
+	std::string generosTMP="";
+	while (indx1 != -1) {
+		if(indx4 < indx1) break;
+		indx1 = a.find("https://jkanime.net/genero", indx1);
+		if (indx1 == -1) { break; }
+		indx2 = a.find(">",indx1);
+		indx3 = a.find("</a>", indx1);
+		generosTMP += a.substr(indx2+1, indx3 - indx2-1)+" ";
+//		std::cout << generosTMP << std::endl;
+		indx1++;
+	}
+	replace(generosTMP, "á","a");
+	replace(generosTMP, "à","a");
+	replace(generosTMP, "é","e");
+	replace(generosTMP, "è","e");
+	replace(generosTMP, "í","i");
+	replace(generosTMP, "ì","i");
+	replace(generosTMP, "ó","o");
+	replace(generosTMP, "ò","o");
+	replace(generosTMP, "ú","u");
+	replace(generosTMP, "ù","u");
+
+	generos = generosTMP;
+
+
+
+
+
+	
 //	std::cout << rese << std::endl;
 	if ((int)a.find("<b>En emision</b>") != -1)
 	{
@@ -502,38 +555,25 @@ std::string capit(std::string b) {
 		tienezero = false;
 	}
 
-
-
-
 	val0 = a.rfind("href=\"#pag");
 
 	if (val0 != -1) {
-
 		val1 = a.find(">", val0);
 		val1 = val1 + 1;
 		val2 = a.find("<", val1);
 
 		std::string urlx;
-
-
 		urlx = (a.substr(val1, val2 - val1));
 		val3 = urlx.find(" - ") + 3;
 		urlx = urlx.substr(val3);
 
 		return (urlx);
 	}
-
 	else
-
 	{
 		return "1";
 	}
-
-
 }
-
-
-
 
 bool isFavorite(std::string fav){
 	/*
@@ -557,7 +597,6 @@ bool isFavorite(std::string fav){
 file.close();
 return false;
 }
-
 
 void delFavorite(int inst = -1){
 	std::string tmp="";

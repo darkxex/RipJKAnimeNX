@@ -20,9 +20,7 @@
 extern SDLB GOD;
 
 void SDLB::intA(){
-//Globally used font
-
-		//Start up SDL and create window
+	//Start up SDL and create window
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
 	{
@@ -246,6 +244,9 @@ LTexture::LTexture()
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;
+	mX = 0;
+	mY = 0;
+	SelIns = -1; 
 }
 
 LTexture::~LTexture()
@@ -434,6 +435,8 @@ void LTexture::setAlpha(Uint8 alpha)
 
 void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
+	mX = x;mY = y;
+	SelIns = GOD.GenState;
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
@@ -450,6 +453,8 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 
 void LTexture::render_T(int x, int y, std::string text, bool presed)
 {
+	mX = x;mY = y;
+	SelIns = GOD.GenState;
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
@@ -480,6 +485,95 @@ void LTexture::render_T(int x, int y, std::string text, bool presed)
 	}
 }
 
+bool LTexture::render_AH(int x, int y, int w, int h, bool type)
+{
+		mX = x;mY = y;
+		SelIns = GOD.GenState;
+		static bool anend = false;
+		static int delayp = 0;
+		int sizeH = 0;
+		int HP = h < 0 ? h *- 1 : h;
+		if(type){
+			if (delayp < HP &&!anend)
+			{
+				delayp+=30;
+				sizeH = h < 0 ? delayp*-1 : delayp;
+			} else {
+				anend = true;
+				sizeH = h;
+				//delayp = h; 
+			}
+			{//SIDE
+			SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
+			SDL_Rect HeaderRect = {x+w,y, 2, sizeH*-1};
+			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+			
+			SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
+			HeaderRect = {x-2,y, 2, sizeH*-1};
+			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+			
+
+			//TOP
+			SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
+			HeaderRect = {x-2,y-2+sizeH*-1, w+2, 2};
+			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+			}
+			
+			
+			SDL_SetRenderDrawColor(GOD.gRenderer, 50, 50, 50, 200);
+			SDL_Rect HeaderRect = {x,y+sizeH*-1, w, sizeH};
+			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+			return anend;
+		} else{
+			if (anend){
+				if (delayp <= 0)
+				{
+					delayp=0;
+					anend = false;
+				} else {
+					delayp-=30;
+					sizeH = h < 0 ? delayp*-1 : delayp;					
+
+					{//SIDE
+					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
+					SDL_Rect HeaderRect = {x+w,y, 3, sizeH*-1};
+					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+					
+					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
+					HeaderRect = {x-2,y, 2, sizeH*-1};
+					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+
+					//TOP
+					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
+					HeaderRect = {x-2,y-2+sizeH*-1, w+2, 2};
+					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+					}
+
+					SDL_SetRenderDrawColor(GOD.gRenderer, 50, 50, 50, 200);
+					SDL_Rect HeaderRect = {x,y+sizeH*-1, w, sizeH};
+					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+				}
+			}
+		} 
+
+return false;
+}
+
+bool LTexture::SP()
+{
+	//return on negative touch
+	if (GOD.TouchX <= 0||GOD.TouchY <= 0||mWidth <= 0||mHeight <= 0) return false;
+	if (SelIns != GOD.GenState) return false;
+	
+	//check if touched
+	if(GOD.TouchX > mX-3 && GOD.TouchX < mX + mWidth +3 && GOD.TouchY > mY-3 && GOD.TouchY < mY + mHeight +3){
+		printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
+		return true;
+	}
+return false;
+}
+
+
 int LTexture::getWidth()
 {
 	return mWidth;
@@ -488,6 +582,16 @@ int LTexture::getWidth()
 int LTexture::getHeight()
 {
 	return mHeight;
+}
+
+int LTexture::getX()
+{
+	return mX;
+}
+
+int LTexture::getY()
+{
+	return mY;
 }
 
 
