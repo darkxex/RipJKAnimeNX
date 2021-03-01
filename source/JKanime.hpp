@@ -397,28 +397,31 @@ int searchjk(void* data)
 {
 	porcentajereload = 0;
 	activatefirstsearchimage = true;
-	reloadingsearch = true;
-//	int val1 = 1;
-//	int val2;
-//	int val0 = 0;
-	int val3, val4;
-//	int arrayselect = 0;
-
-	
-#ifndef __SWITCH__
-	searchtext = "h2o";
-#endif 
+	reloadingsearch = true;	 
 
 	replace(searchtext, " ", "_");
 	replace(searchtext, "!", "");
 	replace(searchtext, ";", "");
 	if (searchtext.length() >= 2) {
-		std::string content = gethtml("https://jkanime.net/buscar/" + searchtext + "/1/");
-		content = content + gethtml("https://jkanime.net/buscar/" + searchtext + "/2/");
-		int val1 = 1;
-		int val2;
-		int val0 = 0;
-
+		std::cout << searchtext << std::endl;
+		std::string content = "";
+		
+		int page = 1;
+		while (true){
+			std::string tempCont=gethtml("https://jkanime.net/buscar/" + searchtext + "/"+std::to_string(page)+"/");
+			content += tempCont;
+			
+			std::string scrap = scrapElement(tempCont, "Resultados Siguientes");
+			std::cout << scrap << "  # " << std::to_string(page) << std::endl;
+			if (scrap.length() > 0){
+				//some code here soon
+			} else {
+				break;
+			}
+			page++;
+		}
+		
+		int val0 = 0,val1 = 1,val2,val3, val4;
 		while (val0 != -1) {
 			val0 = content.find("portada-title", val1);
 			if (val0 == -1) { break; }

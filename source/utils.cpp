@@ -21,7 +21,12 @@ std::string scrapElement(std::string content, std::string get){
 	val1 = content.find(get);
 	if (val1 != -1)
 	{
-		val2 = content.find('"', val1);
+		std::string elmetTMP = content.substr(val1-1, 1);
+		replace(elmetTMP, ">","<");
+		replace(elmetTMP, "{","}");
+		replace(elmetTMP, "[","]");
+		replace(elmetTMP, "(",")");
+		val2 = content.find(elmetTMP, val1);
 
 		Element = content.substr(val1, val2 - val1);
 		replace(Element, "\\", "");
