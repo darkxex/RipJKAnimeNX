@@ -98,7 +98,7 @@ Result WebBrowserCall(std::string url,bool nag){
 			printf("SetCapConfigs\n");
 			webConfigSetDisplayUrlKind (&config, false);
 			webConfigSetMediaPlayerAutoClose (&config, true);
-			webConfigSetFooter(&config, false);
+			//webConfigSetFooter(&config, false);
 		}
 
 		webConfigSetWhitelist(&config, "^http*");// ^http*.jkstremum.* \r\n^http*.mega.*
