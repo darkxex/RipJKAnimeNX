@@ -2,10 +2,19 @@
 #include <switch.h>
 #ifdef __SWITCH__
 #include <unistd.h>
+#include <iostream>
+#include <ostream>
+#include <SDL.h>
+#include <SDL_thread.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include "applet.hpp"
+#include "SDLWork.hpp"
 
 extern AccountUid uid;
 extern u32 __nx_applet_exit_mode;
+extern SDLB GOD;
 
 bool GetAppletMode()
 {
@@ -70,6 +79,8 @@ Result WebBrowserCall(std::string url,bool nag){
 		if (url.length() <= 0) return 0;
 	}
 	
+	GOD.PleaseWait("-.-. .- .-. --. .- -. -.. ---");
+	
 	WebCommonConfig config;
 	WebCommonReply reply;
 	WebExitReason exitReason = (WebExitReason)0;
@@ -99,9 +110,15 @@ Result WebBrowserCall(std::string url,bool nag){
 			webConfigSetDisplayUrlKind (&config, false);
 			webConfigSetMediaPlayerAutoClose (&config, true);
 			//webConfigSetFooter(&config, false);
+			
+			//block redirection 
+			if(url.substr(0,22) == "https://www.fembed.com") 
+			{	
+	//			std::string TT = KeyboardCall("^http*", );
+				webConfigSetWhitelist(&config, "^https://([0-9A-Za-z\\-]+\\.)*fembed\\.com(/|$)");
+			} else webConfigSetWhitelist(&config, "^http*");
 		}
-
-		webConfigSetWhitelist(&config, "^http*");// ^http*.jkstremum.* \r\n^http*.mega.*
+		
 
 		// Launch the applet and wait for it to exit.
 		printf("Running webConfigShow...\n");
