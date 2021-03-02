@@ -44,7 +44,7 @@ LTexture TChapters;
 LTexture TPreview;
 LTexture TSearchPreview;///////
 LTexture TFavorite;
-
+//Render Buttons
 LTexture B_A;
 LTexture B_B;
 LTexture B_Y;
@@ -54,23 +54,21 @@ LTexture B_R;
 LTexture B_ZR;
 LTexture B_M;
 LTexture B_P;
-
 LTexture B_RIGHT;
 LTexture B_LEFT;
 LTexture B_UP;
 LTexture B_DOWN;
-
-
+//Render extra
 LTexture FAV;
 LTexture NOP;
-
-LTexture Slider;
+//Text and BOXES
+LTexture VOX;
 LTexture T_T;
 
-//main SLD funct
+//main SLD funct (Grafics On Display = GOD)
 SDLB GOD;
 	
-//Gui
+//Gui Vars
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
 enum statesreturn { toprogramation, tosearch, tofavorite };
 int statenow = programationstate;
@@ -140,7 +138,7 @@ std::vector<std::string> arrayserversbak= {
 };
 */
 
-int quit = 0;
+bool quit=false;
 
 //make some includes to clean alittle the main
 #include "JKanime.hpp"
@@ -177,15 +175,12 @@ int main(int argc, char **argv)
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* threadID = NULL;
-
+	
 	//Set main Thread get images and descriptions
 	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
 
+	//set custom music 
 	GOD.intA();//init the SDL
-	if (isFileExist("wada.ogg")){
-		GOD.gMusic = Mix_LoadMUS("wada.ogg");
-		Mix_PlayMusic(GOD.gMusic, -1);
-	}
 #ifdef __SWITCH__
 
 	if (isFileExist("texture.png")){
@@ -199,6 +194,8 @@ int main(int argc, char **argv)
 	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
 	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
 #endif // SWITCH
+	gTextTexture.mark=false;
+	Farest.mark=false;
 
 	//images that not change
 	B_A.loadFromFile("romfs:/buttons/A.png");
@@ -241,21 +238,9 @@ int main(int argc, char **argv)
 #endif // SWITCH
 
 	if (AppletMode) {//close on applet mode
-		//Clear screen
-		SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(GOD.gRenderer);
-
-		//wallpaper
-		Farest.render((0), (0));
-		SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
-		SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
-
-		SDL_RenderFillRect(GOD.gRenderer, &fillRect);
-		gTextTexture.loadFromRenderedText(GOD.gFont3, "Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego", textColor);
-		gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
-		SDL_RenderPresent(GOD.gRenderer);
-		quit=1;
-		SDL_Delay(3000);
+		GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego");
+		quit=true;
+		SDL_Delay(5000);
 	}
 
 	//While application is running
@@ -268,21 +253,23 @@ int main(int argc, char **argv)
 			if (e.type == SDL_QUIT)
 			{
 				cancelcurl = 1;
-				quit = 1;
+				quit = true;
+				std::cout << "Saliendo" << std::endl;
 			}
 			//#include "keyboard.h"
 #ifdef __SWITCH__
-			int Width = 1280;//
-			int Height = 720;//
-			
 			GOD.GenState = statenow;
 			switch (e.type) {
 			case SDL_JOYAXISMOTION:
 				//SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
 				break;
 			case SDL_FINGERDOWN:
-			GOD.TouchX = e.tfinger.x * Width;
-			GOD.TouchY = e.tfinger.y * Height;
+			GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+			GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+			break;
+			case SDL_FINGERUP:
+			GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+			GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
 			e.jbutton.button=-1;
 			if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() || TSearchPreview.SP() || TFavorite.SP()) e.jbutton.button = 0;
 			if (B_B.SP()) e.jbutton.button = 1;
@@ -427,13 +414,14 @@ int main(int argc, char **argv)
 					}
 					else if (e.jbutton.button == 10) {// (+) button down close to home menu
 						cancelcurl = 1;
-						quit = 1;
+						quit = true;
 					}
 					else if (e.jbutton.button == 11) {// (-) button down
 						if (Mix_PlayingMusic() == 0)
 						{
 							//Play the music
 							Mix_PlayMusic(GOD.gMusic, -1);
+							touch("play");
 						}
 						//If music is being played
 						else
@@ -443,12 +431,15 @@ int main(int argc, char **argv)
 							{
 								//Resume the music
 								Mix_ResumeMusic();
+								touch("play");
+								
 							}
 							//If the music is playing
 							else
 							{
 								//Pause the music
 								Mix_PauseMusic();
+								remove("play");
 							}
 						}
 					}
@@ -464,12 +455,13 @@ int main(int argc, char **argv)
 					else if (e.jbutton.button == 9) {// (ZR) button down
 						switch (statenow)
 						{
-						case favoritesstate:
+						case favoritesstate:/*
+							//please don't do-it
 							delFavorite();
 							TFavorite.free();
 							favchapter=0;
 							statenow = programationstate;
-							arrayfavorites.clear();
+							arrayfavorites.clear();*/
 							break;
 						}
 					}
@@ -845,7 +837,6 @@ int main(int argc, char **argv)
 #endif // SWITCH
 		}
 
-
 		//Clear screen
 		SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(GOD.gRenderer);
@@ -857,11 +848,8 @@ int main(int argc, char **argv)
 		{
 		case chapterstate:
 		{
-		//Draw a bacground to a nice view
-		{SDL_SetRenderDrawColor(GOD.gRenderer, 170, 170, 170, 100);
-		SDL_Rect HeaderRect = {0,0, 1280, 720};
-		SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
-
+		//Draw a background to a nice view
+		VOX.render_VOX({0,0, SCREEN_WIDTH, SCREEN_HEIGHT} ,170, 170, 170, 100);
 		std::string temptext = temporallink;
 		replace(temptext, "https://jkanime.net/", "");
 		replace(temptext, "/", " ");
@@ -878,10 +866,7 @@ int main(int argc, char **argv)
 		gTextTexture.render(posxbase+10, posybase);
 
 		{//draw description
-		SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 100);
-		SDL_Rect HeaderRect = {25,60, 770, 340};
-		SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
-
+		VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
 		gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
 		gTextTexture.render(posxbase+15, posybase + 65);
 
@@ -890,10 +875,7 @@ int main(int argc, char **argv)
 		}
 		
 		{//draw back rectangle
-		SDL_Rect fillRect = { SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 };
-		SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
-		SDL_RenderFillRect(GOD.gRenderer, &fillRect);
-
+		VOX.render_VOX({ SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 }, 0, 0, 0, 200);
 		//draw preview image
 		TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
 		}
@@ -913,7 +895,7 @@ int main(int argc, char **argv)
 
 		int sizefix = 0;
 		sizefix = (int)arrayservers.size() * 52;
-		bool anend = Slider.render_AH(310, 610, 190, sizefix, serverpront);
+		bool anend = VOX.render_AH(310, 610, 190, sizefix, serverpront);
 //		bool anend = Heart.render_AH(840, 610, 190, sizefix, serverpront);
 		if(serverpront){
 			if (anend){
@@ -932,9 +914,7 @@ int main(int argc, char **argv)
 		//use this to move the element
 		{//draw caps Scroll
 		int XS=100 , YS =30;
-		SDL_Rect fillRect = {posxbase + 70+XS, posybase + 570+YS, 420, 35 };
-			SDL_SetRenderDrawColor(GOD.gRenderer, 50, 50, 50, 200);
-			SDL_RenderFillRect(GOD.gRenderer, &fillRect);
+			VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
 			if (capmore-2 >= mincapit) {
 				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
 				gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
@@ -965,7 +945,7 @@ int main(int argc, char **argv)
 				B_UP.render_T(280+XS, 530+YS,"+10",serverpront);
 				B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
 			}
-			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"",serverpront);
+			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
 			B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
 			B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 		}
@@ -989,10 +969,7 @@ int main(int argc, char **argv)
 		break;
 		case programationstate:
 			if (!reloading&&arraychapter.size()>=1) {
-				{//Draw a rectagle to a nice view
-				SDL_SetRenderDrawColor(GOD.gRenderer, 200, 200, 200, 105);
-				SDL_Rect HeaderRect = {0,0, 620, 670};
-				SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
+				VOX.render_VOX({0,0, 620, 670}, 200, 200, 200, 105);//Draw a rectagle to a nice view
 
 				for (int x = 0; x < (int)arraychapter.size(); x++) {
 					std::string temptext = arraychapter[x];
@@ -1003,9 +980,7 @@ int main(int argc, char **argv)
 
 					if (x == selectchapter) {
 						T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
-						{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
-						SDL_Rect HeaderRect = {posxbase-2,posybase + (x * 22), 590, T_T.getHeight()};
-						SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
+						VOX.render_VOX({posxbase-2,posybase + (x * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 						T_T.render(posxbase, posybase + (x * 22));
 
 						Heart.render(posxbase - 18, posybase + 3 + (x * 22));
@@ -1028,10 +1003,7 @@ int main(int argc, char **argv)
 				{
 
 					{int ajuX = -350, ajuY = -450;
-					SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
-					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
-
-					SDL_RenderFillRect(GOD.gRenderer, &fillRect);
+					VOX.render_VOX({ xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
 					TPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
 					}
 				}
@@ -1065,14 +1037,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT/2 - 25, 1280, 50 };
-				SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
-
-				SDL_RenderFillRect(GOD.gRenderer, &fillRect); }
-
-
-				gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando programación... ", textColor);
-				gTextTexture.render(SCREEN_WIDTH/2 - gTextTexture.getWidth()/2, SCREEN_HEIGHT/2 - gTextTexture.getHeight() / 2);
+				GOD.PleaseWait("Cargando programación... ");
 			}
 			break;
 		case searchstate:
@@ -1082,10 +1047,7 @@ int main(int argc, char **argv)
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				if ((int)arraysearch.size() >= 1){
 					
-					{//Draw a rectagle to a nice view
-					SDL_SetRenderDrawColor(GOD.gRenderer, 100, 100, 100, 105);
-					SDL_Rect HeaderRect = {0,0, 620, 670};
-					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
+					VOX.render_VOX({0,0, 620, 670}, 100, 100, 100, 105);
 
 					int of = searchchapter < 30 ? 0 : searchchapter - 26;
 					if (arraysearch.size() > 30) {
@@ -1101,9 +1063,7 @@ int main(int argc, char **argv)
 						mayus(temptext);
 						if (x == searchchapter) {
 							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
-							{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
-							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()};
-							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
+							VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 							T_T.render(posxbase, posybase + ((x-of) * 22));
 
 							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
@@ -1127,10 +1087,7 @@ int main(int argc, char **argv)
 					if (preview)
 					{
 						{int ajuX = -350, ajuY = -450;
-						SDL_Rect fillRect = { xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4};
-						SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
-
-						SDL_RenderFillRect(GOD.gRenderer, &fillRect);
+						VOX.render_VOX({ xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
 						TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
 						
 					}
@@ -1146,14 +1103,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				{SDL_Rect fillRect = { 0, SCREEN_HEIGHT / 2 - 25, 1280, 50 };
-				SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
-
-				SDL_RenderFillRect(GOD.gRenderer, &fillRect); }
-
-				textColor = { 50, 50, 50 };
-				gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)", textColor);
-				gTextTexture.render(SCREEN_WIDTH / 2 - gTextTexture.getWidth() / 2, SCREEN_HEIGHT / 2 - gTextTexture.getHeight() / 2);
+				GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)");
 			}
 			break;
 		case favoritesstate:
@@ -1162,11 +1112,7 @@ int main(int argc, char **argv)
 			gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
 			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 			if ((int)arrayfavorites.size() >= 1 ){
-
-			{//Draw a rectagle to a nice view
-			SDL_SetRenderDrawColor(GOD.gRenderer, 150, 150, 150, 105);
-			SDL_Rect HeaderRect = {0,0, 620, 670};
-			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
+			VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 105);
 			int of = favchapter < 30 ? 0 : favchapter - 26;
 			if (arrayfavorites.size() > 30) {
 				gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
@@ -1184,17 +1130,11 @@ int main(int argc, char **argv)
 //						CheckImgNet(machu);
 //						tempimage = machu;
 							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
-							{SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 105);
-							SDL_Rect HeaderRect = {posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()};
-							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);}
+							VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 							T_T.render(posxbase, posybase + ((x-of) * 22));
 
 							{int ajuX = -350, ajuY = -450;
-
-							SDL_Rect HeaderRect = {posxbase + xdistance + ajuX -2,posybase + ydistance + ajuY -2, TFavorite.getWidth()+4, TFavorite.getHeight()+4};
-							SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 200);
-
-							SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
+							VOX.render_VOX({posxbase + xdistance + ajuX -2,posybase + ydistance + ajuY -2, TFavorite.getWidth()+4, TFavorite.getHeight()+4}, 0, 0, 0, 200);
 							TFavorite.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
 
 //							GOD.Cover(machu,610,scroll > 570 ? 570 : scroll ,"",200);
@@ -1213,7 +1153,6 @@ int main(int argc, char **argv)
 				B_B.render_T(dist, 680,"Volver");dist -= posdist;
 				if ((int)arrayfavorites.size() >= 1){
 					B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
-					B_ZR.render_T(dist, 680,"Limpiar");dist -= posdist;
 				}else NOP.render_T(230, 355,"");
 				
 				B_UP.render_T(580, 5,"");
@@ -1262,9 +1201,7 @@ int main(int argc, char **argv)
 
 
 				//Render red filled quad
-				SDL_Rect fillRect = { posxbase + 98, posybase + 400, 580, 50 };
-				SDL_SetRenderDrawColor(GOD.gRenderer, 255, 255, 255, 255);
-				SDL_RenderFillRect(GOD.gRenderer, &fillRect);
+				VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
 				gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 				gTextTexture.render(posxbase + 100, posybase + 400);
 			}
@@ -1272,13 +1209,19 @@ int main(int argc, char **argv)
 		}
 
 		B_P.render_T(160, 680,"Salir",quit);
-		B_M.render_T(10, 680,"Música",Mix_PausedMusic() == 1);
-		//Update screen
+		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
+		
+		if (!HasConnection()) {
+			GOD.PleaseWait("No Hay Red Conectada, Esperando por la red");
+			SDL_Delay(1000);
+		}
+		
+		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
-
-
 	}
+
+
 
 	if (NULL == threadID) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());

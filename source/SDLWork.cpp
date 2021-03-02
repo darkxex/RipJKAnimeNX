@@ -18,6 +18,8 @@
 #include "utils.hpp"
 
 extern SDLB GOD;
+extern LTexture gTextTexture;
+extern LTexture Farest;
 
 void SDLB::intA(){
 	//Start up SDL and create window
@@ -82,10 +84,14 @@ void SDLB::intA(){
 					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 					
 				}
-				//Load music
 #ifdef __SWITCH__
-				
-				gMusic = Mix_LoadMUS("romfs:/wada.ogg");
+				//Load music
+				if (isFileExist("wada.ogg")){
+					gMusic = Mix_LoadMUS("wada.ogg");
+				} else {
+					gMusic = Mix_LoadMUS("romfs:/wada.ogg");
+				}
+
 #else
 				gMusic = Mix_LoadMUS("C:/respaldo2017/C++/test/Debug/wada.ogg");
 #endif // SWITCH
@@ -98,6 +104,7 @@ void SDLB::intA(){
 				if (Mix_PlayingMusic() == 0)
 				{
 					//Play the music
+					if(isFileExist("play"))
 					Mix_PlayMusic(gMusic, -1);
 				}
 			}
@@ -208,6 +215,22 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int HS){
 		SDL_FreeSurface(DrawImg);
 }
 
+void SDLB::PleaseWait(std::string text){
+	//Clear screen
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(gRenderer);
+
+	//wallpaper
+	Farest.render((0), (0));
+	SDL_Rect fillRect = { 0, 720/2 - 25, 1280, 50 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+
+	SDL_RenderFillRect(gRenderer, &fillRect);
+	gTextTexture.loadFromRenderedText(gFont3, text.c_str(), { 50, 50, 50 });
+	gTextTexture.render(1280/2 - gTextTexture.getWidth()/2, 720/2 - gTextTexture.getHeight() / 2);
+	SDL_RenderPresent(gRenderer);
+}
+
 void SDLB::deint(){
 	//Free global font
 	TTF_CloseFont(gFont);
@@ -237,7 +260,6 @@ void SDLB::deint(){
 
 }
 
-
 LTexture::LTexture()
 {
 	//Initialize
@@ -246,7 +268,8 @@ LTexture::LTexture()
 	mHeight = 0;
 	mX = 0;
 	mY = 0;
-	SelIns = -1; 
+	SelIns = -1;
+	mark=true;
 }
 
 LTexture::~LTexture()
@@ -413,6 +436,9 @@ void LTexture::free()
 		mTexture = NULL;
 		mWidth = 0;
 		mHeight = 0;
+		mX = 0;
+		mY = 0;
+		SelIns = -1; 
 	}
 }
 void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
@@ -435,8 +461,8 @@ void LTexture::setAlpha(Uint8 alpha)
 
 void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
-	mX = x;mY = y;
-	SelIns = GOD.GenState;
+	//tactil stuff
+	mX = x;mY = y;	SelIns = GOD.GenState;
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
@@ -446,6 +472,8 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 		renderQuad.w = clip->w;
 		renderQuad.h = clip->h;
 	}
+	if(SP()){SDL_SetTextureColorMod(mTexture,77,166,255);}
+	else SDL_SetTextureColorMod(mTexture, 255, 255, 255);
 
 	//Render to screen
 	SDL_RenderCopyEx(GOD.gRenderer, mTexture, clip, &renderQuad, angle, center, flip);
@@ -453,16 +481,16 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 
 void LTexture::render_T(int x, int y, std::string text, bool presed)
 {
-	mX = x;mY = y;
-	SelIns = GOD.GenState;
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	
-	if (presed){SDL_SetTextureColorMod(mTexture, 150, 150, 150);}
+	if (presed ){SDL_SetTextureColorMod(mTexture, 150, 150, 150);}
 	else {SDL_SetTextureColorMod(mTexture, 255, 255, 255);}
-
+	
+	if(SP()){SDL_SetTextureColorMod(mTexture, 77,166,255);}
+	
 	//Render to screen
 	SDL_RenderCopy(GOD.gRenderer, mTexture, NULL, &renderQuad);
 	
@@ -483,12 +511,14 @@ void LTexture::render_T(int x, int y, std::string text, bool presed)
 		}
 		SDL_FreeSurface(textSurface);
 	}
+	//tactil stuff
+	mX = x;mY = y;	SelIns = GOD.GenState;
 }
 
 bool LTexture::render_AH(int x, int y, int w, int h, bool type)
 {
-		mX = x;mY = y;
-		SelIns = GOD.GenState;
+		//tactil stuff
+		mX = x;mY = y;	SelIns = GOD.GenState;
 		static bool anend = false;
 		static int delayp = 0;
 		int sizeH = 0;
@@ -559,11 +589,21 @@ bool LTexture::render_AH(int x, int y, int w, int h, bool type)
 return false;
 }
 
+void LTexture::render_VOX(SDL_Rect Form ,int R, int G, int B, int A)
+{
+	//tactil stuff
+	mX = Form.x; mY = Form.y;	SelIns = GOD.GenState;
+	//Set rendering space and render to screen
+	SDL_SetRenderDrawColor(GOD.gRenderer, R, G, B, A);
+	SDL_RenderFillRect(GOD.gRenderer, &Form);
+}
+
 bool LTexture::SP()
 {
 	//return on negative touch
 	if (GOD.TouchX <= 0||GOD.TouchY <= 0||mWidth <= 0||mHeight <= 0) return false;
 	if (SelIns != GOD.GenState) return false;
+	if (!mark) return false;
 	
 	//check if touched
 	if(GOD.TouchX > mX-3 && GOD.TouchX < mX + mWidth +3 && GOD.TouchY > mY-3 && GOD.TouchY < mY + mHeight +3){
@@ -572,7 +612,6 @@ bool LTexture::SP()
 	}
 return false;
 }
-
 
 int LTexture::getWidth()
 {

@@ -160,6 +160,13 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 return false;
 }
 
+bool HasConnection()
+{
+    u32 strg = 0;
+	nifmInitialize(NifmServiceType_User);
+    nifmGetInternetConnectionStatus(NULL, &strg, NULL);
+	return (strg > 0);
+}
 
 bool CheckImgNet(std::string image){
 	if (!isFileExist(image.c_str())) {

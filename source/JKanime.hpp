@@ -164,8 +164,9 @@ std::vector<std::string> con_full;
 SDL_Thread* first = NULL;
 int GETCONT(void* d){
 con_full.clear();
-for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
+for (int x = 0; x < (int)arraychapter.size()&& !quit; x++)
 	{
+		while (!HasConnection()){SDL_Delay(5000);if(quit) return 0;}
 		porcentajebufferA = x+1;
 		std::string link = arraychapter[x];
 		int trace = link.find("/", 20);
@@ -176,6 +177,7 @@ for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
 return 0;
 }
 int refrescarpro(void* data){
+	while (!HasConnection()){SDL_Delay(5000);if(quit) return 0;}
 	activatefirstimage = true;
 	reloading = true;
 	porcentajereload = 0;
@@ -267,12 +269,13 @@ int MKcapitBuffer() {
 	con_tienezero.clear();
 	con_maxcapit.clear();
 	std::string a = "";
-	for (int x = 0; x < (int)arraychapter.size()&& quit == 0; x++)
+	for (int x = 0; x < (int)arraychapter.size()&& !quit; x++)
 	{
 		porcentajebuffer = x+1;
 		//if (x > (int)con_full.size()-1) printf("Wait for vector...\n");
 		while (x > (int)con_full.size()-1){
 			//printf("-");
+			if(quit) return 0;
 			SDL_Delay(500);
 		}
 		//printf("Get from vector...\n");

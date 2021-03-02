@@ -17,6 +17,7 @@ int TouchY=-1;
 int GenState=-1;
 void Image(std::string path,int X, int Y,std::string Text = "",bool off=false);
 void Cover(std::string path,int X, int Y,std::string Text = "",int HS = 100);
+void PleaseWait(std::string text);
 void deint();
 };
 
@@ -53,6 +54,7 @@ public:
 	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void render_T(int x, int y, std::string text="", bool presed=false);
 	bool render_AH(int x, int y, int w, int h, bool type);
+	void render_VOX(SDL_Rect Form ,int R, int G, int B, int A);
 	//get touch
 	bool SP();
 	//Gets image dimensions
@@ -60,7 +62,7 @@ public:
 	int getHeight();
 	int getX();
 	int getY();
-
+	bool mark;
 private:
 	//The actual hardware texture
 	SDL_Texture* mTexture;
@@ -71,6 +73,7 @@ private:
 	int mX;
 	int mY;
 	int SelIns;
+	
 };
 
 
