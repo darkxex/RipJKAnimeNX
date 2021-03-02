@@ -14,7 +14,6 @@
 
 extern AccountUid uid;
 extern u32 __nx_applet_exit_mode;
-extern SDLB GOD;
 
 bool GetAppletMode()
 {
@@ -78,8 +77,6 @@ Result WebBrowserCall(std::string url,bool nag){
 		url = KeyboardCall ("Escribir URL http://", url);
 		if (url.length() <= 0) return 0;
 	}
-	
-	GOD.PleaseWait("-.-. .- .-. --. .- -. -.. ---");
 	
 	WebCommonConfig config;
 	WebCommonReply reply;

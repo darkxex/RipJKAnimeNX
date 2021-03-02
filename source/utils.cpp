@@ -13,7 +13,14 @@
 #include <thread>
 #include "utils.hpp"
 #include "Networking.hpp"
+#include <SDL.h>
+#include <SDL_thread.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include "applet.hpp"
+#include "SDLWork.hpp"
+extern SDLB GOD;
 
 std::string scrapElement(std::string content, std::string get){
 	int val1 = 0, val2 = 0;
@@ -38,6 +45,12 @@ return Element;
 
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 {
+	std::string text = "Cargando... "+onlineenlace.substr(0,62)+"... desde "+server;
+	
+	replace(text,"https://jkanime.net/","");
+	replace(text,"-"," ");
+	replace(text,"/","");
+	GOD.PleaseWait(text+"...");
 	std::string videourl = "";
 	std::string content = "";
 	content = gethtml(onlineenlace);
@@ -99,7 +112,6 @@ void replace(std::string& subject, const std::string& search,
 	}
 }
 
-
 void mayus(std::string &s)
 {
 	bool cap = true;
@@ -116,4 +128,11 @@ void mayus(std::string &s)
 			cap = true;
 		}
 	}
+}
+
+void touch(std::string route)
+{
+	std::ofstream outfile;
+	outfile.open(route, std::ios_base::app);
+	outfile.close();
 }
