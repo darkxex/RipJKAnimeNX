@@ -1,96 +1,36 @@
 int MKcapitBuffer();
 int MKfavimgfix();
-	
-std::string linktodownoadjkanime()
-{
-	std::string videourl = "";
-
-
-	std::string content = "";
-	std::string enlacejk = urltodownload;
-
-
-	content = gethtml(enlacejk.c_str());
-	int val1 = 0, val2 = 0;
-
-	val1 = content.find("https://www.mediafire.com/file/");
-	if (val1 != -1)
-	{
-		val2 = content.find('"', val1);
-		
-		videourl = content.substr(val1, val2 - val1);
-		replace(videourl, "\\", "");
-		std::string tempmedia = gethtml(videourl);
-		val1 = tempmedia.find("https://download");
-		if (val1 != -1)
-		{
-			val2 = tempmedia.find('"', val1);
-
-			videourl = tempmedia.substr(val1, val2 - val1);
-			replace(videourl, "\\", "");
-			std::cout << videourl << std::endl;
-			serverenlace = videourl;
-			return videourl;//downloadfile(videourl, directorydownload);
-
-		}
-		else
-		{
-			val1 = content.find("https://jkanime.net/jk.php?");
-			if (val1 != -1)
-			{
-				val2 = content.find('"', val1);
-
-				videourl = content.substr(val1, val2 - val1);
-				replace(videourl, "\\", "");
-				replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
-
-				std::cout << videourl << std::endl;
-				serverenlace = videourl;
-				return videourl;//downloadfile(videourl, directorydownload);
-			}
-		}
-		
-	
-	}
-	else
-
-	{
-		val1 = content.find("https://jkanime.net/jk.php?");
-	if (val1 != -1)
-	{
-		val2 = content.find('"', val1);
-
-		videourl = content.substr(val1, val2 - val1);
-		replace(videourl, "\\", "");
-		replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
-
-		std::cout << videourl << std::endl;
-		serverenlace = videourl;
-		return videourl;//downloadfile(videourl, directorydownload);
-	}
-	}
-	return "";
-}
 
 int downloadjkanimevideo(void* data)
 {
-	std::string videourl = linktodownoadjkanime();
+	std::string videourl = linktodownoadjkanime(urltodownload);
+	if (videourl.length() <7){
+		std::cout << "Error:  " << videourl << std::endl;
+		std::cout << urltodownload << std::endl;
+		serverenlace = "Error de descarga";
+		return 0;
+	}
+	
 	std::string namedownload = urltodownload;
+	serverenlace = videourl;
 	replace(namedownload, "https://jkanime.net/", "");
-	replace(namedownload, "-", " ");
+//	replace(namedownload, "-", " ");
 	replace(namedownload, "/", " ");
 	namedownload = namedownload.substr(0, namedownload.length() - 1);
 	mayus(namedownload);
 	namedownload = namedownload + ".mp4";
 #ifdef __SWITCH__
-	std::string directorydownload = "sdmc:/" + namedownload;
+	std::string directorydownload = namedownload;
 #else
 	std::string directorydownload = "C:\\respaldo2017\\C++\\test\\Debug\\" + namedownload;
 #endif // SWITCH
+
 	std::cout << namedownload << std::endl;
 	std::cout << videourl << std::endl;
 
-	downloadfile(videourl, directorydownload);
+	if (!downloadfile(videourl, directorydownload)){
+		serverenlace = "Error de descarga";
+	}
 	return 0;
 }
 
@@ -110,7 +50,7 @@ void callimage(int cain)
 	std::string temp = arrayimages[cain];
 	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
 
-	std::string directorydownloadimage = rootdirectory;
+	std::string directorydownloadimage = rootdirectory+"DATA/";
 	directorydownloadimage.append(temp);
 #else
 	std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/";
@@ -135,7 +75,7 @@ void callimagesearch(int cain)
 #ifdef __SWITCH__
 		std::string temp = arraysearchimages[cain];
 		replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
-		std::string directorydownloadimage = rootdirectory;
+		std::string directorydownloadimage = rootdirectory+"DATA/";
 		directorydownloadimage.append(temp);
 #else
 		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/";
@@ -151,7 +91,7 @@ void callimagefavorites(int cain)
 		std::string temp = arrayfavorites[cain];
 		replace(temp,"https://jkanime.net/","");
 		replace(temp,"/","");
-		std::string directorydownloadimage = rootdirectory;
+		std::string directorydownloadimage = rootdirectory+"DATA/";
 		directorydownloadimage.append(temp+".jpg");
 		
 //		printf("# %d callimage imagen: %s \n",cain,directorydownloadimage.c_str());
@@ -216,7 +156,7 @@ int refrescarpro(void* data){
 		std::string tempima = arrayimages[x];
 		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
 #ifdef __SWITCH__
-		std::string directorydownloadimage = rootdirectory;
+		std::string directorydownloadimage = rootdirectory+"DATA/";
 		directorydownloadimage.append(tempima);
 #else
 		std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/" ;
@@ -250,7 +190,7 @@ int MKfavimgfix(){
 			machu=str;
 			replace(machu, "https://jkanime.net/", "");
 			replace(machu, "/", "");
-			CheckImgNet(rootdirectory+machu+".jpg");
+			CheckImgNet(rootdirectory+"DATA/"+machu+".jpg");
 		}
 	}
 	file.close();
@@ -448,7 +388,7 @@ int searchjk(void* data)
 				std::string tempima = arraysearchimages[x];
 				replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
 #ifdef __SWITCH__
-				std::string directorydownloadimage = rootdirectory;
+				std::string directorydownloadimage = rootdirectory+"DATA/";
 				directorydownloadimage.append(tempima);
 #else
 				std::string directorydownloadimage = "C:/respaldo2017/C++/test/Debug/RipJKAnime/";

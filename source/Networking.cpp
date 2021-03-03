@@ -128,9 +128,10 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 	CURLcode res = CURLE_OK;
 	curl = curl_easy_init();
 	if (curl) {
+	struct MemoryStruct chunk;
 	FILE *fp = fopen(directorydown.c_str(), "wb");;
 		if(fp){
-			struct MemoryStruct chunk;
+			
             chunk.memory = (char*)malloc(1);
             chunk.size = 0;
 			curl_easy_setopt(curl, CURLOPT_URL, enlace.c_str());
@@ -149,13 +150,15 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 			}
 			
 			res = curl_easy_perform(curl);
-            if (res == CURLE_OK) fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+			if ((chunk.size > 3000000) & (res == CURLE_OK)){
+				fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+			}
 			/* always cleanup */
 			curl_easy_cleanup(curl);
 			free(chunk.memory);
 		}
 	fclose(fp);
-	if (res == CURLE_OK){return true;}else{printf("\n%s\n",curl_easy_strerror(res));}
+	if ((chunk.size > 3000000) & (res == CURLE_OK)){return true;}else{printf("\n%s\n",curl_easy_strerror(res));}
 	}
 return false;
 }

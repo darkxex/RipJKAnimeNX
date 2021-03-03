@@ -14,6 +14,7 @@
 
 extern AccountUid uid;
 extern u32 __nx_applet_exit_mode;
+std::string TT = "^https://([0-9A-Za-z\\-]+\\.)*fembed\\.com(/|$)";
 
 bool GetAppletMode()
 {
@@ -111,8 +112,10 @@ Result WebBrowserCall(std::string url,bool nag){
 			//block redirection 
 			if(url.substr(0,22) == "https://www.fembed.com") 
 			{	
-	//			std::string TT = KeyboardCall("^http*", );
-				webConfigSetWhitelist(&config, "^https://([0-9A-Za-z\\-]+\\.)*fembed\\.com(/|$)");
+				TT = KeyboardCall("Use ^http*", TT);
+//^https://([0-9A-Za-z\-]+\.)*nintendo\.(co\.jp|eu|co\.uk|es|pt|ch|at|de|nl|be|ru|fr|it|co\.za|co\.kr|tw|com\.hk|com\.au|ca|co\.nz)(/|$)
+//^https://www\.nintendo\.co\.jp/check_blacklisted_url-H2KMqKxRvwijbZ4xeB3C7mkr(\?|$)
+				webConfigSetWhitelist(&config, TT.c_str());				
 			} else webConfigSetWhitelist(&config, "^http*");
 		}
 		

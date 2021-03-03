@@ -215,20 +215,25 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int HS){
 		SDL_FreeSurface(DrawImg);
 }
 
-void SDLB::PleaseWait(std::string text){
+void SDLB::PleaseWait(std::string text,bool render){
 	//Clear screen
-	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(gRenderer);
+	//SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	//SDL_RenderClear(gRenderer);
 
 	//wallpaper
-	Farest.render((0), (0));
-	SDL_Rect fillRect = { 0, 720/2 - 25, 1280, 50 };
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-
+	/**/
+	//Farest.render((0), (0));
+	SDL_Rect fillRect = { 0, 0, 1280, 720 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 105);
 	SDL_RenderFillRect(gRenderer, &fillRect);
+	
+	fillRect = { 0, 720/2 - 25, 1280, 50 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(gRenderer, &fillRect);
+	
 	gTextTexture.loadFromRenderedText(gFont3, text.c_str(), { 50, 50, 50 });
 	gTextTexture.render(1280/2 - gTextTexture.getWidth()/2, 720/2 - gTextTexture.getHeight() / 2);
-	SDL_RenderPresent(gRenderer);
+	if (render)	SDL_RenderPresent(gRenderer);
 }
 
 void SDLB::deint(){

@@ -79,7 +79,6 @@ int porcendown = 0;
 int sizeestimated = 0;
 std::string temporallink = "";
 int cancelcurl = 0;
-bool fulldownloaded = false;
 
 //img
 bool reloading = false;
@@ -95,7 +94,7 @@ bool activatefirstimage = true;
 int searchchapter = 0;
 bool reloadingsearch = false;
 bool activatefirstsearchimage = true;
-std::string serverenlace = "";
+std::string serverenlace = "-";
 std::string searchtext = "";
 std::string tempimage = "";
 //favs
@@ -112,7 +111,7 @@ std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
 #endif // SWITCH
 
 //my vars
-std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/DATA/";
+std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
@@ -125,11 +124,11 @@ void blinkLed(u8 times);
 #endif // ___SWITCH___
 
 std::vector<std::string> arrayservers= {
-"Desu", "Xtreme S", "Okru",  "Fembed"
+"Desu", "Xtreme S", "Okru",  "Fembed", "MixDrop"
 };
 
 std::vector<std::string> arrayserversbak= {
-"Desu", "Xtreme S", "Okru",  "Fembed"
+"Desu", "Xtreme S", "Okru",  "Fembed", "MixDrop"
 };
 /*
 std::vector<std::string> arrayserversbak= {
@@ -153,8 +152,9 @@ int main(int argc, char **argv)
 	struct stat st = { 0 };
 	nxlinkStdio();
 	printf("printf output now goes to nxlink server\n");
-	mkdir("sdmc:/switch/RipJKAnime_NX", 0777);
-	mkdir("sdmc:/switch/RipJKAnime_NX/DATA", 0777);
+	mkdir(rootdirectory.c_str(), 0777);
+	mkdir((rootdirectory+"Video").c_str(), 0777);
+	mkdir((rootdirectory+"DATA").c_str(), 0777);
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
 	}
@@ -958,6 +958,7 @@ int main(int argc, char **argv)
 		} else {
 			B_A.render_T(dist, 680,"Seleccionar");dist -= posdist;
 			B_B.render_T(dist, 680,"Atras");dist -= posdist;
+			B_X.render_T(dist, 680,"Descargar");dist -= posdist;
 		}
 
 
@@ -1037,7 +1038,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				GOD.PleaseWait("Cargando programación... ");
+				GOD.PleaseWait("Cargando programación... ",false);
 			}
 			break;
 		case searchstate:
@@ -1103,7 +1104,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)");
+				GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)",false);
 			}
 			break;
 		case favoritesstate:
@@ -1166,45 +1167,37 @@ int main(int argc, char **argv)
 			replace(temptext, "/", " ");
 			replace(temptext, "-", " ");
 			mayus(temptext);
-			gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando actualmente:", textColor);
+			gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
 			gTextTexture.render(posxbase, posybase);
 			gTextTexture.loadFromRenderedText(GOD.gFont3, temptext, textColor);
 			gTextTexture.render(posxbase, posybase + 20);
 
-			gTextTexture.loadFromRenderedText(GOD.gFont2, std::to_string(porcendown) + "\%", textColor);
-			gTextTexture.render(posxbase + 40, posybase + 40);
-			gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
-			gTextTexture.render(posxbase + 100, posybase + 220);
-
-
 			gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
 			gTextTexture.render(posxbase , posybase + 280);
-			gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
-			gTextTexture.render(posxbase, posybase + 260);
+			std::string textB = "Cancelar la descarga";
+			if (serverenlace != "Error de descarga"){
+				gTextTexture.loadFromRenderedText(GOD.gFont2, std::to_string(porcendown) + "\%", textColor);
+				gTextTexture.render(posxbase + 40, posybase + 40);
 
-			{
-				B_B.render_T(1000, 680,"Cancelar la descarga");
-			}/*
-			gTextTexture.loadFromRenderedText(GOD.gFont, "Cancelar la descarga \"B\" - \"+\" para salir", textColor);
-			gTextTexture.render(posxbase, SCREEN_HEIGHT - 50);*/
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
+				gTextTexture.render(posxbase + 100, posybase + 220);
+				
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
+				gTextTexture.render(posxbase, posybase + 260);
 
-			if (std::to_string(porcendown) == "100") {
-
-
-#ifdef __SWITCH__
-				if (!fulldownloaded)
-				{
-					//blinkLed(6);//LED
-					fulldownloaded = true;
+				if (std::to_string(porcendown) == "100") {
+					//Render red filled quad
+					VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
+					gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
+					gTextTexture.render(posxbase + 100, posybase + 400);
+					textB="Volver";
 				}
-#endif // __SWITCH__
-
-
-				//Render red filled quad
-				VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
-				gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
-				gTextTexture.render(posxbase + 100, posybase + 400);
+			} else {
+				porcendown=0;
+				textB="Volver";
 			}
+			
+			B_B.render_T(1000, 680,textB);
 			break;
 		}
 
