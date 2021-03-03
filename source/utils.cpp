@@ -22,13 +22,18 @@
 #include "SDLWork.hpp"
 extern SDLB GOD;
 
-std::string scrapElement(std::string content, std::string get){
+std::string scrapElement(std::string content, std::string get,std::string delim){
 	int val1 = 0, val2 = 0;
 	std::string Element = "";
 	val1 = content.find(get);
 	if (val1 != -1)
 	{
-		std::string elmetTMP = content.substr(val1-1, 1);
+		std::string elmetTMP;
+		if(delim.length())
+			elmetTMP = delim;
+		else
+			elmetTMP = content.substr(val1-1, 1);
+		
 		replace(elmetTMP, ">","<");
 		replace(elmetTMP, "{","}");
 		replace(elmetTMP, "[","]");
@@ -53,6 +58,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	GOD.PleaseWait(text+"...");
 	std::string videourl = "";
 	std::string content = "";
+	std::string tempcon = "";
 	content = gethtml(onlineenlace);
 	
 	if (server == "Okru"){
@@ -68,10 +74,32 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	}
 	if (server == "Xtreme S"){
 		videourl = scrapElement(content,"https://jkanime.net/jk.php?");
+		//replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
 	}
 	if (server == "MixDrop"){
 		videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
 		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
+		if(videourl.length())
+		{
+			std::cout << videourl << std::endl;
+			std::string tempmedia = gethtml(videourl);
+			std::cout << tempmedia << std::endl;
+			videourl = scrapElement(tempmedia, "MDCore|","'");
+			if(videourl.length())
+			{
+				//clean
+				replace(videourl, "||s|", "||");
+				replace(videourl, "|s|", "||");
+				replace(videourl, "|vfile|vserver|remotesub|chromeInject|poster", "");
+				replace(videourl, "|thumbs|jpg|furl|wurl||v|_t|", "&e=");
+				replace(videourl, "|mp4|mxdcontent|net|referrer|", ".mp4?s=");
+				//scrap important elements
+				std::string dely = scrapElement(videourl, "delivery");
+				replace(videourl, "MDCore||"+dely+"|", "https://s-"+dely+".mxdcontent.net/v/");
+				replace(videourl, "|", "&_t=");
+				std::cout << videourl << std::endl;
+			}
+		}
 	}
 	if (server == "Nozomi"){
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
@@ -79,7 +107,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	if (server == "Mega"){
 		videourl = scrapElement(content,"https://mega.nz/embed/");
 	}
-
+	std::cout << videourl << std::endl;
 #ifdef __SWITCH__
 if (videourl.length() != 0)
 {
@@ -91,6 +119,78 @@ if (videourl.length() != 0)
 #endif //  SWITCH
 return false;
 }
+
+std::string linktodownoadjkanime(std::string urltodownload)
+{
+	std::string videourl = "";
+	std::string content = "";
+	GOD.PleaseWait("Calculando Links Espere...");
+	content = gethtml(urltodownload);
+	
+	
+	videourl = scrapElement(content, "https://www.mediafire.com/file/");
+	if(videourl.length())
+	{
+		std::cout << videourl << std::endl;
+		std::string tempmedia = gethtml(videourl);
+		videourl = scrapElement(tempmedia, "https://download");
+		if(videourl.length())
+		{
+			replace(videourl, "\\", "");
+			std::cout << videourl << std::endl;
+			return videourl;
+		}
+	}
+	
+	videourl = scrapElement(content, "https://www24.zippyshare.com");
+	if(videourl.length())
+	{
+		std::cout << videourl << std::endl;
+		std::string tempmedia = gethtml(videourl);
+		videourl = scrapElement(tempmedia, "https://www24.zippyshare.com/d");
+		if(videourl.length())
+		{
+			replace(videourl, "\\", "");
+			std::cout << videourl << std::endl;
+			return videourl;
+		}
+	}
+	videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
+	if(videourl.length())
+	{
+		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
+		std::cout << videourl << std::endl;
+		std::string tempmedia = gethtml(videourl);
+		videourl = scrapElement(tempmedia, "MDCore|","'");
+		if(videourl.length())
+		{
+			//clean
+			replace(videourl, "||s|", "||");
+			replace(videourl, "|s|", "||");
+			replace(videourl, "|vfile|vserver|remotesub|chromeInject|poster", "");
+			replace(videourl, "|thumbs|jpg|furl|wurl||v|_t|", "&e=");
+			replace(videourl, "|mp4|mxdcontent|net|referrer|", ".mp4?s=");
+			//scrap important elements
+			std::string dely = scrapElement(videourl, "delivery");
+			replace(videourl, "MDCore||"+dely+"|", "https://s-"+dely+".mxdcontent.net/v/");
+			replace(videourl, "|", "&_t=");
+			std::cout << videourl << std::endl;
+			return videourl;
+		}
+	}
+
+	// return {} is useless for now
+	videourl = scrapElement(content, "https://jkanime.net/jk.php?");
+	if(videourl.length())
+	{
+		replace(videourl, "\\", "");
+		replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
+		std::cout << videourl << std::endl;
+		return videourl;
+	}
+	return "";
+}
+
 
 bool isFileExist(std::string file)
 {

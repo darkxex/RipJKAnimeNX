@@ -17,7 +17,7 @@ int TouchY=-1;
 int GenState=-1;
 void Image(std::string path,int X, int Y,std::string Text = "",bool off=false);
 void Cover(std::string path,int X, int Y,std::string Text = "",int HS = 100);
-void PleaseWait(std::string text);
+void PleaseWait(std::string text,bool render = true);
 void deint();
 };
 
