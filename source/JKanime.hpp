@@ -18,7 +18,7 @@ int downloadjkanimevideo(void* data)
 	replace(namedownload, "/", " ");
 	namedownload = namedownload.substr(0, namedownload.length() - 1);
 	mayus(namedownload);
-	namedownload = namedownload + ".mp4";
+	namedownload = "sdmc:/" +namedownload + ".mp4";
 #ifdef __SWITCH__
 	std::string directorydownload = namedownload;
 #else
