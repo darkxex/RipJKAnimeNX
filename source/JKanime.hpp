@@ -302,7 +302,7 @@ int MKfavimgfix(){
 	std::ifstream file(favoritosdirectory);
 	std::string str;
 	std::string machu ="";
-	while (std::getline(file, str)) {
+		while (std::getline(file, str)) {
 		//std::cout << str << "\n";
 		if (str.find("jkanime"))
 		{
