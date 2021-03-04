@@ -369,8 +369,8 @@ int main(int argc, char **argv)
 						case chapterstate:
 							if(serverpront){
 								serverpront=false;
-							} else {
 								arrayservers=arrayserversbak;
+							} else {
 								switch (returnnow)
 								{
 								case toprogramation:
