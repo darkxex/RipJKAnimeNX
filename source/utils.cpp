@@ -83,7 +83,6 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 		{
 			std::cout << videourl << std::endl;
 			std::string tempmedia = gethtml(videourl);
-			std::cout << tempmedia << std::endl;
 			videourl = scrapElement(tempmedia, "MDCore|","'");
 			if(videourl.length())
 			{
