@@ -124,7 +124,6 @@ std::string linktodownoadjkanime(std::string urltodownload)
 {
 	std::string videourl = "";
 	std::string content = "";
-	GOD.PleaseWait("Calculando Links Espere...");
 	content = gethtml(urltodownload);
 	
 	

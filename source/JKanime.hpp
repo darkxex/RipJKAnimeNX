@@ -1,23 +1,140 @@
+//////////////////////////////////aquí empieza el pc.
+//Screen dimension constants
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
+//Rendered texture
+LTexture gTextTexture;
+LTexture Farest;
+LTexture Heart;
+LTexture TChapters;
+LTexture TPreview;
+LTexture TSearchPreview;///////
+LTexture TFavorite;
+//Render Buttons
+LTexture B_A;
+LTexture B_B;
+LTexture B_Y;
+LTexture B_X;
+LTexture B_L;
+LTexture B_R;
+LTexture B_ZR;
+LTexture B_M;
+LTexture B_P;
+LTexture B_RIGHT;
+LTexture B_LEFT;
+LTexture B_UP;
+LTexture B_DOWN;
+//Render extra
+LTexture FAV;
+LTexture NOP;
+//Text and BOXES
+LTexture VOX;
+LTexture T_T;
+LTexture T_D;
+
+//main SLD funct (Grafics On Display = GOD)
+SDLB GOD;
+	
+//Gui Vars
+enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
+enum statesreturn { toprogramation, tosearch, tofavorite };
+int statenow = programationstate;
+int returnnow = toprogramation;
+//net
+std::string  urltodownload = "";
+int porcendown = 0;
+int sizeestimated = 0;
+std::string temporallink = "";
+int cancelcurl = 0;
+
+//img
+bool reloading = false;
+bool preview = false;
+int selectchapter = 0;
+int porcentajereload = 0;
+int imgNumbuffer = 0;
+int porcentajebuffer = 0;
+int porcentajebufferA = 0;
+bool activatefirstimage = true;
+std::string serverenlace = "...";
+std::string DownTitle="...";
+//search
+int searchchapter = 0;
+bool reloadingsearch = false;
+bool activatefirstsearchimage = true;
+std::string searchtext = "";
+std::string tempimage = "";
+//downloads
+bool isDownloading=false;
+//favs
+int favchapter = 0;
+bool gFAV = false;
+//server
+int selectserver = 0;
+bool serverpront = false;
+
+#ifdef __SWITCH__
+std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
+#else
+std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
+#endif // SWITCH
+
+//my vars
+std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
+bool AppletMode=false;
+bool isSXOS=false;
+bool hasStealth=false;
+AccountUid uid;
+
+
+#ifdef __SWITCH__
+HidsysNotificationLedPattern blinkLedPattern(u8 times);
+void blinkLed(u8 times);
+#endif // ___SWITCH___
+
+std::vector<std::string> arrayservers= {
+"Desu", "Xtreme S", "Okru",  "Fembed", "MixDrop"
+};
+
+std::vector<std::string> arrayserversbak= {
+"Desu", "Xtreme S", "Okru",  "Fembed", "MixDrop"
+};
+/*
+std::vector<std::string> arrayserversbak= {
+"Okru",	"Desu", "Xtreme S", "Fembed",
+"MixDrop", "Nozomi", "Mega"
+};
+*/
+bool quit=false;
+
 int MKcapitBuffer();
 int MKfavimgfix();
 
 int downloadjkanimevideo(void* data)
 {
+	DownTitle="...";
+	serverenlace = "...";
+	isDownloading=true;
+	porcendown=0;
+	
+	std::string namedownload = urltodownload;
+	replace(namedownload, "https://jkanime.net/", "");
+	replace(namedownload, "-", " ");
+	replace(namedownload, "/", " ");
+	namedownload = namedownload.substr(0, namedownload.length() - 1);
+	mayus(namedownload);
+	DownTitle=namedownload;
+	
 	std::string videourl = linktodownoadjkanime(urltodownload);
 	if (videourl.length() <7){
 		std::cout << "Error:  " << videourl << std::endl;
 		std::cout << urltodownload << std::endl;
 		serverenlace = "Error de descarga";
+		isDownloading=false;
 		return 0;
 	}
-	
-	std::string namedownload = urltodownload;
 	serverenlace = videourl;
-	replace(namedownload, "https://jkanime.net/", "");
-//	replace(namedownload, "-", " ");
-	replace(namedownload, "/", " ");
-	namedownload = namedownload.substr(0, namedownload.length() - 1);
-	mayus(namedownload);
+
 	namedownload = "sdmc:/" +namedownload + ".mp4";
 #ifdef __SWITCH__
 	std::string directorydownload = namedownload;
@@ -31,6 +148,8 @@ int downloadjkanimevideo(void* data)
 	if (!downloadfile(videourl, directorydownload)){
 		serverenlace = "Error de descarga";
 	}
+	isDownloading=false;
+	statenow = downloadstate;
 	return 0;
 }
 
