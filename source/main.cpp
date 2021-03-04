@@ -26,11 +26,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
-#include <thread>
 #include "Networking.hpp"
 #include "SDLWork.hpp"
 #include "applet.hpp"
+#include <thread>
 #include "utils.hpp"
+
 
 //make some includes to clean alittle the main
 #include "JKanime.hpp"
@@ -41,6 +42,7 @@ int main(int argc, char **argv)
 #ifdef __SWITCH__
 	romfsInit();
 	socketInitializeDefault();
+	//nxlinkStdio();
 	struct stat st = { 0 };
 	nxlinkStdio();
 	printf("printf output now goes to nxlink server\n");
@@ -755,363 +757,363 @@ int main(int argc, char **argv)
 		SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(GOD.gRenderer);
 
+		//Render current frame
 		//wallpaper
 		Farest.render((0), (0));
-		
-		//render states
 		switch (statenow)
 		{
-			case chapterstate:		{
-			//Draw a background to a nice view
-			VOX.render_VOX({0,0, SCREEN_WIDTH, SCREEN_HEIGHT} ,170, 170, 170, 100);
-			std::string temptext = temporallink;
-			replace(temptext, "https://jkanime.net/", "");
-			replace(temptext, "/", " ");
-			replace(temptext, "-", " ");
-			mayus(temptext);
+		case chapterstate:
+		{
+		//Draw a background to a nice view
+		VOX.render_VOX({0,0, SCREEN_WIDTH, SCREEN_HEIGHT} ,170, 170, 170, 100);
+		std::string temptext = temporallink;
+		replace(temptext, "https://jkanime.net/", "");
+		replace(temptext, "/", " ");
+		replace(temptext, "-", " ");
+		mayus(temptext);
 
 
-			//warning , only display in sxos ToDo
-			gTextTexture.loadFromRenderedText(GOD.gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
-			gTextTexture.render(posxbase, 0 );
+		//warning , only display in sxos ToDo
+		gTextTexture.loadFromRenderedText(GOD.gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
+		gTextTexture.render(posxbase, 0 );
 
-			//draw Title
-			gTextTexture.loadFromRenderedText(GOD.gFont3, temptext.substr(0,62)+ ":", textColor);
-			gTextTexture.render(posxbase+10, posybase);
+		//draw Title
+		gTextTexture.loadFromRenderedText(GOD.gFont3, temptext.substr(0,62)+ ":", textColor);
+		gTextTexture.render(posxbase+10, posybase);
 
-			{//draw description
-			VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
-			gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
-			gTextTexture.render(posxbase+15, posybase + 65);
+		{//draw description
+		VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
+		gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
+		gTextTexture.render(posxbase+15, posybase + 65);
 
-			gTextTexture.loadFromRenderedTextWrap(GOD.gFont3, generos, textColor,750);
-			gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
+		gTextTexture.loadFromRenderedTextWrap(GOD.gFont3, generos, textColor,750);
+		gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
+		}
+		
+		{//draw back rectangle
+		VOX.render_VOX({ SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 }, 0, 0, 0, 200);
+		//draw preview image
+		TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
+		}
+		if (enemision)
+		{
+			gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
+			gTextTexture.render(posxbase + 820, posybase + 598);
+			gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
+			gTextTexture.render(posxbase + 1020, posybase + 615);
+		}
+		else
+		{
+			gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
+			gTextTexture.render(posxbase + 820, posybase + 598);
+		}
+
+
+		int sizefix = 0;
+		sizefix = (int)arrayservers.size() * 52;
+		bool anend = VOX.render_AH(310, 610, 190, sizefix, serverpront);
+//		bool anend = Heart.render_AH(840, 610, 190, sizefix, serverpront);
+		if(serverpront){
+			if (anend){
+				for (int x = 0; x < (int)arrayservers.size(); x++) {
+					if (x == selectserver){
+						T_T.loadFromRenderedText(GOD.gFont3, arrayservers[x], textWhite);
+						T_T.render(posxbase+310, 610 - sizefix + (x * 52));
+					} else {
+						gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x],textGray);
+						gTextTexture.render(posxbase+310, 610 - sizefix + (x * 52));
+					}
+				}
+			}
+		}
+		
+		//use this to move the element
+		{//draw caps Scroll
+		int XS=100 , YS =30;
+			VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
+			if (capmore-2 >= mincapit) {
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
+				gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+			}
+			if (capmore-1 >= mincapit) {
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-1), textGray);
+				gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 			
-			{//draw back rectangle
-			VOX.render_VOX({ SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 }, 0, 0, 0, 200);
-			//draw preview image
-			TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
+			if (serverpront){
+				gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
+				gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+			} else {
+				T_T.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
+				T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
 			}
-			if (enemision)
-			{
-				gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
-				gTextTexture.render(posxbase + 820, posybase + 598);
-				gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
-				gTextTexture.render(posxbase + 1020, posybase + 615);
+
+			if (capmore+1 <= maxcapit) {
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+1), textGray);
+				gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+			}
+			if (capmore+2 <= maxcapit) {
+				gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+2), textGray);
+				gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+			}
+
+			if (maxcapit >= 10 && !serverpront){
+				B_UP.render_T(280+XS, 530+YS,"+10",serverpront);
+				B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
+			}
+			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
+			B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
+			B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
+		}
+				
+		//Draw Footer Buttons
+		int dist = 1100,posdist = 160;
+		if(serverpront){
+			B_A.render_T(dist, 680,"Ver Online");dist -= posdist;
+			B_B.render_T(dist, 680,"Cerrar");dist -= posdist;
+		} else {
+			B_A.render_T(dist, 680,"Seleccionar");dist -= posdist;
+			B_B.render_T(dist, 680,"Atras");dist -= posdist;
+			B_X.render_T(dist, 680,"Descargar");dist -= posdist;
+		}
+
+
+
+		if(gFAV){FAV.render_T(1190, 70,"");}
+		else {B_Y.render_T(dist, 680,"Favorito");}
+		}
+		break;
+		case programationstate:
+		{
+			if (!reloading&&arraychapter.size()>=1) {
+				VOX.render_VOX({0,0, 620, 670}, 200, 200, 200, 105);//Draw a rectagle to a nice view
+
+				for (int x = 0; x < (int)arraychapter.size(); x++) {
+					std::string temptext = arraychapter[x];
+					replace(temptext, "https://jkanime.net/", "");
+					replace(temptext, "/", " ");
+					replace(temptext, "-", " ");
+					mayus(temptext);
+
+					if (x == selectchapter) {
+						T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+						VOX.render_VOX({posxbase-2,posybase + (x * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
+						T_T.render(posxbase, posybase + (x * 22));
+
+						Heart.render(posxbase - 18, posybase + 3 + (x * 22));
+					}
+					else
+					{
+						gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
+						gTextTexture.render(posxbase, posybase + (x * 22));
+
+					}
+
+				}
+				if (activatefirstimage)
+				{
+					TPreview.free();
+					callimage(selectchapter);
+					activatefirstimage = false;
+				}
+				if (preview)
+				{
+
+					{int ajuX = -350, ajuY = -450;
+					VOX.render_VOX({ xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
+					TPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
+					}
+				}
+
+				//Draw footer buttons
+				int dist = 1100,posdist = 160;
+				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+				B_R.render_T(dist, 680,"Buscar");dist -= posdist;
+				B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
+				B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
+				B_UP.render_T(580, 5,"");
+				B_DOWN.render_T(580, 630,"");
+			
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8.3) #KASTXUPALO", {100,0,0});
+				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
+				if (imgNumbuffer > 0){
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
+					Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
+				}
+				if (porcentajebuffer > 0){
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/30)", {0,100,0});
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
+					Heart.render(posxbase + 570, posybase + 3 + (porcentajebuffer-1) * 22);
+					Heart.render(posxbase + 550, posybase + 3 + (porcentajebufferA-1) * 22);
+				}
+
+
+
 			}
 			else
 			{
-				gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
-				gTextTexture.render(posxbase + 820, posybase + 598);
+				GOD.PleaseWait("Cargando programación... ",false);
 			}
-
-
-			int sizefix = 0;
-			sizefix = (int)arrayservers.size() * 52;
-			bool anend = VOX.render_AH(310, 610, 190, sizefix, serverpront);
-	//		bool anend = Heart.render_AH(840, 610, 190, sizefix, serverpront);
-			if(serverpront){
-				if (anend){
-					for (int x = 0; x < (int)arrayservers.size(); x++) {
-						if (x == selectserver){
-							T_T.loadFromRenderedText(GOD.gFont3, arrayservers[x], textWhite);
-							T_T.render(posxbase+310, 610 - sizefix + (x * 52));
-						} else {
-							gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x],textGray);
-							gTextTexture.render(posxbase+310, 610 - sizefix + (x * 52));
-						}
-					}
-				}
-			}
-			
-			//use this to move the element
-			{//draw caps Scroll
-			int XS=100 , YS =30;
-				VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
-				if (capmore-2 >= mincapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
-					gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-				if (capmore-1 >= mincapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-1), textGray);
-					gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-				
-				if (serverpront){
-					gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
-					gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				} else {
-					T_T.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
-					T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
-				}
-
-				if (capmore+1 <= maxcapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+1), textGray);
-					gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-				if (capmore+2 <= maxcapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+2), textGray);
-					gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-
-				if (maxcapit >= 10 && !serverpront){
-					B_UP.render_T(280+XS, 530+YS,"+10",serverpront);
-					B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
-				}
-				if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
-				B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
-				B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
-			}
-					
-			//Draw Footer Buttons
-			int dist = 1100,posdist = 160;
-			if(serverpront){
-				B_A.render_T(dist, 680,"Ver Online");dist -= posdist;
-				B_B.render_T(dist, 680,"Cerrar");dist -= posdist;
-			} else {
-				B_A.render_T(dist, 680,"Seleccionar");dist -= posdist;
-				B_B.render_T(dist, 680,"Atras");dist -= posdist;
-				B_X.render_T(dist, 680,"Descargar");dist -= posdist;
-			}
-
-
-
-			if(gFAV){FAV.render_T(1190, 70,"");}
-			else {B_Y.render_T(dist, 680,"Favorito");}
 			break;
-			}
-			case programationstate:	{
-				if (!reloading&&arraychapter.size()>=1) {
-					VOX.render_VOX({0,0, 620, 670}, 200, 200, 200, 105);//Draw a rectagle to a nice view
-
-					if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
-						selectchapter=(GOD.TouchY*30/660);
-						if (selectchapter <= 0) selectchapter = 0;
-						if (selectchapter > 30) selectchapter = 30;
-						activatefirstimage=true;
-					}
+		}
+		case searchstate:
+		{
+			if (!reloadingsearch) {
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Busqueda", {100,0,0});
+				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
+				if ((int)arraysearch.size() >= 1){
 					
-					for (int x = 0; x < (int)arraychapter.size(); x++) {
-						std::string temptext = arraychapter[x];
+					VOX.render_VOX({0,0, 620, 670}, 100, 100, 100, 105);
+
+					int of = searchchapter < 30 ? 0 : searchchapter - 26;
+					if (arraysearch.size() > 30) {
+						gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(arraysearch.size()), {0,0,0});
+						gTextTexture.render(400, 690);
+					}
+					for (int x = of; x < (int)arraysearch.size(); x++) {
+						std::string temptext = arraysearch[x];
+					
 						replace(temptext, "https://jkanime.net/", "");
 						replace(temptext, "/", " ");
 						replace(temptext, "-", " ");
 						mayus(temptext);
-
-						if (x == selectchapter) {
+						if (x == searchchapter) {
 							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
-							VOX.render_VOX({posxbase-2,posybase + (x * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
-							T_T.render(posxbase, posybase + (x * 22));
+							VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
+							T_T.render(posxbase, posybase + ((x-of) * 22));
 
-							Heart.render(posxbase - 18, posybase + 3 + (x * 22));
+							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
 						}
-						else
+						else if ((x-of)<30)
 						{
+
 							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
-							gTextTexture.render(posxbase, posybase + (x * 22));
+							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 
 						}
 
 					}
-					if (activatefirstimage)
+
+					if (activatefirstsearchimage)
 					{
-						TPreview.free();
-						callimage(selectchapter);
-						activatefirstimage = false;
+						TSearchPreview.free();
+						callimagesearch(searchchapter);
+						activatefirstsearchimage = false;
 					}
 					if (preview)
 					{
 						{int ajuX = -350, ajuY = -450;
 						VOX.render_VOX({ xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
-						TPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
-						}
-					}
-
-					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8.3) #KASTXUPALO", {100,0,0});
-					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
-					if (imgNumbuffer > 0){
-						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
-						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
-						Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
-					}
-					if (porcentajebuffer > 0){
-						gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/30)", {0,100,0});
-						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
-						Heart.render(posxbase + 570, posybase + 3 + (porcentajebuffer-1) * 22);
-						Heart.render(posxbase + 550, posybase + 3 + (porcentajebufferA-1) * 22);
-					}
-
-					//Draw footer buttons
-					int dist = 1100,posdist = 160;
-					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
-					B_R.render_T(dist, 680,"Buscar");dist -= posdist;
-					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
-					B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
-					B_UP.render_T(580, 5,"");
-					B_DOWN.render_T(580, 630,"");
-				}
-				else
-				{
-					GOD.PleaseWait("Cargando programación... ",false);
-				}
-				break;
-			}
-			case searchstate:		{
-				if (!reloadingsearch) {
-					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Busqueda", {100,0,0});
-					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
-					if ((int)arraysearch.size() >= 1){
+						TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
 						
-						VOX.render_VOX({0,0, 620, 670}, 100, 100, 100, 105);
-
-						int of = searchchapter < 30 ? 0 : searchchapter - 26;
-						if (arraysearch.size() > 30) {
-							gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(arraysearch.size()), {0,0,0});
-							gTextTexture.render(400, 690);
-						}
-						for (int x = of; x < (int)arraysearch.size(); x++) {
-							std::string temptext = arraysearch[x];
-						
-							replace(temptext, "https://jkanime.net/", "");
-							replace(temptext, "/", " ");
-							replace(temptext, "-", " ");
-							mayus(temptext);
-							if (x == searchchapter) {
-								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
-								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
-								T_T.render(posxbase, posybase + ((x-of) * 22));
-
-								Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
-							}
-							else if ((x-of)<30)
-							{
-
-								gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
-								gTextTexture.render(posxbase, posybase + ((x-of) * 22));
-
-							}
-
-						}
-
-						if (activatefirstsearchimage)
-						{
-							TSearchPreview.free();
-							callimagesearch(searchchapter);
-							activatefirstsearchimage = false;
-						}
-						if (preview)
-						{
-							{int ajuX = -350, ajuY = -450;
-							VOX.render_VOX({ xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
-							TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
-							
-						}
-					}else NOP.render_T(230, 355,searchtext);
-					
-					{//Draw footer buttons
-					int dist = 1100,posdist = 160;
-					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
-					B_B.render_T(dist, 680,"Atras");dist -= posdist;
-					B_R.render_T(dist, 680,"Buscar");dist -= posdist;}
-					B_UP.render_T(580, 5,"");
-					B_DOWN.render_T(580, 630,"");
-				}
-				else
-				{
-					GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)",false);
-				}
-				break;
-			}
-			case favoritesstate:	{
-				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
-				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
-				if ((int)arrayfavorites.size() >= 1 ){
-				VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 105);
-				int of = favchapter < 30 ? 0 : favchapter - 26;
-				if (arrayfavorites.size() > 30) {
-					gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
-					gTextTexture.render(400, 690);
-				}
-				for (int x = of; x < (int)arrayfavorites.size(); x++) {
-					std::string temptext = arrayfavorites[x];
-
-					replace(temptext, "https://jkanime.net/", "");
-					replace(temptext, "/", "");
-	//				std::string machu = rootdirectory+temptext+".jpg";
-					replace(temptext, "-", " ");
-						mayus(temptext);
-						if (x == favchapter) {
-	//						CheckImgNet(machu);
-	//						tempimage = machu;
-								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
-								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
-								T_T.render(posxbase, posybase + ((x-of) * 22));
-
-								{int ajuX = -350, ajuY = -450;
-								VOX.render_VOX({posxbase + xdistance + ajuX -2,posybase + ydistance + ajuY -2, TFavorite.getWidth()+4, TFavorite.getHeight()+4}, 0, 0, 0, 200);
-								TFavorite.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
-
-	//							GOD.Cover(machu,610,scroll > 570 ? 570 : scroll ,"",200);
-								Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));}
-						}
-						else if((x-of) < 30)
-						{
-							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
-							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
-						}
 					}
-				}
+				}else NOP.render_T(230, 355,searchtext);
+				
 				{//Draw footer buttons
-					int dist = 1100,posdist = 160;
-					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
-					B_B.render_T(dist, 680,"Volver");dist -= posdist;
-					if ((int)arrayfavorites.size() >= 1){
-						B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
-					}else NOP.render_T(230, 355,"");
-					
-					B_UP.render_T(580, 5,"");
-					B_DOWN.render_T(580, 630,"");
-				}
-			break;
+				int dist = 1100,posdist = 160;
+				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+				B_B.render_T(dist, 680,"Atras");dist -= posdist;
+				B_R.render_T(dist, 680,"Buscar");dist -= posdist;}
+				B_UP.render_T(580, 5,"");
+				B_DOWN.render_T(580, 630,"");
 			}
-			case downloadstate:		{
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
-				gTextTexture.render(posxbase, posybase);
-				gTextTexture.loadFromRenderedText(GOD.gFont3, DownTitle, textColor);
-				gTextTexture.render(posxbase, posybase + 20);
-
-				gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
-				gTextTexture.render(posxbase , posybase + 280);
-				if (serverenlace != "Error de descarga"){
-					gTextTexture.loadFromRenderedText(GOD.gFont2, std::to_string(porcendown) + "\%", textColor);
-					gTextTexture.render(posxbase + 40, posybase + 40);
-
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
-					gTextTexture.render(posxbase + 100, posybase + 220);
-					
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
-					gTextTexture.render(posxbase, posybase + 260);
-
-					if (std::to_string(porcendown) == "100") {
-						//Render red filled quad
-						VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
-						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
-						gTextTexture.render(posxbase + 100, posybase + 400);
-					 }
-				} else {
-					porcendown=0;
-				}
-				if(isDownloading)
-				B_X.render_T(800, 680,"Cancelar la descarga");
-				B_B.render_T(1100, 680,"Volver");
+			else
+			{
+				GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)",false);
+			}
 			break;
+		}
+		case favoritesstate:
+		{
+			//Draw Header
+			gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
+			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
+			if ((int)arrayfavorites.size() >= 1 ){
+			VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 105);
+			int of = favchapter < 30 ? 0 : favchapter - 26;
+			if (arrayfavorites.size() > 30) {
+				gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
+				gTextTexture.render(400, 690);
+			}
+			for (int x = of; x < (int)arrayfavorites.size(); x++) {
+				std::string temptext = arrayfavorites[x];
+
+				replace(temptext, "https://jkanime.net/", "");
+				replace(temptext, "/", "");
+//				std::string machu = rootdirectory+temptext+".jpg";
+				replace(temptext, "-", " ");
+					mayus(temptext);
+					if (x == favchapter) {
+//						CheckImgNet(machu);
+//						tempimage = machu;
+							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+							VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
+							T_T.render(posxbase, posybase + ((x-of) * 22));
+
+							{int ajuX = -350, ajuY = -450;
+							VOX.render_VOX({posxbase + xdistance + ajuX -2,posybase + ydistance + ajuY -2, TFavorite.getWidth()+4, TFavorite.getHeight()+4}, 0, 0, 0, 200);
+							TFavorite.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
+
+//							GOD.Cover(machu,610,scroll > 570 ? 570 : scroll ,"",200);
+							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));}
+					}
+					else if((x-of) < 30)
+					{
+						gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
+						gTextTexture.render(posxbase, posybase + ((x-of) * 22));
+					}
+				}
+			}
+			{//Draw footer buttons
+				int dist = 1100,posdist = 160;
+				B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+				B_B.render_T(dist, 680,"Volver");dist -= posdist;
+				if ((int)arrayfavorites.size() >= 1){
+					B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
+				}else NOP.render_T(230, 355,"");
+				
+				B_UP.render_T(580, 5,"");
+				B_DOWN.render_T(580, 630,"");
 			}
 		}
-		//global render
+		break;
+		case downloadstate:
+		{
+			gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
+			gTextTexture.render(posxbase, posybase);
+			gTextTexture.loadFromRenderedText(GOD.gFont3, DownTitle, textColor);
+			gTextTexture.render(posxbase, posybase + 20);
+
+			gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
+			gTextTexture.render(posxbase , posybase + 280);
+			if (serverenlace != "Error de descarga"){
+				gTextTexture.loadFromRenderedText(GOD.gFont2, std::to_string(porcendown) + "\%", textColor);
+				gTextTexture.render(posxbase + 40, posybase + 40);
+
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
+				gTextTexture.render(posxbase + 100, posybase + 220);
+				
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
+				gTextTexture.render(posxbase, posybase + 260);
+
+				if (std::to_string(porcendown) == "100") {
+					//Render red filled quad
+					VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
+					gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
+					gTextTexture.render(posxbase + 100, posybase + 400);
+				 }
+			} else {
+				porcendown=0;
+			}
+			if(isDownloading)
+			B_X.render_T(800, 680,"Cancelar la descarga");
+			B_B.render_T(1100, 680,"Volver");
+		}
+		break;
+		}
 		if(isDownloading&& downloadstate != statenow){
 			T_D.loadFromRenderedText(GOD.gFont, "Downloading: ("+std::to_string(porcendown)+"\% )", {100,100,0});
 			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, porcentajebuffer > 0 ? T_D.getHeight()+42 : 40);
