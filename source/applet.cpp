@@ -108,7 +108,7 @@ Result WebBrowserCall(std::string url,bool nag){
 			//webConfigSetFooter(&config, false);
 			
 			//play direct links
-			if(url.substr(0,18) == "https://s-delivery") 
+			if(url.substr(9,9) == "-delivery") 
 			webConfigSetBootAsMediaPlayer(&config, true);
 
 			//block redirection

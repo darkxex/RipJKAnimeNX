@@ -86,18 +86,31 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 			videourl = scrapElement(tempmedia, "MDCore|","'");
 			if(videourl.length())
 			{
-				//clean
-				replace(videourl, "||s|", "||");
-				replace(videourl, "|s|", "||");
+				//clean  int val0 =0;
+				replace(videourl, "MDCore||s|", "https://s-|");
+				replace(videourl, "MDCore|s|", "https://s-|");
+				replace(videourl, "MDCore||", "https://a-|");
+				replace(videourl, "||s|", "|");
+				replace(videourl, "|s|", "|");
+				replace(videourl, "||", "|");
+				replace(videourl, "||", "|");
 				replace(videourl, "|vfile|vserver|remotesub|chromeInject|poster", "");
-				replace(videourl, "|thumbs|jpg|furl|wurl||v|_t|", "&e=");
-				replace(videourl, "|mp4|mxdcontent|net|referrer|", ".mp4?s=");
+				replace(videourl, "|thumbs", "");
+				replace(videourl, "|jpg", "");
+				replace(videourl, "|furl", "");
+				replace(videourl, "|wurl", "");
+				replace(videourl, "|v", "");
+				replace(videourl, "|_t|", "&e=");
+				replace(videourl, "|mp4", "");
+				replace(videourl, "|net", "");
+				replace(videourl, "|mxdcontent", "");
+				replace(videourl, "|referrer|", ".mp4?s=");
 				//scrap important elements
 				std::string dely = scrapElement(videourl, "delivery");
-				replace(videourl, "MDCore||"+dely+"|", "https://s-"+dely+".mxdcontent.net/v/");
+				replace(videourl, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
 				replace(videourl, "|", "&_t=");
 				std::cout << videourl << std::endl;
-			}
+			}	
 		}
 	}
 	if (server == "Nozomi"){
@@ -162,15 +175,28 @@ std::string linktodownoadjkanime(std::string urltodownload)
 		videourl = scrapElement(tempmedia, "MDCore|","'");
 		if(videourl.length())
 		{
-			//clean
-			replace(videourl, "||s|", "||");
-			replace(videourl, "|s|", "||");
+			//clean  int val0 =0;
+			replace(videourl, "MDCore||s|", "https://s-|");
+			replace(videourl, "MDCore|s|", "https://s-|");
+			replace(videourl, "MDCore||", "https://a-|");
+			replace(videourl, "||s|", "|");
+			replace(videourl, "|s|", "|");
+			replace(videourl, "||", "|");
+			replace(videourl, "||", "|");
 			replace(videourl, "|vfile|vserver|remotesub|chromeInject|poster", "");
-			replace(videourl, "|thumbs|jpg|furl|wurl||v|_t|", "&e=");
-			replace(videourl, "|mp4|mxdcontent|net|referrer|", ".mp4?s=");
+			replace(videourl, "|thumbs", "");
+			replace(videourl, "|jpg", "");
+			replace(videourl, "|furl", "");
+			replace(videourl, "|wurl", "");
+			replace(videourl, "|v", "");
+			replace(videourl, "|_t|", "&e=");
+			replace(videourl, "|mp4", "");
+			replace(videourl, "|net", "");
+			replace(videourl, "|mxdcontent", "");
+			replace(videourl, "|referrer|", ".mp4?s=");
 			//scrap important elements
 			std::string dely = scrapElement(videourl, "delivery");
-			replace(videourl, "MDCore||"+dely+"|", "https://s-"+dely+".mxdcontent.net/v/");
+			replace(videourl, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
 			replace(videourl, "|", "&_t=");
 			std::cout << videourl << std::endl;
 			return videourl;
