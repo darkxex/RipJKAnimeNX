@@ -161,29 +161,47 @@ int main(int argc, char **argv)
 			GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 			GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
 			break;
+			case SDL_FINGERMOTION:
+				if(GOD.TouchX > 55 && GOD.TouchX < 620 && statenow != chapterstate){
+					
+					//swipe down go up
+					if(e.tfinger.dy * SCREEN_HEIGHT > 15)
+					{
+						e.jbutton.button = 15;
+					}
+					//swipe up go down
+					else if(e.tfinger.dy * SCREEN_HEIGHT < -15)
+					{
+						e.jbutton.button = 13;
+					} else {
+						break;
+					}
+				SDL_Log("motion %f \n",e.tfinger.dy * SCREEN_HEIGHT);
+				} else break;
 			case SDL_FINGERUP:
-			GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
-			GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-			e.jbutton.button=-1;
-			if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() || TSearchPreview.SP() || TFavorite.SP()) e.jbutton.button = 0;
-			if (B_B.SP()) e.jbutton.button = 1;
-			if (B_X.SP()) e.jbutton.button = 2;
-			if (B_Y.SP()) e.jbutton.button = 3;
-			if (B_L.SP()) e.jbutton.button = 6;
-			if (B_R.SP()) e.jbutton.button = 7;
-//			if (B_ZR.SP()) e.jbutton.button = 9;
-			if (B_P.SP()) e.jbutton.button = 10;
-			if (B_M.SP()) e.jbutton.button = 11;
-			if (B_LEFT.SP()) e.jbutton.button = 12;
-			if (B_RIGHT.SP()) e.jbutton.button = 18;
-			if (B_UP.SP()) e.jbutton.button = 13;
-			if (B_DOWN.SP()) e.jbutton.button = 15;
-			if (T_D.SP()&&isDownloading) statenow = downloadstate;
-			
-			SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
-			GOD.TouchX = -1;
-			GOD.TouchY = -1;
-			
+			if (e.type == SDL_FINGERUP){
+				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+				e.jbutton.button=-1;
+				if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() || TSearchPreview.SP() || TFavorite.SP()) e.jbutton.button = 0;
+				if (B_B.SP()) e.jbutton.button = 1;
+				if (B_X.SP()) e.jbutton.button = 2;
+				if (B_Y.SP()) e.jbutton.button = 3;
+				if (B_L.SP()) e.jbutton.button = 6;
+				if (B_R.SP()) e.jbutton.button = 7;
+	//			if (B_ZR.SP()) e.jbutton.button = 9;
+				if (B_P.SP()) e.jbutton.button = 10;
+				if (B_M.SP()) e.jbutton.button = 11;
+				if (B_LEFT.SP()) e.jbutton.button = 12;
+				if (B_RIGHT.SP()) e.jbutton.button = 18;
+				if (B_UP.SP()) e.jbutton.button = 13;
+				if (B_DOWN.SP()) e.jbutton.button = 15;
+				if (T_D.SP()&&isDownloading) statenow = downloadstate;
+				
+				SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
+				GOD.TouchX = -1;
+				GOD.TouchY = -1;
+			}
 			case SDL_JOYBUTTONDOWN :
 				//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
