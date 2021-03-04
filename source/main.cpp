@@ -810,7 +810,6 @@ int main(int argc, char **argv)
 			int sizefix = 0;
 			sizefix = (int)arrayservers.size() * 52;
 			bool anend = VOX.render_AH(310, 610, 190, sizefix, serverpront);
-	//		bool anend = Heart.render_AH(840, 610, 190, sizefix, serverpront);
 			if(serverpront){
 				if (anend){
 					for (int x = 0; x < (int)arrayservers.size(); x++) {
@@ -889,7 +888,7 @@ int main(int argc, char **argv)
 						selectchapter=(GOD.TouchY*30/660);
 						if (selectchapter <= 0) selectchapter = 0;
 						if (selectchapter > 30) selectchapter = 30;
-						activatefirstimage=true;
+						callimage(selectchapter);
 					}
 					
 					for (int x = 0; x < (int)arraychapter.size(); x++) {
