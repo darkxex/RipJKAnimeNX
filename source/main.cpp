@@ -929,7 +929,7 @@ int main(int argc, char **argv)
 					}
 
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8) #KASTXUPALO", {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8.3) #KASTXUPALO", {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 					if (imgNumbuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
