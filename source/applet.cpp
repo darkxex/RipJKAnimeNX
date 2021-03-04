@@ -85,7 +85,7 @@ Result WebBrowserCall(std::string url,bool nag){
 	// Create the config. There's a number of web*Create() funcs, see libnx web.h.
 	// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
 	rc = webPageCreate(&config, url.c_str());
-	
+
 	printf("webPageCreate(): 0x%x\n", rc);
 	if (R_SUCCEEDED(rc)) {
  		if (nag){
@@ -100,16 +100,18 @@ Result WebBrowserCall(std::string url,bool nag){
 		webConfigSetBootLoadingIcon (&config, true);
 		webConfigSetPageScrollIndicator (&config, true);
 		webConfigSetMediaPlayerSpeedControl (&config, true);	
-//		webConfigSetPlayReport (&config, false);
 		webConfigSetMediaAutoPlay (&config, true);
-
 		if (!nag){
 			printf("SetCapConfigs\n");
 			webConfigSetDisplayUrlKind (&config, false);
 			webConfigSetMediaPlayerAutoClose (&config, true);
 			//webConfigSetFooter(&config, false);
 			
-			//block redirection 
+			//play direct links
+			if(url.substr(0,18) == "https://s-delivery") 
+			webConfigSetBootAsMediaPlayer(&config, true);
+
+			//block redirection
 			if(url.substr(0,22) == "https://www.fembed.com") 
 			{	
 				TT = KeyboardCall("Use ^http*", TT);

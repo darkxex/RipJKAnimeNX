@@ -32,112 +32,6 @@
 #include <thread>
 #include "utils.hpp"
 
-//////////////////////////////////aquí empieza el pc.
-//Screen dimension constants
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-//Rendered texture
-LTexture gTextTexture;
-LTexture Farest;
-LTexture Heart;
-LTexture TChapters;
-LTexture TPreview;
-LTexture TSearchPreview;///////
-LTexture TFavorite;
-//Render Buttons
-LTexture B_A;
-LTexture B_B;
-LTexture B_Y;
-LTexture B_X;
-LTexture B_L;
-LTexture B_R;
-LTexture B_ZR;
-LTexture B_M;
-LTexture B_P;
-LTexture B_RIGHT;
-LTexture B_LEFT;
-LTexture B_UP;
-LTexture B_DOWN;
-//Render extra
-LTexture FAV;
-LTexture NOP;
-//Text and BOXES
-LTexture VOX;
-LTexture T_T;
-
-//main SLD funct (Grafics On Display = GOD)
-SDLB GOD;
-	
-//Gui Vars
-enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
-enum statesreturn { toprogramation, tosearch, tofavorite };
-int statenow = programationstate;
-int returnnow = toprogramation;
-//net
-std::string  urltodownload = "";
-int porcendown = 0;
-int sizeestimated = 0;
-std::string temporallink = "";
-int cancelcurl = 0;
-
-//img
-bool reloading = false;
-bool preview = false;
-int selectchapter = 0;
-int porcentajereload = 0;
-int imgNumbuffer = 0;
-int porcentajebuffer = 0;
-int porcentajebufferA = 0;
-bool activatefirstimage = true;
-
-//search
-int searchchapter = 0;
-bool reloadingsearch = false;
-bool activatefirstsearchimage = true;
-std::string serverenlace = "-";
-std::string searchtext = "";
-std::string tempimage = "";
-//favs
-int favchapter = 0;
-bool gFAV = false;
-//server
-int selectserver = 0;
-bool serverpront = false;
-
-#ifdef __SWITCH__
-std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
-#else
-std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
-#endif // SWITCH
-
-//my vars
-std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
-bool AppletMode=false;
-bool isSXOS=false;
-bool hasStealth=false;
-AccountUid uid;
-
-
-#ifdef __SWITCH__
-HidsysNotificationLedPattern blinkLedPattern(u8 times);
-void blinkLed(u8 times);
-#endif // ___SWITCH___
-
-std::vector<std::string> arrayservers= {
-"Desu", "Xtreme S", "Okru",  "Fembed", "MixDrop"
-};
-
-std::vector<std::string> arrayserversbak= {
-"Desu", "Xtreme S", "Okru",  "Fembed", "MixDrop"
-};
-/*
-std::vector<std::string> arrayserversbak= {
-"Okru",	"Desu", "Xtreme S", "Fembed",
-"MixDrop", "Nozomi", "Mega"
-};
-*/
-
-bool quit=false;
 
 //make some includes to clean alittle the main
 #include "JKanime.hpp"
@@ -284,6 +178,8 @@ int main(int argc, char **argv)
 			if (B_RIGHT.SP()) e.jbutton.button = 18;
 			if (B_UP.SP()) e.jbutton.button = 13;
 			if (B_DOWN.SP()) e.jbutton.button = 15;
+			if (T_D.SP()&&isDownloading) statenow = downloadstate;
+			
 			SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
 			GOD.TouchX = -1;
 			GOD.TouchY = -1;
@@ -407,7 +303,6 @@ int main(int argc, char **argv)
 								}
 							}else {
 								serverpront = true;
-								arrayservers=arrayserversbak;
 							}
 							break;
 						}
@@ -469,13 +364,12 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case downloadstate:
-							cancelcurl = 1;
 							statenow = chapterstate;
 							break;
 						case chapterstate:
-							cancelcurl = 1;
 							if(serverpront){
 								serverpront=false;
+								arrayservers=arrayserversbak;
 							} else {
 								switch (returnnow)
 								{
@@ -509,10 +403,14 @@ int main(int argc, char **argv)
 					else if (e.jbutton.button == 2) {// (X) button down
 						switch (statenow)
 						{
+						case downloadstate:
+							cancelcurl = 1;
+							break;
 						case chapterstate:
-							//just for test
 							statenow = downloadstate;
+							if(isDownloading) break;
 							cancelcurl = 0;
+							GOD.PleaseWait("Calculando Links Espere...");
 							urltodownload = temporallink + std::to_string(capmore) + "/";
 							threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
 							break;
@@ -966,9 +864,9 @@ int main(int argc, char **argv)
 		if(gFAV){FAV.render_T(1190, 70,"");}
 		else {B_Y.render_T(dist, 680,"Favorito");}
 		}
-
 		break;
 		case programationstate:
+		{
 			if (!reloading&&arraychapter.size()>=1) {
 				VOX.render_VOX({0,0, 620, 670}, 200, 200, 200, 105);//Draw a rectagle to a nice view
 
@@ -1041,7 +939,9 @@ int main(int argc, char **argv)
 				GOD.PleaseWait("Cargando programación... ",false);
 			}
 			break;
+		}
 		case searchstate:
+		{
 			if (!reloadingsearch) {
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Busqueda", {100,0,0});
@@ -1107,6 +1007,7 @@ int main(int argc, char **argv)
 				GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)",false);
 			}
 			break;
+		}
 		case favoritesstate:
 		{
 			//Draw Header
@@ -1162,19 +1063,14 @@ int main(int argc, char **argv)
 		}
 		break;
 		case downloadstate:
-			std::string temptext = urltodownload;
-			replace(temptext, "https://jkanime.net/", "");
-			replace(temptext, "/", " ");
-			replace(temptext, "-", " ");
-			mayus(temptext);
+		{
 			gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
 			gTextTexture.render(posxbase, posybase);
-			gTextTexture.loadFromRenderedText(GOD.gFont3, temptext, textColor);
+			gTextTexture.loadFromRenderedText(GOD.gFont3, DownTitle, textColor);
 			gTextTexture.render(posxbase, posybase + 20);
 
 			gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
 			gTextTexture.render(posxbase , posybase + 280);
-			std::string textB = "Cancelar la descarga";
 			if (serverenlace != "Error de descarga"){
 				gTextTexture.loadFromRenderedText(GOD.gFont2, std::to_string(porcendown) + "\%", textColor);
 				gTextTexture.render(posxbase + 40, posybase + 40);
@@ -1190,15 +1086,19 @@ int main(int argc, char **argv)
 					VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
 					gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 					gTextTexture.render(posxbase + 100, posybase + 400);
-					textB="Volver";
-				}
+				 }
 			} else {
 				porcendown=0;
-				textB="Volver";
 			}
-			
-			B_B.render_T(1000, 680,textB);
-			break;
+			if(isDownloading)
+			B_X.render_T(800, 680,"Cancelar la descarga");
+			B_B.render_T(1100, 680,"Volver");
+		}
+		break;
+		}
+		if(isDownloading&& downloadstate != statenow){
+			T_D.loadFromRenderedText(GOD.gFont, "Downloading: ("+std::to_string(porcendown)+"\% )", {100,100,0});
+			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, porcentajebuffer > 0 ? T_D.getHeight()+42 : 40);
 		}
 
 		B_P.render_T(160, 680,"Salir",quit);
