@@ -815,8 +815,9 @@ int main(int argc, char **argv)
 					for (int x = 0; x < (int)arrayservers.size(); x++) {
 						if (x == selectserver){
 							T_T.loadFromRenderedText(GOD.gFont3, arrayservers[x], textWhite);
+							VOX.render_VOX({ posxbase+300,615 - sizefix + (x * 52), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
 							T_T.render(posxbase+310, 610 - sizefix + (x * 52));
-						} else {
+							} else {
 							gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x],textGray);
 							gTextTexture.render(posxbase+310, 610 - sizefix + (x * 52));
 						}
@@ -874,8 +875,6 @@ int main(int argc, char **argv)
 				B_X.render_T(dist, 680,"Descargar");dist -= posdist;
 			}
 
-
-
 			if(gFAV){FAV.render_T(1190, 70,"");}
 			else {B_Y.render_T(dist, 680,"Favorito");}
 			break;
@@ -885,10 +884,11 @@ int main(int argc, char **argv)
 					VOX.render_VOX({0,0, 620, 670}, 200, 200, 200, 105);//Draw a rectagle to a nice view
 
 					if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
-						selectchapter=(GOD.TouchY*30/660);
-						if (selectchapter <= 0) selectchapter = 0;
-						if (selectchapter > 30) selectchapter = 30;
-						callimage(selectchapter);
+						u32 sel=(GOD.TouchY*30/660);
+						if (sel >= 0 && sel < arraychapter.size()){
+							selectchapter = sel;
+							activatefirstimage=true;
+						} 
 					}
 					
 					for (int x = 0; x < (int)arraychapter.size(); x++) {
@@ -962,6 +962,15 @@ int main(int argc, char **argv)
 					//Draw Header
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Busqueda", {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
+
+					if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 1 && GOD.TouchX > 15){
+						u32 sel=(GOD.TouchY*30/670);
+						if (sel >= 0 && sel < arraysearch.size()){
+							searchchapter = sel;
+							TSearchPreview.free();
+							callimagesearch(searchchapter);					
+						}
+					}
 					if ((int)arraysearch.size() >= 1){
 						
 						VOX.render_VOX({0,0, 620, 670}, 100, 100, 100, 105);
@@ -1028,6 +1037,16 @@ int main(int argc, char **argv)
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
+				
+				if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
+					u32 sel=(GOD.TouchY*30/660);
+					if (sel >= 0 && sel < arrayfavorites.size()){
+						favchapter = sel;
+						TFavorite.free();
+						callimagefavorites(favchapter);
+					}
+				}
+
 				if ((int)arrayfavorites.size() >= 1 ){
 				VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 105);
 				int of = favchapter < 30 ? 0 : favchapter - 26;
@@ -1092,6 +1111,7 @@ int main(int argc, char **argv)
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
 					gTextTexture.render(posxbase + 100, posybase + 220);
 					
+
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 					gTextTexture.render(posxbase, posybase + 260);
 
@@ -1100,6 +1120,13 @@ int main(int argc, char **argv)
 						VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 						gTextTexture.render(posxbase + 100, posybase + 400);
+					 }else{
+						VOX.render_VOX({ posxbase + 340, posybase + 150, 500, 50 }, 255, 255, 255, 145);
+						gTextTexture.loadFromRenderedText(GOD.gFont3, "Velocidad: " +speedD, textColor);
+						gTextTexture.render(posxbase + 350, posybase + 150);
+						
+						gTextTexture.loadFromRenderedText(GOD.gFont3, "M/S", textColor);
+						gTextTexture.render(posxbase + 770, posybase + 150);
 					 }
 				} else {
 					porcendown=0;
@@ -1112,8 +1139,15 @@ int main(int argc, char **argv)
 		}
 		//global render
 		if(isDownloading&& downloadstate != statenow){
-			T_D.loadFromRenderedText(GOD.gFont, "Downloading: ("+std::to_string(porcendown)+"\% )", {100,100,0});
-			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, porcentajebuffer > 0 ? T_D.getHeight()+42 : 40);
+			int het=40;
+			T_D.loadFromRenderedText(GOD.digifont, "Downloading: ("+std::to_string(porcendown)+"\%)", {100,100,0});
+			if (statenow == programationstate){
+				het = porcentajebuffer > 0 ? T_D.getHeight()+42 : 40;
+			}
+			if (statenow == chapterstate){
+				het=10;
+			}
+			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, het);
 		}
 
 		B_P.render_T(160, 680,"Salir",quit);
