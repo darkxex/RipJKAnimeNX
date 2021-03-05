@@ -66,6 +66,7 @@ std::string searchtext = "";
 std::string tempimage = "";
 //downloads
 bool isDownloading=false;
+std::string speedD="";
 //favs
 int favchapter = 0;
 bool gFAV = false;
@@ -112,8 +113,8 @@ int MKfavimgfix();
 
 int downloadjkanimevideo(void* data)
 {
-	DownTitle="...";
-	serverenlace = "...";
+	DownTitle="................";
+	serverenlace = "................";
 	isDownloading=true;
 	porcendown=0;
 	
@@ -125,16 +126,6 @@ int downloadjkanimevideo(void* data)
 	mayus(namedownload);
 	DownTitle=namedownload;
 	
-	std::string videourl = linktodownoadjkanime(urltodownload);
-	if (videourl.length() <7){
-		std::cout << "Error:  " << videourl << std::endl;
-		std::cout << urltodownload << std::endl;
-		serverenlace = "Error de descarga";
-		isDownloading=false;
-		return 0;
-	}
-	serverenlace = videourl;
-
 	namedownload = "sdmc:/" +namedownload + ".mp4";
 #ifdef __SWITCH__
 	std::string directorydownload = namedownload;
@@ -142,12 +133,10 @@ int downloadjkanimevideo(void* data)
 	std::string directorydownload = "C:\\respaldo2017\\C++\\test\\Debug\\" + namedownload;
 #endif // SWITCH
 
-	std::cout << namedownload << std::endl;
-	std::cout << videourl << std::endl;
-
-	if (!downloadfile(videourl, directorydownload)){
+	if (!linktodownoadjkanime(urltodownload,directorydownload)){
 		serverenlace = "Error de descarga";
 	}
+
 	isDownloading=false;
 	statenow = downloadstate;
 	return 0;

@@ -217,17 +217,12 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int HS){
 
 void SDLB::PleaseWait(std::string text,bool render){
 	//Clear screen
-	//SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	//SDL_RenderClear(gRenderer);
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(gRenderer);
 
 	//wallpaper
-	/**/
-	//Farest.render((0), (0));
-	SDL_Rect fillRect = { 0, 0, 1280, 720 };
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 105);
-	SDL_RenderFillRect(gRenderer, &fillRect);
-	
-	fillRect = { 0, 720/2 - 25, 1280, 50 };
+	Farest.render((0), (0));	
+	SDL_Rect fillRect = { 0, 720/2 - 25, 1280, 50 };
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(gRenderer, &fillRect);
 	
@@ -295,7 +290,7 @@ bool LTexture::loadFromFile(std::string path)
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL)
 	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());remove(path.c_str());
 	}
 	else
 	{
