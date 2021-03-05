@@ -13,10 +13,12 @@
 #include <sys/stat.h>
 #include "Networking.hpp"
 #include "utils.hpp"
+#include <ctime>
 
 extern int porcendown;
 extern int sizeestimated;
 extern int cancelcurl;
+extern std::string speedD;
 
 //Write file in mem to increase download speed on 3 or 5 times
 struct MemoryStruct
@@ -74,10 +76,32 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 	// part of the progressmeter that's already "full"
 	int dotz = round(fractiondownloaded * totaldotz);
 
+	//get console time
+	static int secr=0;
+	static double temporal=0;
+	static double herencia=0;
+	time_t now = time(0);
+	struct tm *tm;
+	if ((tm = localtime (&now)) == NULL) {
+		printf ("Error extracting time stuff\n");
+	}
+	//printf ("working %f\n",doneF);
+	//calculate speed
+	if(tm->tm_sec != secr)
+	{
+		herencia = NowDownloaded/1000000 - temporal;
+		speedD=std::to_string(herencia);
+		temporal = NowDownloaded/1000000;
+		secr = tm->tm_sec;
+	}
+
+
 	// create the "meter"
 	int ii = 0;
 	porcendown = fractiondownloaded * 100;
 	sizeestimated = TotalToDownload;
+	int d=NowDownloaded,t=TotalToDownload;
+	printf("%f m/s  %d / %d - ",herencia,d/1000000,t/1000000);
 	printf("%3.0f%% [", fractiondownloaded * 100);
 	// part  that's full already
 	for (; ii < dotz; ii++) {
@@ -127,11 +151,11 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 	curl = curl_easy_init();
+	bool allok=false;
 	if (curl) {
 	struct MemoryStruct chunk;
 	FILE *fp = fopen(directorydown.c_str(), "wb");;
 		if(fp){
-			
             chunk.memory = (char*)malloc(1);
             chunk.size = 0;
 			curl_easy_setopt(curl, CURLOPT_URL, enlace.c_str());
@@ -150,17 +174,27 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 			}
 			
 			res = curl_easy_perform(curl);
-			if ((chunk.size > 3000000) & (res == CURLE_OK)){
-				fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+			if ((res == CURLE_OK)){
+				printf("#size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
+				if (chunk.size < 1000000  && directorydown.find(".mp4") != -1){
+					printf("####size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
+					allok=false;//
+				} else {
+					fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+					allok=true;
+				}
+			}else{
+				allok=false;
+				printf("\n%s\n",curl_easy_strerror(res));
 			}
 			/* always cleanup */
 			curl_easy_cleanup(curl);
 			free(chunk.memory);
 		}
 	fclose(fp);
-	if ((chunk.size > 3000000) & (res == CURLE_OK)){return true;}else{printf("\n%s\n",curl_easy_strerror(res));}
+	if (!allok){remove(directorydown.c_str());}
 	}
-return false;
+return allok;
 }
 
 bool HasConnection()
