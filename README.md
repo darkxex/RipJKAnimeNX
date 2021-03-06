@@ -14,4 +14,4 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 * Esta app no funciona en modo applet (desde el album) porque requiere mas memoria y del uso del navegador 
 * Debes usar lo basico antibaneo (dns, incognito ,host de atmosphere,etc)
 * Nesesita Si o Si Internet 
-* Para ver animes descargados puedes usar [PPlay](https://github.com/Cpasjuste/pplay/) se guardan en la Raiz de lla sd
+* Para ver Animes descargados puedes usar [PPlay](https://github.com/Cpasjuste/pplay/) se guardan en la Raiz de la sd
