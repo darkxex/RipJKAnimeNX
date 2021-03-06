@@ -797,14 +797,14 @@ int main(int argc, char **argv)
 			{
 				gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
 				gTextTexture.render(posxbase + 820, posybase + 598);
-				gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
-				gTextTexture.render(posxbase + 1020, posybase + 615);
 			}
 			else
 			{
 				gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
 				gTextTexture.render(posxbase + 820, posybase + 598);
 			}
+			gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
+			gTextTexture.render(posxbase + 1020, posybase + 615);
 
 
 			int sizefix = 0;
