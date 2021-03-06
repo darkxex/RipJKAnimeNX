@@ -1115,7 +1115,7 @@ int main(int argc, char **argv)
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 					gTextTexture.render(posxbase, posybase + 260);
 
-					if (std::to_string(porcendown) == "100") {
+					if (std::to_string(porcendown) == "100"&&!isDownloading) {
 						//Render red filled quad
 						VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
