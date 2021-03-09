@@ -41,7 +41,7 @@ enum statesreturn { toprogramation, tosearch, tofavorite };
 int statenow = programationstate;
 int returnnow = toprogramation;
 //net
-std::string  urltodownload = "";
+std::string urltodownload = "";
 int porcendown = 0;
 int sizeestimated = 0;
 std::string temporallink = "";
@@ -111,32 +111,38 @@ bool quit=false;
 int MKcapitBuffer();
 int MKfavimgfix();
 
+std::vector<std::string> downqueue;
+std::vector<std::string> logqueue;
 int downloadjkanimevideo(void* data)
 {
-	DownTitle="................";
-	serverenlace = "................";
-	isDownloading=true;
-	porcendown=0;
-	
-	std::string namedownload = urltodownload;
-	replace(namedownload, "https://jkanime.net/", "");
-	replace(namedownload, "-", " ");
-	replace(namedownload, "/", " ");
-	namedownload = namedownload.substr(0, namedownload.length() - 1);
-	mayus(namedownload);
-	DownTitle=namedownload;
-	
-	namedownload = "sdmc:/" +namedownload + ".mp4";
+	for (u64 x=0; x< downqueue.size();x++){
+		DownTitle="................";
+		serverenlace = "................";
+		isDownloading=true;
+		porcendown=0;
+		if(cancelcurl){serverenlace = "Error de descarga"; break;}
+		std::string urldown=downqueue[x];
+		std::string namedownload = urldown;
+		replace(namedownload, "https://jkanime.net/", "");
+		replace(namedownload, "-", " ");
+		replace(namedownload, "/", " ");
+		namedownload = namedownload.substr(0, namedownload.length() - 1);
+		mayus(namedownload);
+		DownTitle=namedownload;
+		logqueue[x] = ">>>> "+namedownload;
 #ifdef __SWITCH__
-	std::string directorydownload = namedownload;
+		std::string directorydownload = "sdmc:/" +namedownload + ".mp4";
 #else
-	std::string directorydownload = "C:\\respaldo2017\\C++\\test\\Debug\\" + namedownload;
+	std::string directorydownload = "C:\\respaldo2017\\C++\\test\\Debug\\" + namedownload + ".mp4";
 #endif // SWITCH
 
-	if (!linktodownoadjkanime(urltodownload,directorydownload)){
-		serverenlace = "Error de descarga";
+		if (!linktodownoadjkanime(urldown,directorydownload)){
+			serverenlace = "Error de descarga";
+			logqueue[x] = "Error: "+namedownload;
+		} else {
+			logqueue[x] = "100% : "+namedownload;
+		}
 	}
-
 	isDownloading=false;
 	statenow = downloadstate;
 	return 0;
@@ -281,9 +287,10 @@ int refrescarpro(void* data){
 	}
 	printf("#\nEnd Image Download\n");
 	imgNumbuffer=0;
-//	threadID = SDL_CreateThread(MKcapitBuffer, "MainBuffer", (void*)NULL);
 	activatefirstimage=true;
 	MKfavimgfix();
+	//exit after load the images cache
+	if (AppletMode) quit=true;
 	MKcapitBuffer();
 	return 0;
 }

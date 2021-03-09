@@ -71,19 +71,13 @@ std::string MD_s(std::string code){
 	replace(code, "|jmkBVb", "");
 	replace(code, "|mxdcontent", "");
 	replace(code, "|referrer|", ".mp4?s=");
-	
-	std::cout << code << std::endl;////////
-
 	replace(code, E, "&e="+E.substr(1));
 
 	//scrap important elements
 	std::string dely = scrapElement(code, "delivery");
-	std::cout << code << std::endl;////////
 	
 	replace(code, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
-	std::cout << code << std::endl;////////
 	replace(code, "|16", "&_t=16");
-	std::cout << code << std::endl;////////
 return code;
 }
 
