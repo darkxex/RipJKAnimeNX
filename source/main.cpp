@@ -415,16 +415,32 @@ int main(int argc, char **argv)
 					else if (e.jbutton.button == 2) {// (X) button down
 						switch (statenow)
 						{
+						case programationstate:
+							if(isDownloading)
+								statenow = downloadstate;
+							break;
 						case downloadstate:
 							cancelcurl = 1;
 							break;
 						case chapterstate:
 							statenow = downloadstate;
-							if(isDownloading) break;
 							cancelcurl = 0;
-							GOD.PleaseWait("Calculando Links Espere...");
-							urltodownload = temporallink + std::to_string(capmore) + "/";
-							threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
+//							GOD.PleaseWait("Calculando Links Espere...");
+							urltodownload  = temporallink + std::to_string(capmore) + "/";
+							if(isDownloading){
+								bool gogo = false;
+								for (u64 x=0; x < downqueue.size();x++){
+									if (downqueue[x] == urltodownload) gogo = true;
+								}
+								if(gogo) break;
+								downqueue.push_back(urltodownload);
+								logqueue.push_back(urltodownload);
+							}else{
+								downqueue.clear();
+								downqueue.push_back(urltodownload);
+								logqueue = downqueue;
+								threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
+							}
 							break;
 						case searchstate:
 
@@ -944,6 +960,7 @@ int main(int argc, char **argv)
 					B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 					B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
+					if(isDownloading) {B_X.render_T(dist, 680,"Descargas");dist -= posdist;}
 					B_UP.render_T(580, 5,"");
 					B_DOWN.render_T(580, 630,"");
 				}
@@ -1127,6 +1144,27 @@ int main(int argc, char **argv)
 				} else {
 					porcendown=0;
 				}
+				
+				VOX.render_VOX({posxbase-5,posybase + 300 , 750, ((int)logqueue.size() * 22)+53}, 200, 200, 200, 105);
+				gTextTexture.loadFromRenderedText(GOD.digifont, "Cola De Descarga::", textColor);
+				gTextTexture.render(posxbase, posybase+310);
+				for (u64 x = 0; x < logqueue.size(); x++) {
+					std::string descarga = logqueue[x];
+					replace(descarga, "https://jkanime.net/", "");
+					replace(descarga, "/", " ");
+					replace(descarga, "-", " ");
+					mayus(descarga);
+					SDL_Color txtColor = textColor;//{ 50, 50, 50 };
+					
+					if(descarga.substr(0,3) == "100") txtColor = { 50, 150, 50 };
+					if(descarga.substr(0,3) == "Err") txtColor = { 150, 50, 50 };
+					if(descarga.substr(0,3) == ">>>") txtColor = { 0, 0, 0 };
+
+					gTextTexture.loadFromRenderedText(GOD.digifont, descarga, txtColor);
+					gTextTexture.render(posxbase, posybase+350 + ((x) * 22));
+					
+				}
+				
 				if(isDownloading)
 				B_X.render_T(800, 680,"Cancelar la descarga");
 				B_B.render_T(1100, 680,"Volver");
