@@ -129,15 +129,10 @@ int main(int argc, char **argv)
 	}
 #endif // SWITCH
 
-	if (AppletMode) {//close on applet mode
-		GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego");
-		quit=true;
-		SDL_Delay(5000);
-	}
-
 	//While application is running
 	while (!quit)
 	{
+
 		//Handle events on queue
 		while (SDL_PollEvent(&e))
 		{
@@ -315,7 +310,8 @@ int main(int argc, char **argv)
 								std::string tempurl = temporallink + std::to_string(capmore) + "/";
 								if(!onlinejkanimevideo(tempurl,arrayservers[selectserver])){
 									arrayservers.erase(arrayservers.begin()+selectserver);
-									//serverpront = false;
+								} else {
+									serverpront = false;
 								}
 							}else {
 								serverpront = true;
@@ -1140,7 +1136,7 @@ int main(int argc, char **argv)
 		//global render
 		if(isDownloading&& downloadstate != statenow){
 			int het=40;
-			T_D.loadFromRenderedText(GOD.digifont, "Downloading: ("+std::to_string(porcendown)+"\%)", {100,100,0});
+			T_D.loadFromRenderedText(GOD.digifont, "Downloading: "+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {100,100,0});
 			if (statenow == programationstate){
 				het = porcentajebuffer > 0 ? T_D.getHeight()+42 : 40;
 			}
@@ -1149,7 +1145,7 @@ int main(int argc, char **argv)
 			}
 			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, het);
 		}
-
+		if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
 		B_P.render_T(160, 680,"Salir",quit);
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
