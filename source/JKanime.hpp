@@ -338,16 +338,22 @@ int MKcapitBuffer() {
 		replace(terese, "<br/>", "");
 		con_rese.push_back(terese);
 
-		//find next date
-		re1 = a.find("<b>Próximo episodio</b>") + 25;
-		re2 = a.find("<i class", re1);
 
 		terese = "";
-		terese = a.substr(re1, re2 - re1);
-		replace(terese, "á","a");
-		replace(terese, "ó","o");
-		con_nextdate.push_back(terese);
 	//	std::cout << rese << std::endl;
+		if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
+		{
+			con_nextdate.push_back("Pelicula");;
+		}else{
+			//find next date
+			re1 = a.find("<b>Próximo episodio</b>") + 25;
+			re2 = a.find("<i class", re1);
+			terese = a.substr(re1, re2 - re1);
+			replace(terese, "á","a");
+			replace(terese, "ó","o");
+			con_nextdate.push_back(terese);
+		}
+
 
 		int indx1 = 1, indx2, indx3, indx4;
 		indx4 = a.find("<strong>Generos:</strong>", indx1);
@@ -540,10 +546,18 @@ std::string capit(std::string b) {
 
 	//utf-8
 	nextdate = "";
-	nextdate = a.substr(re1, re2 - re1);
-	replace(nextdate, "á","a");
-	replace(nextdate, "ó","o");
-	replace(nextdate, "í","i");
+//	std::cout << rese << std::endl;
+	if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
+	{
+		nextdate="Pelicula";
+	}else{
+		//find next date
+		re1 = a.find("<b>Próximo episodio</b>") + 25;
+		re2 = a.find("<i class", re1);
+		nextdate = a.substr(re1, re2 - re1);
+		replace(nextdate, "á","a");
+		replace(nextdate, "ó","o");
+	}
 
 	int indx1 = 1, indx2, indx3, indx4;
 	indx4 = a.find("<strong>Generos:</strong>", indx1);
@@ -572,10 +586,6 @@ std::string capit(std::string b) {
 	generos = generosTMP;
 
 
-
-
-
-	
 //	std::cout << rese << std::endl;
 	if ((int)a.find("<b>En emision</b>") != -1)
 	{

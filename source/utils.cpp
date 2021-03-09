@@ -39,7 +39,7 @@ std::string scrapElement(std::string content, std::string get,std::string delim)
 		replace(elmetTMP, "{","}");
 		replace(elmetTMP, "[","]");
 		replace(elmetTMP, "(",")");
-		val2 = content.find(elmetTMP, val1);
+		val2 = content.find(elmetTMP, val1+1);
 
 		Element = content.substr(val1, val2 - val1);
 		replace(Element, "\\", "");
@@ -47,6 +47,44 @@ std::string scrapElement(std::string content, std::string get,std::string delim)
 		std::cout << Element << std::endl;
 	}
 return Element;
+}
+
+std::string MD_s(std::string code){
+	//clean  int val0 =0;
+	std::string E = scrapElement(code, "|1615","|");
+	replace(code, "MDCore||s|", "https://s-|");
+	replace(code, "MDCore|s|", "https://s-|");
+	replace(code, "MDCore||", "https://a-|");
+	replace(code, "||s|", "|");
+	replace(code, "|s|", "|");
+	replace(code, "||", "|");
+	replace(code, "||", "|");
+	replace(code, "|vfile|vserver|remotesub|chromeInject|poster", "");
+	replace(code, "|thumbs", "");
+	replace(code, "|jpg", "");
+	replace(code, "|furl", "");
+	replace(code, "|wurl", "");
+	replace(code, "|v", "");
+	replace(code, "|_t|16", "&e=16");
+	replace(code, "|mp4", "");
+	replace(code, "|net", "");
+	replace(code, "|jmkBVb", "");
+	replace(code, "|mxdcontent", "");
+	replace(code, "|referrer|", ".mp4?s=");
+	
+	std::cout << code << std::endl;////////
+
+	replace(code, E, "&e="+E.substr(1));
+
+	//scrap important elements
+	std::string dely = scrapElement(code, "delivery");
+	std::cout << code << std::endl;////////
+	
+	replace(code, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
+	std::cout << code << std::endl;////////
+	replace(code, "|16", "&_t=16");
+	std::cout << code << std::endl;////////
+return code;
 }
 
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
@@ -71,7 +109,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	}
 	if (server == "Fembed"){
 		videourl = scrapElement(content,"https://jkanime.net/jkfembed.php?u=");
-		replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/v/");
+		//replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/v/");
 	}
 	if (server == "Xtreme S"){
 		videourl = scrapElement(content,"https://jkanime.net/jk.php?");
@@ -87,29 +125,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 			videourl = scrapElement(tempmedia, "MDCore|","'");
 			if(videourl.length())
 			{
-				//clean  int val0 =0;
-				replace(videourl, "MDCore||s|", "https://s-|");
-				replace(videourl, "MDCore|s|", "https://s-|");
-				replace(videourl, "MDCore||", "https://a-|");
-				replace(videourl, "||s|", "|");
-				replace(videourl, "|s|", "|");
-				replace(videourl, "||", "|");
-				replace(videourl, "||", "|");
-				replace(videourl, "|vfile|vserver|remotesub|chromeInject|poster", "");
-				replace(videourl, "|thumbs", "");
-				replace(videourl, "|jpg", "");
-				replace(videourl, "|furl", "");
-				replace(videourl, "|wurl", "");
-				replace(videourl, "|v", "");
-				replace(videourl, "|_t|", "&e=");
-				replace(videourl, "|mp4", "");
-				replace(videourl, "|net", "");
-				replace(videourl, "|mxdcontent", "");
-				replace(videourl, "|referrer|", ".mp4?s=");
-				//scrap important elements
-				std::string dely = scrapElement(videourl, "delivery");
-				replace(videourl, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
-				replace(videourl, "|", "&_t=");
+				videourl=MD_s(videourl);
 				std::cout << videourl << std::endl;
 			}	
 		}
@@ -138,8 +154,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 	std::string videourl = "";
 	std::string content = "";
 	content = gethtml(urltodownload);
-	
-	
+
 	videourl = scrapElement(content, "https://www.mediafire.com/file/");
 	if(videourl.length())
 	{
@@ -154,7 +169,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 			if(downloadfile(videourl, directorydownload)) return true;
 		}
 	}
-	
+
 	videourl = scrapElement(content, "https://www24.zippyshare.com");
 	if(videourl.length())
 	{
@@ -189,29 +204,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 		videourl = scrapElement(tempmedia, "MDCore|","'");
 		if(videourl.length())
 		{
-			//clean  int val0 =0;
-			replace(videourl, "MDCore||s|", "https://s-|");
-			replace(videourl, "MDCore|s|", "https://s-|");
-			replace(videourl, "MDCore||", "https://a-|");
-			replace(videourl, "||s|", "|");
-			replace(videourl, "|s|", "|");
-			replace(videourl, "||", "|");
-			replace(videourl, "||", "|");
-			replace(videourl, "|vfile|vserver|remotesub|chromeInject|poster", "");
-			replace(videourl, "|thumbs", "");
-			replace(videourl, "|jpg", "");
-			replace(videourl, "|furl", "");
-			replace(videourl, "|wurl", "");
-			replace(videourl, "|v", "");
-			replace(videourl, "|_t|", "&e=");
-			replace(videourl, "|mp4", "");
-			replace(videourl, "|net", "");
-			replace(videourl, "|mxdcontent", "");
-			replace(videourl, "|referrer|", ".mp4?s=");
-			//scrap important elements
-			std::string dely = scrapElement(videourl, "delivery");
-			replace(videourl, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
-			replace(videourl, "|", "&_t=");
+			videourl=MD_s(videourl);
 			std::cout << videourl << std::endl;
 			serverenlace = videourl;
 			if(downloadfile(videourl, directorydownload)) return true;
