@@ -281,9 +281,10 @@ int refrescarpro(void* data){
 	}
 	printf("#\nEnd Image Download\n");
 	imgNumbuffer=0;
-//	threadID = SDL_CreateThread(MKcapitBuffer, "MainBuffer", (void*)NULL);
 	activatefirstimage=true;
 	MKfavimgfix();
+	//exit after load the images cache
+	if (AppletMode) quit=true;
 	MKcapitBuffer();
 	return 0;
 }
