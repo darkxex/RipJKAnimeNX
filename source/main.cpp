@@ -216,11 +216,9 @@ int main(int argc, char **argv)
 									{
 										rese = "......";
 										nextdate = "......";
-										enemision = true;
-										tienezero = false;
 										maxcapit = -1;
-										mincapit = 0;
-										capmore = 0;
+										mincapit = 1;
+										capmore = 1;
 										generos = "......";
 										capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);									
 									}else {
@@ -266,11 +264,9 @@ int main(int argc, char **argv)
 									temporallink = arraysearch[searchchapter];
 									rese = "......";
 									nextdate = "......";
-									enemision = true;
-									tienezero = false;
 									maxcapit = -1;
-									mincapit = 0;
-									capmore = 0;
+									mincapit = 1;
+									capmore = 1;
 									generos = "......";
 									std::cout << temporallink << std::endl;
 									capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
@@ -294,10 +290,8 @@ int main(int argc, char **argv)
 								//init 
 								rese = "......";
 								nextdate = "......";
-								enemision = true;
-								tienezero = false;
 								maxcapit = -1;
-								mincapit = 0;
+								mincapit = 1;
 								capmore = 0;
 								generos = "......";
 								capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
