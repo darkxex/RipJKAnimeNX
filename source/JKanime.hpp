@@ -58,6 +58,11 @@ int porcentajebufferA = 0;
 bool activatefirstimage = true;
 std::string serverenlace = "...";
 std::string DownTitle="...";
+
+int maxcapit = 1;
+int mincapit = 0;
+int capmore = 1;
+
 //search
 int searchchapter = 0;
 bool reloadingsearch = false;
@@ -346,19 +351,22 @@ int MKcapitBuffer() {
 		con_rese.push_back(terese);
 
 
-		terese = "";
+		terese = "...";
 	//	std::cout << rese << std::endl;
 		if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
 		{
 			con_nextdate.push_back("Pelicula");;
 		}else{
 			//find next date
-			re1 = a.find("<b>Próximo episodio</b>") + 25;
-			re2 = a.find("<i class", re1);
-			terese = a.substr(re1, re2 - re1);
-			replace(terese, "á","a");
-			replace(terese, "ó","o");
-			con_nextdate.push_back(terese);
+			re1 = a.find("<b>Próximo episodio</b>");
+			if(re1 > 1){
+				re1 += 25;
+				re2 = a.find("<i class", re1);
+				terese = a.substr(re1, re2 - re1);
+				replace(terese, "á","a");
+				replace(terese, "ó","o");
+				con_nextdate.push_back(terese);
+			}
 		}
 
 
@@ -534,11 +542,33 @@ std::string rese = "";
 bool enemision = false;
 std::string nextdate = "";
 std::string generos = "";
-std::string capit(std::string b) {
+int capit(void* data) {
 	tienezero = false;
 	std::string a = "";
-	a = gethtml(b);
-	//
+	a = gethtml(temporallink);
+	if (statenow != chapterstate) return 0;
+
+	int val0, val1, val2, val3;
+	val0 = a.rfind("href=\"#pag");
+	if (val0 != -1) {
+		val1 = a.find(">", val0);
+		val1 = val1 + 1;
+		val2 = a.find("<", val1);
+
+		std::string urlx;
+		urlx = (a.substr(val1, val2 - val1));
+		val3 = urlx.find(" - ") + 3;
+		urlx = urlx.substr(val3);
+
+		//return (urlx);
+		maxcapit = atoi(urlx.c_str());
+	}
+	else
+	{
+		maxcapit = 1;
+	}
+	capmore = maxcapit;
+
 	int re1, re2;
 	re1 = a.find("Sinopsis: </strong>") + 19;
 	re2 = a.find("</p>", re1);
@@ -546,24 +576,24 @@ std::string capit(std::string b) {
 	std::string terese = a.substr(re1, re2 - re1);
 	replace(terese, "<br/>", "");
 	rese = terese;
-
-	//find next date
-	re1 = a.find("<b>Próximo episodio</b>") + 25;
-	re2 = a.find("<i class", re1);
+	std::cout << rese << std::endl;
 
 	//utf-8
-	nextdate = "";
+	nextdate = "...";
 //	std::cout << rese << std::endl;
 	if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
 	{
 		nextdate="Pelicula";
 	}else{
 		//find next date
-		re1 = a.find("<b>Próximo episodio</b>") + 25;
-		re2 = a.find("<i class", re1);
-		nextdate = a.substr(re1, re2 - re1);
-		replace(nextdate, "á","a");
-		replace(nextdate, "ó","o");
+		re1 = a.find("<b>Próximo episodio</b>");
+		if(re1 > 1){
+			re1 += 25;
+			re2 = a.find("<i class", re1);
+			nextdate = a.substr(re1, re2 - re1);
+			replace(nextdate, "á","a");
+			replace(nextdate, "ó","o");
+		}
 	}
 
 	int indx1 = 1, indx2, indx3, indx4;
@@ -603,7 +633,6 @@ std::string capit(std::string b) {
 		enemision = false;
 	}
 
-	int val0, val1, val2, val3;
 
 	int zero1, zero2;
 	std::string zerocontainer = "";
@@ -614,6 +643,7 @@ std::string capit(std::string b) {
 	std::cout << zerocontainer << std::endl;
 
 	zerocontainer2 = gethtml(zerocontainer);
+	if (statenow != chapterstate) return 0;
 	int tempzero = zerocontainer2.find("\"0\"");
 	if (tempzero != -1) {
 
@@ -626,24 +656,19 @@ std::string capit(std::string b) {
 		tienezero = false;
 	}
 
-	val0 = a.rfind("href=\"#pag");
 
-	if (val0 != -1) {
-		val1 = a.find(">", val0);
-		val1 = val1 + 1;
-		val2 = a.find("<", val1);
-
-		std::string urlx;
-		urlx = (a.substr(val1, val2 - val1));
-		val3 = urlx.find(" - ") + 3;
-		urlx = urlx.substr(val3);
-
-		return (urlx);
+	if (tienezero) {
+		maxcapit = maxcapit - 1;
+		mincapit = 0;
+		capmore = maxcapit;
 	}
 	else
 	{
-		return "1";
+		mincapit = 1;
+		capmore = maxcapit;
 	}
+	std::cout << maxcapit << std::endl;
+return 0;
 }
 
 bool isFavorite(std::string fav){

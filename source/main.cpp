@@ -64,6 +64,7 @@ int main(int argc, char **argv)
 #endif
 
 
+	SDL_Thread* capithread = NULL;
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* threadID = NULL;
@@ -113,9 +114,6 @@ int main(int argc, char **argv)
 
 	int posxbase = 20;
 	int posybase = 10;
-	int maxcapit = 1;
-	int mincapit = 0;
-	int capmore = 1;
 
 	//Event handler
 	SDL_Event e;
@@ -216,7 +214,15 @@ int main(int argc, char **argv)
 									printf("q wea es esto? %s  : %d\n",temporallink.c_str() ,selectchapter);
 									if (selectchapter > (int)con_maxcapit.size()-1)
 									{
-										maxcapit = atoi(capit(temporallink).c_str());
+										rese = "......";
+										nextdate = "......";
+										enemision = true;
+										tienezero = false;
+										maxcapit = -1;
+										mincapit = 0;
+										capmore = 0;
+										generos = "......";
+										capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);									
 									}else {
 										try{
 											rese = con_rese[selectchapter];
@@ -258,20 +264,16 @@ int main(int argc, char **argv)
 									TChapters.loadFromFileCustom(tempimage, 550, 400);
 									statenow = chapterstate;
 									temporallink = arraysearch[searchchapter];
-
+									rese = "......";
+									nextdate = "......";
+									enemision = true;
+									tienezero = false;
+									maxcapit = -1;
+									mincapit = 0;
+									capmore = 0;
+									generos = "......";
 									std::cout << temporallink << std::endl;
-									maxcapit = atoi(capit(temporallink).c_str());
-									if (tienezero) {
-										maxcapit = maxcapit - 1;
-										mincapit = 0;
-										capmore = maxcapit;
-									}
-									else
-									{
-										mincapit = 1;
-										capmore = maxcapit;
-									}
-									std::cout << maxcapit << std::endl;
+									capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 									gFAV = isFavorite(temporallink);
 								}
 
@@ -285,22 +287,20 @@ int main(int argc, char **argv)
 								TChapters.free();
 								CheckImgNet(tempimage);
 								TChapters.loadFromFileCustom(tempimage, 550, 400);
+								statenow = chapterstate;
 								temporallink = arrayfavorites[favchapter];
 
 								std::cout << temporallink << std::endl;
-								maxcapit = atoi(capit(temporallink).c_str());
-								statenow = chapterstate;
-								if (tienezero) {
-									maxcapit = maxcapit - 1;
-									mincapit = 0;
-									capmore = maxcapit;
-								}
-								else
-								{
-									mincapit = 1;
-									capmore = maxcapit;
-								}
-								std::cout << maxcapit << std::endl;
+								//init 
+								rese = "......";
+								nextdate = "......";
+								enemision = true;
+								tienezero = false;
+								maxcapit = -1;
+								mincapit = 0;
+								capmore = 0;
+								generos = "......";
+								capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 								gFAV = true;
 								}
 							}
@@ -805,41 +805,42 @@ int main(int argc, char **argv)
 			//draw preview image
 			TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
 			}
-			if (enemision)
-			{
-				gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
-				gTextTexture.render(posxbase + 820, posybase + 598);
-			}
-			else
-			{
-				gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
-				gTextTexture.render(posxbase + 820, posybase + 598);
-			}
-			gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
-			gTextTexture.render(posxbase + 1020, posybase + 615);
+			if (maxcapit >= 0){
+				if (enemision)
+				{
+					gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
+					gTextTexture.render(posxbase + 820, posybase + 598);
+				}
+				else
+				{
+					gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
+					gTextTexture.render(posxbase + 820, posybase + 598);
+				}
+				gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
+				gTextTexture.render(posxbase + 1020, posybase + 615);
 
 
-			int sizefix = 0;
-			sizefix = (int)arrayservers.size() * 52;
-			bool anend = VOX.render_AH(310, 610, 190, sizefix, serverpront);
-			if(serverpront){
-				if (anend){
-					for (int x = 0; x < (int)arrayservers.size(); x++) {
-						if (x == selectserver){
-							T_T.loadFromRenderedText(GOD.gFont3, arrayservers[x], textWhite);
-							VOX.render_VOX({ posxbase+300,615 - sizefix + (x * 52), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
-							T_T.render(posxbase+310, 610 - sizefix + (x * 52));
-							} else {
-							gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x],textGray);
-							gTextTexture.render(posxbase+310, 610 - sizefix + (x * 52));
+				int sizefix = 0;
+				sizefix = (int)arrayservers.size() * 52;
+				bool anend = VOX.render_AH(310, 610, 190, sizefix, serverpront);
+				if(serverpront){
+					if (anend){
+						for (int x = 0; x < (int)arrayservers.size(); x++) {
+							if (x == selectserver){
+								T_T.loadFromRenderedText(GOD.gFont3, arrayservers[x], textWhite);
+								VOX.render_VOX({ posxbase+300,615 - sizefix + (x * 52), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
+								T_T.render(posxbase+310, 610 - sizefix + (x * 52));
+								} else {
+								gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x],textGray);
+								gTextTexture.render(posxbase+310, 610 - sizefix + (x * 52));
+							}
 						}
 					}
 				}
 			}
-			
 			//use this to move the element
-			{//draw caps Scroll
 			int XS=100 , YS =30;
+			if (maxcapit >= 0){//draw caps Scroll
 				VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
 				if (capmore-2 >= mincapit) {
 					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
@@ -874,6 +875,10 @@ int main(int argc, char **argv)
 				if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
 				B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
 				B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
+			} else {
+				VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
+				gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
+				gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 			}
 					
 			//Draw Footer Buttons
@@ -1199,6 +1204,12 @@ int main(int argc, char **argv)
 
 
 
+	if (NULL == capithread) {
+		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+	}
+	else {
+		SDL_WaitThread(capithread, NULL);
+	}
 	if (NULL == threadID) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
 	}
@@ -1217,6 +1228,8 @@ int main(int argc, char **argv)
 	else {
 		SDL_WaitThread(searchthread,NULL);
 	}
+	
+	
 	//Free resources and close SDL
 #ifdef __SWITCH__
 	accountExit();
