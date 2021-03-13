@@ -81,8 +81,13 @@ int main(int argc, char **argv)
 	} else {
 		Farest.loadFromFile("romfs:/texture.png");
 	}
+	
+	if (isFileExist("heart.png")){
+		Heart.loadFromFile("heart.png");
+	} else {
+		Heart.loadFromFile("romfs:/heart.png");
+	}
 
-	Heart.loadFromFile("romfs:/heart.png");
 #else
 	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
 	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
