@@ -839,7 +839,8 @@ int main(int argc, char **argv)
 			}
 			//use this to move the element
 			int XS=100 , YS =30;
-			if (maxcapit >= 0){//draw caps Scroll
+			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
+			if (maxcapit >= 0&&nextdate != "Pelicula"){//draw caps Scroll
 				VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
 				if (capmore-2 >= mincapit) {
 					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
@@ -871,13 +872,19 @@ int main(int argc, char **argv)
 					B_UP.render_T(280+XS, 530+YS,"+10",serverpront);
 					B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
 				}
-				if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
+				
 				B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
 				B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 			} else {
-				VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
-				gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
-				gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+				VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
+				if (nextdate == "Pelicula"){
+					T_T.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
+					T_T.render(posxbase + 282+XS-T_T.getWidth()/2, posybase + 558+YS);
+				} else {
+					gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
+					gTextTexture.render(posxbase + 282+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+				}
+				
 			}
 					
 			//Draw Footer Buttons

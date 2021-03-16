@@ -667,7 +667,7 @@ int capit(void* data) {
 		mincapit = 1;
 		capmore = maxcapit;
 	}
-	std::cout << maxcapit << std::endl;
+//	std::cout << maxcapit << std::endl;
 return 0;
 }
 
