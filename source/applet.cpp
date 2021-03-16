@@ -35,7 +35,7 @@ SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
 	return SwkbdTextCheckResult_OK;
 }
 
-const char *Keyboard_GetText(const char *guide_text, const char *initial_text) {
+std::string KeyboardCall (std::string hint, std::string text){
 	Result ret = 0;
 	SwkbdConfig swkbd;
 	static char input_string[256];
@@ -47,11 +47,11 @@ const char *Keyboard_GetText(const char *guide_text, const char *initial_text) {
 
 	swkbdConfigMakePresetDefault(&swkbd);
 	swkbdConfigSetInitialCursorPos (&swkbd, 0);
-	if (strlen(guide_text) != 0)
-		swkbdConfigSetGuideText(&swkbd, guide_text);
+	if (strlen(hint.c_str()) != 0)
+		swkbdConfigSetGuideText(&swkbd, hint.c_str());
 
-	if (strlen(initial_text) != 0)
-		swkbdConfigSetInitialText(&swkbd, initial_text);
+	if (strlen(text.c_str()) != 0)
+		swkbdConfigSetInitialText(&swkbd, text.c_str());
 
 	swkbdConfigSetTextCheckCallback(&swkbd, Keyboard_ValidateText);
 
@@ -61,13 +61,10 @@ const char *Keyboard_GetText(const char *guide_text, const char *initial_text) {
 	}
 
 	swkbdClose(&swkbd);
-	return input_string;
-}
 
-std::string KeyboardCall (std::string hint, std::string text){
-char *buf = (char*)malloc(256);
-strcpy(buf, Keyboard_GetText(hint.c_str(), text.c_str()));
-return std::string(buf);
+	char *buf = (char*)malloc(256);
+	strcpy(buf, input_string);
+	return std::string(buf);
 }
 
 

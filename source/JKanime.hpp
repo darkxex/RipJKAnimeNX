@@ -355,7 +355,7 @@ int MKcapitBuffer() {
 	//	std::cout << rese << std::endl;
 		if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
 		{
-			con_nextdate.push_back("Pelicula");;
+			terese = "Pelicula";
 		}else{
 			//find next date
 			re1 = a.find("<b>Próximo episodio</b>");
@@ -365,9 +365,9 @@ int MKcapitBuffer() {
 				terese = a.substr(re1, re2 - re1);
 				replace(terese, "á","a");
 				replace(terese, "ó","o");
-				con_nextdate.push_back(terese);
 			}
 		}
+		con_nextdate.push_back(terese);
 
 
 		int indx1 = 1, indx2, indx3, indx4;
@@ -667,7 +667,7 @@ int capit(void* data) {
 		mincapit = 1;
 		capmore = maxcapit;
 	}
-	std::cout << maxcapit << std::endl;
+//	std::cout << maxcapit << std::endl;
 return 0;
 }
 
@@ -684,9 +684,9 @@ bool isFavorite(std::string fav){
 	//	std::cout << str << "\n";
 		if (str.find("jkanime"))
 		{
-			printf("---\n");
-			printf("%s---\n",fav.c_str());
-			printf("%s\n",str.c_str());
+//			printf("---\n");
+//			printf("%s---\n",fav.c_str());
+//			printf("%s\n",str.c_str());
 			if (fav == str){file.close(); return true;}
 		}
 	}

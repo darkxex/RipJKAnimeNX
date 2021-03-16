@@ -584,7 +584,7 @@ bool LTexture::render_AH(int x, int y, int w, int h, bool type)
 					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
 				}
 			}
-		} 
+		}
 
 return false;
 }
