@@ -234,7 +234,7 @@ int main(int argc, char **argv)
 											tienezero = con_tienezero[selectchapter];
 											maxcapit = con_maxcapit[selectchapter];
 											generos = con_generos[selectchapter];
-											printf("Goted %d\n",selectchapter);
+											printf("Goted All of sel %d\n",selectchapter);
 										}catch(...){
 											printf("Error \n");
 										}
