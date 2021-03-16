@@ -792,7 +792,7 @@ int main(int argc, char **argv)
 
 			{//draw description
 			VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
-			gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
+			gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese.substr(0,800)+"...", textColor, 750);
 			gTextTexture.render(posxbase+15, posybase + 65);
 
 			gTextTexture.loadFromRenderedTextWrap(GOD.gFont3, generos, textColor,750);
@@ -804,20 +804,26 @@ int main(int argc, char **argv)
 			//draw preview image
 			TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
 			}
+			
 			if (maxcapit >= 0){
-				if (enemision)
-				{
-					gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
+				
+				if (nextdate == "Pelicula"){
+					gTextTexture.loadFromRenderedText(GOD.gFont3, "Pelicula", { 250,250,250 });
 					gTextTexture.render(posxbase + 820, posybase + 598);
+				}else {
+					if (enemision)
+					{
+						gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
+						gTextTexture.render(posxbase + 820, posybase + 598);
+					}
+					else
+					{
+						gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
+						gTextTexture.render(posxbase + 820, posybase + 598);
+					}
+					gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
+					gTextTexture.render(posxbase + 1020, posybase + 615);
 				}
-				else
-				{
-					gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
-					gTextTexture.render(posxbase + 820, posybase + 598);
-				}
-				gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
-				gTextTexture.render(posxbase + 1020, posybase + 615);
-
 
 				int sizefix = 0;
 				sizefix = (int)arrayservers.size() * 52;
