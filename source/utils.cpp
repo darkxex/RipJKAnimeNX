@@ -71,7 +71,7 @@ std::string MD_s(std::string code){
 	replace(code, "|jmkBVb", "");
 	replace(code, "|mxdcontent", "");
 	replace(code, "|referrer|", ".mp4?s=");
-	if (E.length() > 3)	replace(code, E, "&e="+E.substr(1));
+	if (E.length() > 3) replace(code, E, "&e="+E.substr(1));
 
 	//scrap important elements
 	std::string dely = scrapElement(code, "delivery");
