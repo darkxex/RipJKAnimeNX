@@ -51,7 +51,7 @@ return Element;
 
 std::string MD_s(std::string code){
 	//clean  int val0 =0;
-	std::string E = scrapElement(code, "|1615","|");
+	std::string E = scrapElement(code, "|161","|");
 	replace(code, "MDCore||s|", "https://s-|");
 	replace(code, "MDCore|s|", "https://s-|");
 	replace(code, "MDCore||", "https://a-|");
@@ -71,7 +71,7 @@ std::string MD_s(std::string code){
 	replace(code, "|jmkBVb", "");
 	replace(code, "|mxdcontent", "");
 	replace(code, "|referrer|", ".mp4?s=");
-	replace(code, E, "&e="+E.substr(1));
+	if (E.length() > 3)	replace(code, E, "&e="+E.substr(1));
 
 	//scrap important elements
 	std::string dely = scrapElement(code, "delivery");
