@@ -50,35 +50,59 @@ return Element;
 }
 
 std::string MD_s(std::string code){
-	//clean  int val0 =0;
-	std::string E = scrapElement(code, "|161","|");
-	replace(code, "MDCore||s|", "https://s-|");
-	replace(code, "MDCore|s|", "https://s-|");
-	replace(code, "MDCore||", "https://a-|");
-	replace(code, "||s|", "|");
-	replace(code, "|s|", "|");
-	replace(code, "||", "|");
-	replace(code, "||", "|");
-	replace(code, "|vfile|vserver|remotesub|chromeInject|poster", "");
-	replace(code, "|thumbs", "");
-	replace(code, "|jpg", "");
-	replace(code, "|furl", "");
-	replace(code, "|wurl", "");
-	replace(code, "|v", "");
-	replace(code, "|_t|16", "&e=16");
-	replace(code, "|mp4", "");
-	replace(code, "|net", "");
-	replace(code, "|jmkBVb", "");
-	replace(code, "|mxdcontent", "");
-	replace(code, "|referrer|", ".mp4?s=");
-	if (E.length() > 3) replace(code, E, "&e="+E.substr(1));
+std::string decode;
+while (true){
+	decode = code;
+	std::cout << decode << std::endl;
+	std::string tempmedia = gethtml(decode);
+	decode = scrapElement(tempmedia, "MDCore|","'");
+	if(decode.length())
+	{
+		//clean  int val0 =0;
+		std::string E = scrapElement(decode, "|161","|");
+		replace(decode, "MDCore||s|", "https://s-|");
+		replace(decode, "MDCore|s|", "https://s-|");
+		replace(decode, "MDCore||", "https://a-|");
+		replace(decode, "||s|", "|");
+		replace(decode, "|s|", "|");
+		replace(decode, "||", "|");
+		replace(decode, "||", "|");
+		replace(decode, "|vfile|vserver|remotesub|chromeInject|poster", "");
+		replace(decode, "|thumbs", "");
+		replace(decode, "|jpg", "");
+		replace(decode, "|furl", "");
+		replace(decode, "|wurl", "");
+		
+		replace(decode, "|M", "");
+		replace(decode, "|nLhMBA", "");
+		
+		replace(decode, "|v", "");
+		replace(decode, "|_t|16", "&e=16");
+		replace(decode, "|mp4", "");
+		replace(decode, "|net", "");
+		replace(decode, "|jmkBVb", "");
+		replace(decode, "|mxdcontent", "");
+		replace(decode, "|referrer|", ".mp4?s=");
+		if (E.length() > 3) replace(decode, E, "&e="+E.substr(1));
 
-	//scrap important elements
-	std::string dely = scrapElement(code, "delivery");
-	
-	replace(code, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
-	replace(code, "|16", "&_t=16");
-return code;
+		//scrap important elements
+		std::string dely = scrapElement(decode, "delivery");
+		
+		replace(decode, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
+		replace(decode, "|16", "&_t=16");
+		
+		std::cout << decode << std::endl;
+		std::cout << decode.find("|",0) << std::endl;
+		std::cout << decode.length() << std::endl;
+		
+		if(decode.find("|") > 0 && decode.rfind("|") < decode.length()){continue;}
+		break;
+	} else {
+		decode = "";
+		break;
+	}
+}
+return decode;
 }
 
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
@@ -114,14 +138,8 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
 		if(videourl.length())
 		{
+			videourl=MD_s(videourl);
 			std::cout << videourl << std::endl;
-			std::string tempmedia = gethtml(videourl);
-			videourl = scrapElement(tempmedia, "MDCore|","'");
-			if(videourl.length())
-			{
-				videourl=MD_s(videourl);
-				std::cout << videourl << std::endl;
-			}	
 		}
 	}
 	if (server == "Nozomi"){
@@ -193,16 +211,11 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 	if(videourl.length())
 	{
 		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
+		std::cout << videourl << std::endl;			
+		videourl=MD_s(videourl);
 		std::cout << videourl << std::endl;
-		std::string tempmedia = gethtml(videourl);
-		videourl = scrapElement(tempmedia, "MDCore|","'");
-		if(videourl.length())
-		{
-			videourl=MD_s(videourl);
-			std::cout << videourl << std::endl;
-			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
-		}
+		serverenlace = videourl;
+		if(downloadfile(videourl, directorydownload)) return true;
 	}
 	return false;
 }
