@@ -91,11 +91,8 @@ while (true){
 		replace(decode, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
 		replace(decode, "|16", "&_t=16");
 		
-		std::cout << decode << std::endl;
-		std::cout << decode.find("|",0) << std::endl;
-		std::cout << decode.length() << std::endl;
-		
 		if(decode.find("|") > 0 && decode.rfind("|") < decode.length()){continue;}
+		std::cout << decode << std::endl;
 		break;
 	} else {
 		decode = "";
