@@ -31,6 +31,7 @@ LTexture NOP;
 LTexture VOX;
 LTexture T_T;
 LTexture T_D;
+LTexture T_R;
 
 //main SLD funct (Grafics On Display = GOD)
 SDLB GOD;
@@ -574,9 +575,8 @@ int capit(void* data) {
 	re2 = a.find("</p>", re1);
 
 	std::string terese = a.substr(re1, re2 - re1);
-	replace(terese, "<br/>", "");
-	rese = terese;
-	std::cout << rese << std::endl;
+	replace(terese, "<br/>", "");	
+	T_R.loadFromRenderedTextWrap(GOD.gFont, terese.substr(0,800)+"...", {50,50,50}, 750);
 
 	//utf-8
 	nextdate = "...";
