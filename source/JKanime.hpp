@@ -575,8 +575,9 @@ int capit(void* data) {
 	re2 = a.find("</p>", re1);
 
 	std::string terese = a.substr(re1, re2 - re1);
-	replace(terese, "<br/>", "");	
-	T_R.loadFromRenderedTextWrap(GOD.gFont, terese.substr(0,800)+"...", {50,50,50}, 750);
+	replace(terese, "<br/>", "");
+	rese = terese;
+	std::cout << rese << std::endl;
 
 	//utf-8
 	nextdate = "...";

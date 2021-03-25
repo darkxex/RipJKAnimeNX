@@ -219,7 +219,7 @@ int main(int argc, char **argv)
 									printf("q wea es esto? %s  : %d\n",temporallink.c_str() ,selectchapter);
 									if (selectchapter > (int)con_maxcapit.size()-1)
 									{
-										T_R.loadFromRenderedTextWrap(GOD.gFont, "......", textColor, 750);
+										rese = "......";
 										nextdate = "......";
 										maxcapit = -1;
 										mincapit = 1;
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
 										capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);									
 									}else {
 										try{
-											T_R.loadFromRenderedTextWrap(GOD.gFont, con_rese[selectchapter], textColor, 750);
+											rese = con_rese[selectchapter];
 											nextdate = con_nextdate[selectchapter];
 											enemision = con_enemision[selectchapter];
 											tienezero = con_tienezero[selectchapter];
@@ -266,7 +266,7 @@ int main(int argc, char **argv)
 									TChapters.loadFromFileCustom(tempimage, 550, 400);
 									statenow = chapterstate;
 									temporallink = arraysearch[searchchapter];
-									T_R.loadFromRenderedTextWrap(GOD.gFont, "......", textColor, 750);
+									rese = "......";
 									nextdate = "......";
 									maxcapit = -1;
 									mincapit = 1;
@@ -292,7 +292,7 @@ int main(int argc, char **argv)
 
 								std::cout << temporallink << std::endl;
 								//init 
-								T_R.loadFromRenderedTextWrap(GOD.gFont, "......", textColor, 750);
+								rese = "......";
 								nextdate = "......";
 								maxcapit = -1;
 								mincapit = 1;
@@ -791,6 +791,11 @@ int main(int argc, char **argv)
 
 			{//draw description
 			VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
+			static std::string rese_prot = "..";
+			if (rese_prot != rese){//load texture on text change 
+				T_R.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
+				rese_prot = rese;
+			}
 			T_R.render(posxbase+15, posybase + 65);
 
 			gTextTexture.loadFromRenderedTextWrap(GOD.gFont3, generos, textColor,750);
