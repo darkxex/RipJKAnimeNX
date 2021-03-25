@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 	SDL_Thread* capithread = NULL;
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
-	SDL_Thread* threadID = NULL;
+	SDL_Thread* downloadthread = NULL;
 	
 	//Set main Thread get images and descriptions
 	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
@@ -239,7 +239,6 @@ int main(int argc, char **argv)
 											printf("Error \n");
 										}
 									}
-
 
 									statenow = chapterstate;
 									if (tienezero) {
@@ -438,7 +437,7 @@ int main(int argc, char **argv)
 								downqueue.clear();
 								downqueue.push_back(urltodownload);
 								logqueue = downqueue;
-								threadID = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
+								downloadthread = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
 							}
 							break;
 						case searchstate:
@@ -792,8 +791,12 @@ int main(int argc, char **argv)
 
 			{//draw description
 			VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
-			gTextTexture.loadFromRenderedTextWrap(GOD.gFont, rese.substr(0,800)+"...", textColor, 750);
-			gTextTexture.render(posxbase+15, posybase + 65);
+			static std::string rese_prot = "..";
+			if (rese_prot != rese){//load texture on text change 
+				T_R.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
+				rese_prot = rese;
+			}
+			T_R.render(posxbase+15, posybase + 65);
 
 			gTextTexture.loadFromRenderedTextWrap(GOD.gFont3, generos, textColor,750);
 			gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
@@ -1222,11 +1225,11 @@ int main(int argc, char **argv)
 	else {
 		SDL_WaitThread(capithread, NULL);
 	}
-	if (NULL == threadID) {
+	if (NULL == downloadthread) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
 	}
 	else {
-		SDL_WaitThread(threadID, NULL);
+		SDL_WaitThread(downloadthread, NULL);
 	}
 	if (NULL == prothread) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());

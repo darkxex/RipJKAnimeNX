@@ -31,6 +31,7 @@ LTexture NOP;
 LTexture VOX;
 LTexture T_T;
 LTexture T_D;
+LTexture T_R;
 
 //main SLD funct (Grafics On Display = GOD)
 SDLB GOD;
