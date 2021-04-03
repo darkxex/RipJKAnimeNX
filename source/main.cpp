@@ -913,7 +913,8 @@ int main(int argc, char **argv)
 			}
 			case programationstate:	{
 				if (!reloading&&arraychapter.size()>=1) {
-					VOX.render_VOX({0,0, 620, 670}, 200, 200, 200, 105);//Draw a rectagle to a nice view
+					VOX.render_VOX({0,0, 620, 670}, 200, 200, 200, 115);//Draw a rectagle to a nice view
+					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 
 					if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
 						u32 sel=(GOD.TouchY*30/660);
@@ -1006,7 +1007,8 @@ int main(int argc, char **argv)
 					}
 					if ((int)arraysearch.size() >= 1){
 						
-						VOX.render_VOX({0,0, 620, 670}, 100, 100, 100, 105);
+						VOX.render_VOX({0,0, 620, 670}, 100, 100, 100, 115);
+						VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 
 						int of = searchchapter < 30 ? 0 : searchchapter - 26;
 						if (arraysearch.size() > 30) {
@@ -1067,6 +1069,7 @@ int main(int argc, char **argv)
 				break;
 			}
 			case favoritesstate:	{
+				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
@@ -1081,7 +1084,7 @@ int main(int argc, char **argv)
 				}
 
 				if ((int)arrayfavorites.size() >= 1 ){
-				VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 105);
+				VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
 				int of = favchapter < 30 ? 0 : favchapter - 26;
 				if (arrayfavorites.size() > 30) {
 					gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
@@ -1130,6 +1133,7 @@ int main(int argc, char **argv)
 			break;
 			}
 			case downloadstate:		{
+				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
 				gTextTexture.render(posxbase, posybase);
 				gTextTexture.loadFromRenderedText(GOD.gFont3, DownTitle, textColor);
