@@ -244,28 +244,38 @@ int refrescarpro(void* data){
 	int  val0 = 0, val1 = 1, val2, val3, val4;
 	std::string temporal = "";
 	std::string content = gethtml("https://jkanime.net");
-	while (val0 != -1) {
-		val0 = content.find("play-button", val1);
+	
+	int temp0=0,temp1=0;
+//	std::cout << "---" << val0 << std::endl;
+	temp0=content.find("Programación");
+	temp1=content.find("TOP ANIMES",temp0);
+	content = content.substr(temp0,temp1-temp0);
+//	std::cout << "---" << val0 << std::endl;
+
+	
+printf("--\n");
+	while (val0 != -1 && !quit) {
+		val0 = content.find("<a href=", val1);
 		if (val0 == -1) { break; }
 
-		val1 = 19 + content.find("play-button", val1);
+		val1 = 9 + content.find("<a href=", val1);
 		val2 = (content.find('"', val1));
 		std::string gdrive = content.substr(val1, val2 - val1);
+		//std::cout << gdrive << std::endl;
 
 		arraychapter.push_back(gdrive);
-		val3 = content.rfind("<img src=", val2) + 10;
+		val3 = content.find("<img src=", val2) + 10;
 		val4 = content.find('"', val3);
 		std::string gpreview = content.substr(val3, val4 - val3);
 		arrayimages.push_back(gpreview);
 		
-		//std::cout << arraycount << ". " << gdrive << std::endl;
+		std::cout << gdrive << "  .  " << gpreview << std::endl;
 		temporal = temporal + gdrive + "\n";
 		temporal = temporal + gpreview + "\n";
 		porcentajereload = val1;
 		val1++;
 	}
-	
-	printf(temporal.c_str());
+	//printf(temporal.c_str());
 	reloading = false;
 	
 	first = SDL_CreateThread(GETCONT,"ContentThread",(void*)NULL);printf("firstCreated...\n");;
@@ -294,6 +304,8 @@ int refrescarpro(void* data){
 	printf("#\nEnd Image Download\n");
 	imgNumbuffer=0;
 	activatefirstimage=true;
+	//return 0;
+
 	MKfavimgfix();
 	//exit after load the images cache
 	if (AppletMode) quit=true;
@@ -344,7 +356,8 @@ int MKcapitBuffer() {
 		
 		//find sinopsis
 		int re1, re2;
-		re1 = a.find("Sinopsis: </strong>") + 19;
+		re1 = a.find("anime__details__text") + 19;
+		re1 = a.find("<p>", re1)+3;
 		re2 = a.find("</p>", re1);
 
 		std::string terese = a.substr(re1, re2 - re1);
@@ -354,7 +367,7 @@ int MKcapitBuffer() {
 
 		terese = "...";
 	//	std::cout << rese << std::endl;
-		if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
+		if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
 		{
 			terese = "Pelicula";
 		}else{
@@ -372,12 +385,12 @@ int MKcapitBuffer() {
 
 
 		int indx1 = 1, indx2, indx3, indx4;
-		indx4 = a.find("<strong>Generos:</strong>", indx1);
+		indx1 = a.find("<span>Genero:</span>", indx1);
 		std::string generosTMP="";
 		while (indx1 != -1) {
 			indx1 = a.find("https://jkanime.net/genero", indx1);
 			if (indx1 == -1) { break; }
-			if(indx4 < indx1) break;
+			//if(indx4 < indx1) break;
 			indx2 = a.find(">",indx1);
 			indx3 = a.find("</a>", indx1);
 			generosTMP += a.substr(indx2+1, indx3 - indx2-1)+"   ";
@@ -396,7 +409,7 @@ int MKcapitBuffer() {
 		replace(generosTMP, "ù","u");
 		con_generos.push_back(generosTMP);
 
-		if ((int)a.find("<b>En emision</b>") != -1)
+		if ((int)a.find("En emision") != -1)
 		{
 			con_enemision.push_back(true);
 		}
@@ -571,7 +584,8 @@ int capit(void* data) {
 	capmore = maxcapit;
 
 	int re1, re2;
-	re1 = a.find("Sinopsis: </strong>") + 19;
+	re1 = a.find("anime__details__text") + 19;
+	re1 = a.find("<p>", re1)+3;
 	re2 = a.find("</p>", re1);
 
 	std::string terese = a.substr(re1, re2 - re1);
@@ -582,7 +596,8 @@ int capit(void* data) {
 	//utf-8
 	nextdate = "...";
 //	std::cout << rese << std::endl;
-	if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
+//<div id="proxep"><p><b>Próximo episodio</b> Sábado 10 Abril <i class="far fa-calendar-alt"></i></p></div>
+	if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
 	{
 		nextdate="Pelicula";
 	}else{
@@ -591,24 +606,24 @@ int capit(void* data) {
 		if(re1 > 1){
 			re1 += 25;
 			re2 = a.find("<i class", re1);
-			nextdate = a.substr(re1, re2 - re1);
+			nextdate = "."+a.substr(re1, re2 - re1);
 			replace(nextdate, "á","a");
 			replace(nextdate, "ó","o");
 		}
 	}
 
 	int indx1 = 1, indx2, indx3, indx4;
-	indx4 = a.find("<strong>Generos:</strong>", indx1);
+	indx1 = a.find("<span>Genero:</span>", indx1);
 	std::string generosTMP="";
 	while (indx1 != -1) {
-		if(indx4 < indx1) break;
+		//if(indx4 < indx1) break;
 		indx1 = a.find("https://jkanime.net/genero", indx1);
 		if (indx1 == -1) { break; }
 		indx2 = a.find(">",indx1);
 		indx3 = a.find("</a>", indx1);
 		generosTMP += a.substr(indx2+1, indx3 - indx2-1)+" ";
 //		std::cout << generosTMP << std::endl;
-		indx1++;
+		indx1 = indx3;
 	}
 	replace(generosTMP, "á","a");
 	replace(generosTMP, "à","a");
@@ -625,7 +640,7 @@ int capit(void* data) {
 
 
 //	std::cout << rese << std::endl;
-	if ((int)a.find("<b>En emision</b>") != -1)
+	if ((int)a.find("En emision") != -1)
 	{
 		enemision = true;
 	}
