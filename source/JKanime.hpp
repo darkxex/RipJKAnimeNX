@@ -583,7 +583,8 @@ int capit(void* data) {
 	capmore = maxcapit;
 
 	int re1, re2;
-	re1 = a.find("Sinopsis: </strong>") + 19;
+	re1 = a.find("anime__details__text") + 19;
+	re1 = a.find("<p>", re1)+3;
 	re2 = a.find("</p>", re1);
 
 	std::string terese = a.substr(re1, re2 - re1);
@@ -594,7 +595,8 @@ int capit(void* data) {
 	//utf-8
 	nextdate = "...";
 //	std::cout << rese << std::endl;
-	if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
+//<div id="proxep"><p><b>Próximo episodio</b> Sábado 10 Abril <i class="far fa-calendar-alt"></i></p></div>
+	if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
 	{
 		nextdate="Pelicula";
 	}else{
@@ -603,24 +605,24 @@ int capit(void* data) {
 		if(re1 > 1){
 			re1 += 25;
 			re2 = a.find("<i class", re1);
-			nextdate = a.substr(re1, re2 - re1);
+			nextdate = "."+a.substr(re1, re2 - re1);
 			replace(nextdate, "á","a");
 			replace(nextdate, "ó","o");
 		}
 	}
 
 	int indx1 = 1, indx2, indx3, indx4;
-	indx4 = a.find("<strong>Generos:</strong>", indx1);
+	indx4 = a.find("<span>Genero:</span>", indx1);
 	std::string generosTMP="";
 	while (indx1 != -1) {
-		if(indx4 < indx1) break;
+		//if(indx4 < indx1) break;
 		indx1 = a.find("https://jkanime.net/genero", indx1);
 		if (indx1 == -1) { break; }
 		indx2 = a.find(">",indx1);
 		indx3 = a.find("</a>", indx1);
 		generosTMP += a.substr(indx2+1, indx3 - indx2-1)+" ";
 //		std::cout << generosTMP << std::endl;
-		indx1++;
+		indx1 = indx3;
 	}
 	replace(generosTMP, "á","a");
 	replace(generosTMP, "à","a");
@@ -637,7 +639,7 @@ int capit(void* data) {
 
 
 //	std::cout << rese << std::endl;
-	if ((int)a.find("<b>En emision</b>") != -1)
+	if ((int)a.find("En emision") != -1)
 	{
 		enemision = true;
 	}
