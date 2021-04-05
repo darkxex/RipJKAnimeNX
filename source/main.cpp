@@ -800,7 +800,7 @@ int main(int argc, char **argv)
 			}
 			T_R.render(posxbase+15, posybase + 65);
 
-			gTextTexture.loadFromRenderedTextWrap(GOD.gFont3, generos, textColor,750);
+			gTextTexture.loadFromRenderedTextWrap(GOD.gFont4, generos, textColor,750);
 			gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
 			}
 			
