@@ -244,28 +244,38 @@ int refrescarpro(void* data){
 	int  val0 = 0, val1 = 1, val2, val3, val4;
 	std::string temporal = "";
 	std::string content = gethtml("https://jkanime.net");
-	while (val0 != -1) {
-		val0 = content.find("play-button", val1);
+	
+	int temp0=0,temp1=0;
+//	std::cout << "---" << val0 << std::endl;
+	temp0=content.find("Programación");
+	temp1=content.find("TOP ANIMES",temp0);
+	content = content.substr(temp0,temp1-temp0);
+//	std::cout << "---" << val0 << std::endl;
+
+	
+printf("--\n");
+	while (val0 != -1 && !quit) {
+		val0 = content.find("<a href=", val1);
 		if (val0 == -1) { break; }
 
-		val1 = 19 + content.find("play-button", val1);
+		val1 = 9 + content.find("<a href=", val1);
 		val2 = (content.find('"', val1));
 		std::string gdrive = content.substr(val1, val2 - val1);
+		//std::cout << gdrive << std::endl;
 
 		arraychapter.push_back(gdrive);
-		val3 = content.rfind("<img src=", val2) + 10;
+		val3 = content.find("<img src=", val2) + 10;
 		val4 = content.find('"', val3);
 		std::string gpreview = content.substr(val3, val4 - val3);
 		arrayimages.push_back(gpreview);
 		
-		//std::cout << arraycount << ". " << gdrive << std::endl;
+		std::cout << gdrive << "  .  " << gpreview << std::endl;
 		temporal = temporal + gdrive + "\n";
 		temporal = temporal + gpreview + "\n";
 		porcentajereload = val1;
 		val1++;
 	}
-	
-	printf(temporal.c_str());
+	//printf(temporal.c_str());
 	reloading = false;
 	
 	first = SDL_CreateThread(GETCONT,"ContentThread",(void*)NULL);printf("firstCreated...\n");;
@@ -294,6 +304,8 @@ int refrescarpro(void* data){
 	printf("#\nEnd Image Download\n");
 	imgNumbuffer=0;
 	activatefirstimage=true;
+	return 0;
+
 	MKfavimgfix();
 	//exit after load the images cache
 	if (AppletMode) quit=true;
