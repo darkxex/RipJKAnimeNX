@@ -11,6 +11,7 @@ TTF_Font* digifont = NULL;
 TTF_Font *gFontcapit = NULL;
 TTF_Font *gFont2 = NULL;
 TTF_Font *gFont3 = NULL;
+TTF_Font *gFont4 = NULL;
 Mix_Music* gMusic = NULL;
 int TouchX=-1;
 int TouchY=-1;

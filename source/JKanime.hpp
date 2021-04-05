@@ -250,10 +250,7 @@ int refrescarpro(void* data){
 	temp0=content.find("Programación");
 	temp1=content.find("TOP ANIMES",temp0);
 	content = content.substr(temp0,temp1-temp0);
-//	std::cout << "---" << val0 << std::endl;
 
-	
-printf("--\n");
 	while (val0 != -1 && !quit) {
 		val0 = content.find("<a href=", val1);
 		if (val0 == -1) { break; }
@@ -269,7 +266,7 @@ printf("--\n");
 		std::string gpreview = content.substr(val3, val4 - val3);
 		arrayimages.push_back(gpreview);
 		
-		std::cout << gdrive << "  .  " << gpreview << std::endl;
+		//std::cout << gdrive << "  .  " << gpreview << std::endl;
 		temporal = temporal + gdrive + "\n";
 		temporal = temporal + gpreview + "\n";
 		porcentajereload = val1;
@@ -362,6 +359,7 @@ int MKcapitBuffer() {
 
 		std::string terese = a.substr(re1, re2 - re1);
 		replace(terese, "<br/>", "");
+		replace(terese, "&quot;", "");
 		con_rese.push_back(terese);
 
 
@@ -384,7 +382,7 @@ int MKcapitBuffer() {
 		con_nextdate.push_back(terese);
 
 
-		int indx1 = 1, indx2, indx3, indx4;
+		int indx1 = 1, indx2, indx3;
 		indx1 = a.find("<span>Genero:</span>", indx1);
 		std::string generosTMP="";
 		while (indx1 != -1) {
@@ -509,7 +507,7 @@ int searchjk(void* data)
 		
 		int val0 = 0,val1 = 1,val2,val3, val4;
 		while (val0 != -1) {
-			val0 = content.find("portada-title", val1);
+			val0 = content.find("<div class=\"anime__item\">", val1);
 			if (val0 == -1) { break; }
 
 			val1 = 6 + content.find("href=", val0);
@@ -518,7 +516,7 @@ int searchjk(void* data)
 		
 
 			arraysearch.push_back(gdrive);
-			val3 = content.find("<img src=", val2) + 10;
+			val3 = content.find("data-setbg=", val2) + 12;
 			val4 = content.find('"', val3);
 			std::string gsearchpreview = content.substr(val3, val4 - val3);
 			arraysearchimages.push_back(gsearchpreview);
@@ -590,6 +588,7 @@ int capit(void* data) {
 
 	std::string terese = a.substr(re1, re2 - re1);
 	replace(terese, "<br/>", "");
+	replace(terese, "&quot;", "");
 	rese = terese;
 	std::cout << rese << std::endl;
 
@@ -612,7 +611,7 @@ int capit(void* data) {
 		}
 	}
 
-	int indx1 = 1, indx2, indx3, indx4;
+	int indx1 = 1, indx2, indx3;
 	indx1 = a.find("<span>Genero:</span>", indx1);
 	std::string generosTMP="";
 	while (indx1 != -1) {
