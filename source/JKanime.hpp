@@ -304,7 +304,7 @@ printf("--\n");
 	printf("#\nEnd Image Download\n");
 	imgNumbuffer=0;
 	activatefirstimage=true;
-	return 0;
+	//return 0;
 
 	MKfavimgfix();
 	//exit after load the images cache
@@ -356,7 +356,8 @@ int MKcapitBuffer() {
 		
 		//find sinopsis
 		int re1, re2;
-		re1 = a.find("Sinopsis: </strong>") + 19;
+		re1 = a.find("anime__details__text") + 19;
+		re1 = a.find("<p>", re1)+3;
 		re2 = a.find("</p>", re1);
 
 		std::string terese = a.substr(re1, re2 - re1);
@@ -366,7 +367,7 @@ int MKcapitBuffer() {
 
 		terese = "...";
 	//	std::cout << rese << std::endl;
-		if ((int)a.find("<span class=\"info-value\">Pelicula</span>") != -1)
+		if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
 		{
 			terese = "Pelicula";
 		}else{
@@ -384,12 +385,12 @@ int MKcapitBuffer() {
 
 
 		int indx1 = 1, indx2, indx3, indx4;
-		indx4 = a.find("<strong>Generos:</strong>", indx1);
+		indx1 = a.find("<span>Genero:</span>", indx1);
 		std::string generosTMP="";
 		while (indx1 != -1) {
 			indx1 = a.find("https://jkanime.net/genero", indx1);
 			if (indx1 == -1) { break; }
-			if(indx4 < indx1) break;
+			//if(indx4 < indx1) break;
 			indx2 = a.find(">",indx1);
 			indx3 = a.find("</a>", indx1);
 			generosTMP += a.substr(indx2+1, indx3 - indx2-1)+"   ";
@@ -408,7 +409,7 @@ int MKcapitBuffer() {
 		replace(generosTMP, "ù","u");
 		con_generos.push_back(generosTMP);
 
-		if ((int)a.find("<b>En emision</b>") != -1)
+		if ((int)a.find("En emision") != -1)
 		{
 			con_enemision.push_back(true);
 		}
@@ -612,7 +613,7 @@ int capit(void* data) {
 	}
 
 	int indx1 = 1, indx2, indx3, indx4;
-	indx4 = a.find("<span>Genero:</span>", indx1);
+	indx1 = a.find("<span>Genero:</span>", indx1);
 	std::string generosTMP="";
 	while (indx1 != -1) {
 		//if(indx4 < indx1) break;

@@ -62,8 +62,10 @@ int main(int argc, char **argv)
 
 	AppletMode=GetAppletMode();
 #endif
-
-
+	//quick fix wait for jkanime
+	//WebBrowserCall("https://jkanime.net",true);
+	//return 0;
+	
 	SDL_Thread* capithread = NULL;
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
@@ -793,7 +795,7 @@ int main(int argc, char **argv)
 			VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
 			static std::string rese_prot = "..";
 			if (rese_prot != rese){//load texture on text change 
-				T_R.loadFromRenderedTextWrap(GOD.gFont, rese, textColor, 750);
+				T_R.loadFromRenderedTextWrap(GOD.gFont, rese.substr(0,800), textColor, 750);
 				rese_prot = rese;
 			}
 			T_R.render(posxbase+15, posybase + 65);
