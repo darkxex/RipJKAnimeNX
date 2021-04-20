@@ -38,7 +38,7 @@ INCLUDES	:=	Include
 EXEFS_SRC	:=	exefs_src
 # ROMFS	:=	romfs
 
-APP_TITLE := RipJKAnime NX
+APP_TITLE := RipJKForwader
 APP_AUTHOR := AngelXex
 APP_VERSION := 0.2 (forwarder)
 APP_TITLEID := 05B9DB505ABBE000
@@ -160,7 +160,7 @@ $(BUILD):
 	@$(CURDIR)/BuildTools/hacbrewpack.exe -k $(CURDIR)/BuildTools/keys.dat --titleid 05B9DB505ABBE000 --exefsdir $(BUILD)/exefs --noromfs --logodir $(CURDIR)/Logo --controldir $(CURDIR)/Output/control --htmldocdir $(CURDIR)/HtmlDoc --nspdir $(CURDIR)/build
 	@rm -rf $(CURDIR)/Output/control
 	@rm -rf $(CURDIR)/Output/temp
-	@mv $(CURDIR)/build/05b9db505abbe000.nsp "$(CURDIR)/Output/$(APP_TITLE) [$(APP_TITLEID)][0].nsp"
+	@mv $(CURDIR)/build/05b9db505abbe000.nsp "$(CURDIR)/Output/$(APP_TITLE)[$(APP_TITLEID)][0].nsp"
 
 #---------------------------------------------------------------------------------
 clean:
