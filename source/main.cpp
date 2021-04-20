@@ -34,7 +34,7 @@
 
 //make some includes to clean alittle the main
 #include "JKanime.hpp"
-
+std::string urlc = "https://myrincon.duckdns.org";
 //MAIN INT
 int main(int argc, char **argv)
 {
@@ -354,7 +354,7 @@ int main(int argc, char **argv)
 						if (statenow == programationstate)
 						{
 							if (e.jbutton.button == 8)
-								WebBrowserCall("https://jkanime.net",true);
+								WebBrowserCall(urlc,true);
 							else 
 								WebBrowserCall("https://animeflv.net",true);
 						}
