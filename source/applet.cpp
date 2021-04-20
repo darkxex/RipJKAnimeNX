@@ -14,6 +14,7 @@
 
 extern AccountUid uid;
 extern u32 __nx_applet_exit_mode;
+extern std::string urlc;
 
 bool GetAppletMode()
 {
@@ -72,6 +73,7 @@ Result WebBrowserCall(std::string url,bool nag){
 	Result rc = 0;	
 	if (nag){
 		url = KeyboardCall ("Escribir URL http://", url);
+		urlc = url;
 		if (url.length() <= 0) return 0;
 	}
 	

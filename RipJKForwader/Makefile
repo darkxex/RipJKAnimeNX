@@ -38,9 +38,9 @@ INCLUDES	:=	Include
 EXEFS_SRC	:=	exefs_src
 # ROMFS	:=	romfs
 
-APP_TITLE := RipJKAnime NX
+APP_TITLE := RipJKForwader
 APP_AUTHOR := AngelXex
-APP_VERSION := 0.1 (forwarder)
+APP_VERSION := 0.2 (forwarder)
 APP_TITLEID := 05B9DB505ABBE000
 
 #---------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE
 CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
 			$(ARCH) $(DEFINES)
 
-CFLAGS	+=	$(INCLUDE) -D__SWITCH__
+CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -DTITLE='"$(APP_TITLE)"' -DVERSION='"$(APP_VERSION)"'
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
@@ -160,7 +160,7 @@ $(BUILD):
 	@$(CURDIR)/BuildTools/hacbrewpack.exe -k $(CURDIR)/BuildTools/keys.dat --titleid 05B9DB505ABBE000 --exefsdir $(BUILD)/exefs --noromfs --logodir $(CURDIR)/Logo --controldir $(CURDIR)/Output/control --htmldocdir $(CURDIR)/HtmlDoc --nspdir $(CURDIR)/build
 	@rm -rf $(CURDIR)/Output/control
 	@rm -rf $(CURDIR)/Output/temp
-	@mv $(CURDIR)/build/05b9db505abbe000.nsp $(CURDIR)/Output/ripjkforwader.nsp
+	@mv $(CURDIR)/build/05b9db505abbe000.nsp "$(CURDIR)/Output/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp"
 
 #---------------------------------------------------------------------------------
 clean:
