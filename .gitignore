@@ -1,10 +1,8 @@
 build/
 Build/
 Output/
-Out/
 *.nso
 *.nro
-*.nsp
 *.elf
 .vscode/
 .vs/
@@ -16,4 +14,9 @@ target/
 .project
 *.cmd
 *.bat
+*.pfs0
+*.nacp
 RipJKForwader/hacbrewpack_backup/*
+RipJKForwader/hacbrewpack_temp/*
+hacbrewpack_backup/*
+hacbrewpack_temp/*

@@ -44,9 +44,10 @@ BUILD		:=	build
 SOURCES		:=	source 
 DATA		:=	data
 INCLUDES	:=	include 
-EXEFS_SRC	:=	exefs_src
+EXEFS_SRC	:=	RipJKForwader/exefs_src
 ROMFS		:=	romfs
 ICON        :=  Icon.jpg
+APP_TITLEID := 05B9DB505ABBE000
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -61,7 +62,7 @@ CFLAGS	:=	-g -O3 -ffunction-sections \
 			`freetype-config --cflags` \
 			`sdl2-config --cflags`
 
-CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1
+CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 -DTITLE='"$(APP_TITLE)"' -DVERSION='"$(APP_VERSION)"'
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -fexceptions
 
@@ -69,16 +70,6 @@ ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-no-as-needed,-Map,$(notdir $*.map)
 
 LIBS	:=	-lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -lwebp -ljpeg `sdl2-config --libs` `freetype-config --libs` -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lz -lnx `$(PREFIX)pkg-config --libs sdl2 SDL2_mixer SDL2_image SDL2_ttf` \
-			-lnx
-#LIBS     := -lSDL2_ttf -lSDL2_image -lSDL2_mixer -lSDL2 -lSDL2_gfx \
-#			-lpng  -ljpeg \
-#			-lglad -lEGL -lglapi -ldrm_nouveau \
-#			-lvorbisidec -logg -lmpg123 -lmodplug -lstdc++ \
-#			-lglad -lEGL -lglapi -ldrm_nouveau \
-#			-lavformat -lavcodec -lswresample -lswscale -lavutil -lbz2 -lass -ltheora -lvorbis -lopus\
-#			-lnx -lm -lz
-#LIBS	:=	-lSDL2_ttf -lSDL2_gfx -lSDL2_image -lSDL2_mixer -lpng -ljpeg -lglad -lEGL -lglapi -ldrm_nouveau -lvorbisidec -logg -lmpg123 -lmodplug -lstdc++ -lavformat -lavcodec -lswresample -lswscale -lavutil -lbz2 -lass -ltheora -lvorbis -lopus `sdl2-config --libs` `freetype-config --libs` -lnx
-
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
@@ -168,13 +159,23 @@ endif
 all: $(BUILD)
 
 $(BUILD):
-	@[ -d $@ ] || mkdir -p $@ $(BUILD) $(OUTDIR)
+	@[ -d $@ ] || mkdir -p $@
+	@[ -d $(CURDIR)/$(OUTDIR) ] || mkdir -p $(CURDIR)/$(OUTDIR)
+	@[ -d $(CURDIR)/$(OUTDIR)/control ] || mkdir -p $(CURDIR)/$(OUTDIR)/control
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@rm -rf $(CURDIR)/Control
+	mkdir -p $(CURDIR)/Control
+	@cp $(OUTPUT).nacp $(CURDIR)/$(OUTDIR)/control/control.nacp
+	@cp $(CURDIR)/Icon.jpg $(CURDIR)/$(OUTDIR)/control/icon_AmericanEnglish.dat
+	@$(CURDIR)/RipJKForwader/BuildTools/hacbrewpack.exe -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/build --nspdir $(CURDIR)/build
+	@rm -rf $(CURDIR)/$(OUTDIR)/control
+	@rm -rf $(CURDIR)/Control
+	@mv $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp"
 
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(OUTDIR)
+	@rm -fr $(BUILD) $(TARGET).nso $(TARGET).elf
 
 
 #---------------------------------------------------------------------------------
@@ -186,9 +187,7 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all	:	$(OUTPUT).pfs0 $(OUTPUT).nro
-
-$(OUTPUT).pfs0	:	$(OUTPUT).nso
+all	: $(OUTPUT).nso $(OUTPUT).pfs0 $(OUTPUT).nro $(OUTPUT).nacp
 
 $(OUTPUT).nso	:	$(OUTPUT).elf
 
