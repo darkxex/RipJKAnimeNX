@@ -78,14 +78,14 @@ int main(int argc, char **argv)
 	GOD.intA();//init the SDL
 #ifdef __SWITCH__
 
-	if (isFileExist("texture.png")){
-		Farest.loadFromFile("texture.png");
+	if (isFileExist(rootdirectory+"texture.png")){
+		Farest.loadFromFile(rootdirectory+"texture.png");
 	} else {
 		Farest.loadFromFile("romfs:/texture.png");
 	}
 	
-	if (isFileExist("heart.png")){
-		Heart.loadFromFile("heart.png");
+	if (isFileExist(rootdirectory+"heart.png")){
+		Heart.loadFromFile(rootdirectory+"heart.png");
 	} else {
 		Heart.loadFromFile("romfs:/heart.png");
 	}

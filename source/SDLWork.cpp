@@ -20,6 +20,7 @@
 extern SDLB GOD;
 extern LTexture gTextTexture;
 extern LTexture Farest;
+extern std::string rootdirectory;
 
 void SDLB::intA(){
 	//Start up SDL and create window
@@ -86,8 +87,8 @@ void SDLB::intA(){
 				}
 #ifdef __SWITCH__
 				//Load music
-				if (isFileExist("wada.ogg")){
-					gMusic = Mix_LoadMUS("wada.ogg");
+				if (isFileExist(rootdirectory+"wada.ogg")){
+					gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 				} else {
 					gMusic = Mix_LoadMUS("romfs:/wada.ogg");
 				}
