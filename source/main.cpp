@@ -33,23 +33,45 @@
 #include "utils.hpp"
 
 //my vars
+bool usenand = true; //set to false to not use nand
 std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
 
-//make some includes to clean alittle the main
+//make some includes to clean a little the main
 #include "JKanime.hpp"
 std::string urlc = "https://myrincon.duckdns.org";
+
 //MAIN INT
 int main(int argc, char **argv)
 {
 #ifdef __SWITCH__
+	//use the nand of the switch
+	if(usenand){
+		std::string rootdirectory = "user:/RipJKAnime_NX/";
+	}
+
 	romfsInit();
 	socketInitializeDefault();
+	if(usenand){
+		//mount user
+		FsFileSystem data;
+		fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
+		fsdevMountDevice("user", data);
+	}
 	struct stat st = { 0 };
 	nxlinkStdio();
 	printf("printf output now goes to nxlink server\n");
-	mkdir(rootdirectory.c_str(), 0777);
-	mkdir((rootdirectory+"Video").c_str(), 0777);
-	mkdir((rootdirectory+"DATA").c_str(), 0777);
+	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
+		mkdir(rootdirectory.c_str(), 0777);
+		mkdir((rootdirectory+"DATA").c_str(), 0777);
+		if (stat("sdmc:/switch/RipJKAnime_NX", &st) != -1){
+			copy_me("sdmc:/switch/RipJKAnime_NX/favoritos.txt",rootdirectory+"favoritos.txt");
+			copy_me("sdmc:/switch/RipJKAnime_NX/heart.png",rootdirectory+"heart.png");
+			copy_me("sdmc:/switch/RipJKAnime_NX/texture.png",rootdirectory+"texture.png");
+			copy_me("sdmc:/switch/RipJKAnime_NX/wada.ogg",rootdirectory+"wada.ogg");
+		}
+	}
+
+	//mkdir((rootdirectory+"Video").c_str(), 0777);
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
 	}
@@ -459,7 +481,7 @@ int main(int argc, char **argv)
 								std::string temp;
 								std::ifstream infile;
 
-								std::ifstream file(favoritosdirectory);
+								std::ifstream file(rootdirectory+"favoritos.txt");
 								std::string str;
 								while (std::getline(file, str)) {
 									std::cout << str << "\n";
@@ -489,7 +511,7 @@ int main(int argc, char **argv)
 								std::string temp;
 								std::ifstream infile;
 
-								std::ifstream file(favoritosdirectory);
+								std::ifstream file(rootdirectory+"favoritos.txt");
 								std::string str;
 								while (std::getline(file, str)) {
 									std::cout << str << "\n";
@@ -513,7 +535,7 @@ int main(int argc, char **argv)
 						{//AGREGAR A FAVORITOS
 							if(!isFavorite(temporallink)){
 								std::ofstream outfile;
-								outfile.open(favoritosdirectory, std::ios_base::app); // append instead of overwrite
+								outfile.open(rootdirectory+"favoritos.txt", std::ios_base::app); // append instead of overwrite
 								outfile << temporallink;
 								outfile << "\n";
 								outfile.close();
@@ -1286,6 +1308,11 @@ int main(int argc, char **argv)
 	NOP.free();
 
 	GOD.deint();
-
+	if(usenand){
+		//unmount and commit
+		fsdevCommitDevice("user");
+		fsdevUnmountDevice("user");
+		fsFsClose(&data);
+	}
 	return 0;
 }
