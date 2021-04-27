@@ -13,7 +13,6 @@ target/
 .classpath
 .project
 *.cmd
-*.bat
 *.pfs0
 *.nacp
 RipJKForwader/hacbrewpack_backup/*

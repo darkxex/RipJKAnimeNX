@@ -108,6 +108,7 @@ int main(int argc, char **argv)
 				if (isFileExist(rootdirectory+"wada.ogg")){
 					GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 				}
+				//if (!isFileExist("RipJKAnime_NX.nro"))//detect the nro path
 				fsdevDeleteDirectoryRecursively(oldroot.c_str());
 			}
 		}
@@ -1004,7 +1005,13 @@ int main(int argc, char **argv)
 					}
 
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8.3) #KASTXUPALO", {100,0,0});
+					std::string VERCAT =  VERSION;
+					#ifdef USENAND
+						std::string TYPEA =  "emmc";
+					#else
+						std::string TYPEA =  "sdmc";
+					#endif
+					gTextTexture.loadFromRenderedText(GOD.gFont, (TYPEA+" (Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 					if (imgNumbuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});

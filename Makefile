@@ -62,7 +62,11 @@ CFLAGS	:=	-g -O3 -ffunction-sections \
 			`freetype-config --cflags` \
 			`sdl2-config --cflags`
 
-CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 -DTITLE='"$(APP_TITLE)"' -DVERSION='"$(APP_VERSION)"' -DUSENAND
+CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 -DTITLE='"$(APP_TITLE)"' -DVERSION='"$(APP_VERSION)"'
+
+ifneq ($(strip $(USENAND)),)
+CFLAGS	+= -DUSENAND
+endif
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -fexceptions
 
