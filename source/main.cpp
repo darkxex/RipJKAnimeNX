@@ -35,6 +35,7 @@
 //my vars
 bool usenand = true; //set to false to not use nand
 std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
+FsFileSystem data;
 
 //make some includes to clean a little the main
 #include "JKanime.hpp"
@@ -53,7 +54,6 @@ int main(int argc, char **argv)
 	socketInitializeDefault();
 	if(usenand){
 		//mount user
-		FsFileSystem data;
 		fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
 		fsdevMountDevice("user", data);
 	}
