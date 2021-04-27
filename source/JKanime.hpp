@@ -87,7 +87,6 @@ std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
 #endif // SWITCH
 
 //my vars
-std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;

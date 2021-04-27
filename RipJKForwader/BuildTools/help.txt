@@ -1,0 +1,29 @@
+hacBrewPack v3.00 by The-4n
+Usage: hacbrewpack.exe [options...]
+
+Options:
+-k, --keyset             Set keyset filepath, default filepath is .\keys.dat
+-h, --help               Display usage
+--nspdir                 Set output nsp directory path, default path is .\hacbrewpack_nsp\
+--ncadir                 Set output nca directory path, default path is .\hacbrewpack_nca\
+--tempdir                Set temp directory filepath, default filepath is .\hacbrewpack_temp\
+--backupdir              Set backup directory path, default path is .\hacbrewpack_backup\
+--exefsdir               Set program exefs directory path, default path is .\exefs\
+--romfsdir               Set program romfs directory path, default path is .\romfs\
+--logodir                Set program logo directory path, default path is .\logo\
+--controldir             Set control romfs directory path, default path is .\control\
+--htmldocdir             Set HtmlDocument romfs directory path
+--legalinfodir           Set LegalInformation romfs directory path
+--noromfs                Skip creating program romfs section
+--nologo                 Skip creating program logo section
+--keygeneration          Set keygeneration for encrypting key area, default keygeneration is 1
+--keyareakey             Set key area key 2 in hex with 16 bytes lenght
+--sdkversion             Set SDK version in hex, default SDK version is 000C1100
+--plaintext              Skip encrypting sections and set section header block crypto type to plaintext
+--keepncadir             Keep NCA directory
+--nosignncasig2          Skip patching acid public key in npdm and signing nca header with acid public key
+Overriding options:
+--titleid                Use specified titleid for creating ncas and patch titleid in npdm and nacp
+--titlename              Change title name in nacp for all languages, max size is 512 bytes
+--titlepublisher         Change title publisher in nacp for all languages, max size is 256 bytes
+--nopatchnacplogo        Skip changing logo handeling to auto in NACP

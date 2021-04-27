@@ -6,3 +6,4 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server);
 bool linktodownoadjkanime(std::string urltodownload,std::string directorydownload);
 std::string scrapElement(std::string content, std::string get,std::string delim ="" );
 void touch(std::string route);
+bool copy_me(std::string origen, std::string destino);
