@@ -6,9 +6,14 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 
 <img style="display:inline" src="ScreenShots/ScreenShots_2.jpg" width="232"/><img style="display:inline" src="ScreenShots/ScreenShots_3.jpg" width="232"/><img style="display:inline" src="ScreenShots/ScreenShots_4.jpg" width="232"/>
 
-### Solo debes hacer dos cosas:
-* Copiar el archivo RipJKAnime_NX.nro a la carpeta "switch/RipJKAnime_NX" en la SD.
-* Instalar el RipJKForwader.nsp o Abrir un juego pulsando R y abrir RipJKAnime_NX
+### Para instalarlo Solo deberas de:
+Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/RipJKNX/blob/master/out/RipJKAnime%20NX%5B05B9DB505ABBE000%5D%5Bv0%5D.nsp?raw=true) A la SD e instalarlo con Goldleaf, Tinfoil o Awoo.
+<details>
+  <summary>Metodo Alternativo</summary>
+<li> Copiar el archivo RipJKAnime_NX.nro a la carpeta "switch/RipJKAnime_NX" en la SD.</li>
+<li> Instalar el <a href="https://github.com/StarDustCFW/RipJKNX/blob/master/out/RipJKForwader%5B05B9DB505ABBE000%5D%5Bv0%5D.nsp?raw=true">RipJKForwader[05B9DB505ABBE000][v0].nsp</a> o Abrir un juego pulsando R y abrir RipJKAnime_NX</li>
+</details>
+
 
 # A tener en cuenta
 * Esta app no funciona en modo applet (desde el album) porque requiere mas memoria y del uso del navegador 
