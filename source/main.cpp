@@ -32,6 +32,9 @@
 #include "applet.hpp"
 #include "utils.hpp"
 
+//my vars
+std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
+
 //make some includes to clean alittle the main
 #include "JKanime.hpp"
 std::string urlc = "https://myrincon.duckdns.org";
