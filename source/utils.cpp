@@ -1,14 +1,13 @@
-#include <iostream>
 #include <string>
 #include <math.h>
 #include <stdio.h>
 #include <string>
 #include <cmath>
-#include <iostream>
 #include <Vector>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
+#include <iostream>
 #include <switch.h>
 #include <thread>
 #include "utils.hpp"
@@ -261,4 +260,24 @@ void touch(std::string route)
 	std::ofstream outfile;
 	outfile.open(route, std::ios_base::app);
 	outfile.close();
+}
+
+bool copy_me(std::string origen, std::string destino) {
+    if(isFileExist(origen))
+	{
+		printf("%s a %s\n",origen.c_str(),destino.c_str());
+		std::string tempdest = destino+".tmp";
+		std::ifstream source(origen, std::ios::binary);
+		std::ofstream dest(tempdest, std::ios::binary);
+		dest << source.rdbuf();
+		source.close();
+		dest.close();
+		remove(destino.c_str());
+		rename (tempdest.c_str(), destino.c_str());
+		if(isFileExist(destino)) printf("%s a %s OK\n\n",origen.c_str(),destino.c_str());
+		return true;
+	}else{
+		return false;
+	}
+return false;
 }

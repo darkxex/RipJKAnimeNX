@@ -81,13 +81,12 @@ int selectserver = 0;
 bool serverpront = false;
 
 #ifdef __SWITCH__
-std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
+//std::string favoritosdirectory = "sdmc:/switch/RipJKAnime_NX/favoritos.txt";
 #else
-std::string favoritosdirectory = "C:/respaldo2017/C++/test/Debug/favoritos.txt";
+rootdirectory = "C:/respaldo2017/C++/test/Debug/";
 #endif // SWITCH
 
 //my vars
-std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
@@ -310,7 +309,7 @@ int refrescarpro(void* data){
 	return 0;
 }
 int MKfavimgfix(){
-	std::ifstream file(favoritosdirectory);
+	std::ifstream file(rootdirectory+"favoritos.txt");
 	std::string str;
 	std::string machu ="";
 	while (std::getline(file, str)) {
@@ -693,7 +692,7 @@ bool isFavorite(std::string fav){
 			return gFAV;
 		} else limit = fav;
 	*/
-	std::ifstream file(favoritosdirectory);
+	std::ifstream file(rootdirectory+"favoritos.txt");
 	std::string str;
 	while (std::getline(file, str)) {
 	//	std::cout << str << "\n";
@@ -712,7 +711,7 @@ return false;
 void delFavorite(int inst = -1){
 	std::string tmp="";
 	if (inst >= 0){//delete all if is -1  delFavorite();
-		std::ifstream file(favoritosdirectory);
+		std::ifstream file(rootdirectory+"favoritos.txt");
 		std::string str = "";
 
 		int index = 0;
@@ -722,7 +721,7 @@ void delFavorite(int inst = -1){
 		}
 		file.close();	
 	} else gFAV=false;
-	std::ofstream outfile(favoritosdirectory);
+	std::ofstream outfile(rootdirectory+"favoritos.txt");
 	outfile << tmp;
 	outfile.close();
 }

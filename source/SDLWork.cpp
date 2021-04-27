@@ -105,7 +105,7 @@ void SDLB::intA(){
 				if (Mix_PlayingMusic() == 0)
 				{
 					//Play the music
-					if(isFileExist("play"))
+					if(isFileExist(rootdirectory+"play"))
 					Mix_PlayMusic(gMusic, -1);
 				}
 			}
@@ -219,7 +219,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int HS){
 
 void SDLB::PleaseWait(std::string text,bool render){
 	//Clear screen
-	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(gRenderer, 0x55, 0x55, 0x55, 0xFF);
 	SDL_RenderClear(gRenderer);
 
 	//wallpaper

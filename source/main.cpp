@@ -32,9 +32,19 @@
 #include "applet.hpp"
 #include "utils.hpp"
 
-//make some includes to clean alittle the main
+//use the nand of the switch
+#ifdef USENAND
+std::string rootdirectory = "user:/RipJKAnime_NX/";
+std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
+#else
+std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
+#endif
+
+
+//make some includes to clean a little the main
 #include "JKanime.hpp"
 std::string urlc = "https://myrincon.duckdns.org";
+
 //MAIN INT
 int main(int argc, char **argv)
 {
@@ -42,11 +52,16 @@ int main(int argc, char **argv)
 	romfsInit();
 	socketInitializeDefault();
 	struct stat st = { 0 };
+	#ifdef USENAND
+		//mount user
+		FsFileSystem data;
+		fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
+		fsdevMountDevice("user", data);
+	#endif
+	AppletMode=GetAppletMode();
 	nxlinkStdio();
 	printf("printf output now goes to nxlink server\n");
-	mkdir(rootdirectory.c_str(), 0777);
-	mkdir((rootdirectory+"Video").c_str(), 0777);
-	mkdir((rootdirectory+"DATA").c_str(), 0777);
+	//mkdir((rootdirectory+"Video").c_str(), 0777);
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
 	}
@@ -60,7 +75,6 @@ int main(int argc, char **argv)
 		accountExit();
 	} else printf("failed tu get user \n");
 
-	AppletMode=GetAppletMode();
 #endif
 	//quick fix wait for jkanime
 	//WebBrowserCall("https://jkanime.net",true);
@@ -77,6 +91,34 @@ int main(int argc, char **argv)
 	//set custom music 
 	GOD.intA();//init the SDL
 #ifdef __SWITCH__
+	#ifdef USENAND
+		if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
+			mkdir(rootdirectory.c_str(), 0777);
+			mkdir((rootdirectory+"DATA").c_str(), 0777);
+			if (stat((oldroot+"DATA").c_str(), &st) != -1){
+				GOD.PleaseWait("Copiando Archivos Importantes Espere...",true);
+				copy_me(oldroot+"favoritos.txt",rootdirectory+"favoritos.txt");
+				GOD.PleaseWait("Copiando Archivos Importantes Espere.",true);
+				copy_me(oldroot+"texture.png",rootdirectory+"texture.png");
+				GOD.PleaseWait("Copiando Archivos Importantes Espere..",true);
+				copy_me(oldroot+"heart.png",rootdirectory+"heart.png");
+				GOD.PleaseWait("Copiando Archivos Importantes Espere....",true);
+				copy_me(oldroot+"wada.ogg",rootdirectory+"wada.ogg");
+				GOD.PleaseWait("Copiando Archivos Importantes Espere......",true);
+				if (isFileExist(rootdirectory+"wada.ogg")){
+					GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
+				}
+				//if (!isFileExist("RipJKAnime_NX.nro"))//detect the nro path
+				fsdevDeleteDirectoryRecursively(oldroot.c_str());
+			}
+		}
+	#else
+	mkdir(rootdirectory.c_str(), 0777);
+	mkdir((rootdirectory+"DATA").c_str(), 0777);
+	#endif
+
+
+
 
 	if (isFileExist(rootdirectory+"texture.png")){
 		Farest.loadFromFile(rootdirectory+"texture.png");
@@ -328,7 +370,7 @@ int main(int argc, char **argv)
 						{
 							//Play the music
 							Mix_PlayMusic(GOD.gMusic, -1);
-							touch("play");
+							touch(rootdirectory+"play");
 						}
 						//If music is being played
 						else
@@ -338,7 +380,7 @@ int main(int argc, char **argv)
 							{
 								//Resume the music
 								Mix_ResumeMusic();
-								touch("play");
+								touch(rootdirectory+"play");
 								
 							}
 							//If the music is playing
@@ -346,7 +388,7 @@ int main(int argc, char **argv)
 							{
 								//Pause the music
 								Mix_PauseMusic();
-								remove("play");
+								remove((rootdirectory+"play").c_str());
 							}
 						}
 					}
@@ -456,7 +498,7 @@ int main(int argc, char **argv)
 								std::string temp;
 								std::ifstream infile;
 
-								std::ifstream file(favoritosdirectory);
+								std::ifstream file(rootdirectory+"favoritos.txt");
 								std::string str;
 								while (std::getline(file, str)) {
 									std::cout << str << "\n";
@@ -486,7 +528,7 @@ int main(int argc, char **argv)
 								std::string temp;
 								std::ifstream infile;
 
-								std::ifstream file(favoritosdirectory);
+								std::ifstream file(rootdirectory+"favoritos.txt");
 								std::string str;
 								while (std::getline(file, str)) {
 									std::cout << str << "\n";
@@ -510,7 +552,7 @@ int main(int argc, char **argv)
 						{//AGREGAR A FAVORITOS
 							if(!isFavorite(temporallink)){
 								std::ofstream outfile;
-								outfile.open(favoritosdirectory, std::ios_base::app); // append instead of overwrite
+								outfile.open(rootdirectory+"favoritos.txt", std::ios_base::app); // append instead of overwrite
 								outfile << temporallink;
 								outfile << "\n";
 								outfile.close();
@@ -963,7 +1005,13 @@ int main(int argc, char **argv)
 					}
 
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.gFont, "(Ver 1.8.3) #KASTXUPALO", {100,0,0});
+					std::string VERCAT =  VERSION;
+					#ifdef USENAND
+						std::string TYPEA =  "emmc";
+					#else
+						std::string TYPEA =  "sdmc";
+					#endif
+					gTextTexture.loadFromRenderedText(GOD.gFont, (TYPEA+" (Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 					if (imgNumbuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
@@ -1283,6 +1331,11 @@ int main(int argc, char **argv)
 	NOP.free();
 
 	GOD.deint();
-
+#ifdef USENAND
+	//unmount and commit
+	fsdevCommitDevice("user");
+	fsdevUnmountDevice("user");
+	fsFsClose(&data);
+#endif
 	return 0;
 }
