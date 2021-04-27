@@ -265,7 +265,7 @@ void touch(std::string route)
 bool copy_me(std::string origen, std::string destino) {
     if(isFileExist(origen))
 	{
-		printf("Copy %s to %s\n",origen.c_str(),destino.c_str());
+		printf("%s a %s\n",origen.c_str(),destino.c_str());
 		std::string tempdest = destino+".tmp";
 		std::ifstream source(origen, std::ios::binary);
 		std::ofstream dest(tempdest, std::ios::binary);
@@ -274,7 +274,7 @@ bool copy_me(std::string origen, std::string destino) {
 		dest.close();
 		remove(destino.c_str());
 		rename (tempdest.c_str(), destino.c_str());
-		if(isFileExist(destino)) printf("Copy %s to %s OK\n",origen.c_str(),destino.c_str());
+		if(isFileExist(destino)) printf("%s a %s OK\n\n",origen.c_str(),destino.c_str());
 		return true;
 	}else{
 		return false;
