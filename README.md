@@ -20,3 +20,19 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/
 * Debes usar lo basico antibaneo (dns, incognito ,host de atmosphere,etc)
 * Nesesita Si o Si Internet 
 * Para ver Animes descargados puedes usar [PPlay](https://github.com/Cpasjuste/pplay/) se guardan en la Raiz de la sd
+
+## ToDo
+- [ ] **Añadir Sección de Programación semanal**
+- [ ] **Agregar un Historial**
+- [ ] **Agregar Eliminar Cache**
+- [ ] **Gestor de Pieles**
+- [ ] **Agregar slideshow de recomendados**
+- [ ] **Agregar sección de recomendados **
+- [ ] **Gestionar la interfaz de decargas**
+### Maybe 
+- [ ] **Gestionar la UI de forma mas simple**
+- [ ] **Abrir PPLAY desde la app**
+- [ ] **Crear un Auto Actualizador**
+- [ ] **Autoinstalar el nsp cunado se actualize**
+- [ ] **Sección de ajustes**
+- [ ] **Hacer una lista de imagenes en lugar de plana **
