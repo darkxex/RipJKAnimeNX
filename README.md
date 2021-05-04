@@ -21,6 +21,9 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/
 * Nesesita Si o Si Internet 
 * Para ver Animes descargados puedes usar [PPlay](https://github.com/Cpasjuste/pplay/) se guardan en la Raiz de la sd
 
+<details>
+  <summary>ToDo</summary>
+
 ## ToDo
 - [ ] **Añadir Sección de Programación semanal**
 - [ ] **Agregar un Historial**
@@ -36,3 +39,4 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/
 - [ ] **Autoinstalar el nsp cuando se actualize**
 - [ ] **Sección de ajustes**
 - [ ] **Hacer una lista de imagenes en lugar de plana**
+</details>
