@@ -1205,7 +1205,7 @@ int main(int argc, char **argv)
 					if (std::to_string(porcendown) == "100"&&!isDownloading) {
 						//Render red filled quad
 						VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
-						gTextTexture.loadFromRenderedText(GOD.gFont3, "ï¿½Descarga Completada! Revisa tu SD.", textColor);
+						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 						gTextTexture.render(posxbase + 100, posybase + 400);
 					 }else{
 						VOX.render_VOX({ posxbase + 340, posybase + 150, 500, 50 }, 255, 255, 255, 145);
