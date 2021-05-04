@@ -165,8 +165,9 @@ all: $(BUILD)
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@[ -d $(CURDIR)/$(OUTDIR) ] || mkdir -p $(CURDIR)/$(OUTDIR)
-	@[ -d $(CURDIR)/$(OUTDIR)/control ] || mkdir -p $(CURDIR)/$(OUTDIR)/control
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+ifneq ($(EXPORTNSP),)
+	@[ -d $(CURDIR)/$(OUTDIR)/control ] || mkdir -p $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/Control
 	mkdir -p $(CURDIR)/Control
 	@cp $(OUTPUT).nacp $(CURDIR)/$(OUTDIR)/control/control.nacp
@@ -175,6 +176,7 @@ $(BUILD):
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/Control
 	@mv $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp"
+endif
 
 #---------------------------------------------------------------------------------
 clean:
