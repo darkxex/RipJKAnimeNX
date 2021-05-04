@@ -141,3 +141,11 @@ std::string getThirdKey(std::string secondKey)
        Buffer = codetemp;
 	return Buffer;
 }
+
+std::string Nozomi_Link(std::string Link){
+	std::string videourl = Link;
+	videourl = getFirstKey(videourl);
+	videourl = getSecondKey(videourl);
+	videourl = getThirdKey(videourl);
+	return videourl;
+}

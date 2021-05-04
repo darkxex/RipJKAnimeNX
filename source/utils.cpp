@@ -144,12 +144,8 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 		}
 	}
 	if (server == "Nozomi"){
-
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
-	  videourl = getFirstKey(videourl);
-	   videourl = getSecondKey(videourl);
-
-
+		videourl = Nozomi_Link(videourl);
 	}
 	if (server == "Mega"){
 		videourl = scrapElement(content,"https://mega.nz/embed/");
@@ -178,11 +174,9 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 	videourl = scrapElement(content, "https://jkanime.net/um2.php?");
 	if(videourl.length())
 	{
-		 videourl = getFirstKey(videourl);
-	   videourl = getSecondKey(videourl);
+		videourl = Nozomi_Link(videourl);
 		if(videourl.length())
 		{
-			videourl = getThirdKey(videourl);
 			std::cout << videourl << std::endl;
 			serverenlace = videourl;
 			if(downloadfile(videourl, directorydownload)) return true;
