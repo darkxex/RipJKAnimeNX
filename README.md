@@ -33,6 +33,6 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/
 - [ ] **Gestionar la UI de forma mas simple**
 - [ ] **Abrir PPLAY desde la app**
 - [ ] **Crear un Auto Actualizador**
-- [ ] **Autoinstalar el nsp cunado se actualize**
+- [ ] **Autoinstalar el nsp cuando se actualize**
 - [ ] **Sección de ajustes**
 - [ ] **Hacer una lista de imagenes en lugar de plana**
