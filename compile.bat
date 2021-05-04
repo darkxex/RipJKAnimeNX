@@ -3,7 +3,7 @@ rem comenta esto para desactivar el uso de la nand como root
 set USENAND=true
 set EXPORTNSP=true
 title RipJKAnime_NX
-make -j7
+make -j20
 set a=%errorlevel%
 echo ------------------------------------------
 
