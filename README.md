@@ -27,7 +27,7 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/
 - [ ] **Agregar Eliminar Cache**
 - [ ] **Gestor de Pieles**
 - [ ] **Agregar slideshow de recomendados**
-- [ ] **Agregar sección de recomendados **
+- [ ] **Agregar sección de recomendados**
 - [ ] **Gestionar la interfaz de decargas**
 ### Maybe 
 - [ ] **Gestionar la UI de forma mas simple**
@@ -35,4 +35,4 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/
 - [ ] **Crear un Auto Actualizador**
 - [ ] **Autoinstalar el nsp cunado se actualize**
 - [ ] **Sección de ajustes**
-- [ ] **Hacer una lista de imagenes en lugar de plana **
+- [ ] **Hacer una lista de imagenes en lugar de plana**
