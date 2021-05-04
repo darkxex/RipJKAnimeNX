@@ -1,6 +1,5 @@
 #include <cstring>
 #include <switch.h>
-#ifdef __SWITCH__
 #include <unistd.h>
 #include <iostream>
 #include <ostream>
@@ -133,4 +132,4 @@ Result WebBrowserCall(std::string url,bool nag){
 }
 
 //KeyboardCall ("Buscar Anime (3 letras minimo.)", "");
-#endif 
+ 

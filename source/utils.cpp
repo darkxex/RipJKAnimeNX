@@ -1,3 +1,4 @@
+
 #include <string>
 #include <math.h>
 #include <stdio.h>
@@ -12,6 +13,7 @@
 #include <thread>
 #include "utils.hpp"
 #include "Networking.hpp"
+#include "NozomiHacked.hpp"
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_image.h>
@@ -19,6 +21,7 @@
 #include <SDL_mixer.h>
 #include "applet.hpp"
 #include "SDLWork.hpp"
+
 extern SDLB GOD;
 extern std::string serverenlace;
 
@@ -101,6 +104,7 @@ while (true){
 return decode;
 }
 
+
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 {
 	std::string text = "Cargando... "+onlineenlace.substr(0,62)+"... desde "+server;
@@ -113,6 +117,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	std::string content = "";
 	std::string tempcon = "";
 	content = gethtml(onlineenlace);
+	
 	
 	if (server == "Okru"){
 		videourl = scrapElement(content,"https://jkanime.net/jkokru.php?");
@@ -139,7 +144,12 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 		}
 	}
 	if (server == "Nozomi"){
+
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
+	  videourl = getFirstKey(videourl);
+	   videourl = getSecondKey(videourl);
+
+
 	}
 	if (server == "Mega"){
 		videourl = scrapElement(content,"https://mega.nz/embed/");
@@ -162,6 +172,22 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 	std::string videourl = "";
 	std::string content = "";
 	content = gethtml(urltodownload);
+
+
+
+	videourl = scrapElement(content, "https://jkanime.net/um2.php?");
+	if(videourl.length())
+	{
+		 videourl = getFirstKey(videourl);
+	   videourl = getSecondKey(videourl);
+		if(videourl.length())
+		{
+			videourl = getThirdKey(videourl);
+			std::cout << videourl << std::endl;
+			serverenlace = videourl;
+			if(downloadfile(videourl, directorydownload)) return true;
+		}
+	}
 
 	videourl = scrapElement(content, "https://www.mediafire.com/file/");
 	if(videourl.length())

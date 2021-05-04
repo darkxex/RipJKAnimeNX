@@ -99,11 +99,11 @@ void blinkLed(u8 times);
 #endif // ___SWITCH___
 
 std::vector<std::string> arrayservers= {
-"Desu", "Xtreme S", "MixDrop", "Okru",  "Fembed"
+"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru",  "Fembed"
 };
 
 std::vector<std::string> arrayserversbak= {
-"Desu", "Xtreme S", "MixDrop", "Okru",  "Fembed"
+"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru",  "Fembed"
 };
 /*
 std::vector<std::string> arrayserversbak= {
