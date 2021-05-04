@@ -26,22 +26,26 @@ extern SDLB GOD;
 extern std::string serverenlace;
 
 std::string scrapElement(std::string content, std::string get,std::string delim){
-	int val1 = 0, val2 = 0;
 	std::string Element = "";
+	if(content.length() <= 0)
+	{return Element;}
+	
+	int val1 = 0, val2 = 0;
 	val1 = content.find(get);
+	
 	if (val1 != -1)
 	{
 		std::string elmetTMP;
 		if(delim.length())
 			elmetTMP = delim;
-		else
+		else{
 			elmetTMP = content.substr(val1-1, 1);
-		
-		replace(elmetTMP, ">","<");
-		replace(elmetTMP, "{","}");
-		replace(elmetTMP, "[","]");
-		replace(elmetTMP, "(",")");
-		val2 = content.find(elmetTMP, val1+1);
+			replace(elmetTMP, ">","<");
+			replace(elmetTMP, "{","}");
+			replace(elmetTMP, "[","]");
+			replace(elmetTMP, "(",")");
+		}
+		val2 = content.find(elmetTMP, val1+get.length()+1);
 
 		Element = content.substr(val1, val2 - val1);
 		replace(Element, "\\", "");
@@ -155,6 +159,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 if (videourl.length() != 0)
 {
 	WebBrowserCall(videourl);
+	videourl = "";
 	return true;
 } else {
 	std::cout << "Server no encontrado..." << onlineenlace << std::endl;
