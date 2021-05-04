@@ -102,11 +102,11 @@ Result WebBrowserCall(std::string url,bool nag){
 			printf("SetCapConfigs\n");
 			webConfigSetDisplayUrlKind (&config, false);
 			webConfigSetMediaPlayerAutoClose (&config, true);
+			//play direct links
+			//if(url.substr(9,9) == "-delivery" || url.find("apidata.googleusercontent")) 
+			webConfigSetBootAsMediaPlayer(&config, true);
 			//webConfigSetFooter(&config, false);
 			
-			//play direct links
-			if(url.substr(9,9) == "-delivery") 
-			webConfigSetBootAsMediaPlayer(&config, true);
 
 			//block redirection
 			if(url.substr(0,32) == "https://jkanime.net/jkfembed.php") 

@@ -144,12 +144,10 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 		}
 	}
 	if (server == "Nozomi"){
-
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
-	  videourl = getFirstKey(videourl);
-	   videourl = getSecondKey(videourl);
-
-
+		videourl = getFirstKey(videourl);
+		videourl = getSecondKey(videourl);
+		videourl = getThirdKey(videourl);
 	}
 	if (server == "Mega"){
 		videourl = scrapElement(content,"https://mega.nz/embed/");
