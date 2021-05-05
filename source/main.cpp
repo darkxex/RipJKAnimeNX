@@ -1011,7 +1011,7 @@ int main(int argc, char **argv)
 					#else
 						std::string TYPEA =  "sdmc";
 					#endif
-					gTextTexture.loadFromRenderedText(GOD.gFont, (TYPEA+" (Ver "+VERCAT+") #PIï¿½ERAXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.gFont, (TYPEA+" (Ver "+VERCAT+") #PIÑERAXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 					if (imgNumbuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
