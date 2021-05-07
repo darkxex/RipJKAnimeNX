@@ -4,7 +4,7 @@ set USENAND=true
 set EXPORTNSP=true
 title RipJKAnime_NX
 del out\RipJKAnime*.nsp /q>nul
-make -j7
+make -j20
 set a=%errorlevel%
 echo ------------------------------------------
 
