@@ -51,6 +51,7 @@ APP_TITLEID := 05B9DB505ABBE000
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
+export APP_VERSION
 ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIE
 
 CFLAGS	:=	-g -O3 -ffunction-sections \
@@ -175,7 +176,7 @@ ifneq ($(EXPORTNSP),)
 	@$(CURDIR)/RipJKForwader/BuildTools/hacbrewpack.exe -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/build --nspdir $(CURDIR)/build
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/Control
-	@mv $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp"
+	@mv $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v$(APP_VERSION)].nsp"
 endif
 
 #---------------------------------------------------------------------------------

@@ -13,7 +13,6 @@
 #include <thread>
 #include "utils.hpp"
 #include "Networking.hpp"
-#include "NozomiHacked.hpp"
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_image.h>
@@ -108,6 +107,29 @@ while (true){
 return decode;
 }
 
+std::string Nozomi_Link(std::string Link){
+	std::string codetemp;
+	//Get FirstKey
+	std::string FirstKey = gethtml(Link);
+	codetemp = scrapElement(FirstKey,"name=\"data\" value=\"", "\"");
+	replace(codetemp,"name=\"data\" value=\"","");
+	FirstKey = codetemp;
+	std::cout << "FirstKey: "<< FirstKey << std::endl;
+	//Get SecondKey
+	std::string data = "data=" + FirstKey;
+	std::string SecondKey = gethtml("https://jkanime.net/gsplay/redirect_post.php",data,true);
+	std::cout << "Secondkey: "<< SecondKey << std::endl;
+	//Get ThirdKey
+	std::string second = "v=" + SecondKey;
+	replace(second,"https://jkanime.net/gsplay/player.html#","");
+	std::string ThirdKey = gethtml("https://jkanime.net/gsplay/api.php",second);
+	codetemp = scrapElement(ThirdKey,"https:", "\"");
+	replace(codetemp,"\\","");
+	ThirdKey = codetemp;
+	std::cout << "ThirdKey: "<< ThirdKey << std::endl;
+	//return URL
+	return ThirdKey;
+}
 
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 {
