@@ -153,6 +153,7 @@ int main(int argc, char **argv)
 	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
 	B_UP.loadFromFile("romfs:/buttons/UP.png");
 	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
+	CLEAR.loadFromFile("romfs:/buttons/clear.png");
 	FAV.loadFromFile("romfs:/buttons/FAV.png");/////
 	NOP.loadFromFile("romfs:/nop.png");
 
@@ -237,6 +238,12 @@ int main(int argc, char **argv)
 				if (B_UP.SP()) e.jbutton.button = 13;
 				if (B_DOWN.SP()) e.jbutton.button = 15;
 				if (T_D.SP()&&isDownloading) statenow = downloadstate;
+				if (CLEAR.SP()){
+					GOD.PleaseWait("Borrando cache");
+					fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
+						cancelcurl = 1;
+						quit = true;
+				}
 				
 				SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
 				GOD.TouchX = -1;
@@ -817,7 +824,8 @@ int main(int argc, char **argv)
 		{
 			case chapterstate:		{
 			//Draw a background to a nice view
-			VOX.render_VOX({0,0, SCREEN_WIDTH, SCREEN_HEIGHT} ,170, 170, 170, 100);
+			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
+			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 			std::string temptext = temporallink;
 			replace(temptext, "https://jkanime.net/", "");
 			replace(temptext, "/", " ");
@@ -847,9 +855,9 @@ int main(int argc, char **argv)
 			}
 			
 			{//draw back rectangle
-			VOX.render_VOX({ SCREEN_WIDTH - 442,SCREEN_HEIGHT / 2 - 302, 404, 595 }, 0, 0, 0, 200);
-			//draw preview image
-			TChapters.render(SCREEN_WIDTH - 440, SCREEN_HEIGHT / 2 - 300);
+				VOX.render_VOX({ SCREEN_WIDTH - TChapters.getWidth() - 40 - 2,58, TChapters.getWidth()+4, TChapters.getHeight()+40}, 0, 0, 0, 200);
+				//draw preview image
+				TChapters.render(SCREEN_WIDTH - TChapters.getWidth() - 40,60);
 			}
 			
 			if (maxcapit >= 0){
@@ -873,25 +881,28 @@ int main(int argc, char **argv)
 				}
 
 				int sizefix = 0;
-				sizefix = (int)arrayservers.size() * 52;
-				bool anend = VOX.render_AH(310, 610, 190, sizefix, serverpront);
+				int mwide = 35;//52
+				int XD = 310;
+				int YD = 582;
+				sizefix = (int)arrayservers.size() * mwide;
+				bool anend = VOX.render_AH(XD, YD, 190, sizefix, serverpront);
 				if(serverpront){
 					if (anend){
 						for (int x = 0; x < (int)arrayservers.size(); x++) {
 							if (x == selectserver){
-								T_T.loadFromRenderedText(GOD.gFont3, arrayservers[x], textWhite);
-								VOX.render_VOX({ posxbase+300,615 - sizefix + (x * 52), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
-								T_T.render(posxbase+310, 610 - sizefix + (x * 52));
+								T_T.loadFromRenderedText(GOD.gFont4, arrayservers[x], textWhite);
+								VOX.render_VOX({ posxbase+XD-10,YD + 5 - sizefix + (x * mwide), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
+								T_T.render(posxbase+XD, YD - sizefix + (x * mwide));
 								} else {
-								gTextTexture.loadFromRenderedText(GOD.gFont3, arrayservers[x],textGray);
-								gTextTexture.render(posxbase+310, 610 - sizefix + (x * 52));
+								gTextTexture.loadFromRenderedText(GOD.gFont4, arrayservers[x],textGray);
+								gTextTexture.render(posxbase+XD, YD - sizefix + (x * mwide));
 							}
 						}
 					}
 				}
 			}
 			//use this to move the element
-			int XS=100 , YS =30;
+			int XS=100 , YS =0;
 			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
 			if (maxcapit >= 0&&nextdate != "Pelicula"){//draw caps Scroll
 				VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
@@ -967,7 +978,6 @@ int main(int argc, char **argv)
 							activatefirstimage=true;
 						} 
 					}
-					
 					for (int x = 0; x < (int)arraychapter.size(); x++) {
 						std::string temptext = arraychapter[x];
 						replace(temptext, "https://jkanime.net/", "");
@@ -1031,6 +1041,7 @@ int main(int argc, char **argv)
 					B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 					B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
+					CLEAR.render_T(dist, 680,"Cache");dist -= posdist;
 					if(isDownloading) {B_X.render_T(dist, 680,"Descargas");dist -= posdist;}
 					B_UP.render_T(580, 5,"");
 					B_DOWN.render_T(580, 630,"");

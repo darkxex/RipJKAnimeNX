@@ -27,6 +27,7 @@ LTexture B_DOWN;
 //Render extra
 LTexture FAV;
 LTexture NOP;
+LTexture CLEAR;
 //Text and BOXES
 LTexture VOX;
 LTexture T_T;
