@@ -905,7 +905,7 @@ int main(int argc, char **argv)
 			int XS=100 , YS =0;
 			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
 			if (maxcapit >= 0&&nextdate != "Pelicula"){//draw caps Scroll
-				VOX.render_VOX({posxbase + 70+XS, posybase + 570+YS, 420, 35 }, 50, 50, 50, 200);
+				VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
 				if (capmore-2 >= mincapit) {
 					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
 					gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
@@ -1008,9 +1008,9 @@ int main(int argc, char **argv)
 					}
 					if (preview)
 					{
-						{int ajuX = -350, ajuY = -450;
-						VOX.render_VOX({ xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
-						TPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
+						{
+						VOX.render_VOX({ xdistance + 18, ydistance + 8, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
+						TPreview.render(posxbase + xdistance, posybase + ydistance);
 						}
 					}
 
@@ -1108,9 +1108,9 @@ int main(int argc, char **argv)
 						}
 						if (preview)
 						{
-							{int ajuX = -350, ajuY = -450;
-							VOX.render_VOX({ xdistance + 18 +ajuX, ydistance + 8  + ajuY, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
-							TSearchPreview.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);}
+							{
+							VOX.render_VOX({ xdistance + 18, ydistance + 8, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
+							TSearchPreview.render(posxbase + xdistance, posybase + ydistance);}
 							
 						}
 					}else NOP.render_T(230, 355,searchtext);
@@ -1166,9 +1166,9 @@ int main(int argc, char **argv)
 								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 								T_T.render(posxbase, posybase + ((x-of) * 22));
 
-								{int ajuX = -350, ajuY = -450;
-								VOX.render_VOX({posxbase + xdistance + ajuX -2,posybase + ydistance + ajuY -2, TFavorite.getWidth()+4, TFavorite.getHeight()+4}, 0, 0, 0, 200);
-								TFavorite.render(posxbase + xdistance + ajuX, posybase + ydistance + ajuY);
+								{
+								VOX.render_VOX({posxbase + xdistance -2,posybase + ydistance -2, TFavorite.getWidth()+4, TFavorite.getHeight()+4}, 0, 0, 0, 200);
+								TFavorite.render(posxbase + xdistance, posybase + ydistance);
 
 	//							GOD.Cover(machu,610,scroll > 570 ? 570 : scroll ,"",200);
 								Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));}

@@ -160,10 +160,10 @@ std::vector<std::string> arraysearch;
 std::vector<std::string> arrayfavorites;
 std::vector<std::string> arraysearchimages;
 
-int sizeportraity = 180;
-int sizeportraitx = 225;
-int xdistance = 1000;
-int ydistance = 448;
+int sizeportraity = 210;
+int sizeportraitx = 297;
+int xdistance = 1010;
+int ydistance = 340;
 void callimage(int cain)
 {
 #ifdef __SWITCH__
