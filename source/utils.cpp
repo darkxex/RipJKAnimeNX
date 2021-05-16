@@ -144,23 +144,21 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	std::string tempcon = "";
 	content = gethtml(onlineenlace);
 	
-	
-	if (server == "Okru"){
+	if (server == "Nozomi"){
+		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
+		videourl = Nozomi_Link(videourl);
+	} else if (server == "Okru"){
 		videourl = scrapElement(content,"https://jkanime.net/jkokru.php?");
 		replace(videourl, "https://jkanime.net/jkokru.php?u=", "https://ok.ru/videoembed/");
-	}
-	if (server == "Desu"){
+	} else if (server == "Desu"){
 		videourl = scrapElement(content,"https://jkanime.net/um.php?");
-	}
-	if (server == "Fembed"){
+	} else if (server == "Fembed"){
 		videourl = scrapElement(content,"https://jkanime.net/jkfembed.php?u=");
 		//replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/v/");
-	}
-	if (server == "Xtreme S"){
+	} else if (server == "Xtreme S"){
 		videourl = scrapElement(content,"https://jkanime.net/jk.php?");
 		//replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
-	}
-	if (server == "MixDrop"){
+	} else if (server == "MixDrop"){
 		videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
 		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
 		if(videourl.length())
@@ -168,12 +166,10 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 			videourl=MD_s(videourl);
 			std::cout << videourl << std::endl;
 		}
-	}
-	if (server == "Nozomi"){
-		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
-		videourl = Nozomi_Link(videourl);
-	}
-	if (server == "Mega"){
+	} else if (server == "Local"){
+		LoadNRO("sdmc:/switch/pplay/pplay.nro");
+		return false;
+	} else if (server == "Mega"){
 		videourl = scrapElement(content,"https://mega.nz/embed/");
 	}
 	std::cout << videourl << std::endl;

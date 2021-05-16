@@ -100,16 +100,15 @@ void blinkLed(u8 times);
 #endif // ___SWITCH___
 
 std::vector<std::string> arrayservers= {
-"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru",  "Fembed"
+"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed"
 };
 
 std::vector<std::string> arrayserversbak= {
-"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru",  "Fembed"
+"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed"
 };
 /*
 std::vector<std::string> arrayserversbak= {
-"Okru",	"Desu", "Xtreme S", "Fembed",
-"MixDrop", "Nozomi", "Mega"
+"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed", "Local"
 };
 */
 bool quit=false;

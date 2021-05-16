@@ -27,11 +27,12 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/
 ## ToDo
 - [ ] **Añadir Sección de Programación semanal**
 - [ ] **Agregar un Historial**
-- [ ] **Agregar Eliminar Cache**
 - [ ] **Gestor de Pieles**
 - [ ] **Agregar slideshow de recomendados**
 - [ ] **Agregar sección de recomendados**
 - [ ] **Gestionar la interfaz de decargas**
+- [ ] **Precargar luego del vector #30**
+- [x] **Agregar Eliminar Cache**
 ### Maybe 
 - [ ] **Gestionar la UI de forma mas simple**
 - [ ] **Abrir PPLAY desde la app**

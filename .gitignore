@@ -1,3 +1,8 @@
+RipJKForwader/hacbrewpack_backup/
+RipJKForwader/hacbrewpack_temp/
+hacbrewpack_backup/
+hacbrewpack_temp/
+RipJKNSP/
 build/
 Build/
 Output/
@@ -15,7 +20,3 @@ target/
 *.cmd
 *.pfs0
 *.nacp
-RipJKForwader/hacbrewpack_backup/*
-RipJKForwader/hacbrewpack_temp/*
-hacbrewpack_backup/*
-hacbrewpack_temp/*

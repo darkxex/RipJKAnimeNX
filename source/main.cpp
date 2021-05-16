@@ -51,6 +51,8 @@ int main(int argc, char **argv)
 #ifdef __SWITCH__
 	romfsInit();
 	socketInitializeDefault();
+	nxlinkStdio();
+	printf("printf output now goes to nxlink server\n");
 	struct stat st = { 0 };
 	#ifdef USENAND
 		//mount user
@@ -59,8 +61,6 @@ int main(int argc, char **argv)
 		fsdevMountDevice("user", data);
 	#endif
 	AppletMode=GetAppletMode();
-	nxlinkStdio();
-	printf("printf output now goes to nxlink server\n");
 	//mkdir((rootdirectory+"Video").c_str(), 0777);
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
@@ -422,6 +422,7 @@ int main(int argc, char **argv)
 						}
 					}
 					else if (e.jbutton.button == 1) {// (B) button down
+
 						switch (statenow)
 						{
 						case downloadstate:
@@ -811,7 +812,7 @@ int main(int argc, char **argv)
 			}
 #endif // SWITCH
 		}
-
+		GOD.GenState = statenow;
 		//Clear screen
 		SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(GOD.gRenderer);
