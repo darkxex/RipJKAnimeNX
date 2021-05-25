@@ -10,10 +10,27 @@
 #include <SDL_mixer.h>
 #include "applet.hpp"
 #include "SDLWork.hpp"
+#include "utils.hpp"
 
 extern AccountUid uid;
 extern u32 __nx_applet_exit_mode;
 extern std::string urlc;
+extern bool quit;
+extern int cancelcurl;
+
+bool LoadNRO(std::string path){
+if(isFileExist(path)){
+	//__nx_applet_exit_mode = 0;//LoadNRO("sdmc:/switch/pplay/pplay.nro");
+	envSetNextLoad(path.c_str(), path.c_str());
+	cancelcurl = 1;
+	quit = true;
+	std::cout << "Saliendo a:" << path << std::endl;
+	return true;
+}
+std::cout << "No Existe:" << path << std::endl;
+return false;
+}
+
 
 bool GetAppletMode()
 {

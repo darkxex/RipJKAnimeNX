@@ -169,13 +169,10 @@ $(BUILD):
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 ifneq ($(EXPORTNSP),)
 	@[ -d $(CURDIR)/$(OUTDIR)/control ] || mkdir -p $(CURDIR)/$(OUTDIR)/control
-	@rm -rf $(CURDIR)/Control
-	mkdir -p $(CURDIR)/Control
 	@cp $(OUTPUT).nacp $(CURDIR)/$(OUTDIR)/control/control.nacp
 	@cp $(CURDIR)/Icon.jpg $(CURDIR)/$(OUTDIR)/control/icon_AmericanEnglish.dat
 	@$(CURDIR)/RipJKForwader/BuildTools/hacbrewpack.exe -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/build --nspdir $(CURDIR)/build
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
-	@rm -rf $(CURDIR)/Control
 	@mv $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v$(APP_VERSION)].nsp"
 endif
 

@@ -463,22 +463,22 @@ void LTexture::setAlpha(Uint8 alpha)
 
 void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
-	//tactil stuff
-	mX = x;mY = y;	SelIns = GOD.GenState;
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
-
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	//Set clip rendering dimensions
 	if (clip != NULL)
 	{
 		renderQuad.w = clip->w;
 		renderQuad.h = clip->h;
 	}
-	if(SP()){SDL_SetTextureColorMod(mTexture,77,166,255);}
-	else SDL_SetTextureColorMod(mTexture, 255, 255, 255);
+	if(SP()){setColor(77,166,255);}
+	else setColor( 255, 255, 255);
 
 	//Render to screen
 	SDL_RenderCopyEx(GOD.gRenderer, mTexture, clip, &renderQuad, angle, center, flip);
+	//tactil stuff
+	mX = x;mY = y;	SelIns = GOD.GenState;
 }
 
 void LTexture::render_T(int x, int y, std::string text, bool presed)
@@ -488,10 +488,10 @@ void LTexture::render_T(int x, int y, std::string text, bool presed)
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	
-	if (presed ){SDL_SetTextureColorMod(mTexture, 150, 150, 150);}
-	else {SDL_SetTextureColorMod(mTexture, 255, 255, 255);}
+	if (presed ){setColor( 150, 150, 150);}
+	else {setColor( 255, 255, 255);}
 	
-	if(SP()){SDL_SetTextureColorMod(mTexture, 77,166,255);}
+	if(SP()){setColor( 77,166,255);}
 	
 	//Render to screen
 	SDL_RenderCopy(GOD.gRenderer, mTexture, NULL, &renderQuad);
@@ -593,11 +593,11 @@ return false;
 
 void LTexture::render_VOX(SDL_Rect Form ,int R, int G, int B, int A)
 {
-	//tactil stuff
-	mX = Form.x; mY = Form.y;	SelIns = GOD.GenState;
 	//Set rendering space and render to screen
 	SDL_SetRenderDrawColor(GOD.gRenderer, R, G, B, A);
 	SDL_RenderFillRect(GOD.gRenderer, &Form);
+	//tactil stuff
+	mX = Form.x; mY = Form.y;	SelIns = GOD.GenState;
 }
 
 bool LTexture::SP()

@@ -100,16 +100,15 @@ void blinkLed(u8 times);
 #endif // ___SWITCH___
 
 std::vector<std::string> arrayservers= {
-"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru",  "Fembed"
+"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed"
 };
 
 std::vector<std::string> arrayserversbak= {
-"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru",  "Fembed"
+"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed"
 };
 /*
 std::vector<std::string> arrayserversbak= {
-"Okru",	"Desu", "Xtreme S", "Fembed",
-"MixDrop", "Nozomi", "Mega"
+"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed", "Local"
 };
 */
 bool quit=false;
@@ -160,10 +159,10 @@ std::vector<std::string> arraysearch;
 std::vector<std::string> arrayfavorites;
 std::vector<std::string> arraysearchimages;
 
-int sizeportraity = 180;
-int sizeportraitx = 225;
-int xdistance = 1000;
-int ydistance = 448;
+int sizeportraity = 210;
+int sizeportraitx = 297;
+int xdistance = 1010;
+int ydistance = 340;
 void callimage(int cain)
 {
 #ifdef __SWITCH__
