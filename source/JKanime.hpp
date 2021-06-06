@@ -351,12 +351,16 @@ int MKcapitBuffer() {
 		a = con_full[x];
 		
 		//find sinopsis
-		int re1, re2;
+		/*
 		re1 = a.find("anime__details__text") + 19;
 		re1 = a.find("<p>", re1)+3;
 		re2 = a.find("</p>", re1);
 
 		std::string terese = a.substr(re1, re2 - re1);
+		*/
+	
+		std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
+		replace(terese, "<p rel=\"sinopsis\">", "");
 		replace(terese, "<br/>", "");
 		replace(terese, "&quot;", "");
 		con_rese.push_back(terese);
@@ -364,6 +368,7 @@ int MKcapitBuffer() {
 
 		terese = "...";
 	//	std::cout << rese << std::endl;
+		int re1, re2;
 		if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
 		{
 			terese = "Pelicula";
@@ -580,12 +585,14 @@ int capit(void* data) {
 	}
 	capmore = maxcapit;
 
-	int re1, re2;
-	re1 = a.find("anime__details__text") + 19;
-	re1 = a.find("<p>", re1)+3;
+	/*
+	//re1 = a.find("anime__details__text") + 19;
+	re1 = a.find("<p rel=\"sinopsis\">", re1)+3;
 	re2 = a.find("</p>", re1);
-
-	std::string terese = a.substr(re1, re2 - re1);
+	std::string terese = a.substr(re1, re2 - re1);*/
+	
+	std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
+	replace(terese, "<p rel=\"sinopsis\">", "");
 	replace(terese, "<br/>", "");
 	replace(terese, "&quot;", "");
 	rese = terese;
@@ -595,6 +602,7 @@ int capit(void* data) {
 	nextdate = "...";
 //	std::cout << rese << std::endl;
 //<div id="proxep"><p><b>Próximo episodio</b> Sábado 10 Abril <i class="far fa-calendar-alt"></i></p></div>
+	int re1 =0, re2=0;
 	if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
 	{
 		nextdate="Pelicula";
