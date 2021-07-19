@@ -602,10 +602,10 @@ int main(int argc, char **argv)
 							if (!reloadingsearch)
 							{activatefirstimage=true;
 #ifdef __SWITCH__
-								searchtext = KeyboardCall("Buscar Anime (2 letras minimo.)",searchtext);
+								searchtext = KeyboardCall("Buscar el Anime",searchtext);
 								//blinkLed(1);//LED
 #endif // __SWITCH__
-								if (searchtext.length() > 1){
+								if (searchtext.length() > 0){
 									searchchapter = 0;
 									TSearchPreview.free();
 									arraysearch.clear();
