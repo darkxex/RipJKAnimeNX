@@ -100,11 +100,11 @@ void blinkLed(u8 times);
 #endif // ___SWITCH___
 
 std::vector<std::string> arrayservers= {
-"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed"
+"Nozomi","MixDrop","Desu","Xtreme S","Okru","Fembed"
 };
 
 std::vector<std::string> arrayserversbak= {
-"Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed"
+"Nozomi","MixDrop","Desu","Xtreme S","Okru","Fembed"
 };
 /*
 std::vector<std::string> arrayserversbak= {
@@ -596,7 +596,7 @@ int capit(void* data) {
 	replace(terese, "<br/>", "");
 	replace(terese, "&quot;", "");
 	rese = terese;
-	std::cout << rese << std::endl;
+	//std::cout << rese << std::endl;
 
 	//utf-8
 	nextdate = "...";
