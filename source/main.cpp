@@ -1022,7 +1022,7 @@ int main(int argc, char **argv)
 					#else
 						std::string TYPEA =  "sdmc";
 					#endif
-					gTextTexture.loadFromRenderedText(GOD.gFont, (TYPEA+" (Ver "+VERCAT+") #PIÑERAXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.gFont, (TYPEA+" (Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 					if (imgNumbuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
@@ -1056,7 +1056,7 @@ int main(int argc, char **argv)
 			case searchstate:		{
 				if (!reloadingsearch) {
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Busqueda", {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Búsqueda", {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 
 					if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 1 && GOD.TouchX > 15){
