@@ -1225,8 +1225,8 @@ int main(int argc, char **argv)
 						gTextTexture.render(posxbase + 100, posybase + 400);
 					 }else{
 						gTextTexture.loadFromRenderedText(GOD.digifont, "Velocidad: " +speedD+" M/S", textColor);
-						VOX.render_VOX({ posxbase + 340, posybase + 170, gTextTexture.getWidth()+15, 25 }, 255, 255, 255, 145);
-						gTextTexture.render(posxbase + 350, posybase + 170);
+						VOX.render_VOX({ posxbase + 120, posybase + 240, gTextTexture.getWidth()+15, 20 }, 255, 255, 255, 145);
+						gTextTexture.render(posxbase + 130, posybase + 240);
 					 }
 				} else {
 					porcendown=0;
