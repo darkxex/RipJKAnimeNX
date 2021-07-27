@@ -86,50 +86,47 @@ std::string scrapElementReverse(std::string content, std::string get, std::strin
 }
 
 
+//Mixdrop link decode
 std::string MD_s(std::string code){
 std::string decode;
 while (true){
 	decode = code;
+	std::cout << "-----------------------------------------" << std::endl;
 	std::cout << decode << std::endl;
 	std::string tempmedia = gethtml(decode);
 	decode = scrapElement(tempmedia, "MDCore|","'");
+	std::cout << decode << std::endl;
 	if(decode.length())
 	{
-		//clean  int val0 =0;
-		std::string E = scrapElement(decode, "|161","|");
-		replace(decode, "MDCore||s|", "https://s-|");
-		replace(decode, "MDCore|s|", "https://s-|");
-		replace(decode, "MDCore||", "https://a-|");
-		replace(decode, "||s|", "|");
-		replace(decode, "|s|", "|");
-		replace(decode, "||", "|");
-		replace(decode, "||", "|");
-		replace(decode, "|vfile|vserver|remotesub|chromeInject|poster", "");
-		replace(decode, "|thumbs", "");
-		replace(decode, "|jpg", "");
-		replace(decode, "|furl", "");
-		replace(decode, "|wurl", "");
+		std::vector<std::string> list = split (decode, "|");
 		
-		replace(decode, "|M", "");
-		replace(decode, "|nLhMBA", "");
-		
-		replace(decode, "|v", "");
-		replace(decode, "|_t|16", "&e=16");
-		replace(decode, "|mp4", "");
-		replace(decode, "|net", "");
-		replace(decode, "|jmkBVb", "");
-		replace(decode, "|mxdcontent", "");
-		replace(decode, "|referrer|", ".mp4?s=");
-		if (E.length() > 3) replace(decode, E, "&e="+E.substr(1));
-
-		//scrap important elements
+		//get deliver and type
+		std::string type;
+		if (decode.find("|s|")){type="s";} else {type="a";}
 		std::string dely = scrapElement(decode, "delivery");
 		
-		replace(decode, "|"+dely+"|", ""+dely+".mxdcontent.net/v/");
-		replace(decode, "|16", "&_t=16");
+		//get file name and key
+		std::string vidname = "";
+		std::string playkey = "";
+		for (u64 i=0;i < list.size();i++){
+			if ( (list[i]).length() == 32) vidname = list[i];
+			if ( (list[i]).length() == 22) playkey = list[i];//some times get a split key,  fix that 
+		}
+		//get num keys
+		int v1=0;
+		v1 = decode.find("|16");
+		std::string numkey = decode.substr(v1+1,10);
 		
-		if(decode.find("|") > 0 && decode.rfind("|") < decode.length()){continue;}
+		v1 = decode.find("|16",v1+10);
+		std::string numkey2 = decode.substr(v1+1,10);
+		
+		//model
+		decode = "https://"+type+"-"+dely+".mxdcontent.net/v/"+vidname+".mp4?s="+playkey+"&e="+numkey+"&_t="+numkey2;//.substr(1)
+		
 		std::cout << decode << std::endl;
+		//bypass, if not get the key repeat the process
+		if(!playkey.length()){continue;}
+		if(!vidname.length()){continue;}
 		break;
 	} else {
 		decode = "";
