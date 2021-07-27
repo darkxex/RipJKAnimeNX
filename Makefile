@@ -173,6 +173,7 @@ ifneq ($(EXPORTNSP),)
 	@cp $(CURDIR)/Icon.jpg $(CURDIR)/$(OUTDIR)/control/icon_AmericanEnglish.dat
 	@$(CURDIR)/RipJKForwader/BuildTools/hacbrewpack.exe -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/build --nspdir $(CURDIR)/build
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
+	@cp $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v$(APP_VERSION)].nsp"
 	@mv $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp"
 endif
 

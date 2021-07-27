@@ -23,6 +23,7 @@
 
 extern SDLB GOD;
 extern std::string serverenlace;
+using namespace std;
 
 std::string scrapElement(std::string content, std::string get,std::string delim){
 	std::string Element = "";
@@ -49,43 +50,48 @@ std::string scrapElement(std::string content, std::string get,std::string delim)
 		Element = content.substr(val1, val2 - val1);
 		replace(Element, "\\", "");
 
-		std::cout << Element << std::endl;
+		//std::cout << Element << std::endl;
 	}
 return Element;
 }
-
-std::string scrapElementReverse(std::string content, std::string get, std::string delim) {
+vector<string> scrapElementAll(std::string content, std::string get,std::string delim){
+	vector<string> res;
 	std::string Element = "";
-	if (content.length() <= 0)
-	{
-		return Element;
-	}
+	if(content.length() <= 0)
+	{return res;}
 
 	int val1 = 0, val2 = 0;
-	val1 = content.rfind(get);
-	if (val1 != -1)
-	{
-		std::string elmetTMP;
-		if (delim.length())
-			elmetTMP = delim;
-		else {
-			elmetTMP = content.substr(val1 - 1, 1);
-			replace(elmetTMP, ">", "<");
-			replace(elmetTMP, "{", "}");
-			replace(elmetTMP, "[", "]");
-			replace(elmetTMP, "(", ")");
+	while (true){
+		val1 = content.find(get,val1);
+		
+		if (val1 != -1)
+		{
+			std::string elmetTMP;
+			if(delim.length())
+				elmetTMP = delim;
+			else{
+				elmetTMP = content.substr(val1-1, 1);
+				replace(elmetTMP, ">","<");
+				replace(elmetTMP, "{","}");
+				replace(elmetTMP, "[","]");
+				replace(elmetTMP, "(",")");
+			}
+			val2 = content.find(elmetTMP, val1+get.length()+1);
+
+			Element = content.substr(val1, val2 - val1);
+			replace(Element, "\\", "");
+			res.push_back (Element);
+			val1 = val1 + Element.length();
+		} else {
+			if (res.size() == 0)
+				res.push_back ("");
+			break;
 		}
-		val2 = content.find(elmetTMP, val1 + get.length() + 1);
-
-		Element = content.substr(val1, val2 - val1);
-		replace(Element, "\\", "");
-
-		std::cout << Element << std::endl;
 	}
-	return Element;
+std::cout << "Vector Size: " << std::to_string(res.size()) << std::endl;
+return res;
 }
 
-using namespace std;
 // for string delimiter
 vector<string> split (string s, string delimiter) {
     size_t pos_start = 0, pos_end, delim_len = delimiter.length();
@@ -178,11 +184,14 @@ std::string Nozomi_Link(std::string Link){
 std::string Fembed_Link(std::string Link) {
 	std::string codetemp;
 	std::cout << "enlace: " << Link << std::endl;
-	std::string data = "";
-	std::string SecondKey = gethtmlcustom(Link, data, true);
+	//POST to api
+	std::string SecondKey = gethtml(Link, "0");
+
+	//Scrap from json
+	std::vector<std::string> list = scrapElementAll(SecondKey, "https:");
 	
-	codetemp = scrapElementReverse(SecondKey, "https:", "\"");
-	std::cout << "Secondkey: " << codetemp << std::endl;
+	codetemp = list[list.size()-1];
+	std::cout << "Json720key: " << codetemp << std::endl;
 	return codetemp;
 }
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)

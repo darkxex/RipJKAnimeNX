@@ -4,7 +4,6 @@
 
 
 std::string gethtml(std::string enlace,std::string POSTFIEL="",bool redirect = false);
-std::string gethtmlcustom(std::string enlace,std::string POSTFIEL="",bool redirect = false);
 bool downloadfile(std::string enlace, std::string directorydown,bool progress = true);
 bool CheckImgNet(std::string image);
 bool HasConnection();
