@@ -11,7 +11,7 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](https://github.com/StarDustCFW/
 <details>
   <summary>Metodo Alternativo</summary>
 <li> Copiar el archivo RipJKAnime_NX.nro a la carpeta "switch/RipJKAnime_NX" en la SD.</li>
-<li> Instalar el <a href="https://github.com/StarDustCFW/RipJKNX/blob/master/out/RipJKForwader%5B05B9DB505ABBE000%5D%5Bv0%5D.nsp?raw=true">RipJKForwader[05B9DB505ABBE000][v0].nsp</a> o Abrir un juego pulsando R y abrir RipJKAnime_NX</li>
+<li> Instalar el RipJKForwader[05B9DB505ABBE000][v0].nsp o Abrir un juego pulsando R y abrir RipJKAnime_NX</li>
 </details>
 
 
