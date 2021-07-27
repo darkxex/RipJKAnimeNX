@@ -54,6 +54,38 @@ std::string scrapElement(std::string content, std::string get,std::string delim)
 return Element;
 }
 
+std::string scrapElementReverse(std::string content, std::string get, std::string delim) {
+	std::string Element = "";
+	if (content.length() <= 0)
+	{
+		return Element;
+	}
+
+	int val1 = 0, val2 = 0;
+	val1 = content.rfind(get);
+	if (val1 != -1)
+	{
+		std::string elmetTMP;
+		if (delim.length())
+			elmetTMP = delim;
+		else {
+			elmetTMP = content.substr(val1 - 1, 1);
+			replace(elmetTMP, ">", "<");
+			replace(elmetTMP, "{", "}");
+			replace(elmetTMP, "[", "]");
+			replace(elmetTMP, "(", ")");
+		}
+		val2 = content.find(elmetTMP, val1 + get.length() + 1);
+
+		Element = content.substr(val1, val2 - val1);
+		replace(Element, "\\", "");
+
+		std::cout << Element << std::endl;
+	}
+	return Element;
+}
+
+
 std::string MD_s(std::string code){
 std::string decode;
 while (true){
@@ -130,7 +162,16 @@ std::string Nozomi_Link(std::string Link){
 	//return URL
 	return ThirdKey;
 }
-
+std::string Fembed_Link(std::string Link) {
+	std::string codetemp;
+	std::cout << "enlace: " << Link << std::endl;
+	std::string data = "";
+	std::string SecondKey = gethtmlcustom(Link, data, true);
+	
+	codetemp = scrapElementReverse(SecondKey, "https:", "\"");
+	std::cout << "Secondkey: " << codetemp << std::endl;
+	return codetemp;
+}
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 {
 	std::string text = "Cargando... "+onlineenlace.substr(0,62)+"... desde "+server;
@@ -143,8 +184,12 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	std::string content = "";
 	std::string tempcon = "";
 	content = gethtml(onlineenlace);
-	
-	if (server == "Nozomi"){
+	if (server == "Fembed 2.0") {
+		videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
+		replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
+		videourl = Fembed_Link(videourl);
+	}
+	 else if (server == "Nozomi"){
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
 		videourl = Nozomi_Link(videourl);
 	} else if (server == "Okru"){
@@ -192,7 +237,19 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 	std::string content = "";
 	content = gethtml(urltodownload);
 
-
+	videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
+	replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
+	
+	if (videourl.length())
+	{
+		videourl = Fembed_Link(videourl);
+		if (videourl.length())
+		{
+			std::cout << videourl << std::endl;
+			serverenlace = videourl;
+			if (downloadfile(videourl, directorydownload)) return true;
+		}
+	}
 
 	videourl = scrapElement(content, "https://jkanime.net/um2.php?");
 	if(videourl.length())

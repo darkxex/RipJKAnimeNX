@@ -11,7 +11,7 @@ make -C RipJKForwader -j20
 copy "RipJKForwader\Output\RipJKForwader[05B9DB505ABBE000][v0].nsp" "out\RipJKForwader[05B9DB505ABBE000][v0].nsp"
 
 if %a% equ 0 color 0a
-if %a% equ 0 "C:\devkitPro\tools\bin\nxlink.exe" "out\RipJKAnime_NX.nro"  -s -a 192.168.0.9
+"C:\devkitPro\tools\bin\nxlink.exe" "out\RipJKAnime_NX.nro"  -s -a 192.168.0.7
 
 echo -----------------------------------
 

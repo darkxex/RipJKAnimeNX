@@ -164,6 +164,46 @@ std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
 	}
 	return Buffer;
 }
+std::string gethtmlcustom(std::string enlace, std::string POSTFIEL, bool redirect)
+{
+
+	CURL* curl;
+	CURLcode res = CURLE_OK;
+	std::string Buffer;
+
+	curl = curl_easy_init();
+	if (curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, enlace.c_str());
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+		curl_easy_setopt(curl, CURLOPT_REFERER, enlace.c_str());
+
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
+		
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		if (redirect)
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		else
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Buffer);
+		res = curl_easy_perform(curl);
+		if (redirect && CURLE_OK == res)
+		{
+			CURLcode curl_res;
+			char* url = "";
+			curl_res = curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
+			if ((CURLE_OK == curl_res) && url)
+			{
+				printf("CURLINFO_EFFECTIVE_URL: %s\n", url);
+				
+			}
+		}
+		curl_easy_cleanup(curl);
+		if (res != CURLE_OK) { printf("\n%s\n", curl_easy_strerror(res)); }
+	}
+	return Buffer;
+}
 bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 {
 	CURL *curl;
