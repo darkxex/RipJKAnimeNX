@@ -7,7 +7,6 @@ build/
 Build/
 Output/
 *.nso
-*.nro
 *.elf
 .vscode/
 .vs/
