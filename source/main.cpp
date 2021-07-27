@@ -602,10 +602,10 @@ int main(int argc, char **argv)
 							if (!reloadingsearch)
 							{activatefirstimage=true;
 #ifdef __SWITCH__
-								searchtext = KeyboardCall("Buscar Anime (2 letras minimo.)",searchtext);
+								searchtext = KeyboardCall("Buscar el Anime",searchtext);
 								//blinkLed(1);//LED
 #endif // __SWITCH__
-								if (searchtext.length() > 1){
+								if (searchtext.length() > 0){
 									searchchapter = 0;
 									TSearchPreview.free();
 									arraysearch.clear();
@@ -1195,10 +1195,14 @@ int main(int argc, char **argv)
 			break;
 			}
 			case downloadstate:		{
+				VOX.render_VOX({16,5, 900, 282}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
+				
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
 				gTextTexture.render(posxbase, posybase);
+				
 				gTextTexture.loadFromRenderedText(GOD.gFont3, DownTitle, textColor);
+				VOX.render_VOX({17,35, gTextTexture.getWidth()+5, 45}, 210, 210, 210, 215);//Draw title back
 				gTextTexture.render(posxbase, posybase + 20);
 
 				gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
@@ -1220,12 +1224,9 @@ int main(int argc, char **argv)
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 						gTextTexture.render(posxbase + 100, posybase + 400);
 					 }else{
-						VOX.render_VOX({ posxbase + 340, posybase + 150, 500, 50 }, 255, 255, 255, 145);
-						gTextTexture.loadFromRenderedText(GOD.gFont3, "Velocidad: " +speedD, textColor);
-						gTextTexture.render(posxbase + 350, posybase + 150);
-						
-						gTextTexture.loadFromRenderedText(GOD.gFont3, "M/S", textColor);
-						gTextTexture.render(posxbase + 770, posybase + 150);
+						gTextTexture.loadFromRenderedText(GOD.digifont, "Velocidad: " +speedD+" M/S", textColor);
+						VOX.render_VOX({ posxbase + 340, posybase + 170, gTextTexture.getWidth()+15, 25 }, 255, 255, 255, 145);
+						gTextTexture.render(posxbase + 350, posybase + 170);
 					 }
 				} else {
 					porcendown=0;
@@ -1242,7 +1243,7 @@ int main(int argc, char **argv)
 					mayus(descarga);
 					SDL_Color txtColor = textColor;//{ 50, 50, 50 };
 					
-					if(descarga.substr(0,3) == "100") txtColor = { 50, 150, 50 };
+					if(descarga.substr(0,3) == "100") txtColor = { 0, 100, 0 };
 					if(descarga.substr(0,3) == "Err") txtColor = { 150, 50, 50 };
 					if(descarga.substr(0,3) == ">>>") txtColor = { 0, 0, 0 };
 
