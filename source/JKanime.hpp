@@ -111,6 +111,8 @@ std::vector<std::string> arrayserversbak= {
 "Nozomi","Desu", "Xtreme S", "MixDrop", "Okru", "Fembed", "Local"
 };
 */
+json BigData;
+
 bool quit=false;
 
 int MKcapitBuffer();

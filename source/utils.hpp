@@ -1,4 +1,7 @@
 #include <vector>
+#include "nlohmann/json.hpp"
+using namespace std;
+using json = nlohmann::json;
 bool isFileExist(std::string file);
 void replace(std::string& subject, const std::string& search,const std::string& replace);
 void mayus(std::string &s);
