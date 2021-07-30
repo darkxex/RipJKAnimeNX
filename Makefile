@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 0
-VERSION_MICRO := 1
+VERSION_MICRO := 2
 
 APP_TITLE	:=	RipJKAnime NX
 APP_AUTHOR	:=	AngelXex
@@ -43,7 +43,7 @@ OUTDIR		:=	out
 BUILD		:=	build
 SOURCES		:=	source 
 DATA		:=	data
-INCLUDES	:=	include 
+INCLUDES	:=	include source 
 EXEFS_SRC	:=	RipJKForwader/exefs_src
 ROMFS		:=	romfs
 ICON        :=  Icon.jpg
