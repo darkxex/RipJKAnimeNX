@@ -126,7 +126,7 @@ Result WebBrowserCall(std::string url,bool nag){
 			
 
 			//block redirection
-			if(url.substr(0,32) == "https://jkanime.net/jkfembed.php") 
+			if(url.substr(0,20) == "https://jkanime.net/") 
 			{
 				webConfigSetWhitelist(&config, "^https://jkanime\\.net($|/)");
 			} else webConfigSetWhitelist(&config, "^http*");

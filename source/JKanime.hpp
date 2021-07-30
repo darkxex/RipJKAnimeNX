@@ -93,7 +93,7 @@ bool isSXOS=false;
 bool hasStealth=false;
 AccountUid uid;
 SDL_Thread* capithread = NULL;
-std::string sesion = "";
+std::string TimeStamp = "";
 
 #ifdef __SWITCH__
 HidsysNotificationLedPattern blinkLedPattern(u8 times);
@@ -280,15 +280,15 @@ int refrescarpro(void* data){
 		if (BigData["latestchapter"] == arraychapter[0]) {haschange = false;}
 	}
 	if (haschange){
-		BigData["sesion"] = sesion;
+		BigData["TimeStamp"] = TimeStamp;
 		first = SDL_CreateThread(GETCONT,"ContentThread",(void*)NULL);printf("firstCreated...\n");;
 	} else {
 		
-		if (!BigData["sesion"].empty()){
-			std::cout << "has no change revert sesion: "  << std::endl;
-			std::cout <<  sesion << std::endl;
-			sesion = BigData["sesion"];
-			std::cout <<  sesion << std::endl;
+		if (!BigData["TimeStamp"].empty()){
+			std::cout << "has no change revert TimeStamp: "  << std::endl;
+			std::cout <<  TimeStamp << std::endl;
+			TimeStamp = BigData["TimeStamp"];
+			std::cout <<  TimeStamp << std::endl;
 		}
 	}
 
@@ -438,7 +438,7 @@ void PushDirBuffer(std::string a,std::string name){
 		BigData["DataBase"][name]["mincapit"] = 1;
 		BigData["DataBase"][name]["capmore"] = BigData["DataBase"][name]["maxcapit"];
 	}
-	BigData["DataBase"][name]["sesion"] = sesion;
+	BigData["DataBase"][name]["TimeStamp"] = TimeStamp;
 	std::cout << "Bufered: " << name << std::endl;
 }
 
@@ -592,7 +592,7 @@ int capBuffer () {
 	replace(name, "/", "");
 	std::cout << "KeyName: " << name << std::endl;
 
-	if (BigData["DataBase"][name]["sesion"].empty())
+	if (BigData["DataBase"][name]["TimeStamp"].empty())
 	{
 		rese = "......";
 		nextdate = "......";
@@ -610,7 +610,7 @@ int capBuffer () {
 			mincapit = BigData["DataBase"][name]["mincapit"];//1;
 			capmore = BigData["DataBase"][name]["capmore"];//1;
 			generos = BigData["DataBase"][name]["generos"];//"......";
-			if (BigData["DataBase"][name]["sesion"] != sesion){
+			if (BigData["DataBase"][name]["TimeStamp"] != TimeStamp){
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 			}
 		}catch(...){

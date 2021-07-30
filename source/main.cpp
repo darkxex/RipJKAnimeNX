@@ -83,8 +83,8 @@ int main(int argc, char **argv)
 	//return 0;
 
 	std::time_t t = std::time(0);
-	sesion = std::to_string(t);
-	printf("time stamp: %s \n",sesion.c_str());
+	TimeStamp = std::to_string(t);
+	printf("time stamp: %s \n",TimeStamp.c_str());
 
 	// read a JSON file
 	std::ifstream inf(rootdirectory+"DataBase.json");
@@ -632,7 +632,7 @@ int main(int argc, char **argv)
 								if (selectchapter > 0)
 								{
 									selectchapter--;
-									std::cout << selectchapter << std::endl;
+									//std::cout << selectchapter << std::endl;
 								}
 								else {
 									selectchapter = arraychapter.size() - 1;
@@ -667,7 +667,7 @@ int main(int argc, char **argv)
 								if (searchchapter > 0)
 								{
 									searchchapter--;
-									std::cout << searchchapter << std::endl;
+									//std::cout << searchchapter << std::endl;
 								}
 								else {
 									searchchapter = arraysearch.size() - 1;
@@ -683,7 +683,7 @@ int main(int argc, char **argv)
 							if (favchapter > 0)
 							{
 								favchapter--;
-								std::cout << favchapter << std::endl;
+								//std::cout << favchapter << std::endl;
 							}
 							else {
 								favchapter = (int)arrayfavorites.size() - 1;
@@ -705,7 +705,7 @@ int main(int argc, char **argv)
 								{
 									searchchapter++;
 
-									std::cout << searchchapter << std::endl;
+									//std::cout << searchchapter << std::endl;
 								}
 								else {
 									searchchapter = 0;
@@ -724,7 +724,7 @@ int main(int argc, char **argv)
 								{
 									selectchapter++;
 
-									std::cout << selectchapter << std::endl;
+									//std::cout << selectchapter << std::endl;
 								}
 								else {
 									selectchapter = 0;
@@ -760,7 +760,7 @@ int main(int argc, char **argv)
 							{
 								favchapter++;
 
-								std::cout << favchapter << std::endl;
+								//std::cout << favchapter << std::endl;
 							}
 							else {
 								favchapter = 0;
