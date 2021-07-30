@@ -243,7 +243,7 @@ int refrescarpro(void* data){
 	activatefirstimage = true;
 	reloading = true;
 	porcentajereload = 0;
-	int  val0 = 0, val1 = 1, val2, val3, val4,val5;
+	int  val0 = 0, val1 = 1, val2, val3, val4;
 	std::string temporal = "";
 	std::string content = gethtml("https://jkanime.net");
 	
@@ -252,7 +252,6 @@ int refrescarpro(void* data){
 	temp0=content.find("Programación");
 	temp1=content.find("TOP ANIMES",temp0);
 	content = content.substr(temp0,temp1-temp0);
-
 	while (val0 != -1 && !quit) {
 		val0 = content.find("<a href=", val1);
 		if (val0 == -1) { break; }
@@ -262,13 +261,6 @@ int refrescarpro(void* data){
 		std::string gdrive = content.substr(val1, val2 - val1);
 		//std::cout << gdrive << std::endl;
 		arraychapter.push_back(gdrive);
-
-		val5 = gdrive.find("/", 20);
-		gdrive = gdrive.substr(0, val5 + 1);
-		replace(gdrive, "https://jkanime.net/", "");
-		replace(gdrive, "/", "");
-		BigData["arraychaptername"].push_back(gdrive);
-		
 		val3 = content.find("<img src=", val2) + 10;
 		val4 = content.find('"', val3);
 		std::string gpreview = content.substr(val3, val4 - val3);
@@ -282,11 +274,26 @@ int refrescarpro(void* data){
 	}
 	//printf(temporal.c_str());
 	reloading = false;
-	
-	first = SDL_CreateThread(GETCONT,"ContentThread",(void*)NULL);printf("firstCreated...\n");;
+	//
+	bool haschange = true;
+	if (!BigData["latestchapter"].empty()){
+		if (BigData["latestchapter"] == arraychapter[0]) {haschange = false;}
+	}
+	if (haschange){
+		BigData["sesion"] = sesion;
+		first = SDL_CreateThread(GETCONT,"ContentThread",(void*)NULL);printf("firstCreated...\n");;
+	} else {
+		
+		if (!BigData["sesion"].empty()){
+			std::cout << "has no change revert sesion: "  << std::endl;
+			std::cout <<  sesion << std::endl;
+			sesion = BigData["sesion"];
+			std::cout <<  sesion << std::endl;
+		}
+	}
 
 	for (int x = 0; x < (int)arrayimages.size(); x++)
-	{	
+	{
 		imgNumbuffer = x+1;
 		std::string tempima = arrayimages[x];
 		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
@@ -314,7 +321,10 @@ int refrescarpro(void* data){
 	MKfavimgfix();
 	//exit after load the images cache
 	if (AppletMode) quit=true;
-	MKcapitBuffer();
+	if (haschange) {
+		MKcapitBuffer();
+		BigData["latestchapter"] = arraychapter[0];
+	}
 	return 0;
 }
 int MKfavimgfix(){
@@ -432,18 +442,7 @@ void PushDirBuffer(std::string a,std::string name){
 	std::cout << "Bufered: " << name << std::endl;
 }
 
-std::vector<std::string> con_rese;
-std::vector<std::string> con_nextdate;
-std::vector<bool> con_enemision;
-std::vector<bool> con_tienezero;
-std::vector<int> con_maxcapit;
-std::vector<std::string> con_generos;
 int MKcapitBuffer() {
-	con_rese.clear();
-	con_nextdate.clear();
-	con_enemision.clear();
-	con_tienezero.clear();
-	con_maxcapit.clear();
 	std::string a = "";
 	for (int x = 0; x < (int)arraychapter.size()&& !quit; x++)
 	{
@@ -456,7 +455,12 @@ int MKcapitBuffer() {
 		}
 		//printf("Get from vector...\n");
 		a = con_full[x];
-		PushDirBuffer(a,BigData["arraychaptername"][x]);
+		std::string name = arraychapter[x];
+		int v5 = name.find("/", 20);
+		name = name.substr(0, v5 + 1);
+		replace(name, "https://jkanime.net/", "");
+		replace(name, "/", "");
+		PushDirBuffer(a,name);
 	}
 	
 	if (NULL == first) {
