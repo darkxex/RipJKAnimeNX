@@ -92,7 +92,8 @@ bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
 AccountUid uid;
-
+SDL_Thread* capithread = NULL;
+std::string sesion = "";
 
 #ifdef __SWITCH__
 HidsysNotificationLedPattern blinkLedPattern(u8 times);
@@ -242,7 +243,7 @@ int refrescarpro(void* data){
 	activatefirstimage = true;
 	reloading = true;
 	porcentajereload = 0;
-	int  val0 = 0, val1 = 1, val2, val3, val4;
+	int  val0 = 0, val1 = 1, val2, val3, val4,val5;
 	std::string temporal = "";
 	std::string content = gethtml("https://jkanime.net");
 	
@@ -260,8 +261,14 @@ int refrescarpro(void* data){
 		val2 = (content.find('"', val1));
 		std::string gdrive = content.substr(val1, val2 - val1);
 		//std::cout << gdrive << std::endl;
-
 		arraychapter.push_back(gdrive);
+
+		val5 = gdrive.find("/", 20);
+		gdrive = gdrive.substr(0, val5 + 1);
+		replace(gdrive, "https://jkanime.net/", "");
+		replace(gdrive, "/", "");
+		BigData["arraychaptername"].push_back(gdrive);
+		
 		val3 = content.find("<img src=", val2) + 10;
 		val4 = content.find('"', val3);
 		std::string gpreview = content.substr(val3, val4 - val3);
@@ -327,6 +334,104 @@ int MKfavimgfix(){
 	file.close();
 	return 0;
 }
+
+void PushDirBuffer(std::string a,std::string name){
+	//Sinopsis
+	std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
+	replace(terese, "<p rel=\"sinopsis\">", "");
+	replace(terese, "<br/>", "");
+	replace(terese, "&quot;", "");
+	BigData["DataBase"][name]["sinopsis"] = terese;
+	//std::cout << BigData["DataBase"][name]["sinopsis"] << std::endl;
+
+	//es una peli ?
+	terese = "...";
+	
+	if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
+	{
+		terese="Pelicula";
+	} else {
+		//find next date
+		int re1 =0, re2=0;
+		re1 = a.find("<b>Próximo episodio</b>");
+		if(re1 > 1){
+			re1 += 25;
+			re2 = a.find("<i class", re1);
+			terese = "."+a.substr(re1, re2 - re1);
+			replace(terese, "á","a");
+			replace(terese, "ó","o");
+		}
+	}
+	BigData["DataBase"][name]["nextdate"] = terese;
+	
+	//Generos 
+	int indx1 = 1, indx2, indx3;
+	indx1 = a.find("<span>Genero:</span>", indx1);
+	std::string generosTMP="";
+	while (indx1 != -1) {
+		//if(indx4 < indx1) break;
+		indx1 = a.find("https://jkanime.net/genero", indx1);
+		if (indx1 == -1) { break; }
+		indx2 = a.find(">",indx1);
+		indx3 = a.find("</a>", indx1);
+		generosTMP += a.substr(indx2+1, indx3 - indx2-1)+" ";
+//		std::cout << generosTMP << std::endl;
+		indx1 = indx3;
+	}
+	replace(generosTMP, "á","a");replace(generosTMP, "é","e");replace(generosTMP, "í","i");replace(generosTMP, "ó","o");replace(generosTMP, "ú","u");
+	replace(generosTMP, "à","a");replace(generosTMP, "è","e");replace(generosTMP, "ì","i");replace(generosTMP, "ò","o");replace(generosTMP, "ù","u");
+	BigData["DataBase"][name]["generos"] = ":"+generosTMP;
+
+	//Esta en emision?
+	if ((int)a.find("En emision") != -1)
+	{BigData["DataBase"][name]["enemision"] = "true";} else {BigData["DataBase"][name]["enemision"] = "false";}
+	
+	int val0, val1, val2, val3;
+	val0 = a.rfind("href=\"#pag");
+	if (val0 != -1) {
+		val1 = a.find(">", val0);
+		val1 = val1 + 1;
+		val2 = a.find("<", val1);
+
+		std::string urlx;
+		urlx = (a.substr(val1, val2 - val1));
+		val3 = urlx.find(" - ") + 3;
+		urlx = urlx.substr(val3);
+
+		BigData["DataBase"][name]["maxcapit"] = atoi(urlx.c_str());
+	}
+	else
+	{
+		BigData["DataBase"][name]["maxcapit"] = 1;
+	}
+	BigData["DataBase"][name]["capmore"] = BigData["DataBase"][name]["maxcapit"];
+
+	//empieza por 0?
+	int zero1, zero2;
+	std::string zerocontainer = "";
+	std::string zerocontainer2 = "";
+	zero1 = a.rfind("ajax/pagination_episodes/");
+	zero2 = a.find("'", zero1);
+	zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
+	std::cout << zerocontainer << std::endl;
+	zerocontainer2 = gethtml(zerocontainer);
+
+	int tempzero = zerocontainer2.find("\"0\"");
+	if (tempzero != -1) {
+		std::cout << "Si contiene" << std::endl;
+		BigData["DataBase"][name]["maxcapit"] = BigData["DataBase"][name]["maxcapit"].get<int>() - 1;
+		BigData["DataBase"][name]["mincapit"] = 0;
+		BigData["DataBase"][name]["capmore"] = BigData["DataBase"][name]["maxcapit"];
+	}
+	else {
+		std::cout << "no contiene" << std::endl;
+		BigData["DataBase"][name]["mincapit"] = 1;
+		BigData["DataBase"][name]["capmore"] = BigData["DataBase"][name]["maxcapit"];
+	}
+	BigData["DataBase"][name]["sesion"] = sesion;
+	std::cout << "Bufered: " << name << std::endl;
+}
+
 std::vector<std::string> con_rese;
 std::vector<std::string> con_nextdate;
 std::vector<bool> con_enemision;
@@ -351,120 +456,7 @@ int MKcapitBuffer() {
 		}
 		//printf("Get from vector...\n");
 		a = con_full[x];
-		
-		//find sinopsis
-		/*
-		re1 = a.find("anime__details__text") + 19;
-		re1 = a.find("<p>", re1)+3;
-		re2 = a.find("</p>", re1);
-
-		std::string terese = a.substr(re1, re2 - re1);
-		*/
-	
-		std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
-		replace(terese, "<p rel=\"sinopsis\">", "");
-		replace(terese, "<br/>", "");
-		replace(terese, "&quot;", "");
-		con_rese.push_back(terese);
-
-
-		terese = "...";
-	//	std::cout << rese << std::endl;
-		int re1, re2;
-		if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
-		{
-			terese = "Pelicula";
-		}else{
-			//find next date
-			re1 = a.find("<b>Próximo episodio</b>");
-			if(re1 > 1){
-				re1 += 25;
-				re2 = a.find("<i class", re1);
-				terese = a.substr(re1, re2 - re1);
-				replace(terese, "á","a");
-				replace(terese, "ó","o");
-			}
-		}
-		con_nextdate.push_back(terese);
-
-
-		int indx1 = 1, indx2, indx3;
-		indx1 = a.find("<span>Genero:</span>", indx1);
-		std::string generosTMP="";
-		while (indx1 != -1) {
-			indx1 = a.find("https://jkanime.net/genero", indx1);
-			if (indx1 == -1) { break; }
-			//if(indx4 < indx1) break;
-			indx2 = a.find(">",indx1);
-			indx3 = a.find("</a>", indx1);
-			generosTMP += a.substr(indx2+1, indx3 - indx2-1)+"   ";
-			//std::cout << generosTMP << std::endl;
-			indx1++;
-		}
-		replace(generosTMP, "á","a");
-		replace(generosTMP, "à","a");
-		replace(generosTMP, "é","e");
-		replace(generosTMP, "è","e");
-		replace(generosTMP, "í","i");
-		replace(generosTMP, "ì","i");
-		replace(generosTMP, "ó","o");
-		replace(generosTMP, "ò","o");
-		replace(generosTMP, "ú","u");
-		replace(generosTMP, "ù","u");
-		con_generos.push_back(generosTMP);
-
-		if ((int)a.find("En emision") != -1)
-		{
-			con_enemision.push_back(true);
-		}
-		else
-		{
-			con_enemision.push_back(false);
-		}
-
-		int val0, val1, val2, val3;
-
-		int zero1, zero2;
-		std::string zerocontainer = "";
-		std::string zerocontainer2 = "";
-		zero1 = a.rfind("ajax/pagination_episodes/");
-		zero2 = a.find("'", zero1);
-		zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
-		//std::cout << zerocontainer << std::endl;
-
-		zerocontainer2 = gethtml(zerocontainer);
-		int tempzero = zerocontainer2.find("\"0\"");
-		if (tempzero != -1) {
-
-			//std::cout << "Si contiene" << std::endl;
-			con_tienezero.push_back(true);
-		}
-		else {
-
-			//std::cout << "no contiene" << std::endl;
-			con_tienezero.push_back(false);
-		}
-
-		val0 = a.rfind("href=\"#pag");
-
-		if (val0 != -1) {
-
-			val1 = a.find(">", val0);
-			val1 = val1 + 1;
-			val2 = a.find("<", val1);
-
-			std::string urlx;
-
-
-			urlx = (a.substr(val1, val2 - val1));
-			val3 = urlx.find(" - ") + 3;
-			urlx = urlx.substr(val3);
-			con_maxcapit.push_back(atoi(urlx.c_str()));
-		}
-		else
-		{
-			con_maxcapit.push_back(1);//return "1";
-		}
+		PushDirBuffer(a,BigData["arraychaptername"][x]);
 	}
 	
 	if (NULL == first) {
@@ -560,138 +552,67 @@ std::string rese = "";
 bool enemision = false;
 std::string nextdate = "";
 std::string generos = "";
+void load_state(){
+}
+
+//get cap thread
 int capit(void* data) {
-	tienezero = false;
 	std::string a = "";
 	a = gethtml(temporallink);
+	std::string name = temporallink;
+	replace(name, "https://jkanime.net/", "");
+	replace(name, "/", "");
 	if (statenow != chapterstate) return 0;
-
-	int val0, val1, val2, val3;
-	val0 = a.rfind("href=\"#pag");
-	if (val0 != -1) {
-		val1 = a.find(">", val0);
-		val1 = val1 + 1;
-		val2 = a.find("<", val1);
-
-		std::string urlx;
-		urlx = (a.substr(val1, val2 - val1));
-		val3 = urlx.find(" - ") + 3;
-		urlx = urlx.substr(val3);
-
-		//return (urlx);
-		maxcapit = atoi(urlx.c_str());
+	PushDirBuffer(a,name);
+	try{
+		//std::cout << BigData << std::endl;
+		rese = BigData["DataBase"][name]["sinopsis"];
+		nextdate = BigData["DataBase"][name]["nextdate"];//"......";
+		maxcapit = BigData["DataBase"][name]["maxcapit"];//-1;
+		enemision = BigData["DataBase"][name]["enemision"] == "true" ? true : false;
+		mincapit = BigData["DataBase"][name]["mincapit"];//1;
+		capmore = BigData["DataBase"][name]["capmore"];//1;
+		generos = BigData["DataBase"][name]["generos"];//"......";
+	}catch(...){
+		printf("Error \n");
 	}
-	else
-	{
-		maxcapit = 1;
-	}
-	capmore = maxcapit;
+return 0;
+}
 
-	/*
-	//re1 = a.find("anime__details__text") + 19;
-	re1 = a.find("<p rel=\"sinopsis\">", re1)+3;
-	re2 = a.find("</p>", re1);
-	std::string terese = a.substr(re1, re2 - re1);*/
-	
-	std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
-	replace(terese, "<p rel=\"sinopsis\">", "");
-	replace(terese, "<br/>", "");
-	replace(terese, "&quot;", "");
-	rese = terese;
-	std::cout << rese << std::endl;
+//anime manager
+int capBuffer () {
+	//std::cout << "Prety json" << std::endl;
+	//std::cout << BigData << std::endl;
+	std::string name = temporallink;
+	replace(name, "https://jkanime.net/", "");
+	replace(name, "/", "");
+	std::cout << "KeyName: " << name << std::endl;
 
-	//utf-8
-	nextdate = "...";
-//	std::cout << rese << std::endl;
-//<div id="proxep"><p><b>Próximo episodio</b> Sábado 10 Abril <i class="far fa-calendar-alt"></i></p></div>
-	int re1 =0, re2=0;
-	if ((int)a.find("<li><span>Tipo:</span> Pelicula</li>") != -1)
+	if (BigData["DataBase"][name]["sesion"].empty())
 	{
-		nextdate="Pelicula";
-	}else{
-		//find next date
-		re1 = a.find("<b>Próximo episodio</b>");
-		if(re1 > 1){
-			re1 += 25;
-			re2 = a.find("<i class", re1);
-			nextdate = "."+a.substr(re1, re2 - re1);
-			replace(nextdate, "á","a");
-			replace(nextdate, "ó","o");
+		rese = "......";
+		nextdate = "......";
+		maxcapit = -1;
+		mincapit = 1;
+		capmore = 1;
+		generos = "......";
+		capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
+	} else {
+		try{
+			rese = BigData["DataBase"][name]["sinopsis"];
+			nextdate = BigData["DataBase"][name]["nextdate"];//"......";
+			maxcapit = BigData["DataBase"][name]["maxcapit"];//-1;
+			enemision = BigData["DataBase"][name]["enemision"] == "true" ? true : false;
+			mincapit = BigData["DataBase"][name]["mincapit"];//1;
+			capmore = BigData["DataBase"][name]["capmore"];//1;
+			generos = BigData["DataBase"][name]["generos"];//"......";
+			if (BigData["DataBase"][name]["sesion"] != sesion){
+				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
+			}
+		}catch(...){
+			printf("Error \n");
 		}
 	}
-
-	int indx1 = 1, indx2, indx3;
-	indx1 = a.find("<span>Genero:</span>", indx1);
-	std::string generosTMP="";
-	while (indx1 != -1) {
-		//if(indx4 < indx1) break;
-		indx1 = a.find("https://jkanime.net/genero", indx1);
-		if (indx1 == -1) { break; }
-		indx2 = a.find(">",indx1);
-		indx3 = a.find("</a>", indx1);
-		generosTMP += a.substr(indx2+1, indx3 - indx2-1)+" ";
-//		std::cout << generosTMP << std::endl;
-		indx1 = indx3;
-	}
-	replace(generosTMP, "á","a");
-	replace(generosTMP, "à","a");
-	replace(generosTMP, "é","e");
-	replace(generosTMP, "è","e");
-	replace(generosTMP, "í","i");
-	replace(generosTMP, "ì","i");
-	replace(generosTMP, "ó","o");
-	replace(generosTMP, "ò","o");
-	replace(generosTMP, "ú","u");
-	replace(generosTMP, "ù","u");
-
-	generos = generosTMP;
-
-
-//	std::cout << rese << std::endl;
-	if ((int)a.find("En emision") != -1)
-	{
-		enemision = true;
-	}
-	else
-	{
-		enemision = false;
-	}
-
-
-	int zero1, zero2;
-	std::string zerocontainer = "";
-	std::string zerocontainer2 = "";
-	zero1 = a.rfind("ajax/pagination_episodes/");
-	zero2 = a.find("'", zero1);
-	zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
-	std::cout << zerocontainer << std::endl;
-
-	zerocontainer2 = gethtml(zerocontainer);
-	if (statenow != chapterstate) return 0;
-	int tempzero = zerocontainer2.find("\"0\"");
-	if (tempzero != -1) {
-
-		std::cout << "Si contiene" << std::endl;
-		tienezero = true;
-	}
-	else {
-
-		std::cout << "no contiene" << std::endl;
-		tienezero = false;
-	}
-
-
-	if (tienezero) {
-		maxcapit = maxcapit - 1;
-		mincapit = 0;
-		capmore = maxcapit;
-	}
-	else
-	{
-		mincapit = 1;
-		capmore = maxcapit;
-	}
-//	std::cout << maxcapit << std::endl;
 return 0;
 }
 

@@ -21,6 +21,8 @@
 #include <string>
 #include <cmath>
 #include <iostream>
+#include<ctime>
+#include <iomanip>
 #include <math.h>
 #include <Vector>
 #include <sys/types.h>
@@ -79,8 +81,16 @@ int main(int argc, char **argv)
 	//quick fix wait for jkanime
 	//WebBrowserCall("https://jkanime.net",true);
 	//return 0;
-	
-	SDL_Thread* capithread = NULL;
+
+	std::time_t t = std::time(0);
+	sesion = std::to_string(t);
+	printf("time stamp: %s \n",sesion.c_str());
+
+	// read a JSON file
+	std::ifstream inf(rootdirectory+"DataBase.json");
+	if(!inf.fail()){inf >> BigData;}
+	inf.close();
+
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* downloadthread = NULL;
@@ -240,6 +250,7 @@ int main(int argc, char **argv)
 				if (T_D.SP()&&isDownloading) statenow = downloadstate;
 				if (CLEAR.SP()){
 					GOD.PleaseWait("Borrando cache");
+					BigData = "{}"_json;
 					fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 						cancelcurl = 1;
 						quit = true;
@@ -265,45 +276,13 @@ int main(int argc, char **argv)
 									TChapters.free();
 									TChapters.loadFromFileCustom(tempimage, 550, 400);
 									temporallink = arraychapter[selectchapter];
-									int val1 = temporallink.find("/", 20);
-									temporallink = temporallink.substr(0, val1 + 1);
-									printf("q wea es esto? %s  : %d\n",temporallink.c_str() ,selectchapter);
-									if (selectchapter > (int)con_maxcapit.size()-1)
-									{
-										rese = "......";
-										nextdate = "......";
-										maxcapit = -1;
-										mincapit = 1;
-										capmore = 1;
-										generos = "......";
-										capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);									
-									}else {
-										try{
-											rese = con_rese[selectchapter];
-											nextdate = con_nextdate[selectchapter];
-											enemision = con_enemision[selectchapter];
-											tienezero = con_tienezero[selectchapter];
-											maxcapit = con_maxcapit[selectchapter];
-											generos = con_generos[selectchapter];
-											printf("Goted All of sel %d\n",selectchapter);
-										}catch(...){
-											printf("Error \n");
-										}
-									}
+									int v2 = temporallink.find("/", 20);
+									temporallink = temporallink.substr(0, v2 + 1);
 
+									printf("q wea es esto? %s  : %d\n",temporallink.c_str() ,selectchapter);
 									statenow = chapterstate;
-									if (tienezero) {
-										maxcapit = maxcapit - 1;
-										mincapit = 0;
-										capmore = maxcapit;
-									}
-									else
-									{
-										mincapit = 1;
-										capmore = maxcapit;
-									}
-									std::cout << maxcapit << std::endl;
-								gFAV = isFavorite(temporallink);
+									capBuffer();								
+									gFAV = isFavorite(temporallink);
 								}
 							}
 							break;
@@ -317,14 +296,8 @@ int main(int argc, char **argv)
 									TChapters.loadFromFileCustom(tempimage, 550, 400);
 									statenow = chapterstate;
 									temporallink = arraysearch[searchchapter];
-									rese = "......";
-									nextdate = "......";
-									maxcapit = -1;
-									mincapit = 1;
-									capmore = 1;
-									generos = "......";
 									std::cout << temporallink << std::endl;
-									capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
+									capBuffer();
 									gFAV = isFavorite(temporallink);
 								}
 
@@ -342,14 +315,7 @@ int main(int argc, char **argv)
 								temporallink = arrayfavorites[favchapter];
 
 								std::cout << temporallink << std::endl;
-								//init 
-								rese = "......";
-								nextdate = "......";
-								maxcapit = -1;
-								mincapit = 1;
-								capmore = 0;
-								generos = "......";
-								capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
+								capBuffer();
 								gFAV = true;
 								}
 							}
@@ -894,7 +860,7 @@ int main(int argc, char **argv)
 								T_T.loadFromRenderedText(GOD.gFont4, arrayservers[x], textWhite);
 								VOX.render_VOX({ posxbase+XD-10,YD + 5 - sizefix + (x * mwide), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
 								T_T.render(posxbase+XD, YD - sizefix + (x * mwide));
-								} else {
+							} else {
 								gTextTexture.loadFromRenderedText(GOD.gFont4, arrayservers[x],textGray);
 								gTextTexture.render(posxbase+XD, YD - sizefix + (x * mwide));
 							}
@@ -1285,6 +1251,10 @@ int main(int argc, char **argv)
 	}
 
 
+	// write prettified JSON
+	std::ofstream otf(rootdirectory+"DataBase.json");
+	otf << std::setw(4) << BigData << std::endl;
+	otf.close();	
 
 	if (NULL == capithread) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
