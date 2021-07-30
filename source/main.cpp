@@ -82,9 +82,6 @@ int main(int argc, char **argv)
 	//WebBrowserCall("https://jkanime.net",true);
 	//return 0;
 
-	std::time_t t = std::time(0);
-	TimeStamp = std::to_string(t);
-	printf("time stamp: %s \n",TimeStamp.c_str());
 
 	// read a JSON file
 	std::ifstream inf(rootdirectory+"DataBase.json");

@@ -93,7 +93,6 @@ bool isSXOS=false;
 bool hasStealth=false;
 AccountUid uid;
 SDL_Thread* capithread = NULL;
-std::string TimeStamp = "";
 
 #ifdef __SWITCH__
 HidsysNotificationLedPattern blinkLedPattern(u8 times);
@@ -279,17 +278,12 @@ int refrescarpro(void* data){
 	if (!BigData["latestchapter"].empty()){
 		if (BigData["latestchapter"] == arraychapter[0]) {haschange = false;}
 	}
-	if (haschange){
-		BigData["TimeStamp"] = TimeStamp;
+	if (haschange || BigData["TimeStamp"].empty()){
+		//update TimeStamp
+		std::time_t t = std::time(0);
+		BigData["TimeStamp"] = std::to_string(t);
+		std::cout << "New TimeStamp: " << BigData["TimeStamp"] << std::endl;
 		first = SDL_CreateThread(GETCONT,"ContentThread",(void*)NULL);printf("firstCreated...\n");;
-	} else {
-		
-		if (!BigData["TimeStamp"].empty()){
-			std::cout << "has no change revert TimeStamp: "  << std::endl;
-			std::cout <<  TimeStamp << std::endl;
-			TimeStamp = BigData["TimeStamp"];
-			std::cout <<  TimeStamp << std::endl;
-		}
 	}
 
 	for (int x = 0; x < (int)arrayimages.size(); x++)
@@ -438,7 +432,7 @@ void PushDirBuffer(std::string a,std::string name){
 		BigData["DataBase"][name]["mincapit"] = 1;
 		BigData["DataBase"][name]["capmore"] = BigData["DataBase"][name]["maxcapit"];
 	}
-	BigData["DataBase"][name]["TimeStamp"] = TimeStamp;
+	BigData["DataBase"][name]["TimeStamp"] = BigData["TimeStamp"];
 	std::cout << "Bufered: " << name << std::endl;
 }
 
@@ -610,7 +604,7 @@ int capBuffer () {
 			mincapit = BigData["DataBase"][name]["mincapit"];//1;
 			capmore = BigData["DataBase"][name]["capmore"];//1;
 			generos = BigData["DataBase"][name]["generos"];//"......";
-			if (BigData["DataBase"][name]["TimeStamp"] != TimeStamp){
+			if (BigData["DataBase"][name]["TimeStamp"] != BigData["TimeStamp"]){
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 			}
 		}catch(...){
