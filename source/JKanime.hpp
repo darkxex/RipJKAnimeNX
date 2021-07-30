@@ -550,8 +550,6 @@ std::string rese = "";
 bool enemision = false;
 std::string nextdate = "";
 std::string generos = "";
-void load_state(){
-}
 
 //get cap thread
 int capit(void* data) {
@@ -605,6 +603,7 @@ int capBuffer () {
 			capmore = BigData["DataBase"][name]["capmore"];//1;
 			generos = BigData["DataBase"][name]["generos"];//"......";
 			if (BigData["DataBase"][name]["TimeStamp"] != BigData["TimeStamp"]){
+				nextdate = "Loading...";
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 			}
 		}catch(...){
