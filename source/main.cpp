@@ -1254,7 +1254,10 @@ int main(int argc, char **argv)
 	std::ofstream otf(rootdirectory+"DataBase.json");
 	otf << std::setw(4) << BigData << std::endl;
 	otf.close();	
-	if (AppletMode) appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
+	if (AppletMode){
+		SDL_Delay(3000);
+		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
+	} 
 
 	if (NULL == capithread) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
