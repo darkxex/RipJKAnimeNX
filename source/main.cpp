@@ -260,7 +260,7 @@ int main(int argc, char **argv)
 				GOD.TouchY = -1;
 			}
 			case SDL_JOYBUTTONDOWN :
-				SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
+				//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 				// seek for joystick #0
 				if (e.jbutton.which == 0) {
@@ -1251,10 +1251,7 @@ int main(int argc, char **argv)
 		SDL_RenderPresent(GOD.gRenderer);
 	}
 
-//	std::cout << "Prety Json : " << BigData << std::endl;
-
 	//clear allocate
-	std::cout << "Prety Json : " << BigData << std::endl;
 	BigData["arrays"] = "{}"_json;;
 
 	// write prettified JSON
