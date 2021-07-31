@@ -53,6 +53,7 @@ int main(int argc, char **argv)
 #ifdef __SWITCH__
 	romfsInit();
 	socketInitializeDefault();
+	appletBeginBlockingHomeButton (0);
 	nxlinkStdio();
 	printf("printf output now goes to nxlink server\n");
 	struct stat st = { 0 };
@@ -1253,7 +1254,9 @@ int main(int argc, char **argv)
 	// write prettified JSON
 	std::ofstream otf(rootdirectory+"DataBase.json");
 	otf << std::setw(4) << BigData << std::endl;
-	otf.close();	
+	otf.close();
+	appletEndBlockingHomeButton();
+	
 	if (AppletMode){
 		SDL_Delay(3000);
 		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
