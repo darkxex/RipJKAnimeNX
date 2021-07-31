@@ -33,6 +33,7 @@
 #include "SDLWork.hpp"
 #include "applet.hpp"
 #include "utils.hpp"
+#include "JKanime.hpp"
 
 //use the nand of the switch
 #ifdef USENAND
@@ -44,15 +45,15 @@ std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
 
 
 //make some includes to clean a little the main
-#include "JKanime.hpp"
+#include "extra.hpp"
 std::string urlc = "https://myrincon.duckdns.org";
 
 //MAIN INT
 int main(int argc, char **argv)
 {
 #ifdef __SWITCH__
-	romfsInit();
 	socketInitializeDefault();
+	romfsInit();
 	appletBeginBlockingHomeButton (0);
 	nxlinkStdio();
 	printf("printf output now goes to nxlink server\n");
@@ -259,7 +260,7 @@ int main(int argc, char **argv)
 				GOD.TouchY = -1;
 			}
 			case SDL_JOYBUTTONDOWN :
-				//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
+				SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 				// seek for joystick #0
 				if (e.jbutton.which == 0) {
@@ -269,11 +270,11 @@ int main(int argc, char **argv)
 						{
 							case programationstate:
 							{
-								if (!reloading&&arraychapter.size()>=1)
+								if (!reloading&&BigData["arrays"]["arraychapter"].size()>=1)
 								{activatefirstimage=true;
 									TChapters.free();
 									TChapters.loadFromFileCustom(tempimage, 550, 400);
-									temporallink = arraychapter[selectchapter];
+									temporallink = BigData["arrays"]["arraychapter"][selectchapter];
 									int v2 = temporallink.find("/", 20);
 									temporallink = temporallink.substr(0, v2 + 1);
 
@@ -288,12 +289,12 @@ int main(int argc, char **argv)
 							case searchstate:
 							{
 								activatefirstimage=true;
-								if (!reloadingsearch && arraysearch.size()>=1)
+								if (!reloadingsearch && BigData["arrays"]["arraysearch"].size()>=1)
 								{
 									TChapters.free();
 									TChapters.loadFromFileCustom(tempimage, 550, 400);
 									statenow = chapterstate;
-									temporallink = arraysearch[searchchapter];
+									temporallink = BigData["arrays"]["arraysearch"][searchchapter];
 									std::cout << temporallink << std::endl;
 									capBuffer();
 									gFAV = isFavorite(temporallink);
@@ -305,12 +306,12 @@ int main(int argc, char **argv)
 							case favoritesstate:
 							{
 								activatefirstimage=true;
-								if ((int)arrayfavorites.size() >= 1 ){
+								if ((int)BigData["arrays"]["arrayfavorites"].size() >= 1 ){
 								TChapters.free();
 								CheckImgNet(tempimage);
 								TChapters.loadFromFileCustom(tempimage, 550, 400);
 								statenow = chapterstate;
-								temporallink = arrayfavorites[favchapter];
+								temporallink = BigData["arrays"]["arrayfavorites"][favchapter];
 
 								std::cout << temporallink << std::endl;
 								capBuffer();
@@ -381,7 +382,7 @@ int main(int argc, char **argv)
 							TFavorite.free();
 							favchapter=0;
 							statenow = programationstate;
-							arrayfavorites.clear();*/
+							BigData["arrays"]["arrayfavorites"].clear();*/
 							break;
 						}
 					}
@@ -465,7 +466,7 @@ int main(int argc, char **argv)
 							if (!reloading)
 							{
 								if (favchapter > 0) favchapter--;
-								arrayfavorites.clear();
+								BigData["arrays"]["arrayfavorites"].clear();
 								statenow = favoritesstate;
 								std::string temp;
 								std::ifstream infile;
@@ -476,7 +477,7 @@ int main(int argc, char **argv)
 									std::cout << str << "\n";
 									if (str.find("jkanime"))
 									{
-										arrayfavorites.push_back(str);
+										BigData["arrays"]["arrayfavorites"].push_back(str);
 									}
 								}
 								file.close();
@@ -495,7 +496,7 @@ int main(int argc, char **argv)
 							if (!reloading)
 							{activatefirstimage=true;
 								returnnow = tofavorite;
-								arrayfavorites.clear();
+								BigData["arrays"]["arrayfavorites"].clear();
 								statenow = favoritesstate;
 								std::string temp;
 								std::ifstream infile;
@@ -506,7 +507,7 @@ int main(int argc, char **argv)
 									std::cout << str << "\n";
 									if (str.find("jkanime"))
 									{
-										arrayfavorites.push_back(str);
+										BigData["arrays"]["arrayfavorites"].push_back(str);
 									}
 								}
 								file.close();
@@ -572,8 +573,8 @@ int main(int argc, char **argv)
 								if (searchtext.length() > 0){
 									searchchapter = 0;
 									TSearchPreview.free();
-									arraysearch.clear();
-									arraysearchimages.clear();
+									BigData["arrays"]["arraysearch"].clear();
+									BigData["arrays"]["arraysearchimages"].clear();
 									statenow = searchstate;
 									returnnow = tosearch;
 									searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
@@ -633,7 +634,7 @@ int main(int argc, char **argv)
 									//std::cout << selectchapter << std::endl;
 								}
 								else {
-									selectchapter = arraychapter.size() - 1;
+									selectchapter = BigData["arrays"]["arraychapter"].size() - 1;
 								}
 								callimage(selectchapter);
 
@@ -668,7 +669,7 @@ int main(int argc, char **argv)
 									//std::cout << searchchapter << std::endl;
 								}
 								else {
-									searchchapter = arraysearch.size() - 1;
+									searchchapter = BigData["arrays"]["arraysearch"].size() - 1;
 								}
 								callimagesearch(searchchapter);
 
@@ -684,7 +685,7 @@ int main(int argc, char **argv)
 								//std::cout << favchapter << std::endl;
 							}
 							else {
-								favchapter = (int)arrayfavorites.size() - 1;
+								favchapter = (int)BigData["arrays"]["arrayfavorites"].size() - 1;
 							}
 							callimagefavorites(favchapter);
 							break;
@@ -699,7 +700,7 @@ int main(int argc, char **argv)
 							if (!reloadingsearch)
 							{
 								TSearchPreview.free();
-								if (searchchapter < (int)arraysearch.size() - 1)
+								if (searchchapter < (int)BigData["arrays"]["arraysearch"].size() - 1)
 								{
 									searchchapter++;
 
@@ -718,7 +719,7 @@ int main(int argc, char **argv)
 								TPreview.free();
 
 
-								if (selectchapter < (int)arraychapter.size() - 1)
+								if (selectchapter < (int)BigData["arrays"]["arraychapter"].size() - 1)
 								{
 									selectchapter++;
 
@@ -754,7 +755,7 @@ int main(int argc, char **argv)
 
 						case favoritesstate:
 							TFavorite.free();
-							if (favchapter < (int)arrayfavorites.size() - 1)
+							if (favchapter < (int)BigData["arrays"]["arrayfavorites"].size() - 1)
 							{
 								favchapter++;
 
@@ -932,19 +933,19 @@ int main(int argc, char **argv)
 			break;
 			}
 			case programationstate:	{
-				if (!reloading&&arraychapter.size()>=1) {
+				if (!reloading&&BigData["arrays"]["arraychapter"].size()>=1) {
 					VOX.render_VOX({0,0, 620, 670}, 200, 200, 200, 115);//Draw a rectagle to a nice view
 					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 
 					if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
 						u32 sel=(GOD.TouchY*30/660);
-						if (sel >= 0 && sel < arraychapter.size()){
+						if (sel >= 0 && sel < BigData["arrays"]["arraychapter"].size()){
 							selectchapter = sel;
 							activatefirstimage=true;
 						} 
 					}
-					for (int x = 0; x < (int)arraychapter.size(); x++) {
-						std::string temptext = arraychapter[x];
+					for (int x = 0; x < (int)BigData["arrays"]["arraychapter"].size(); x++) {
+						std::string temptext = BigData["arrays"]["arraychapter"][x];
 						replace(temptext, "https://jkanime.net/", "");
 						replace(temptext, "/", " ");
 						replace(temptext, "-", " ");
@@ -1025,24 +1026,24 @@ int main(int argc, char **argv)
 
 					if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 1 && GOD.TouchX > 15){
 						u32 sel=(GOD.TouchY*30/670);
-						if (sel >= 0 && sel < arraysearch.size()){
+						if (sel >= 0 && sel < BigData["arrays"]["arraysearch"].size()){
 							searchchapter = sel;
 							TSearchPreview.free();
 							callimagesearch(searchchapter);					
 						}
 					}
-					if ((int)arraysearch.size() >= 1){
+					if ((int)BigData["arrays"]["arraysearch"].size() >= 1){
 						
 						VOX.render_VOX({0,0, 620, 670}, 100, 100, 100, 115);
 						VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 
 						int of = searchchapter < 30 ? 0 : searchchapter - 26;
-						if (arraysearch.size() > 30) {
-							gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(arraysearch.size()), {0,0,0});
+						if (BigData["arrays"]["arraysearch"].size() > 30) {
+							gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(BigData["arrays"]["arraysearch"].size()), {0,0,0});
 							gTextTexture.render(400, 690);
 						}
-						for (int x = of; x < (int)arraysearch.size(); x++) {
-							std::string temptext = arraysearch[x];
+						for (int x = of; x < (int)BigData["arrays"]["arraysearch"].size(); x++) {
+							std::string temptext = BigData["arrays"]["arraysearch"][x];
 						
 							replace(temptext, "https://jkanime.net/", "");
 							replace(temptext, "/", " ");
@@ -1102,22 +1103,22 @@ int main(int argc, char **argv)
 				
 				if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
 					u32 sel=(GOD.TouchY*30/660);
-					if (sel >= 0 && sel < arrayfavorites.size()){
+					if (sel >= 0 && sel < BigData["arrays"]["arrayfavorites"].size()){
 						favchapter = sel;
 						TFavorite.free();
 						callimagefavorites(favchapter);
 					}
 				}
 
-				if ((int)arrayfavorites.size() >= 1 ){
+				if ((int)BigData["arrays"]["arrayfavorites"].size() >= 1 ){
 				VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
 				int of = favchapter < 30 ? 0 : favchapter - 26;
-				if (arrayfavorites.size() > 30) {
-					gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(arrayfavorites.size()), {0,0,0});
+				if (BigData["arrays"]["arrayfavorites"].size() > 30) {
+					gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(BigData["arrays"]["arrayfavorites"].size()), {0,0,0});
 					gTextTexture.render(400, 690);
 				}
-				for (int x = of; x < (int)arrayfavorites.size(); x++) {
-					std::string temptext = arrayfavorites[x];
+				for (int x = of; x < (int)BigData["arrays"]["arrayfavorites"].size(); x++) {
+					std::string temptext = BigData["arrays"]["arrayfavorites"][x];
 
 					replace(temptext, "https://jkanime.net/", "");
 					replace(temptext, "/", "");
@@ -1149,7 +1150,7 @@ int main(int argc, char **argv)
 					int dist = 1100,posdist = 160;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_B.render_T(dist, 680,"Volver");dist -= posdist;
-					if ((int)arrayfavorites.size() >= 1){
+					if ((int)BigData["arrays"]["arrayfavorites"].size() >= 1){
 						B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
 					}else NOP.render_T(230, 355,"");
 					
@@ -1245,43 +1246,54 @@ int main(int argc, char **argv)
 			GOD.PleaseWait("No Hay Red Conectada, Esperando por la red");
 			SDL_Delay(1000);
 		}
-		
+
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
 	}
 
+	std::cout << "Prety Json : " << BigData << std::endl;
+
+	//clear allocate
+	BigData["arrays"]["arraychapter"].clear();
+	BigData["arrays"]["arrayimages"].clear();
+	BigData["arrays"]["arraysearch"].clear();
+	BigData["arrays"]["arraysearchimages"].clear();
+	BigData["arrays"]["arrayfavorites"].clear();
+	
+	std::cout << "Prety Json : " << BigData << std::endl;
 
 	// write prettified JSON
 	std::ofstream otf(rootdirectory+"DataBase.json");
 	otf << std::setw(4) << BigData << std::endl;
 	otf.close();
+
 	appletEndBlockingHomeButton();
 	
 	if (AppletMode){
-		SDL_Delay(3000);
+		SDL_Delay(2000);
 		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
 	} 
 
 	if (NULL == capithread) {
-		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(capithread, NULL);
 	}
 	if (NULL == downloadthread) {
-		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(downloadthread, NULL);
 	}
 	if (NULL == prothread) {
-		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(prothread, NULL);
 	}
 	if (NULL == searchthread) {
-		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(searchthread,NULL);
