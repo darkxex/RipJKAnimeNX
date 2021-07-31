@@ -149,7 +149,7 @@ int downloadjkanimevideo(void* data)
 	statenow = downloadstate;
 	return 0;
 }
-//BigData["arrays"]["arraysearch"]
+//BigData["arrays"]["search"]["link"]
 /*
 std::vector<std::string> arrayimages;
 std::vector<std::string> arraychapter;
@@ -163,7 +163,7 @@ int xdistance = 1010;
 int ydistance = 340;
 void callimage(int cain)
 {
-	std::string temp = BigData["arrays"]["arrayimages"][cain];
+	std::string temp = BigData["arrays"]["chapter"]["images"][cain];
 	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
 
 	std::string directorydownloadimage = rootdirectory+"DATA/";
@@ -183,7 +183,7 @@ void callimage(int cain)
 
 void callimagesearch(int cain)
 {
-	std::string temp = BigData["arrays"]["arraysearchimages"][cain];
+	std::string temp = BigData["arrays"]["search"]["images"][cain];
 	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
 	std::string directorydownloadimage = rootdirectory+"DATA/";
 	directorydownloadimage.append(temp);
@@ -194,7 +194,7 @@ void callimagesearch(int cain)
 
 void callimagefavorites(int cain)
 {
-	std::string temp = BigData["arrays"]["arrayfavorites"][cain];
+	std::string temp = BigData["arrays"]["favorites"][cain];
 	replace(temp,"https://jkanime.net/","");
 	replace(temp,"/","");
 	std::string directorydownloadimage = rootdirectory+"DATA/";
@@ -210,11 +210,11 @@ std::vector<std::string> con_full;
 SDL_Thread* first = NULL;
 int GETCONT(void* d){
 con_full.clear();
-for (int x = 0; x < (int)BigData["arrays"]["arraychapter"].size()&& !quit; x++)
+for (int x = 0; x < (int)BigData["arrays"]["chapter"]["link"].size()&& !quit; x++)
 	{
 		while (!HasConnection()){SDL_Delay(5000);if(quit) return 0;}
 		porcentajebufferA = x+1;
-		std::string link = BigData["arrays"]["arraychapter"][x];
+		std::string link = BigData["arrays"]["chapter"]["link"][x];
 		int trace = link.find("/", 20);
 		link = link.substr(0, trace + 1);
 		con_full.push_back(gethtml(link));
@@ -223,12 +223,8 @@ for (int x = 0; x < (int)BigData["arrays"]["arraychapter"].size()&& !quit; x++)
 return 0;
 }
 int refrescarpro(void* data){
-//clear allocate
-	BigData["arrays"]["arraychapter"].clear();
-	BigData["arrays"]["arrayimages"].clear();
-	BigData["arrays"]["arraysearch"].clear();
-	BigData["arrays"]["arraysearchimages"].clear();
-	BigData["arrays"]["arrayfavorites"].clear();
+	//clear allocate
+	BigData["arrays"] = "{}"_json;;
 
 	while (!HasConnection()){SDL_Delay(5000);if(quit) return 0;}
 	activatefirstimage = true;
@@ -251,11 +247,11 @@ int refrescarpro(void* data){
 		val2 = (content.find('"', val1));
 		std::string gdrive = content.substr(val1, val2 - val1);
 		//std::cout << gdrive << std::endl;
-		BigData["arrays"]["arraychapter"].push_back(gdrive);
+		BigData["arrays"]["chapter"]["link"].push_back(gdrive);
 		val3 = content.find("<img src=", val2) + 10;
 		val4 = content.find('"', val3);
 		std::string gpreview = content.substr(val3, val4 - val3);
-		BigData["arrays"]["arrayimages"].push_back(gpreview);
+		BigData["arrays"]["chapter"]["images"].push_back(gpreview);
 		
 		//std::cout << gdrive << "  .  " << gpreview << std::endl;
 		temporal = temporal + gdrive + "\n";
@@ -268,7 +264,7 @@ int refrescarpro(void* data){
 	//
 	bool haschange = true;
 	if (!BigData["latestchapter"].empty()){
-		if (BigData["latestchapter"] == BigData["arrays"]["arraychapter"][0]) {haschange = false;}
+		if (BigData["latestchapter"] == BigData["arrays"]["chapter"]["link"][0]) {haschange = false;}
 	}
 	if (haschange || BigData["TimeStamp"].empty()){
 		//update TimeStamp
@@ -278,10 +274,10 @@ int refrescarpro(void* data){
 		first = SDL_CreateThread(GETCONT,"ContentThread",(void*)NULL);printf("firstCreated...\n");;
 	}
 
-	for (int x = 0; x < (int)BigData["arrays"]["arrayimages"].size(); x++)
+	for (int x = 0; x < (int)BigData["arrays"]["chapter"]["images"].size(); x++)
 	{
 		imgNumbuffer = x+1;
-		std::string tempima = BigData["arrays"]["arrayimages"][x];
+		std::string tempima = BigData["arrays"]["chapter"]["images"][x];
 		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
 #ifdef __SWITCH__
 		std::string directorydownloadimage = rootdirectory+"DATA/";
@@ -292,12 +288,12 @@ int refrescarpro(void* data){
 #endif // SWITCH
 	if(!isFileExist(directorydownloadimage)){
 		printf("\n# %d imagen: %s \n",x,tempima.c_str());
-		downloadfile(BigData["arrays"]["arrayimages"][x],directorydownloadimage,false);
+		downloadfile(BigData["arrays"]["chapter"]["images"][x],directorydownloadimage,false);
 		activatefirstimage=true;
 	} else printf("-");
 	preview = true;
 
-//	porcentajereload = ((x+1) * 100) / BigData["arrays"]["arrayimages"].size();
+//	porcentajereload = ((x+1) * 100) / BigData["arrays"]["chapter"]["images"].size();
 	}
 	printf("#\nEnd Image Download\n");
 	imgNumbuffer=0;
@@ -309,7 +305,7 @@ int refrescarpro(void* data){
 	if (AppletMode) quit=true;
 	if (haschange) {
 		MKcapitBuffer();
-		BigData["latestchapter"] = BigData["arrays"]["arraychapter"][0];
+		BigData["latestchapter"] = BigData["arrays"]["chapter"]["link"][0];
 	}
 	MKfavimgfix(false);
 	return 0;
@@ -317,7 +313,7 @@ int refrescarpro(void* data){
 
 int MKcapitBuffer() {
 	std::string a = "";
-	for (int x = 0; x < (int)BigData["arrays"]["arraychapter"].size()&& !quit; x++)
+	for (int x = 0; x < (int)BigData["arrays"]["chapter"]["link"].size()&& !quit; x++)
 	{
 		porcentajebuffer = x+1;
 		//if (x > (int)con_full.size()-1) printf("Wait for vector...\n");
@@ -328,7 +324,7 @@ int MKcapitBuffer() {
 		}
 		//printf("Get from vector...\n");
 		a = con_full[x];
-		std::string name = BigData["arrays"]["arraychapter"][x];
+		std::string name = BigData["arrays"]["chapter"]["link"][x];
 		int v5 = name.find("/", 20);
 		name = name.substr(0, v5 + 1);
 		replace(name, "https://jkanime.net/", "");
@@ -390,18 +386,18 @@ int searchjk(void* data)
 			std::string gdrive = content.substr(val1, val2 - val1);
 		
 
-			BigData["arrays"]["arraysearch"].push_back(gdrive);
+			BigData["arrays"]["search"]["link"].push_back(gdrive);
 			val3 = content.find("data-setbg=", val2) + 12;
 			val4 = content.find('"', val3);
 			std::string gsearchpreview = content.substr(val3, val4 - val3);
-			BigData["arrays"]["arraysearchimages"].push_back(gsearchpreview);
+			BigData["arrays"]["search"]["images"].push_back(gsearchpreview);
 			std::cout << gsearchpreview << std::endl;
 			
 			val1++;
 		}
 		
-		for (int x = 0; x < (int)BigData["arrays"]["arraysearchimages"].size(); x++) {
-				std::string tempima = BigData["arrays"]["arraysearchimages"][x];
+		for (int x = 0; x < (int)BigData["arrays"]["search"]["images"].size(); x++) {
+				std::string tempima = BigData["arrays"]["search"]["images"][x];
 				replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
 #ifdef __SWITCH__
 				std::string directorydownloadimage = rootdirectory+"DATA/";
@@ -411,9 +407,9 @@ int searchjk(void* data)
 				directorydownloadimage.append(tempima);
 #endif // SWITCH
 			if(!isFileExist(directorydownloadimage))
-			downloadfile(BigData["arrays"]["arraysearchimages"][x],directorydownloadimage,false);
+			downloadfile(BigData["arrays"]["search"]["images"][x],directorydownloadimage,false);
 
-			porcentajereload = ((x + 1) * 100) / BigData["arrays"]["arraysearchimages"].size();
+			porcentajereload = ((x + 1) * 100) / BigData["arrays"]["search"]["images"].size();
 		}
 	}
 	else
