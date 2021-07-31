@@ -809,9 +809,9 @@ int main(int argc, char **argv)
 			{//draw description
 			VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
 			static std::string rese_prot = "..";
-			if (rese_prot != rese){//load texture on text change 
-				T_R.loadFromRenderedTextWrap(GOD.gFont, rese.substr(0,800), textColor, 750);
-				rese_prot = rese;
+			if (rese_prot != sinopsis){//load texture on text change 
+				T_R.loadFromRenderedTextWrap(GOD.gFont, sinopsis.substr(0,800), textColor, 750);
+				rese_prot = sinopsis;
 			}
 			T_R.render(posxbase+15, posybase + 65);
 
