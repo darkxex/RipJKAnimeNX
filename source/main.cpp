@@ -1234,6 +1234,8 @@ int main(int argc, char **argv)
 			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, het);
 		}
 		if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
+
+
 		B_P.render_T(160, 680,"Salir",quit);
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
@@ -1252,6 +1254,7 @@ int main(int argc, char **argv)
 	std::ofstream otf(rootdirectory+"DataBase.json");
 	otf << std::setw(4) << BigData << std::endl;
 	otf.close();	
+	if (AppletMode) appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
 
 	if (NULL == capithread) {
 		printf("SDL_CreateThread failed: %s\n", SDL_GetError());
