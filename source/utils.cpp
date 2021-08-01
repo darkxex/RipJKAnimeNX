@@ -182,7 +182,7 @@ std::string Nozomi_Link(std::string Link){
 	return ThirdKey;
 }
 std::string Fembed_Link(std::string Link) {
-	std::string codetemp;
+	replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
 	std::cout << "enlace: " << Link << std::endl;
 	//POST to api
 	std::string SecondKey = gethtml(Link, "0");
@@ -190,6 +190,7 @@ std::string Fembed_Link(std::string Link) {
 	//Scrap from json
 	std::vector<std::string> list = scrapElementAll(SecondKey, "https:");
 	
+	std::string codetemp;
 	codetemp = list[list.size()-1];
 	std::cout << "Json720key: " << codetemp << std::endl;
 	return codetemp;
@@ -208,7 +209,6 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	content = gethtml(onlineenlace);
 	if (server == "Fembed 2.0") {
 		videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
-		replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
 		videourl = Fembed_Link(videourl);
 	}
 	 else if (server == "Nozomi"){
@@ -259,20 +259,6 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 	std::string content = "";
 	content = gethtml(urltodownload);
 
-	videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
-	replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
-	
-	if (videourl.length())
-	{
-		videourl = Fembed_Link(videourl);
-		if (videourl.length())
-		{
-			std::cout << videourl << std::endl;
-			serverenlace = videourl;
-			if (downloadfile(videourl, directorydownload)) return true;
-		}
-	}
-
 	videourl = scrapElement(content, "https://jkanime.net/um2.php?");
 	if(videourl.length())
 	{
@@ -297,6 +283,18 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 			std::cout << videourl << std::endl;
 			serverenlace = videourl;
 			if(downloadfile(videourl, directorydownload)) return true;
+		}
+	}
+
+	videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
+	if (videourl.length())
+	{
+		videourl = Fembed_Link(videourl);
+		if (videourl.length())
+		{
+			std::cout << videourl << std::endl;
+			serverenlace = videourl;
+			if (downloadfile(videourl, directorydownload)) return true;
 		}
 	}
 
