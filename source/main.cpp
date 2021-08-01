@@ -444,16 +444,16 @@ int main(int argc, char **argv)
 							urltodownload  = temporallink + std::to_string(capmore) + "/";
 							if(isDownloading){
 								bool gogo = false;
-								for (u64 x=0; x < downqueue.size();x++){
-									if (downqueue[x] == urltodownload) gogo = true;
+								for (u64 x=0; x < BigData["arrays"]["downloads"]["queue"].size();x++){
+									if (BigData["arrays"]["downloads"]["queue"][x] == urltodownload) gogo = true;
 								}
 								if(gogo) break;
-								downqueue.push_back(urltodownload);
-								logqueue.push_back(urltodownload);
+								BigData["arrays"]["downloads"]["queue"].push_back(urltodownload);
+								BigData["arrays"]["downloads"]["log"].push_back(urltodownload);
 							}else{
-								downqueue.clear();
-								downqueue.push_back(urltodownload);
-								logqueue = downqueue;
+								BigData["arrays"]["downloads"]["queue"].clear();
+								BigData["arrays"]["downloads"]["queue"].push_back(urltodownload);
+								BigData["arrays"]["downloads"]["log"] = BigData["arrays"]["downloads"]["queue"];
 								downloadthread = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
 							}
 							break;
@@ -1197,11 +1197,11 @@ int main(int argc, char **argv)
 					porcendown=0;
 				}
 				
-				VOX.render_VOX({posxbase-5,posybase + 300 , 750, ((int)logqueue.size() * 22)+53}, 200, 200, 200, 105);
+				VOX.render_VOX({posxbase-5,posybase + 300 , 750, ((int)BigData["arrays"]["downloads"]["log"].size() * 22)+53}, 200, 200, 200, 105);
 				gTextTexture.loadFromRenderedText(GOD.digifont, "Cola De Descarga::", textColor);
 				gTextTexture.render(posxbase, posybase+310);
-				for (u64 x = 0; x < logqueue.size(); x++) {
-					std::string descarga = logqueue[x];
+				for (u64 x = 0; x < BigData["arrays"]["downloads"]["log"].size(); x++) {
+					std::string descarga = BigData["arrays"]["downloads"]["log"][x];
 					replace(descarga, "https://jkanime.net/", "");
 					replace(descarga, "/", " ");
 					replace(descarga, "-", " ");
@@ -1250,7 +1250,7 @@ int main(int argc, char **argv)
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
 	}
-
+	cancelcurl=1;
 	//clear allocate
 	BigData["arrays"] = "{}"_json;;
 
