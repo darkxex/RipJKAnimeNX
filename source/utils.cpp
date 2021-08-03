@@ -182,17 +182,22 @@ std::string Nozomi_Link(std::string Link){
 	return ThirdKey;
 }
 std::string Fembed_Link(std::string Link) {
-	replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
-	std::cout << "enlace: " << Link << std::endl;
-	//POST to api
-	std::string SecondKey = gethtml(Link, "0");
+	std::string codetemp = "";
+	if (Link.length() > 0){
+		replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
+		std::cout << "enlace: " << Link << std::endl;
+		//POST to api
+		std::string SecondKey = gethtml(Link, "0");
 
-	//Scrap from json
-	std::vector<std::string> list = scrapElementAll(SecondKey, "https:");
-	
-	std::string codetemp;
-	codetemp = list[list.size()-1];
-	std::cout << "Json720key: " << codetemp << std::endl;
+		//Scrap from json
+		std::vector<std::string> list = scrapElementAll(SecondKey, "https:");
+		
+		std::cout << "vector len: " << list.size() << std::endl;
+		if (list.size() > 0){
+			codetemp = list[list.size()-1];
+			std::cout << "Json720key: " << codetemp << std::endl;
+		}
+	}
 	return codetemp;
 }
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
