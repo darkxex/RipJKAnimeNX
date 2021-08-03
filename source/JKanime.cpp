@@ -23,8 +23,8 @@ extern LTexture Farest;
 extern LTexture Heart;
 extern LTexture TChapters;
 extern LTexture TPreview;
-extern LTexture TSearchPreview;///////
-extern LTexture TFavorite;
+extern LTexture TPreviewb;
+extern LTexture TPreviewa;
 extern int sizeportraity;
 extern int sizeportraitx;
 
@@ -55,48 +55,41 @@ extern bool activatefirstsearchimage;
 extern std::string searchtext;
 
 
-void callimage(int cain)
+void callimage(int pos,std::vector<std::string> imageV)
 {
-	std::string temp = BigData["arrays"]["chapter"]["images"][cain];
+	TPreview.free();
+	TPreviewb.free();
+	TPreviewa.free();
+	
+	std::string temp = imageV[pos];
 	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
+	temp = rootdirectory+"DATA/"+temp;
 
-	std::string directorydownloadimage = rootdirectory+"DATA/";
-	directorydownloadimage.append(temp);
-
-	if(isFileExist(directorydownloadimage)){
-		//printf("# %d imagen: %s \n",cain,directorydownloadimage.c_str());
-		
-	} else {
-		directorydownloadimage="romfs:/nop.png";
-		printf("# %d callimage imagen: %s \n",cain,directorydownloadimage.c_str());
+	if(!isFileExist(temp)){
+		temp="romfs:/nop.png";
+		printf("# %d callimage imagen: %s \n",pos,temp.c_str());
 	}
 	
-	TPreview.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
-	tempimage = directorydownloadimage;
-}
-
-void callimagesearch(int cain)
-{
-	std::string temp = BigData["arrays"]["search"]["images"][cain];
+	TPreview.loadFromFileCustom(temp.c_str(), sizeportraitx, sizeportraity);
+	tempimage = temp;
+	
+	//extra img 
+	int bval,aval;
+	int sisea = imageV.size();
+	if (pos == 0){bval = sisea-1;} else {bval = pos-1;}
+	if (pos+1 == sisea){aval = 0;} else {aval = pos+1;}
+	
+	temp = imageV[bval];
 	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
-	std::string directorydownloadimage = rootdirectory+"DATA/";
-	directorydownloadimage.append(temp);
-
-	TSearchPreview.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
-	tempimage = directorydownloadimage;
-}
-
-void callimagefavorites(int cain)
-{
-	std::string temp = BigData["arrays"]["favorites"][cain];
-	replace(temp,"https://jkanime.net/","");
-	replace(temp,"/","");
-	std::string directorydownloadimage = rootdirectory+"DATA/";
-	directorydownloadimage.append(temp+".jpg");
-		
-//		printf("# %d callimage imagen: %s \n",cain,directorydownloadimage.c_str());
-	TFavorite.loadFromFileCustom(directorydownloadimage.c_str(), sizeportraitx, sizeportraity);
-	tempimage = directorydownloadimage;
+	temp = rootdirectory+"DATA/"+temp;
+	if(!isFileExist(temp)){temp = "romfs:/nop.png";}
+	TPreviewb.loadFromFileCustom(temp, sizeportraitx-142, sizeportraity-100);
+	
+	temp = imageV[aval];
+	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
+	temp = rootdirectory+"DATA/"+temp;
+	if(!isFileExist(temp)){temp = "romfs:/nop.png";}
+	TPreviewa.loadFromFileCustom(temp, sizeportraitx-142, sizeportraity-100);
 }
 
 void PushDirBuffer(std::string a,std::string name){
@@ -526,6 +519,30 @@ int capBuffer () {
 return 0;
 }
 
+void get_favorites()
+{
+	BigData["arrays"]["favorites"]["link"].clear();
+	BigData["arrays"]["favorites"]["images"].clear();
+	std::string temp;
+	std::ifstream infile;
+
+	std::ifstream file(rootdirectory+"favoritos.txt");
+	std::string str;
+	while (std::getline(file, str)) {
+		//std::cout << str << "\n";
+		std::string strtmp = str;
+		if (str.find("jkanime"))
+		{
+			BigData["arrays"]["favorites"]["link"].push_back(str);
+			replace(strtmp, "https://jkanime.net/", "");
+			replace(strtmp, "/", ".jpg");
+			strtmp = "https://cdn.jkanime.net/assets/images/animes/image/"+strtmp;
+			BigData["arrays"]["favorites"]["images"].push_back(strtmp);				
+		}
+	}
+	file.close();
+	//std::cout << "-----  " << BigData << std::endl;
+}
 bool isFavorite(std::string fav){
 	/*
 		static std::string limit = "";

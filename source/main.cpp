@@ -233,7 +233,9 @@ int main(int argc, char **argv)
 				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
 				e.jbutton.button=-1;
-				if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() || TSearchPreview.SP() || TFavorite.SP()) e.jbutton.button = 0;
+				if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = 0;
+				if (TPreviewb.SP()) e.jbutton.button = 13;
+				if (TPreviewa.SP()) e.jbutton.button = 15;
 				if (B_B.SP()) e.jbutton.button = 1;
 				if (B_X.SP()) e.jbutton.button = 2;
 				if (B_Y.SP()) e.jbutton.button = 3;
@@ -249,7 +251,8 @@ int main(int argc, char **argv)
 				if (T_D.SP()&&isDownloading) statenow = downloadstate;
 				if (CLEAR.SP()){
 					GOD.PleaseWait("Borrando cache");
-					BigData = "{}"_json;
+					BigData["DataBase"] = "{}"_json;
+					BigData["latestchapter"] = "";
 					fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 						cancelcurl = 1;
 						quit = true;
@@ -306,12 +309,12 @@ int main(int argc, char **argv)
 							case favoritesstate:
 							{
 								activatefirstimage=true;
-								if ((int)BigData["arrays"]["favorites"].size() >= 1 ){
+								if ((int)BigData["arrays"]["favorites"]["link"].size() >= 1 ){
 								TChapters.free();
 								CheckImgNet(tempimage);
 								TChapters.loadFromFileCustom(tempimage, 550, 400);
 								statenow = chapterstate;
-								temporallink = BigData["arrays"]["favorites"][favchapter];
+								temporallink = BigData["arrays"]["favorites"]["link"][favchapter];
 
 								std::cout << temporallink << std::endl;
 								capBuffer();
@@ -379,10 +382,10 @@ int main(int argc, char **argv)
 						case favoritesstate:/*
 							//please don't do-it
 							delFavorite();
-							TFavorite.free();
+							
 							favchapter=0;
 							statenow = programationstate;
-							BigData["arrays"]["favorites"].clear();*/
+							BigData["arrays"]["favorites"]["link"].clear();*/
 							break;
 						}
 					}
@@ -417,7 +420,6 @@ int main(int argc, char **argv)
 							{
 								returnnow = toprogramation;
 								statenow = programationstate;
-								TSearchPreview.free();
 							}
 							break;
 
@@ -462,27 +464,14 @@ int main(int argc, char **argv)
 							break;
 						case favoritesstate:
 							delFavorite(favchapter);
-							TFavorite.free();
+							
 							if (!reloading)
 							{
 								if (favchapter > 0) favchapter--;
-								BigData["arrays"]["favorites"].clear();
+								get_favorites();
 								statenow = favoritesstate;
-								std::string temp;
-								std::ifstream infile;
-
-								std::ifstream file(rootdirectory+"favoritos.txt");
-								std::string str;
-								while (std::getline(file, str)) {
-									std::cout << str << "\n";
-									if (str.find("jkanime"))
-									{
-										BigData["arrays"]["favorites"].push_back(str);
-									}
-								}
-								file.close();
 							}
-							callimagefavorites(favchapter);
+							callimage(favchapter,BigData["arrays"]["favorites"]["images"]);
 						break;
 
 						}
@@ -495,25 +484,10 @@ int main(int argc, char **argv)
 						case programationstate:
 							if (!reloading)
 							{activatefirstimage=true;
+								get_favorites();
 								returnnow = tofavorite;
-								BigData["arrays"]["favorites"].clear();
 								statenow = favoritesstate;
-								std::string temp;
-								std::ifstream infile;
-
-								std::ifstream file(rootdirectory+"favoritos.txt");
-								std::string str;
-								while (std::getline(file, str)) {
-									std::cout << str << "\n";
-									if (str.find("jkanime"))
-									{
-										BigData["arrays"]["favorites"].push_back(str);
-									}
-								}
-								file.close();
-								callimagefavorites(favchapter);
-
-
+								callimage(favchapter,BigData["arrays"]["favorites"]["images"]);
 							}
 							break;
 						case downloadstate:
@@ -572,7 +546,7 @@ int main(int argc, char **argv)
 #endif // __SWITCH__
 								if (searchtext.length() > 0){
 									searchchapter = 0;
-									TSearchPreview.free();
+									
 									BigData["arrays"]["search"]["link"].clear();
 									BigData["arrays"]["search"]["images"].clear();
 									statenow = searchstate;
@@ -636,7 +610,7 @@ int main(int argc, char **argv)
 								else {
 									selectchapter = BigData["arrays"]["chapter"]["link"].size() - 1;
 								}
-								callimage(selectchapter);
+								callimage(selectchapter,BigData["arrays"]["chapter"]["images"]);
 
 							}
 
@@ -662,7 +636,7 @@ int main(int argc, char **argv)
 						case searchstate:
 							if (!reloadingsearch)
 							{
-								TSearchPreview.free();
+								
 								if (searchchapter > 0)
 								{
 									searchchapter--;
@@ -671,23 +645,23 @@ int main(int argc, char **argv)
 								else {
 									searchchapter = BigData["arrays"]["search"]["link"].size() - 1;
 								}
-								callimagesearch(searchchapter);
+								callimage(searchchapter,BigData["arrays"]["search"]["images"]);
 
 							}
 							break;
 
 						case favoritesstate:
 
-							TFavorite.free();
+							
 							if (favchapter > 0)
 							{
 								favchapter--;
 								//std::cout << favchapter << std::endl;
 							}
 							else {
-								favchapter = (int)BigData["arrays"]["favorites"].size() - 1;
+								favchapter = (int)BigData["arrays"]["favorites"]["link"].size() - 1;
 							}
-							callimagefavorites(favchapter);
+							callimage(favchapter,BigData["arrays"]["favorites"]["images"]);
 							break;
 
 						}
@@ -699,7 +673,7 @@ int main(int argc, char **argv)
 						case searchstate:
 							if (!reloadingsearch)
 							{
-								TSearchPreview.free();
+								
 								if (searchchapter < (int)BigData["arrays"]["search"]["link"].size() - 1)
 								{
 									searchchapter++;
@@ -709,7 +683,7 @@ int main(int argc, char **argv)
 								else {
 									searchchapter = 0;
 								}
-								callimagesearch(searchchapter);
+								callimage(searchchapter,BigData["arrays"]["search"]["images"]);
 							}
 							break;
 
@@ -729,7 +703,7 @@ int main(int argc, char **argv)
 									selectchapter = 0;
 								}
 
-								callimage(selectchapter);
+								callimage(selectchapter,BigData["arrays"]["chapter"]["images"]);
 
 							}
 							break;
@@ -754,8 +728,8 @@ int main(int argc, char **argv)
 							break;
 
 						case favoritesstate:
-							TFavorite.free();
-							if (favchapter < (int)BigData["arrays"]["favorites"].size() - 1)
+							
+							if (favchapter < (int)BigData["arrays"]["favorites"]["link"].size() - 1)
 							{
 								favchapter++;
 
@@ -764,7 +738,7 @@ int main(int argc, char **argv)
 							else {
 								favchapter = 0;
 							}
-							callimagefavorites(favchapter);
+							callimage(favchapter,BigData["arrays"]["favorites"]["images"]);
 							break;
 
 						}
@@ -944,15 +918,24 @@ int main(int argc, char **argv)
 							activatefirstimage=true;
 						} 
 					}
+					std::string seltext ="";
 					for (int x = 0; x < (int)BigData["arrays"]["chapter"]["link"].size(); x++) {
 						std::string temptext = BigData["arrays"]["chapter"]["link"][x];
+						temptext = temptext.substr(0,temptext.length()-1);
 						replace(temptext, "https://jkanime.net/", "");
 						replace(temptext, "/", " ");
 						replace(temptext, "-", " ");
 						mayus(temptext);
+						if (x == selectchapter) { seltext = temptext;}
+
+						
+						std::string temp = BigData["arrays"]["chapter"]["images"][x];
+						replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
+						temp = rootdirectory+"DATA/"+temp;
+						temptext = (temptext.substr(0,temptext.rfind(" ")).substr(0,53) + " " + temptext.substr(temptext.rfind(" ")) );
 
 						if (x == selectchapter) {
-							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+							T_T.loadFromRenderedText(GOD.digifont, temptext, { 255,255,255 });
 							VOX.render_VOX({posxbase-2,posybase + (x * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 							T_T.render(posxbase, posybase + (x * 22));
 
@@ -960,6 +943,7 @@ int main(int argc, char **argv)
 						}
 						else
 						{
+							//if (x < 6) GOD.Cover(temp,posxbase+600, posybase + (x * 22),temp,20);
 							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
 							gTextTexture.render(posxbase, posybase + (x * 22));
 
@@ -969,14 +953,30 @@ int main(int argc, char **argv)
 					if (activatefirstimage)
 					{
 						TPreview.free();
-						callimage(selectchapter);
+						callimage(selectchapter,BigData["arrays"]["chapter"]["images"]);
 						activatefirstimage = false;
 					}
 					if (preview)
 					{
 						{
-						VOX.render_VOX({ xdistance + 18, ydistance + 8, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
-						TPreview.render(posxbase + xdistance, posybase + ydistance);
+						int cfx=0,cfy=-50;
+						int bfx=111+cfx, bfy=-142+cfy, afx=-100+cfx, afy=206+cfy;
+						//after
+						VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
+						TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
+						//text
+						seltext = (seltext.substr(0,seltext.rfind(" ")).substr(0,48) + " " + seltext.substr(seltext.rfind(" ")) );
+						gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext, { 255,255,255 }, 205);
+						
+						//curret
+						VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
+						TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
+						//text
+						gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + cfy+300);
+						//before
+						VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
+						TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
+
 						}
 					}
 
@@ -1028,8 +1028,8 @@ int main(int argc, char **argv)
 						u32 sel=(GOD.TouchY*30/670);
 						if (sel >= 0 && sel < BigData["arrays"]["search"]["link"].size()){
 							searchchapter = sel;
-							TSearchPreview.free();
-							callimagesearch(searchchapter);					
+							
+							callimage(searchchapter,BigData["arrays"]["search"]["images"]);					
 						}
 					}
 					if ((int)BigData["arrays"]["search"]["link"].size() >= 1){
@@ -1042,6 +1042,7 @@ int main(int argc, char **argv)
 							gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(BigData["arrays"]["search"]["link"].size()), {0,0,0});
 							gTextTexture.render(400, 690);
 						}
+						std::string seltext;
 						for (int x = of; x < (int)BigData["arrays"]["search"]["link"].size(); x++) {
 							std::string temptext = BigData["arrays"]["search"]["link"][x];
 						
@@ -1050,6 +1051,7 @@ int main(int argc, char **argv)
 							replace(temptext, "-", " ");
 							mayus(temptext);
 							if (x == searchchapter) {
+								seltext= temptext;
 								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 								T_T.render(posxbase, posybase + ((x-of) * 22));
@@ -1068,16 +1070,30 @@ int main(int argc, char **argv)
 
 						if (activatefirstsearchimage)
 						{
-							TSearchPreview.free();
-							callimagesearch(searchchapter);
+							callimage(searchchapter,BigData["arrays"]["search"]["images"]);
 							activatefirstsearchimage = false;
 						}
 						if (preview)
 						{
 							{
-							VOX.render_VOX({ xdistance + 18, ydistance + 8, sizeportraity + 4, sizeportraitx + 4}, 0, 0, 0, 200);
-							TSearchPreview.render(posxbase + xdistance, posybase + ydistance);}
+							int cfx=0,cfy=-50;
+							int bfx=111+cfx, bfy=-142+cfy, afx=-100+cfx, afy=206+cfy;
+							//after
+							VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
+							TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
+							//text
+							gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext.substr(0,48), { 255,255,255 }, 205);
 							
+							//curret
+							VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
+							TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
+							//text
+							gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + cfy+300);
+							//before
+							VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
+							TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
+
+							}
 						}
 					}else NOP.render_T(230, 355,searchtext);
 					
@@ -1103,22 +1119,22 @@ int main(int argc, char **argv)
 				
 				if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
 					u32 sel=(GOD.TouchY*30/660);
-					if (sel >= 0 && sel < BigData["arrays"]["favorites"].size()){
+					if (sel >= 0 && sel < BigData["arrays"]["favorites"]["link"].size()){
 						favchapter = sel;
-						TFavorite.free();
-						callimagefavorites(favchapter);
+						callimage(favchapter,BigData["arrays"]["favorites"]["images"]);
 					}
 				}
 
-				if ((int)BigData["arrays"]["favorites"].size() >= 1 ){
+				std::string seltext;
+				if ((int)BigData["arrays"]["favorites"]["link"].size() >= 1 ){
 				VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
 				int of = favchapter < 30 ? 0 : favchapter - 26;
-				if (BigData["arrays"]["favorites"].size() > 30) {
-					gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(BigData["arrays"]["favorites"].size()), {0,0,0});
+				if (BigData["arrays"]["favorites"]["link"].size() > 30) {
+					gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(BigData["arrays"]["favorites"]["link"].size()), {0,0,0});
 					gTextTexture.render(400, 690);
 				}
-				for (int x = of; x < (int)BigData["arrays"]["favorites"].size(); x++) {
-					std::string temptext = BigData["arrays"]["favorites"][x];
+				for (int x = of; x < (int)BigData["arrays"]["favorites"]["link"].size(); x++) {
+					std::string temptext = BigData["arrays"]["favorites"]["link"][x];
 
 					replace(temptext, "https://jkanime.net/", "");
 					replace(temptext, "/", "");
@@ -1126,6 +1142,7 @@ int main(int argc, char **argv)
 					replace(temptext, "-", " ");
 						mayus(temptext);
 						if (x == favchapter) {
+							seltext = temptext;
 	//						CheckImgNet(machu);
 	//						tempimage = machu;
 								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
@@ -1133,10 +1150,6 @@ int main(int argc, char **argv)
 								T_T.render(posxbase, posybase + ((x-of) * 22));
 
 								{
-								VOX.render_VOX({posxbase + xdistance -2,posybase + ydistance -2, TFavorite.getWidth()+4, TFavorite.getHeight()+4}, 0, 0, 0, 200);
-								TFavorite.render(posxbase + xdistance, posybase + ydistance);
-
-	//							GOD.Cover(machu,610,scroll > 570 ? 570 : scroll ,"",200);
 								Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));}
 						}
 						else if((x-of) < 30)
@@ -1146,11 +1159,30 @@ int main(int argc, char **argv)
 						}
 					}
 				}
+				
+				{
+					int cfx=0,cfy=-50;
+					int bfx=111+cfx, bfy=-142+cfy, afx=-100+cfx, afy=206+cfy;
+					//after
+					VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
+					TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
+					//text
+					gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext.substr(0,48), { 255,255,255 }, 205);
+					//curret
+					VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
+					TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
+					//text
+					gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + cfy+300);
+					//before
+					VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
+					TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
+				}
+				
 				{//Draw footer buttons
 					int dist = 1100,posdist = 160;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_B.render_T(dist, 680,"Volver");dist -= posdist;
-					if ((int)BigData["arrays"]["favorites"].size() >= 1){
+					if ((int)BigData["arrays"]["favorites"]["link"].size() >= 1){
 						B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
 					}else NOP.render_T(230, 355,"");
 					
@@ -1306,7 +1338,7 @@ int main(int argc, char **argv)
 	Heart.free();
 	TPreview.free();
 	TChapters.free();
-	TSearchPreview.free();
+	
 	B_A.free();
 	B_B.free();
 	B_Y.free();
