@@ -8,8 +8,8 @@ LTexture Farest;
 LTexture Heart;
 LTexture TChapters;
 LTexture TPreview;
-LTexture TSearchPreview;///////
-LTexture TFavorite;
+LTexture TPreviewb;
+LTexture TPreviewa;
 //Render Buttons
 LTexture B_A;
 LTexture B_B;

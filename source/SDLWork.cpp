@@ -112,22 +112,14 @@ void SDLB::intA(){
 		}
 	}
 
-#ifdef __SWITCH__
-
 	gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
 	gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
 	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
 	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
 	gFont4 = TTF_OpenFont("romfs:/lazy2.ttf", 30);
 	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
+	digifontC = TTF_OpenFont("romfs:/digifont.otf", 11);
 
-#else
-	gFont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy.ttf", 16);
-	digifont = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\digifont.otf", 16);
-	gFont2 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 150);
-	gFontcapit = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 100);
-	gFont3 = TTF_OpenFont("C:\\respaldo2017\\C++\\test\\Debug\\lazy2.ttf", 40);
-#endif // SWITCH
 }
 void SDLB::Image(std::string path,int X, int Y,std::string Text,bool off){
 
@@ -239,6 +231,7 @@ void SDLB::deint(){
 	gFont = NULL;
 	TTF_CloseFont(digifont);
 	digifont = NULL;
+	digifontC = NULL;
 
 	TTF_CloseFont(gFontcapit);
 	gFontcapit = NULL;

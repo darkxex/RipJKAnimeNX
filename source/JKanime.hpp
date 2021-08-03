@@ -20,9 +20,7 @@
 #include <fstream>
 #include <thread>
 
-void callimage(int cain);
-void callimagesearch(int cain);
-void callimagefavorites(int cain);
+void callimage(int pos,std::vector<std::string> imageV);
 
 int downloadjkanimevideo(void* data);
 int refrescarpro(void* data);
@@ -33,6 +31,7 @@ void PushDirBuffer(std::string a,std::string name);
 int capit(void* data);
 int MKfavimgfix(bool images);
 int capBuffer();
+void get_favorites();
 bool isFavorite(std::string fav);
 void delFavorite(int inst = -1);
 
