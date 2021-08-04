@@ -1113,7 +1113,7 @@ int main(int argc, char **argv)
 			case favoritesstate:	{
 				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Lista de Favoritos", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				
 				if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
