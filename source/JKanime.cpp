@@ -36,6 +36,8 @@ extern int porcentajereload;
 extern int imgNumbuffer;
 extern int porcentajebuffer;
 extern int porcentajebufferA;
+extern int porcentajebufferF;
+extern int porcentajebufferFF;
 extern bool activatefirstimage;
 extern std::string serverenlace;
 extern std::string DownTitle;
@@ -93,6 +95,7 @@ void callimage(int pos,std::vector<std::string> imageV)
 }
 
 void PushDirBuffer(std::string a,std::string name){
+	if(quit) return;
 	//Sinopsis
 	std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 	replace(terese, "<p rel=\"sinopsis\">", "");
@@ -359,8 +362,41 @@ int MKcapitBuffer() {
 }
 //END THREAD CHAIN
 
-int searchjk(void* data)
-{
+int MKfavimgfix(bool images){
+	std::ifstream file(rootdirectory+"favoritos.txt");
+	std::string str;
+	std::string name ="";
+	while (std::getline(file, str)) {
+		//std::cout << str << "\n";
+		if(quit) return 0;
+		if (str.find("jkanime"))
+		{
+			name=str;
+			replace(name, "https://jkanime.net/", "");
+			replace(name, "/", "");
+				
+			if (images) {
+				porcentajebufferFF++;
+				CheckImgNet(rootdirectory+"DATA/"+name+".jpg");
+			} else {
+				porcentajebufferF++;
+				if (BigData["DataBase"][name]["TimeStamp"].empty() || BigData["DataBase"][name]["TimeStamp"] != BigData["TimeStamp"]){
+					std::string a = gethtml(str);
+					PushDirBuffer(a,name);
+				}
+			}
+		}
+	}
+	file.close();
+	porcentajebufferF=0;
+	if (!images) {
+		porcentajebufferFF=0;
+		printf("# End fav Download\n");
+	}
+	return 0;
+}
+
+int searchjk(void* data) {
 	porcentajereload = 0;
 	activatefirstsearchimage = true;
 	reloadingsearch = true;	 
@@ -371,12 +407,10 @@ int searchjk(void* data)
 	if (searchtext.length() >= 2) {
 		std::cout << searchtext << std::endl;
 		std::string content = "";
-		
 		int page = 1;
 		while (true){
 			std::string tempCont=gethtml("https://jkanime.net/buscar/" + searchtext + "/"+std::to_string(page)+"/");
 			content += tempCont;
-			
 			std::string scrap = scrapElement(tempCont, "Resultados Siguientes");
 			std::cout << scrap << "  # " << std::to_string(page) << std::endl;
 			if (scrap.length() > 0){
@@ -435,8 +469,9 @@ int searchjk(void* data)
 //get cap thread
 int capit(void* data) {
 	std::string a = "";
-	a = gethtml(temporallink);
-	std::string name = temporallink;
+	std::string bb = temporallink;
+	a = gethtml(bb);
+	std::string name = bb;
 	replace(name, "https://jkanime.net/", ""); replace(name, "/", "");
 	
 	PushDirBuffer(a,name);
@@ -452,33 +487,6 @@ int capit(void* data) {
 		printf("Error \n");
 	}
 return 0;
-}
-
-
-int MKfavimgfix(bool images){
-	std::ifstream file(rootdirectory+"favoritos.txt");
-	std::string str;
-	std::string name ="";
-	while (std::getline(file, str)) {
-		//std::cout << str << "\n";
-		if (str.find("jkanime"))
-		{
-				name=str;
-				replace(name, "https://jkanime.net/", "");
-				replace(name, "/", "");
-				
-			if (images) {
-				CheckImgNet(rootdirectory+"DATA/"+name+".jpg");
-			} else {
-				if (BigData["DataBase"][name]["TimeStamp"].empty()){
-					std::string a = gethtml(str);
-					PushDirBuffer(a,name);
-				}
-			}
-		}
-	}
-	file.close();
-	return 0;
 }
 
 //anime manager
@@ -519,8 +527,7 @@ int capBuffer () {
 return 0;
 }
 
-void get_favorites()
-{
+void get_favorites() {
 	BigData["arrays"]["favorites"]["link"].clear();
 	BigData["arrays"]["favorites"]["images"].clear();
 	std::string temp;

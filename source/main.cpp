@@ -281,7 +281,6 @@ int main(int argc, char **argv)
 									int v2 = temporallink.find("/", 20);
 									temporallink = temporallink.substr(0, v2 + 1);
 
-									printf("q wea es esto? %s  : %d\n",temporallink.c_str() ,selectchapter);
 									statenow = chapterstate;
 									capBuffer();								
 									gFAV = isFavorite(temporallink);
@@ -1114,7 +1113,7 @@ int main(int argc, char **argv)
 			case favoritesstate:	{
 				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Lista de Favoritos", {100,0,0});
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				
 				if(GOD.TouchY < 670 && GOD.TouchX < 530 && GOD.TouchY > 5 && GOD.TouchX > 15){
@@ -1177,7 +1176,11 @@ int main(int argc, char **argv)
 					VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
 					TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
 				}
-				
+				if (porcentajebufferF > 0){
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering fav: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
+				}
+
 				{//Draw footer buttons
 					int dist = 1100,posdist = 160;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
