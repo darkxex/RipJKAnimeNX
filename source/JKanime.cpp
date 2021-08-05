@@ -95,6 +95,7 @@ void callimage(int pos,std::vector<std::string> imageV)
 }
 
 void PushDirBuffer(std::string a,std::string name){
+	if(quit) return;
 	//Sinopsis
 	std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 	replace(terese, "<p rel=\"sinopsis\">", "");
@@ -367,6 +368,7 @@ int MKfavimgfix(bool images){
 	std::string name ="";
 	while (std::getline(file, str)) {
 		//std::cout << str << "\n";
+		if(quit) return 0;
 		if (str.find("jkanime"))
 		{
 			name=str;
