@@ -85,6 +85,7 @@ bool hasStealth=false;
 AccountUid uid;
 SDL_Thread* capithread = NULL;
 bool quit=false;
+std::string KeyName;
 
 #ifdef __SWITCH__
 HidsysNotificationLedPattern blinkLedPattern(u8 times);
@@ -99,7 +100,7 @@ std::vector<std::string> arrayserversbak= {
 "Fembed 2.0","Nozomi","MixDrop","Desu","Xtreme S","Okru"
 };
 
-json BigData;
+json BD;
 
 //caps vars
 int maxcapit = 1;
