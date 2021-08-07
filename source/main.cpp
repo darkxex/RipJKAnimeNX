@@ -276,13 +276,13 @@ int main(int argc, char **argv)
 								if (!reloading&&BigData["arrays"]["chapter"]["link"].size()>=1)
 								{activatefirstimage=true;
 									TChapters.free();
-									TChapters.loadFromFileCustom(tempimage, 550, 400);
+									TChapters.loadFromFileCustom(BigData["common"]["tempimage"], 550, 400);
 									temporallink = BigData["arrays"]["chapter"]["link"][selectchapter];
 									int v2 = temporallink.find("/", 20);
 									temporallink = temporallink.substr(0, v2 + 1);
 
 									statenow = chapterstate;
-									capBuffer();								
+									capBuffer(temporallink);								
 									gFAV = isFavorite(temporallink);
 								}
 							}
@@ -293,12 +293,13 @@ int main(int argc, char **argv)
 								activatefirstimage=true;
 								if (!reloadingsearch && BigData["arrays"]["search"]["link"].size()>=1)
 								{
+									CheckImgNet(BigData["common"]["tempimage"]);
 									TChapters.free();
-									TChapters.loadFromFileCustom(tempimage, 550, 400);
+									TChapters.loadFromFileCustom(BigData["common"]["tempimage"], 550, 400);
 									statenow = chapterstate;
 									temporallink = BigData["arrays"]["search"]["link"][searchchapter];
 									std::cout << temporallink << std::endl;
-									capBuffer();
+									capBuffer(temporallink);
 									gFAV = isFavorite(temporallink);
 								}
 
@@ -309,14 +310,14 @@ int main(int argc, char **argv)
 							{
 								activatefirstimage=true;
 								if ((int)BigData["arrays"]["favorites"]["link"].size() >= 1 ){
+								CheckImgNet(BigData["common"]["tempimage"]);
 								TChapters.free();
-								CheckImgNet(tempimage);
-								TChapters.loadFromFileCustom(tempimage, 550, 400);
+								TChapters.loadFromFileCustom(BigData["common"]["tempimage"], 550, 400);
 								statenow = chapterstate;
 								temporallink = BigData["arrays"]["favorites"]["link"][favchapter];
 
 								std::cout << temporallink << std::endl;
-								capBuffer();
+								capBuffer(temporallink);
 								gFAV = true;
 								}
 							}
@@ -539,13 +540,11 @@ int main(int argc, char **argv)
 						case searchstate:
 							if (!reloadingsearch)
 							{activatefirstimage=true;
-#ifdef __SWITCH__
-								searchtext = KeyboardCall("Buscar el Anime",searchtext);
+								if (BigData["searchtext"].empty()){BigData["searchtext"]="";}
+								BigData["searchtext"] = KeyboardCall("Buscar el Anime",BigData["searchtext"]);
 								//blinkLed(1);//LED
-#endif // __SWITCH__
-								if (searchtext.length() > 0){
+								if ((BigData["searchtext"].get<std::string>()).length() > 0){
 									searchchapter = 0;
-									
 									BigData["arrays"]["search"]["link"].clear();
 									BigData["arrays"]["search"]["images"].clear();
 									statenow = searchstate;
@@ -633,7 +632,7 @@ int main(int argc, char **argv)
 							break;
 
 						case searchstate:
-							if (!reloadingsearch)
+							if (!reloadingsearch&&(BigData["arrays"]["search"]["link"].size() >= 1))
 							{
 								
 								if (searchchapter > 0)
@@ -670,7 +669,7 @@ int main(int argc, char **argv)
 						switch (statenow)
 						{
 						case searchstate:
-							if (!reloadingsearch)
+							if (!reloadingsearch&&(BigData["arrays"]["search"]["link"].size() >= 1))
 							{
 								
 								if (searchchapter < (int)BigData["arrays"]["search"]["link"].size() - 1)
@@ -783,13 +782,13 @@ int main(int argc, char **argv)
 			{//draw description
 			VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
 			static std::string rese_prot = "..";
-			if (rese_prot != sinopsis){//load texture on text change 
-				T_R.loadFromRenderedTextWrap(GOD.gFont, sinopsis.substr(0,800), textColor, 750);
-				rese_prot = sinopsis;
+			if (rese_prot != BigData["common"]["sinopsis"]){//load texture on text change 
+				T_R.loadFromRenderedTextWrap(GOD.gFont, BigData["common"]["sinopsis"], textColor, 750);
+				rese_prot = BigData["common"]["sinopsis"];
 			}
 			T_R.render(posxbase+15, posybase + 65);
 
-			gTextTexture.loadFromRenderedTextWrap(GOD.gFont4, generos, textColor,750);
+			gTextTexture.loadFromRenderedTextWrap(GOD.gFont4, BigData["common"]["generos"], textColor,750);
 			gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
 			}
 			
@@ -801,11 +800,11 @@ int main(int argc, char **argv)
 			
 			if (maxcapit >= 0){
 				
-				if (nextdate == "Pelicula"){
+				if (BigData["common"]["nextdate"] == "Pelicula"){
 					gTextTexture.loadFromRenderedText(GOD.gFont3, "Pelicula", { 250,250,250 });
 					gTextTexture.render(posxbase + 820, posybase + 598);
 				}else {
-					if (enemision)
+					if (BigData["common"]["enemision"] == "true")
 					{
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
 						gTextTexture.render(posxbase + 820, posybase + 598);
@@ -815,7 +814,7 @@ int main(int argc, char **argv)
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
 						gTextTexture.render(posxbase + 820, posybase + 598);
 					}
-					gTextTexture.loadFromRenderedText(GOD.gFont, nextdate, { 255,255,255 });
+					gTextTexture.loadFromRenderedText(GOD.gFont, BigData["common"]["nextdate"], { 255,255,255 });
 					gTextTexture.render(posxbase + 1020, posybase + 615);
 				}
 
@@ -843,7 +842,7 @@ int main(int argc, char **argv)
 			//use this to move the element
 			int XS=100 , YS =0;
 			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
-			if (maxcapit >= 0&&nextdate != "Pelicula"){//draw caps Scroll
+			if (maxcapit >= 0&&BigData["common"]["nextdate"] != "Pelicula"){//draw caps Scroll
 				VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
 				if (capmore-2 >= mincapit) {
 					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
@@ -880,7 +879,7 @@ int main(int argc, char **argv)
 				B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
 			} else {
 				VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
-				if (nextdate == "Pelicula"){
+				if (BigData["common"]["nextdate"] == "Pelicula"){
 					T_T.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
 					T_T.render(posxbase + 282+XS-T_T.getWidth()/2, posybase + 558+YS);
 				} else {
@@ -996,8 +995,6 @@ int main(int argc, char **argv)
 					if (porcentajebuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/30)", {0,100,0});
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
-						Heart.render(posxbase + 570, posybase + 3 + (porcentajebuffer-1) * 22);
-						Heart.render(posxbase + 550, posybase + 3 + (porcentajebufferA-1) * 22);
 					}
 
 					//Draw footer buttons
@@ -1094,7 +1091,10 @@ int main(int argc, char **argv)
 
 							}
 						}
-					}else NOP.render_T(230, 355,searchtext);
+					}else {
+						NOP.render_T(230, 355,"?");
+						BigData["searchtext"]="";
+					}
 					
 					{//Draw footer buttons
 					int dist = 1100,posdist = 160;
@@ -1143,7 +1143,7 @@ int main(int argc, char **argv)
 						if (x == favchapter) {
 							seltext = temptext;
 	//						CheckImgNet(machu);
-	//						tempimage = machu;
+	//						BigData["common"]["tempimage"] = machu;
 								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 								T_T.render(posxbase, posybase + ((x-of) * 22));
@@ -1265,6 +1265,9 @@ int main(int argc, char **argv)
 			if (statenow == programationstate){
 				het = porcentajebuffer > 0 ? T_D.getHeight()+42 : 40;
 			}
+			if (statenow == favoritesstate){
+				het = porcentajebufferF > 0 ? T_D.getHeight()+42 : 40;
+			}
 			if (statenow == chapterstate){
 				het=10;
 			}
@@ -1277,9 +1280,13 @@ int main(int argc, char **argv)
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 		
+		static int net=20;
 		if (!HasConnection()) {
-			GOD.PleaseWait("No Hay Red Conectada, Esperando por la red");
+			GOD.PleaseWait("No Hay Red Conectada, Esperando por la red "+std::to_string(net));
 			SDL_Delay(1000);
+			if (net <= 0){quit=true;} else {net--;}
+		} else {
+			net=20;
 		}
 
 		//Update screen
@@ -1287,8 +1294,10 @@ int main(int argc, char **argv)
 	}
 	cancelcurl=1;
 	//clear allocate
-	BigData["arrays"] = "{}"_json;;
-
+	BigData["arrays"] = "{}"_json;
+	//std::cout  << BigData << std::endl;
+	BigData["common"] = "{}"_json;
+//
 	// write prettified JSON
 	std::ofstream otf(rootdirectory+"DataBase.json");
 	otf << std::setw(4) << BigData << std::endl;

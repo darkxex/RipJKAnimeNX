@@ -56,22 +56,17 @@ int selectchapter = 0;
 int porcentajereload = 0;
 int imgNumbuffer = 0;
 int porcentajebuffer = 0;
-int porcentajebufferA = 0;
 int porcentajebufferF =0;
 int porcentajebufferFF =0;
 bool activatefirstimage = true;
 std::string serverenlace = "...";
 std::string DownTitle="...";
 
-int maxcapit = 1;
-int mincapit = 0;
-int capmore = 1;
 
 //search
 int searchchapter = 0;
 bool reloadingsearch = false;
 bool activatefirstsearchimage = true;
-std::string searchtext = "";
 std::string tempimage = "";
 //downloads
 bool isDownloading=false;
@@ -107,10 +102,9 @@ std::vector<std::string> arrayserversbak= {
 json BigData;
 
 //caps vars
-std::string sinopsis = "";
-bool enemision = false;
-std::string nextdate = "";
-std::string generos = "";
+int maxcapit = 1;
+int mincapit = 0;
+int capmore = 1;
 
 int sizeportraity = 210;
 int sizeportraitx = 297;
