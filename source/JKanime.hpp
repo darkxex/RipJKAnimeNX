@@ -23,14 +23,17 @@
 void callimage(int pos,std::vector<std::string> imageV);
 
 int downloadjkanimevideo(void* data);
+
 int refrescarpro(void* data);
 int MKcapitBuffer();
+int MKfavimgfix(bool images);
+
 int searchjk(void* data);
 
 void PushDirBuffer(std::string a,std::string name);
 int capit(void* data);
-int MKfavimgfix(bool images);
-int capBuffer();
+int capBuffer (std::string Tlink);
+
 void get_favorites();
 bool isFavorite(std::string fav);
 void delFavorite(int inst = -1);

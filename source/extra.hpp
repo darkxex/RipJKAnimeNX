@@ -56,22 +56,17 @@ int selectchapter = 0;
 int porcentajereload = 0;
 int imgNumbuffer = 0;
 int porcentajebuffer = 0;
-int porcentajebufferA = 0;
 int porcentajebufferF =0;
 int porcentajebufferFF =0;
 bool activatefirstimage = true;
 std::string serverenlace = "...";
 std::string DownTitle="...";
 
-int maxcapit = 1;
-int mincapit = 0;
-int capmore = 1;
 
 //search
 int searchchapter = 0;
 bool reloadingsearch = false;
 bool activatefirstsearchimage = true;
-std::string searchtext = "";
 std::string tempimage = "";
 //downloads
 bool isDownloading=false;
@@ -90,6 +85,7 @@ bool hasStealth=false;
 AccountUid uid;
 SDL_Thread* capithread = NULL;
 bool quit=false;
+std::string KeyName;
 
 #ifdef __SWITCH__
 HidsysNotificationLedPattern blinkLedPattern(u8 times);
@@ -104,13 +100,12 @@ std::vector<std::string> arrayserversbak= {
 "Fembed 2.0","Nozomi","MixDrop","Desu","Xtreme S","Okru"
 };
 
-json BigData;
+json BD;
 
 //caps vars
-std::string sinopsis = "";
-bool enemision = false;
-std::string nextdate = "";
-std::string generos = "";
+int maxcapit = 1;
+int mincapit = 0;
+int capmore = 1;
 
 int sizeportraity = 210;
 int sizeportraitx = 297;
