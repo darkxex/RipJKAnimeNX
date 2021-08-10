@@ -220,6 +220,7 @@ void PushDirBuffer(std::string a,std::string name) {
 	}
 	BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
 	std::cout << "Bufered: " << name << std::endl;
+
 }
 int downloadjkanimevideo(void* data) {
 	for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size();x++){
@@ -356,6 +357,8 @@ int MKcapitBuffer() {
 			PushDirBuffer(a,name);
 		}
 	}
+	//write json
+	write_DB(BD,rootdirectory+"DataBase.json");
 	porcentajebuffer = 0;
 	return true;
 }
@@ -363,6 +366,7 @@ int MKfavimgfix(bool images){
 	std::ifstream file(rootdirectory+"favoritos.txt");
 	std::string str;
 	std::string name ="";
+	bool hasanychange=false;
 	while (std::getline(file, str)) {
 		//std::cout << str << "\n";
 		if(quit) return 0;
@@ -380,6 +384,7 @@ int MKfavimgfix(bool images){
 				if (BD["DataBase"][name]["TimeStamp"].empty() || BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
 					std::string a = gethtml(str);
 					PushDirBuffer(a,name);
+					hasanychange=true;
 				}
 			}
 		}
@@ -389,6 +394,10 @@ int MKfavimgfix(bool images){
 	if (!images) {
 		porcentajebufferFF=0;
 		printf("# End fav Download\n");
+		if (hasanychange){
+			//write json
+			write_DB(BD,rootdirectory+"DataBase.json");
+		}
 	}
 	return 0;
 }
@@ -484,6 +493,8 @@ int capit(void* data) {
 	}catch(...){
 		printf("Error \n");
 	}
+	//write json
+	write_DB(BD,rootdirectory+"DataBase.json");
 return 0;
 }
 //anime manager

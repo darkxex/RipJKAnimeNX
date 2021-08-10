@@ -406,3 +406,13 @@ bool copy_me(std::string origen, std::string destino) {
 	}
 return false;
 }
+bool write_DB(json base,std::string path){
+	appletBeginBlockingHomeButton (0);
+	std::ofstream otf(path);
+	otf << std::setw(4) << base << std::endl;
+	otf.close();
+	appletEndBlockingHomeButton();
+	std::cout << "Json: writhen..." << std::endl;
+
+	return true;
+}

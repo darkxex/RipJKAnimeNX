@@ -54,7 +54,6 @@ int main(int argc, char **argv)
 #ifdef __SWITCH__
 	socketInitializeDefault();
 	romfsInit();
-	appletBeginBlockingHomeButton (0);
 	nxlinkStdio();
 	printf("printf output now goes to nxlink server\n");
 	struct stat st = { 0 };
@@ -78,17 +77,20 @@ int main(int argc, char **argv)
 		printf("Goted user\n");
 		accountExit();
 	} else printf("failed tu get user \n");
-	BD["com"]["KeyName"] = "";
 #endif
 	//quick fix wait for jkanime
 	//WebBrowserCall("https://jkanime.net",true);
 	//return 0;
 
+	//appletBeginBlockingHomeButton (0);
 
 	// read a JSON file
 	std::ifstream inf(rootdirectory+"DataBase.json");
 	if(!inf.fail()){inf >> BD;}
 	inf.close();
+	BD["arrays"] = "{}"_json;
+	//std::cout  << BD << std::endl;
+	BD["com"] = "{}"_json;
 
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
@@ -1313,11 +1315,9 @@ int main(int argc, char **argv)
 	BD["com"] = "{}"_json;
 //
 	// write prettified JSON
-	std::ofstream otf(rootdirectory+"DataBase.json");
-	otf << std::setw(4) << BD << std::endl;
-	otf.close();
-
-	appletEndBlockingHomeButton();
+	write_DB(BD,rootdirectory+"DataBase.json");
+	
+	//appletEndBlockingHomeButton();
 	
 	if (AppletMode){
 		SDL_Delay(2000);
