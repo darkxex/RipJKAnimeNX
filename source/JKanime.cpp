@@ -78,13 +78,13 @@ void callimage(int pos,std::vector<std::string> imageV) {
 	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
 	temp = rootdirectory+"DATA/"+temp;
 	if(!isFileExist(temp)){temp = "romfs:/nop.png";}
-	TPreviewb.loadFromFileCustom(temp, sizeportraitx-142, sizeportraity-100);
+	TPreviewb.loadFromFileCustom(temp, 155, 110);
 	
 	temp = imageV[aval];
 	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
 	temp = rootdirectory+"DATA/"+temp;
 	if(!isFileExist(temp)){temp = "romfs:/nop.png";}
-	TPreviewa.loadFromFileCustom(temp, sizeportraitx-142, sizeportraity-100);
+	TPreviewa.loadFromFileCustom(temp, 155, 110);
 }
 void PushDirBuffer(std::string a,std::string name) {
 	if(quit) return;

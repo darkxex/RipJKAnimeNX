@@ -107,8 +107,8 @@ int maxcapit = 1;
 int mincapit = 0;
 int capmore = 1;
 
-int sizeportraity = 210;
-int sizeportraitx = 297;
+int sizeportraity = 300;
+int sizeportraitx =424;
 int xdistance = 1010;
 int ydistance = 340;
 
