@@ -54,7 +54,6 @@ int main(int argc, char **argv)
 #ifdef __SWITCH__
 	socketInitializeDefault();
 	romfsInit();
-	appletBeginBlockingHomeButton (0);
 	nxlinkStdio();
 	printf("printf output now goes to nxlink server\n");
 	struct stat st = { 0 };
@@ -78,17 +77,20 @@ int main(int argc, char **argv)
 		printf("Goted user\n");
 		accountExit();
 	} else printf("failed tu get user \n");
-	BD["com"]["KeyName"] = "";
 #endif
 	//quick fix wait for jkanime
 	//WebBrowserCall("https://jkanime.net",true);
 	//return 0;
 
+	//appletBeginBlockingHomeButton (0);
 
 	// read a JSON file
 	std::ifstream inf(rootdirectory+"DataBase.json");
 	if(!inf.fail()){inf >> BD;}
 	inf.close();
+	BD["arrays"] = "{}"_json;
+	//std::cout  << BD << std::endl;
+	BD["com"] = "{}"_json;
 
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
@@ -971,20 +973,20 @@ int main(int argc, char **argv)
 					if (preview)
 					{
 						{
-						int cfx=0,cfy=-50;
-						int bfx=111+cfx, bfy=-142+cfy, afx=-100+cfx, afy=206+cfy;
+						seltext = (seltext.substr(0,seltext.rfind(" ")).substr(0,68) + " " + seltext.substr(seltext.rfind(" ")) );
+						int cfx=-230,cfy=-200;
+						int bfx=340+cfx, bfy=-50+cfy, afx=-150+cfx, afy=350+cfy;
 						//after
 						VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
 						TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
 						//text
-						seltext = (seltext.substr(0,seltext.rfind(" ")).substr(0,48) + " " + seltext.substr(seltext.rfind(" ")) );
-						gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext, { 255,255,255 }, 205);
+						gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext, { 255,255,255 }, 300);
 						
 						//curret
 						VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
 						TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
 						//text
-						gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + cfy+300);
+						gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + sizeportraitx +3+ cfy);
 						//before
 						VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
 						TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
@@ -1086,19 +1088,19 @@ int main(int argc, char **argv)
 						if (preview)
 						{
 							{
-							int cfx=0,cfy=-50;
-							int bfx=111+cfx, bfy=-142+cfy, afx=-100+cfx, afy=206+cfy;
+							int cfx=-230,cfy=-200;
+							int bfx=340+cfx, bfy=-50+cfy, afx=-150+cfx, afy=350+cfy;
 							//after
 							VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
 							TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
 							//text
-							gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext.substr(0,48), { 255,255,255 }, 205);
+							gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext.substr(0,68), { 255,255,255 }, 300);
 							
 							//curret
 							VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
 							TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
 							//text
-							gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + cfy+300);
+							gTextTexture.render(posxbase + xdistance + cfx+2,  posybase + ydistance + sizeportraitx +3+ cfy);
 							//before
 							VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
 							TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
@@ -1174,18 +1176,18 @@ int main(int argc, char **argv)
 				}
 				
 				{
-					int cfx=0,cfy=-50;
-					int bfx=111+cfx, bfy=-142+cfy, afx=-100+cfx, afy=206+cfy;
+					int cfx=-230,cfy=-200;
+					int bfx=340+cfx, bfy=-50+cfy, afx=-150+cfx, afy=350+cfy;
 					//after
 					VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
 					TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
 					//text
-					gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext.substr(0,48), { 255,255,255 }, 205);
+					gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext.substr(0,68), { 255,255,255 }, 300);
 					//curret
 					VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
 					TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
 					//text
-					gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + cfy+300);
+					gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + sizeportraitx +3+ cfy);
 					//before
 					VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
 					TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
@@ -1313,11 +1315,9 @@ int main(int argc, char **argv)
 	BD["com"] = "{}"_json;
 //
 	// write prettified JSON
-	std::ofstream otf(rootdirectory+"DataBase.json");
-	otf << std::setw(4) << BD << std::endl;
-	otf.close();
-
-	appletEndBlockingHomeButton();
+	write_DB(BD,rootdirectory+"DataBase.json");
+	
+	//appletEndBlockingHomeButton();
 	
 	if (AppletMode){
 		SDL_Delay(2000);
