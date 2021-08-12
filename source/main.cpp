@@ -51,7 +51,6 @@ std::string urlc = "https://myrincon.duckdns.org";
 //MAIN INT
 int main(int argc, char **argv)
 {
-#ifdef __SWITCH__
 	socketInitializeDefault();
 	romfsInit();
 	nxlinkStdio();
@@ -77,21 +76,29 @@ int main(int argc, char **argv)
 		printf("Goted user\n");
 		accountExit();
 	} else printf("failed tu get user \n");
-#endif
-	//quick fix wait for jkanime
-	//WebBrowserCall("https://jkanime.net",true);
-	//return 0;
-
-	//appletBeginBlockingHomeButton (0);
 
 	// read a JSON file
 	std::ifstream inf(rootdirectory+"DataBase.json");
-	if(!inf.fail()){inf >> BD;}
-	inf.close();
-	BD["arrays"] = "{}"_json;
+	if(!inf.fail()){
+		std::string tempjson="";
+		for(int f = 0; !inf.eof(); f++)
+		{
+			string TempLine = "";
+			getline(inf, TempLine);
+			tempjson += TempLine;
+		}
+		inf.close();
+		if(json::accept(tempjson))
+		{
+			//Parse and use the JSON data
+			BD = json::parse(tempjson);
+			BD["arrays"] = "{}"_json;
+			BD["com"] = "{}"_json;
+			std::cout  << "Json Readed..." << std::endl;
+		}
+	}
 	//std::cout  << BD << std::endl;
-	BD["com"] = "{}"_json;
-
+	
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* downloadthread = NULL;
@@ -316,6 +323,15 @@ int main(int argc, char **argv)
 									arrayservers.erase(arrayservers.begin()+selectserver);
 								} else {
 									serverpront = false;
+									BD["DataBase"][KeyName]["capmore"] = capmore;
+									//if (BD["history"].find(tempurl)){
+									int hsize = BD["history"].size();
+									if (hsize > 50){BD["history"].erase(0);}//limit history
+									if (hsize > 0){
+										if(BD["history"][hsize-1] != tempurl){
+											BD["history"].push_back(tempurl);
+										}
+									} else {BD["history"].push_back(tempurl);}
 								}
 							}else {
 								serverpront = true;
@@ -373,6 +389,8 @@ int main(int argc, char **argv)
 						}
 					}
 					else if (e.jbutton.button == 9) {// (ZR) button down
+						std::cout  << BD << std::endl;
+
 						switch (statenow)
 						{
 						case favoritesstate:/*
@@ -1311,7 +1329,6 @@ int main(int argc, char **argv)
 	cancelcurl=1;
 	//clear allocate
 	BD["arrays"] = "{}"_json;
-	//std::cout  << BD << std::endl;
 	BD["com"] = "{}"_json;
 //
 	// write prettified JSON
