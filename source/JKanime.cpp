@@ -251,7 +251,7 @@ int downloadjkanimevideo(void* data) {
 	}
 	isDownloading=false;
 	statenow = downloadstate;
-	appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
+	appletSetAutoSleepDisabled(false);
 	return 0;
 }
 
@@ -341,7 +341,7 @@ int refrescarpro(void* data){
 		BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 	}
 	MKfavimgfix(false);
-	if (!isDownloading) appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
+	if (!isDownloading) appletSetAutoSleepDisabled(false);
 	return 0;
 }
 int MKcapitBuffer() {
