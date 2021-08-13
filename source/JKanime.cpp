@@ -223,6 +223,7 @@ void PushDirBuffer(std::string a,std::string name) {
 
 }
 int downloadjkanimevideo(void* data) {
+	appletSetAutoSleepDisabled(true);
 	for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size();x++){
 		DownTitle="................";
 		serverenlace = "................";
@@ -250,11 +251,13 @@ int downloadjkanimevideo(void* data) {
 	}
 	isDownloading=false;
 	statenow = downloadstate;
+	appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
 	return 0;
 }
 
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
+	appletSetAutoSleepDisabled(true);
 	//clear allocate
 	BD["arrays"] = "{}"_json;;
 
@@ -338,6 +341,7 @@ int refrescarpro(void* data){
 		BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 	}
 	MKfavimgfix(false);
+	if (!isDownloading) appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
 	return 0;
 }
 int MKcapitBuffer() {
