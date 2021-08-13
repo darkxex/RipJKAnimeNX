@@ -34,6 +34,7 @@ return false;
 
 bool GetAppletMode()
 {
+	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
 	{
