@@ -170,7 +170,7 @@ void PushDirBuffer(std::string a,std::string name) {
 		if (indx1 == -1) { break; }
 		indx2 = a.find(">",indx1);
 		indx3 = a.find("</a>", indx1);
-		terese += a.substr(indx2+1, indx3 - indx2-1)+",  ";
+		terese += a.substr(indx2+1, indx3 - indx2-1)+", ";
 //		std::cout << terese << std::endl;
 		indx1 = indx3;
 	}
