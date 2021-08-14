@@ -1,38 +1,5 @@
-#ifdef __SWITCH__
-#include <unistd.h>
-#include <switch.h>
-#include <dirent.h>
-#endif
-#ifndef __SWITCH__
-#define _CRT_SECURE_NO_WARNINGS
-#endif
 
-//test
-#include <SDL.h>
-#include <SDL_thread.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <iostream>
-#include <string>
-#include <curl/curl.h>
-#include <SDL_mixer.h>
-#include <errno.h>
-#include <stdio.h>
-#include <string>
-#include <cmath>
-#include <iostream>
-#include<ctime>
-#include <iomanip>
-#include <math.h>
-#include <Vector>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fstream>
-#include <thread>
-#include "Networking.hpp"
-#include "SDLWork.hpp"
-#include "applet.hpp"
-#include "utils.hpp"
+
 #include "JKanime.hpp"
 
 //use the nand of the switch
@@ -108,7 +75,6 @@ int main(int argc, char **argv)
 
 	//set custom music 
 	GOD.intA();//init the SDL
-#ifdef __SWITCH__
 	#ifdef USENAND
 		if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
 			mkdir(rootdirectory.c_str(), 0777);
@@ -150,10 +116,6 @@ int main(int argc, char **argv)
 		Heart.loadFromFile("romfs:/heart.png");
 	}
 
-#else
-	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
-	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
-#endif // SWITCH
 	gTextTexture.mark=false;
 	Farest.mark=false;
 
@@ -186,7 +148,7 @@ int main(int argc, char **argv)
 
 	//Event handler
 	SDL_Event e;
-#ifdef __SWITCH__
+
 	for (int i = 0; i < 2; i++) {
 		if (SDL_JoystickOpen(i) == NULL) {
 			SDL_Log("SDL_JoystickOpen: %s\n", SDL_GetError());
@@ -194,7 +156,6 @@ int main(int argc, char **argv)
 			return -1;
 		}
 	}
-#endif // SWITCH
 
 	//While application is running
 	while (!quit)
@@ -211,7 +172,7 @@ int main(int argc, char **argv)
 				std::cout << "Saliendo" << std::endl;
 			}
 			//#include "keyboard.h"
-#ifdef __SWITCH__
+
 			GOD.GenState = statenow;
 			switch (e.type) {
 			case SDL_JOYAXISMOTION:
@@ -417,6 +378,7 @@ int main(int argc, char **argv)
 						{
 						case downloadstate:
 							statenow = chapterstate;
+							if (porcendown >= 100)led_on(0);
 							break;
 						case chapterstate:
 							if(serverpront){
@@ -572,7 +534,6 @@ int main(int argc, char **argv)
 							{activatefirstimage=true;
 								if (BD["searchtext"].empty()){BD["searchtext"]="";}
 								BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
-								//blinkLed(1);//LED
 								if ((BD["searchtext"].get<std::string>()).length() > 0){
 									searchchapter = 0;
 									BD["arrays"]["search"]["link"].clear();
@@ -777,7 +738,7 @@ int main(int argc, char **argv)
 			default:
 				break;
 			}
-#endif // SWITCH
+
 		}
 		GOD.GenState = statenow;
 		//Clear screen
@@ -1384,12 +1345,10 @@ int main(int argc, char **argv)
 	
 	
 	//Free resources and close SDL
-#ifdef __SWITCH__
 	accountExit();
 	hidsysExit();
 	socketExit();
 	romfsExit();
-#endif // SWITCH
 
 	//Free loaded images
 	gTextTexture.free();

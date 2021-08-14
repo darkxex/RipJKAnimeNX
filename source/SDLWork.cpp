@@ -39,12 +39,7 @@ void SDLB::intA(){
 		}
 
 		//Create window
-#ifdef __SWITCH__
 		gWindow = SDL_CreateWindow("sdl2_gles2", 0, 0, 1280, 720, 0);
-#else
-		gWindow = SDL_CreateWindow("RipJKNX", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-#endif // SWITCH
-
 
 		if (gWindow == NULL)
 		{
@@ -85,17 +80,13 @@ void SDLB::intA(){
 					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 					
 				}
-#ifdef __SWITCH__
+
 				//Load music
 				if (isFileExist(rootdirectory+"wada.ogg")){
 					gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 				} else {
 					gMusic = Mix_LoadMUS("romfs:/wada.ogg");
 				}
-
-#else
-				gMusic = Mix_LoadMUS("C:/respaldo2017/C++/test/Debug/wada.ogg");
-#endif // SWITCH
 				
 				if (gMusic == NULL)
 				{
