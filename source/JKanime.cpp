@@ -92,7 +92,7 @@ void PushDirBuffer(std::string a,std::string name) {
 	//Sinopsis
 	std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 	replace(terese, "<p rel=\"sinopsis\">", ""); replace(terese, "<br/>", ""); replace(terese, "&quot;", "");
-	BD["DataBase"][name]["sinopsis"] = terese.substr(0,800);
+	BD["DataBase"][name]["sinopsis"] = terese.substr(0,810);
 	//std::cout << BD["DataBase"][name]["sinopsis"] << std::endl;
 
 	//new values
@@ -170,7 +170,7 @@ void PushDirBuffer(std::string a,std::string name) {
 		if (indx1 == -1) { break; }
 		indx2 = a.find(">",indx1);
 		indx3 = a.find("</a>", indx1);
-		terese += a.substr(indx2+1, indx3 - indx2-1)+",  ";
+		terese += a.substr(indx2+1, indx3 - indx2-1)+", ";
 //		std::cout << terese << std::endl;
 		indx1 = indx3;
 	}
@@ -223,6 +223,7 @@ void PushDirBuffer(std::string a,std::string name) {
 
 }
 int downloadjkanimevideo(void* data) {
+	appletSetAutoSleepDisabled(true);
 	for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size();x++){
 		DownTitle="................";
 		serverenlace = "................";
@@ -250,11 +251,13 @@ int downloadjkanimevideo(void* data) {
 	}
 	isDownloading=false;
 	statenow = downloadstate;
+	appletSetAutoSleepDisabled(false);
 	return 0;
 }
 
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
+	appletSetAutoSleepDisabled(true);
 	//clear allocate
 	BD["arrays"] = "{}"_json;;
 
@@ -338,6 +341,7 @@ int refrescarpro(void* data){
 		BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 	}
 	MKfavimgfix(false);
+	if (!isDownloading) appletSetAutoSleepDisabled(false);
 	return 0;
 }
 int MKcapitBuffer() {
@@ -530,9 +534,13 @@ int capBuffer (std::string Tlink) {
 			BD["com"]["generos"] = BD["DataBase"][name]["generos"];//"......";
 			BD["com"]["Emitido"] = BD["DataBase"][name]["Emitido"];
 			BD["com"]["enemision"] = BD["DataBase"][name]["enemision"];
-			maxcapit = BD["DataBase"][name]["maxcapit"];//-1;
-			mincapit = BD["DataBase"][name]["mincapit"];//1;
-			capmore = BD["DataBase"][name]["maxcapit"];//1;
+			maxcapit = BD["DataBase"][name]["maxcapit"];
+			mincapit = BD["DataBase"][name]["mincapit"];
+			if (BD["DataBase"][name]["capmore"].empty())
+				capmore = BD["DataBase"][name]["maxcapit"];
+			else
+				capmore = BD["DataBase"][name]["capmore"];
+			
 			if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
 				BD["com"]["nextdate"] = "Loading...";
 				linktmpc=Tlink;

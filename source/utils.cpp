@@ -110,54 +110,52 @@ vector<string> split (string s, string delimiter) {
 
 //Mixdrop link decode
 std::string MD_s(std::string code){
-std::string decode;
-while (true){
-	decode = code;
-	std::cout << "-----------------------------------------" << std::endl;
-	std::cout << decode << std::endl;
-	std::string tempmedia = gethtml(decode);
-	decode = scrapElement(tempmedia, "MDCore|","'");
-	std::cout << decode << std::endl;
-	if(decode.length())
-	{
-		std::vector<std::string> list = split (decode, "|");
-		
-		//get deliver and type
-		std::string type;
-		if (decode.find("|s|")){type="s";} else {type="a";}
-		std::string dely = scrapElement(decode, "delivery");
-		
-		//get file name and key
-		std::string vidname = "";
-		std::string playkey = "";
-		for (u64 i=0;i < list.size();i++){
-			if ( (list[i]).length() == 32) vidname = list[i];
-			if ( (list[i]).length() == 22) playkey = list[i];//some times get a split key,  fix that 
-		}
-		//get num keys
-		int v1=0;
-		v1 = decode.find("|16");
-		std::string numkey = decode.substr(v1+1,10);
-		
-		v1 = decode.find("|16",v1+10);
-		std::string numkey2 = decode.substr(v1+1,10);
-		
-		//model
-		decode = "https://"+type+"-"+dely+".mxdcontent.net/v/"+vidname+".mp4?s="+playkey+"&e="+numkey+"&_t="+numkey2;//.substr(1)
-		
+	std::string decode="";
+	for (int i=1; i<5;i++){
+		decode = code;
+		std::cout << "----------------------------------------- "+std::to_string(i) << std::endl;
 		std::cout << decode << std::endl;
-		//bypass, if not get the key repeat the process
-		if(!playkey.length()){continue;}
-		if(!vidname.length()){continue;}
-		break;
-	} else {
-		decode = "";
-		break;
+		std::string tempmedia = gethtml(decode);
+		decode = scrapElement(tempmedia, "MDCore|","'");
+		std::cout << decode << std::endl;
+		if(decode.length())
+		{
+			std::vector<std::string> list = split (decode, "|");
+			
+			//get deliver and type
+			std::string type;
+			if (decode.find("|s|")){type="s";} else {type="a";}
+			std::string dely = scrapElement(decode, "delivery");
+			
+			//get file name and key
+			std::string vidname = "";
+			std::string playkey = "";
+			for (u64 i=0;i < list.size();i++){
+				if ( (list[i]).length() == 32) vidname = list[i];
+				if ( (list[i]).length() == 22) playkey = list[i];//some times get a split key,  fix that 
+			}
+			//get num keys
+			int v1=0;
+			v1 = decode.find("|16");
+			std::string numkey = decode.substr(v1+1,10);
+			
+			v1 = decode.find("|16",v1+10);
+			std::string numkey2 = decode.substr(v1+1,10);
+			
+			//bypass, if not get the key repeat the process
+			if(!vidname.length()||!playkey.length()){decode="";continue;}
+
+			//model
+			decode = "https://"+type+"-"+dely+".mxdcontent.net/v/"+vidname+".mp4?s="+playkey+"&e="+numkey+"&_t="+numkey2;//.substr(1)
+			std::cout << decode << std::endl;
+			break;
+		} else {
+			decode = "";
+			break;
+		}
 	}
-}
 return decode;
 }
-
 std::string Nozomi_Link(std::string Link){
 	std::string codetemp;
 	//Get FirstKey
@@ -169,37 +167,54 @@ std::string Nozomi_Link(std::string Link){
 	//Get SecondKey
 	std::string data = "data=" + FirstKey;
 	std::string SecondKey = gethtml("https://jkanime.net/gsplay/redirect_post.php",data,true);
+	replace(SecondKey,"https://jkanime.net/gsplay/player.html#","");
 	std::cout << "Secondkey: "<< SecondKey << std::endl;
 	//Get ThirdKey
+	std::string ThirdKey="";
 	std::string second = "v=" + SecondKey;
-	replace(second,"https://jkanime.net/gsplay/player.html#","");
-	std::string ThirdKey = gethtml("https://jkanime.net/gsplay/api.php",second);
-	codetemp = scrapElement(ThirdKey,"https:", "\"");
-	replace(codetemp,"\\","");
+	for (int i=1; i<5;i++){
+		std::cout << "----------------------------------------- "+std::to_string(i) << std::endl;
+		ThirdKey = gethtml("https://jkanime.net/gsplay/api.php",second);
+		//decode json
+		json data;
+		if(json::accept(ThirdKey))
+		{
+			data = json::parse(ThirdKey);
+			if (!data["file"].empty())
+			{
+				codetemp = data["file"];
+				break;
+			} else {
+				SDL_Delay(1000);
+			}
+		}
+	}
 	ThirdKey = codetemp;
 	std::cout << "ThirdKey: "<< ThirdKey << std::endl;
-	//return URL
 	return ThirdKey;
 }
 std::string Fembed_Link(std::string Link) {
 	std::string codetemp = "";
 	if (Link.length() > 0){
 		replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
-		std::cout << "enlace: " << Link << std::endl;
-		//POST to api
-		std::string SecondKey = gethtml(Link, "0");
-
-		//Scrap from json
-		std::vector<std::string> list = scrapElementAll(SecondKey, "https:");
+		//std::cout << "enlace: " << Link << std::endl;
 		
-		std::cout << "vector len: " << list.size() << std::endl;
-		if (list.size() > 0){
-			codetemp = list[list.size()-1];
-			std::cout << "Json720key: " << codetemp << std::endl;
+		//POST to api
+		std::string videojson = gethtml(Link, "0");
+		//std::cout << "Json720key: " << videojson << std::endl;
+		
+		//decode json
+		json data;
+		if(json::accept(videojson))
+		{
+			data = json::parse(videojson);
+			if (!data["data"][1]["file"].empty())
+				codetemp = data["data"][1]["file"];
 		}
 	}
 	return codetemp;
 }
+
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 {
 	std::string text = "Cargando... "+onlineenlace.substr(0,62)+"... desde "+server;
@@ -215,8 +230,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 	if (server == "Fembed 2.0") {
 		videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
 		videourl = Fembed_Link(videourl);
-	}
-	 else if (server == "Nozomi"){
+	} else if (server == "Nozomi"){
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
 		videourl = Nozomi_Link(videourl);
 	} else if (server == "Okru"){
@@ -236,7 +250,6 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 		if(videourl.length())
 		{
 			videourl=MD_s(videourl);
-			std::cout << videourl << std::endl;
 		}
 	} else if (server == "Local"){
 		LoadNRO("sdmc:/switch/pplay/pplay.nro");
@@ -258,8 +271,7 @@ if (videourl.length() != 0)
 return false;
 }
 
-bool linktodownoadjkanime(std::string urltodownload,std::string directorydownload)
-{
+bool linktodownoadjkanime(std::string urltodownload,std::string directorydownload) {
 	std::string videourl = "";
 	std::string content = "";
 	content = gethtml(urltodownload);
@@ -340,7 +352,6 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 	}
 	return false;
 }
-
 
 bool isFileExist(std::string file)
 {

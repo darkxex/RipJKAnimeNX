@@ -51,7 +51,6 @@ std::string urlc = "https://myrincon.duckdns.org";
 //MAIN INT
 int main(int argc, char **argv)
 {
-#ifdef __SWITCH__
 	socketInitializeDefault();
 	romfsInit();
 	nxlinkStdio();
@@ -77,21 +76,29 @@ int main(int argc, char **argv)
 		printf("Goted user\n");
 		accountExit();
 	} else printf("failed tu get user \n");
-#endif
-	//quick fix wait for jkanime
-	//WebBrowserCall("https://jkanime.net",true);
-	//return 0;
-
-	//appletBeginBlockingHomeButton (0);
 
 	// read a JSON file
 	std::ifstream inf(rootdirectory+"DataBase.json");
-	if(!inf.fail()){inf >> BD;}
-	inf.close();
-	BD["arrays"] = "{}"_json;
+	if(!inf.fail()){
+		std::string tempjson="";
+		for(int f = 0; !inf.eof(); f++)
+		{
+			string TempLine = "";
+			getline(inf, TempLine);
+			tempjson += TempLine;
+		}
+		inf.close();
+		if(json::accept(tempjson))
+		{
+			//Parse and use the JSON data
+			BD = json::parse(tempjson);
+			BD["arrays"] = "{}"_json;
+			BD["com"] = "{}"_json;
+			std::cout  << "Json Readed..." << std::endl;
+		}
+	}
 	//std::cout  << BD << std::endl;
-	BD["com"] = "{}"_json;
-
+	
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* downloadthread = NULL;
@@ -236,22 +243,22 @@ int main(int argc, char **argv)
 				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
 				e.jbutton.button=-1;
 				if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = 0;
-				if (TPreviewb.SP()) e.jbutton.button = 13;
-				if (TPreviewa.SP()) e.jbutton.button = 15;
-				if (B_B.SP()) e.jbutton.button = 1;
-				if (B_X.SP()) e.jbutton.button = 2;
-				if (B_Y.SP()) e.jbutton.button = 3;
-				if (B_L.SP()) e.jbutton.button = 6;
-				if (B_R.SP()) e.jbutton.button = 7;
-	//			if (B_ZR.SP()) e.jbutton.button = 9;
-				if (B_P.SP()) e.jbutton.button = 10;
-				if (B_M.SP()) e.jbutton.button = 11;
-				if (B_LEFT.SP()) e.jbutton.button = 12;
-				if (B_RIGHT.SP()) e.jbutton.button = 18;
-				if (B_UP.SP()) e.jbutton.button = 13;
-				if (B_DOWN.SP()) e.jbutton.button = 15;
-				if (T_D.SP()&&isDownloading) statenow = downloadstate;
-				if (CLEAR.SP()){
+				else if (TPreviewb.SP()) e.jbutton.button = 13;
+				else if (TPreviewa.SP()) e.jbutton.button = 15;
+				else if (B_B.SP()) e.jbutton.button = 1;
+				else if (B_X.SP()) e.jbutton.button = 2;
+				else if (B_Y.SP()) e.jbutton.button = 3;
+				else if (B_L.SP()) e.jbutton.button = 6;
+				else if (B_R.SP()) e.jbutton.button = 7;
+	//			else if (B_ZR.SP()) e.jbutton.button = 9;
+				else if (B_P.SP()) e.jbutton.button = 10;
+				else if (B_M.SP()) e.jbutton.button = 11;
+				else if (B_LEFT.SP()) e.jbutton.button = 12;
+				else if (B_RIGHT.SP()) e.jbutton.button = 18;
+				else if (B_UP.SP()) e.jbutton.button = 13;
+				else if (B_DOWN.SP()) e.jbutton.button = 15;
+				else if (T_D.SP()&&isDownloading) statenow = downloadstate;
+				else if (CLEAR.SP()){
 					GOD.PleaseWait("Borrando cache");
 					BD["DataBase"] = "{}"_json;
 					BD["latestchapter"] = "";
@@ -316,6 +323,15 @@ int main(int argc, char **argv)
 									arrayservers.erase(arrayservers.begin()+selectserver);
 								} else {
 									serverpront = false;
+									BD["DataBase"][KeyName]["capmore"] = capmore;
+									//if (BD["history"].find(tempurl)){
+									int hsize = BD["history"].size();
+									if (hsize > 50){BD["history"].erase(0);}//limit history
+									if (hsize > 0){
+										if(BD["history"][hsize-1] != tempurl){
+											BD["history"].push_back(tempurl);
+										}
+									} else {BD["history"].push_back(tempurl);}
 								}
 							}else {
 								serverpront = true;
@@ -373,6 +389,7 @@ int main(int argc, char **argv)
 						}
 					}
 					else if (e.jbutton.button == 9) {// (ZR) button down
+						std::cout  << BD << std::endl;
 						switch (statenow)
 						{
 						case favoritesstate:/*
@@ -800,7 +817,7 @@ int main(int argc, char **argv)
 					T_R.render(posxbase+15, posybase + 65);
 					
 					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["Emitido"], textColor,750);
-					gTextTexture.render(posxbase+15, posybase + 75 + T_R.getHeight());
+					gTextTexture.render(posxbase+15, posybase + 350-gTextTexture.getHeight());
 
 					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["generos"], textColor,750);
 					gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
@@ -900,7 +917,7 @@ int main(int argc, char **argv)
 			}
 					
 			//Draw Footer Buttons
-			int dist = 1100,posdist = 160;
+			int dist = 1100,posdist = 150;
 			if(serverpront){
 				B_A.render_T(dist, 680,"Ver Online");dist -= posdist;
 				B_B.render_T(dist, 680,"Cerrar");dist -= posdist;
@@ -908,6 +925,12 @@ int main(int argc, char **argv)
 				B_A.render_T(dist, 680,"Seleccionar");dist -= posdist;
 				B_B.render_T(dist, 680,"Atras");dist -= posdist;
 				B_X.render_T(dist, 680,"Descargar");dist -= posdist;
+			}
+
+			if(gFAV){FAV.render_T(1190, 70,"");}
+			else {B_Y.render_T(dist, 680,"Favorito");}
+			
+			if(!serverpront){
 				if(!BD["DataBase"][KeyName]["Secuela"].empty()){
 					B_R.render_T(dist, 680,"Secuela");dist -= posdist;
 				}
@@ -915,9 +938,8 @@ int main(int argc, char **argv)
 					B_L.render_T(dist, 680,"Precuela");dist -= posdist;
 				}
 			}
-
-			if(gFAV){FAV.render_T(1190, 70,"");}
-			else {B_Y.render_T(dist, 680,"Favorito");}
+			
+			
 			break;
 			}
 			case programationstate:	{
@@ -1311,7 +1333,6 @@ int main(int argc, char **argv)
 	cancelcurl=1;
 	//clear allocate
 	BD["arrays"] = "{}"_json;
-	//std::cout  << BD << std::endl;
 	BD["com"] = "{}"_json;
 //
 	// write prettified JSON
