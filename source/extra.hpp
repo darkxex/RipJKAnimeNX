@@ -28,6 +28,7 @@ LTexture B_DOWN;
 LTexture FAV;
 LTexture NOP;
 LTexture CLEAR;
+LTexture SCREEN;
 //Text and BOXES
 LTexture VOX;
 LTexture T_T;
@@ -48,7 +49,7 @@ int porcendown = 0;
 int sizeestimated = 0;
 std::string temporallink = "";
 int cancelcurl = 0;
-
+bool lcdoff=false;
 //img
 bool reloading = false;
 bool preview = false;

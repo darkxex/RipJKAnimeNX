@@ -172,6 +172,7 @@ int main(int argc, char **argv)
 	B_UP.loadFromFile("romfs:/buttons/UP.png");
 	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
 	CLEAR.loadFromFile("romfs:/buttons/clear.png");
+	SCREEN.loadFromFile("romfs:/buttons/screen.png");
 	FAV.loadFromFile("romfs:/buttons/FAV.png");/////
 	NOP.loadFromFile("romfs:/nop.png");
 
@@ -239,35 +240,40 @@ int main(int argc, char **argv)
 				} else break;
 			case SDL_FINGERUP:
 			if (e.type == SDL_FINGERUP){
-				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
-				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-				e.jbutton.button=-1;
-				if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = 0;
-				else if (TPreviewb.SP()) e.jbutton.button = 13;
-				else if (TPreviewa.SP()) e.jbutton.button = 15;
-				else if (B_B.SP()) e.jbutton.button = 1;
-				else if (B_X.SP()) e.jbutton.button = 2;
-				else if (B_Y.SP()) e.jbutton.button = 3;
-				else if (B_L.SP()) e.jbutton.button = 6;
-				else if (B_R.SP()) e.jbutton.button = 7;
-	//			else if (B_ZR.SP()) e.jbutton.button = 9;
-				else if (B_P.SP()) e.jbutton.button = 10;
-				else if (B_M.SP()) e.jbutton.button = 11;
-				else if (B_LEFT.SP()) e.jbutton.button = 12;
-				else if (B_RIGHT.SP()) e.jbutton.button = 18;
-				else if (B_UP.SP()) e.jbutton.button = 13;
-				else if (B_DOWN.SP()) e.jbutton.button = 15;
-				else if (T_D.SP()&&isDownloading) statenow = downloadstate;
-				else if (CLEAR.SP()){
-					GOD.PleaseWait("Borrando cache");
-					BD["DataBase"] = "{}"_json;
-					BD["latestchapter"] = "";
-					fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
-						cancelcurl = 1;
-						quit = true;
+				if(lcdoff){
+					lcdoff=false;
+					appletSetLcdBacklightOffEnabled(lcdoff);
+				} else{
+					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+					e.jbutton.button=-1;
+					if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = 0;
+					else if (TPreviewb.SP()) e.jbutton.button = 13;
+					else if (TPreviewa.SP()) e.jbutton.button = 15;
+					else if (B_B.SP()) e.jbutton.button = 1;
+					else if (B_X.SP()) e.jbutton.button = 2;
+					else if (B_Y.SP()) e.jbutton.button = 3;
+					else if (B_L.SP()) e.jbutton.button = 6;
+					else if (B_R.SP()) e.jbutton.button = 7;
+					else if (B_ZR.SP()) e.jbutton.button = 9;
+					else if (B_P.SP()) e.jbutton.button = 10;
+					else if (B_M.SP()) e.jbutton.button = 11;
+					else if (B_LEFT.SP()) e.jbutton.button = 12;
+					else if (B_RIGHT.SP()) e.jbutton.button = 18;
+					else if (B_UP.SP()) e.jbutton.button = 13;
+					else if (B_DOWN.SP()) e.jbutton.button = 15;
+					else if (T_D.SP()&&isDownloading) statenow = downloadstate;
+					else if (SCREEN.SP()){lcdoff=true; appletSetLcdBacklightOffEnabled(lcdoff); }
+					else if (CLEAR.SP()){
+						GOD.PleaseWait("Borrando cache");
+						BD["DataBase"] = "{}"_json;
+						BD["latestchapter"] = "";
+						fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
+							cancelcurl = 1;
+							quit = true;
+					}
+					SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
 				}
-				
-				SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
 				GOD.TouchX = -1;
 				GOD.TouchY = -1;
 			}
@@ -390,6 +396,9 @@ int main(int argc, char **argv)
 					}
 					else if (e.jbutton.button == 9) {// (ZR) button down
 						std::cout  << BD << std::endl;
+						lcdoff = !lcdoff;
+						appletSetLcdBacklightOffEnabled(lcdoff);
+						
 						switch (statenow)
 						{
 						case favoritesstate:/*
@@ -1261,10 +1270,13 @@ int main(int argc, char **argv)
 						VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 						gTextTexture.render(posxbase + 100, posybase + 400);
+						if(lcdoff){lcdoff=false; appletSetLcdBacklightOffEnabled(lcdoff);}
 					 }else{
 						gTextTexture.loadFromRenderedText(GOD.digifont, "Velocidad: " +speedD+" M/S", textColor);
 						VOX.render_VOX({ posxbase + 120, posybase + 240, gTextTexture.getWidth()+15, 20 }, 255, 255, 255, 145);
 						gTextTexture.render(posxbase + 130, posybase + 240);
+						SCREEN.render(1150, 10);
+						B_ZR.render_T(550, 680,"Apagar Pantalla");
 					 }
 				} else {
 					porcendown=0;
