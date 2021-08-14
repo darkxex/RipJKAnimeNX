@@ -223,6 +223,7 @@ void PushDirBuffer(std::string a,std::string name) {
 
 }
 int downloadjkanimevideo(void* data) {
+	led_on(1);
 	appletSetAutoSleepDisabled(true);
 	for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size();x++){
 		DownTitle="................";
@@ -251,6 +252,7 @@ int downloadjkanimevideo(void* data) {
 	}
 	isDownloading=false;
 	statenow = downloadstate;
+	led_on(3);
 	appletSetAutoSleepDisabled(false);
 	return 0;
 }

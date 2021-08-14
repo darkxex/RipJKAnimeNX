@@ -1,3 +1,34 @@
+#include <unistd.h>
+#include <switch.h>
+#include <dirent.h>
+#define _CRT_SECURE_NO_WARNINGS
+
+//test
+#include <SDL.h>
+#include <SDL_thread.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <iostream>
+#include <string>
+#include <curl/curl.h>
+#include <SDL_mixer.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string>
+#include <cmath>
+#include <iostream>
+#include<ctime>
+#include <iomanip>
+#include <math.h>
+#include <Vector>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fstream>
+#include <thread>
+#include "Networking.hpp"
+#include "SDLWork.hpp"
+#include "applet.hpp"
+#include "utils.hpp"
 //////////////////////////////////aquí empieza el pc.
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280;
@@ -28,6 +59,7 @@ LTexture B_DOWN;
 LTexture FAV;
 LTexture NOP;
 LTexture CLEAR;
+LTexture SCREEN;
 //Text and BOXES
 LTexture VOX;
 LTexture T_T;
@@ -48,7 +80,7 @@ int porcendown = 0;
 int sizeestimated = 0;
 std::string temporallink = "";
 int cancelcurl = 0;
-
+bool lcdoff=false;
 //img
 bool reloading = false;
 bool preview = false;
@@ -86,11 +118,6 @@ AccountUid uid;
 SDL_Thread* capithread = NULL;
 bool quit=false;
 std::string KeyName;
-
-#ifdef __SWITCH__
-HidsysNotificationLedPattern blinkLedPattern(u8 times);
-void blinkLed(u8 times);
-#endif // ___SWITCH___
 
 std::vector<std::string> arrayservers= {
 "Fembed 2.0","Nozomi","MixDrop","Desu","Xtreme S","Okru"

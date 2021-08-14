@@ -1,38 +1,5 @@
-#ifdef __SWITCH__
-#include <unistd.h>
-#include <switch.h>
-#include <dirent.h>
-#endif
-#ifndef __SWITCH__
-#define _CRT_SECURE_NO_WARNINGS
-#endif
 
-//test
-#include <SDL.h>
-#include <SDL_thread.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <iostream>
-#include <string>
-#include <curl/curl.h>
-#include <SDL_mixer.h>
-#include <errno.h>
-#include <stdio.h>
-#include <string>
-#include <cmath>
-#include <iostream>
-#include<ctime>
-#include <iomanip>
-#include <math.h>
-#include <Vector>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fstream>
-#include <thread>
-#include "Networking.hpp"
-#include "SDLWork.hpp"
-#include "applet.hpp"
-#include "utils.hpp"
+
 #include "JKanime.hpp"
 
 //use the nand of the switch
@@ -108,7 +75,6 @@ int main(int argc, char **argv)
 
 	//set custom music 
 	GOD.intA();//init the SDL
-#ifdef __SWITCH__
 	#ifdef USENAND
 		if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
 			mkdir(rootdirectory.c_str(), 0777);
@@ -150,10 +116,6 @@ int main(int argc, char **argv)
 		Heart.loadFromFile("romfs:/heart.png");
 	}
 
-#else
-	Farest.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\texture.png");
-	Heart.loadFromFile("C:\\respaldo2017\\C++\\test\\Debug\\heart.png");
-#endif // SWITCH
 	gTextTexture.mark=false;
 	Farest.mark=false;
 
@@ -172,6 +134,7 @@ int main(int argc, char **argv)
 	B_UP.loadFromFile("romfs:/buttons/UP.png");
 	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
 	CLEAR.loadFromFile("romfs:/buttons/clear.png");
+	SCREEN.loadFromFile("romfs:/buttons/screen.png");
 	FAV.loadFromFile("romfs:/buttons/FAV.png");/////
 	NOP.loadFromFile("romfs:/nop.png");
 
@@ -185,7 +148,7 @@ int main(int argc, char **argv)
 
 	//Event handler
 	SDL_Event e;
-#ifdef __SWITCH__
+
 	for (int i = 0; i < 2; i++) {
 		if (SDL_JoystickOpen(i) == NULL) {
 			SDL_Log("SDL_JoystickOpen: %s\n", SDL_GetError());
@@ -193,7 +156,6 @@ int main(int argc, char **argv)
 			return -1;
 		}
 	}
-#endif // SWITCH
 
 	//While application is running
 	while (!quit)
@@ -210,7 +172,7 @@ int main(int argc, char **argv)
 				std::cout << "Saliendo" << std::endl;
 			}
 			//#include "keyboard.h"
-#ifdef __SWITCH__
+
 			GOD.GenState = statenow;
 			switch (e.type) {
 			case SDL_JOYAXISMOTION:
@@ -239,35 +201,40 @@ int main(int argc, char **argv)
 				} else break;
 			case SDL_FINGERUP:
 			if (e.type == SDL_FINGERUP){
-				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
-				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-				e.jbutton.button=-1;
-				if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = 0;
-				else if (TPreviewb.SP()) e.jbutton.button = 13;
-				else if (TPreviewa.SP()) e.jbutton.button = 15;
-				else if (B_B.SP()) e.jbutton.button = 1;
-				else if (B_X.SP()) e.jbutton.button = 2;
-				else if (B_Y.SP()) e.jbutton.button = 3;
-				else if (B_L.SP()) e.jbutton.button = 6;
-				else if (B_R.SP()) e.jbutton.button = 7;
-	//			else if (B_ZR.SP()) e.jbutton.button = 9;
-				else if (B_P.SP()) e.jbutton.button = 10;
-				else if (B_M.SP()) e.jbutton.button = 11;
-				else if (B_LEFT.SP()) e.jbutton.button = 12;
-				else if (B_RIGHT.SP()) e.jbutton.button = 18;
-				else if (B_UP.SP()) e.jbutton.button = 13;
-				else if (B_DOWN.SP()) e.jbutton.button = 15;
-				else if (T_D.SP()&&isDownloading) statenow = downloadstate;
-				else if (CLEAR.SP()){
-					GOD.PleaseWait("Borrando cache");
-					BD["DataBase"] = "{}"_json;
-					BD["latestchapter"] = "";
-					fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
-						cancelcurl = 1;
-						quit = true;
+				if(lcdoff){
+					lcdoff=false;
+					appletSetLcdBacklightOffEnabled(lcdoff);
+				} else{
+					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+					e.jbutton.button=-1;
+					if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = 0;
+					else if (TPreviewb.SP()) e.jbutton.button = 13;
+					else if (TPreviewa.SP()) e.jbutton.button = 15;
+					else if (B_B.SP()) e.jbutton.button = 1;
+					else if (B_X.SP()) e.jbutton.button = 2;
+					else if (B_Y.SP()) e.jbutton.button = 3;
+					else if (B_L.SP()) e.jbutton.button = 6;
+					else if (B_R.SP()) e.jbutton.button = 7;
+					else if (B_ZR.SP()) e.jbutton.button = 9;
+					else if (B_P.SP()) e.jbutton.button = 10;
+					else if (B_M.SP()) e.jbutton.button = 11;
+					else if (B_LEFT.SP()) e.jbutton.button = 12;
+					else if (B_RIGHT.SP()) e.jbutton.button = 18;
+					else if (B_UP.SP()) e.jbutton.button = 13;
+					else if (B_DOWN.SP()) e.jbutton.button = 15;
+					else if (T_D.SP()&&isDownloading) statenow = downloadstate;
+					else if (SCREEN.SP()){lcdoff=true; appletSetLcdBacklightOffEnabled(lcdoff); }
+					else if (CLEAR.SP()){
+						GOD.PleaseWait("Borrando cache");
+						BD["DataBase"] = "{}"_json;
+						BD["latestchapter"] = "";
+						fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
+							cancelcurl = 1;
+							quit = true;
+					}
+					SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
 				}
-				
-				SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
 				GOD.TouchX = -1;
 				GOD.TouchY = -1;
 			}
@@ -390,6 +357,9 @@ int main(int argc, char **argv)
 					}
 					else if (e.jbutton.button == 9) {// (ZR) button down
 						std::cout  << BD << std::endl;
+						lcdoff = !lcdoff;
+						appletSetLcdBacklightOffEnabled(lcdoff);
+						
 						switch (statenow)
 						{
 						case favoritesstate:/*
@@ -408,6 +378,7 @@ int main(int argc, char **argv)
 						{
 						case downloadstate:
 							statenow = chapterstate;
+							if (porcendown >= 100)led_on(0);
 							break;
 						case chapterstate:
 							if(serverpront){
@@ -563,7 +534,6 @@ int main(int argc, char **argv)
 							{activatefirstimage=true;
 								if (BD["searchtext"].empty()){BD["searchtext"]="";}
 								BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
-								//blinkLed(1);//LED
 								if ((BD["searchtext"].get<std::string>()).length() > 0){
 									searchchapter = 0;
 									BD["arrays"]["search"]["link"].clear();
@@ -768,7 +738,7 @@ int main(int argc, char **argv)
 			default:
 				break;
 			}
-#endif // SWITCH
+
 		}
 		GOD.GenState = statenow;
 		//Clear screen
@@ -917,7 +887,7 @@ int main(int argc, char **argv)
 			}
 					
 			//Draw Footer Buttons
-			int dist = 1100,posdist = 150;
+			int dist = 1100,posdist = 160;
 			if(serverpront){
 				B_A.render_T(dist, 680,"Ver Online");dist -= posdist;
 				B_B.render_T(dist, 680,"Cerrar");dist -= posdist;
@@ -928,7 +898,7 @@ int main(int argc, char **argv)
 			}
 
 			if(gFAV){FAV.render_T(1190, 70,"");}
-			else {B_Y.render_T(dist, 680,"Favorito");}
+			else {B_Y.render_T(dist, 680,"Favorito");dist -= posdist;}
 			
 			if(!serverpront){
 				if(!BD["DataBase"][KeyName]["Secuela"].empty()){
@@ -1036,7 +1006,7 @@ int main(int argc, char **argv)
 					}
 
 					//Draw footer buttons
-					int dist = 1100,posdist = 160;
+					int dist = 1100,posdist = 170;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
@@ -1220,7 +1190,7 @@ int main(int argc, char **argv)
 				}
 
 				{//Draw footer buttons
-					int dist = 1100,posdist = 160;
+					int dist = 1100,posdist = 180;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_B.render_T(dist, 680,"Volver");dist -= posdist;
 					if ((int)BD["arrays"]["favorites"]["link"].size() >= 1){
@@ -1261,10 +1231,13 @@ int main(int argc, char **argv)
 						VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
 						gTextTexture.render(posxbase + 100, posybase + 400);
+						if(lcdoff){lcdoff=false; appletSetLcdBacklightOffEnabled(lcdoff);}
 					 }else{
 						gTextTexture.loadFromRenderedText(GOD.digifont, "Velocidad: " +speedD+" M/S", textColor);
 						VOX.render_VOX({ posxbase + 120, posybase + 240, gTextTexture.getWidth()+15, 20 }, 255, 255, 255, 145);
 						gTextTexture.render(posxbase + 130, posybase + 240);
+						SCREEN.render(1150, 10);
+						B_ZR.render_T(550, 680,"Apagar Pantalla");
 					 }
 				} else {
 					porcendown=0;
@@ -1372,12 +1345,10 @@ int main(int argc, char **argv)
 	
 	
 	//Free resources and close SDL
-#ifdef __SWITCH__
 	accountExit();
 	hidsysExit();
 	socketExit();
 	romfsExit();
-#endif // SWITCH
 
 	//Free loaded images
 	gTextTexture.free();

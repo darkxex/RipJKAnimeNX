@@ -39,12 +39,7 @@ void SDLB::intA(){
 		}
 
 		//Create window
-#ifdef __SWITCH__
 		gWindow = SDL_CreateWindow("sdl2_gles2", 0, 0, 1280, 720, 0);
-#else
-		gWindow = SDL_CreateWindow("RipJKNX", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-#endif // SWITCH
-
 
 		if (gWindow == NULL)
 		{
@@ -85,17 +80,13 @@ void SDLB::intA(){
 					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 					
 				}
-#ifdef __SWITCH__
+
 				//Load music
 				if (isFileExist(rootdirectory+"wada.ogg")){
 					gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 				} else {
 					gMusic = Mix_LoadMUS("romfs:/wada.ogg");
 				}
-
-#else
-				gMusic = Mix_LoadMUS("C:/respaldo2017/C++/test/Debug/wada.ogg");
-#endif // SWITCH
 				
 				if (gMusic == NULL)
 				{
@@ -112,12 +103,13 @@ void SDLB::intA(){
 		}
 	}
 
+	B_O_F = TTF_OpenFont("romfs:/AF.ttf", 19);
 	gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
 	gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
-	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
 	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
 	gFont4 = TTF_OpenFont("romfs:/lazy2.ttf", 30);
 	gFont5 = TTF_OpenFont("romfs:/lazy2.ttf", 20);
+	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
 	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
 	digifontC = TTF_OpenFont("romfs:/digifont.otf", 11);
 
@@ -491,14 +483,14 @@ void LTexture::render_T(int x, int y, std::string text, bool presed)
 	SDL_RenderCopy(GOD.gRenderer, mTexture, NULL, &renderQuad);
 	
 	if (text.length()){
-		SDL_Surface* textSurface = TTF_RenderText_Blended(GOD.gFont, text.c_str(), { 50, 50, 50 });
+		SDL_Surface* textSurface = TTF_RenderText_Blended(GOD.B_O_F, text.c_str(), { 50, 50, 50 });
 		if (textSurface == NULL)
 		{
 			printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
 		}
 		else
 		{
-			SDL_Rect TextRect = {x+mWidth+3, y+(mHeight/3), textSurface->w, textSurface->h};
+			SDL_Rect TextRect = {x+mWidth+3, y+(mHeight/2)-(textSurface->h/2), textSurface->w, textSurface->h};
 			//Create texture from surface pixels
 			SDL_Texture* TextureT = SDL_CreateTextureFromSurface(GOD.gRenderer, textSurface);
 			//Render to screen
