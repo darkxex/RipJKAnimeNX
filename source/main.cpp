@@ -926,7 +926,7 @@ int main(int argc, char **argv)
 			}
 					
 			//Draw Footer Buttons
-			int dist = 1100,posdist = 150;
+			int dist = 1100,posdist = 160;
 			if(serverpront){
 				B_A.render_T(dist, 680,"Ver Online");dist -= posdist;
 				B_B.render_T(dist, 680,"Cerrar");dist -= posdist;
@@ -937,7 +937,7 @@ int main(int argc, char **argv)
 			}
 
 			if(gFAV){FAV.render_T(1190, 70,"");}
-			else {B_Y.render_T(dist, 680,"Favorito");}
+			else {B_Y.render_T(dist, 680,"Favorito");dist -= posdist;}
 			
 			if(!serverpront){
 				if(!BD["DataBase"][KeyName]["Secuela"].empty()){
@@ -1045,7 +1045,7 @@ int main(int argc, char **argv)
 					}
 
 					//Draw footer buttons
-					int dist = 1100,posdist = 160;
+					int dist = 1100,posdist = 170;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
@@ -1229,7 +1229,7 @@ int main(int argc, char **argv)
 				}
 
 				{//Draw footer buttons
-					int dist = 1100,posdist = 160;
+					int dist = 1100,posdist = 180;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_B.render_T(dist, 680,"Volver");dist -= posdist;
 					if ((int)BD["arrays"]["favorites"]["link"].size() >= 1){
