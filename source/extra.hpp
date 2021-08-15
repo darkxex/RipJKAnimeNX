@@ -66,12 +66,42 @@ LTexture T_T;
 LTexture T_D;
 LTexture T_R;
 
-//main SLD funct (Grafics On Display = GOD)
+//main SLD funct (Grafics On Display == GOD)
 SDLB GOD;
 	
 //Gui Vars
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
 enum statesreturn { toprogramation, tosearch, tofavorite };
+enum SDL_Keys {
+	SDL_A,
+	SDL_B,
+	SDL_X,
+	SDL_Y,
+	SDL_L3,
+	SDL_R3,
+	SDL_L,
+	SDL_R,
+	SDL_ZL,
+	SDL_ZR,
+	SDL_P,
+	SDL_M,
+	SDL_LEFT,
+	SDL_UP,
+	SDL_RIGHT,
+	SDL_DOWN,
+	SDL_LS_LEFT,
+	SDL_LS_UP,
+	SDL_LS_RIGHT,
+	SDL_LS_DOWN,
+	SDL_RS_LEFT,
+	SDL_RS_UP,
+	SDL_RS_RIGHT,
+	SDL_RS_DOWN,
+	BT_1
+};
+
+/*
+*/
 int statenow = programationstate;
 int returnnow = toprogramation;
 //net
