@@ -59,7 +59,6 @@ int main(int argc, char **argv)
 		{
 			//Parse and use the JSON data
 			BD = json::parse(tempjson);
-			BD["arrays"] = "{}"_json;
 			BD["com"] = "{}"_json;
 			std::cout  << "Json Readed..." << std::endl;
 		}
@@ -306,8 +305,8 @@ try{
 										}
 									} else {BD["history"].push_back(tempurl);}
 								}
-							}else {
-								serverpront = true;
+							} else {
+								if (isConnected) serverpront = true;
 							}
 							break;
 						}
@@ -430,6 +429,7 @@ try{
 							cancelcurl = 1;
 							break;
 						case chapterstate:
+							if (!isConnected) break;
 							statenow = downloadstate;
 							cancelcurl = 0;
 //							GOD.PleaseWait("Calculando Links Espere...");
@@ -1173,21 +1173,29 @@ try{
 			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, het);
 		}
 		if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
-
+		
+		//clock cicle 1s
+		int maxt=100;
+		static int net=maxt;
+		if (onTimeC(1)){		
+			if (!HasConnection()) {
+				isConnected=false;
+				if (net <= 0){quit=true;} else {net--;}
+			} else {
+				isConnected=true;
+				net=maxt;
+			}
+		}
+		if (!isConnected){
+			gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet, Cerrando: "+std::to_string(net), {255,0,0});
+			VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,1, gTextTexture.getWidth()+4, gTextTexture.getHeight()+2}, 0, 0, 0, 105);
+			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 1 );
+		}
 
 		B_P.render_T(160, 680,"Salir",quit);
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 		
-		static int net=20;
-		if (!HasConnection()) {
-			GOD.PleaseWait("No Hay Red Conectada, Esperando por la red "+std::to_string(net));
-			SDL_Delay(1000);
-			if (net <= 0){quit=true;} else {net--;}
-		} else {
-			net=20;
-		}
-
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
 	}
@@ -1197,7 +1205,6 @@ try{
 }
 	cancelcurl=1;
 	//clear allocate
-	BD["arrays"] = "{}"_json;
 	BD["com"] = "{}"_json;
 //
 	// write prettified JSON
@@ -1271,5 +1278,6 @@ try{
 	fsdevUnmountDevice("user");
 	fsFsClose(&data);
 #endif
+	//if (!isConnected) appletRequestToSleep();
 	return 0;
 }

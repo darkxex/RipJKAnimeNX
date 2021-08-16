@@ -156,12 +156,15 @@ void SDLB::Image(std::string path,int X, int Y,std::string Text,bool off){
 		
 }
 void SDLB::PleaseWait(std::string text,bool render){
-	//Clear screen
-	SDL_SetRenderDrawColor(gRenderer, 0x55, 0x55, 0x55, 0xFF);
-	SDL_RenderClear(gRenderer);
+	if (render){
+		//Clear screen
+		SDL_SetRenderDrawColor(gRenderer, 0x55, 0x55, 0x55, 0xFF);
+		SDL_RenderClear(gRenderer);
+		
+		//wallpaper
+		Farest.render((0), (0));
+	}
 
-	//wallpaper
-	Farest.render((0), (0));	
 	SDL_Rect fillRect = { 0, 720/2 - 25, 1280, 50 };
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(gRenderer, &fillRect);
