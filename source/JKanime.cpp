@@ -4,7 +4,7 @@
 #include "JKanime.hpp"
 #include "SDLWork.hpp"
 
-extern json BD;//BD["com"]["tempimage"]
+extern json BD;
 extern int mincapit;
 extern int maxcapit;
 extern int capmore;
@@ -66,7 +66,6 @@ void callimage(int pos,std::vector<std::string> imageV) {
 	}
 	
 	TPreview.loadFromFileCustom(temp.c_str(), sizeportraitx, sizeportraity);
-	BD["com"]["tempimage"] = temp;
 	
 	//extra img 
 	int bval,aval;
