@@ -64,6 +64,7 @@ int main(int argc, char **argv)
 			std::cout  << "Json Readed..." << std::endl;
 		}
 	}
+	//printf("-- %d %d \n",BT_0,BT_1);
 	//std::cout  << BD << std::endl;
 	
 	SDL_Thread* prothread = NULL;
@@ -188,12 +189,12 @@ int main(int argc, char **argv)
 					//swipe down go up
 					if(e.tfinger.dy * SCREEN_HEIGHT > 15)
 					{
-						e.jbutton.button = 15;
+						e.jbutton.button = GOD.BT_DOWN;
 					}
 					//swipe up go down
 					else if(e.tfinger.dy * SCREEN_HEIGHT < -15)
 					{
-						e.jbutton.button = 13;
+						e.jbutton.button = GOD.BT_UP;
 					} else {
 						break;
 					}
@@ -208,21 +209,28 @@ int main(int argc, char **argv)
 					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
 					e.jbutton.button=-1;
-					if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = 0;
-					else if (TPreviewb.SP()) e.jbutton.button = 13;
-					else if (TPreviewa.SP()) e.jbutton.button = 15;
-					else if (B_B.SP()) e.jbutton.button = 1;
-					else if (B_X.SP()) e.jbutton.button = 2;
-					else if (B_Y.SP()) e.jbutton.button = 3;
-					else if (B_L.SP()) e.jbutton.button = 6;
-					else if (B_R.SP()) e.jbutton.button = 7;
-					else if (B_ZR.SP()) e.jbutton.button = 9;
-					else if (B_P.SP()) e.jbutton.button = 10;
-					else if (B_M.SP()) e.jbutton.button = 11;
-					else if (B_LEFT.SP()) e.jbutton.button = 12;
-					else if (B_RIGHT.SP()) e.jbutton.button = 18;
-					else if (B_UP.SP()) e.jbutton.button = 13;
-					else if (B_DOWN.SP()) e.jbutton.button = 15;
+					if (GOD.MasKey >=0){
+						if(GOD.MapT[GOD.WorKey].SP()){
+							e.jbutton.button=GOD.MasKey;
+						}
+						GOD.WorKey="0";
+						GOD.MasKey=-1;
+					}
+					else if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = GOD.BT_A;
+					else if (TPreviewb.SP()) e.jbutton.button = GOD.BT_UP;
+					else if (TPreviewa.SP()) e.jbutton.button = GOD.BT_DOWN;
+					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
+					else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
+					else if (B_Y.SP()) e.jbutton.button = GOD.BT_Y;
+					else if (B_L.SP()) e.jbutton.button = GOD.BT_L;
+					else if (B_R.SP()) e.jbutton.button = GOD.BT_R;
+					else if (B_ZR.SP()) e.jbutton.button = GOD.BT_ZR;
+					else if (B_P.SP()) e.jbutton.button = GOD.BT_P;
+					else if (B_M.SP()) e.jbutton.button = GOD.BT_M;
+					else if (B_LEFT.SP()) e.jbutton.button = GOD.BT_LEFT;
+					else if (B_RIGHT.SP()) e.jbutton.button = GOD.BT_RIGHT;
+					else if (B_UP.SP()) e.jbutton.button = GOD.BT_UP;
+					else if (B_DOWN.SP()) e.jbutton.button = GOD.BT_DOWN;
 					else if (T_D.SP()&&isDownloading) statenow = downloadstate;
 					else if (SCREEN.SP()){lcdoff=true; appletSetLcdBacklightOffEnabled(lcdoff); }
 					else if (CLEAR.SP()){
@@ -239,11 +247,11 @@ int main(int argc, char **argv)
 				GOD.TouchY = -1;
 			}
 			case SDL_JOYBUTTONDOWN :
-				//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
+				SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 				// seek for joystick #0
 				if (e.jbutton.which == 0) {
-					if (e.jbutton.button == 0) {// (A) button down
+					if (e.jbutton.button == GOD.BT_A) {// (A) button down
 
 						switch (statenow)
 						{
@@ -306,11 +314,11 @@ int main(int argc, char **argv)
 							break;
 						}
 					}
-					else if (e.jbutton.button == 10) {// (+) button down close to home menu
+					else if (e.jbutton.button == GOD.BT_P) {// (+) button down close to home menu
 						cancelcurl = 1;
 						quit = true;
 					}
-					else if (e.jbutton.button == 11) {// (-) button down
+					else if (e.jbutton.button == GOD.BT_M) {// (-) button down
 						if (Mix_PlayingMusic() == 0)
 						{
 							//Play the music
@@ -337,8 +345,8 @@ int main(int argc, char **argv)
 							}
 						}
 					}
-					else if (e.jbutton.button == 6 || e.jbutton.button == 8) {// (L & ZL) button down
-						if (statenow == chapterstate&&e.jbutton.button == 6){
+					else if (e.jbutton.button == GOD.BT_L || e.jbutton.button == GOD.BT_ZL) {// (L & ZL) button down
+						if (statenow == chapterstate&&e.jbutton.button == GOD.BT_L){
 							if(!BD["DataBase"][KeyName]["Precuela"].empty()&&!serverpront){
 								temporallink = BD["DataBase"][KeyName]["Precuela"];
 								std::cout << temporallink << std::endl;
@@ -349,13 +357,13 @@ int main(int argc, char **argv)
 				
 						if (statenow == programationstate)
 						{
-							if (e.jbutton.button == 8)
+							if (e.jbutton.button == GOD.BT_ZL)
 								WebBrowserCall(urlc,true);
 							else 
 								WebBrowserCall("https://animeflv.net",true);
 						}
 					}
-					else if (e.jbutton.button == 9) {// (ZR) button down
+					else if (e.jbutton.button == GOD.BT_ZR) {// (ZR) button down
 						std::cout  << BD << std::endl;
 						lcdoff = !lcdoff;
 						appletSetLcdBacklightOffEnabled(lcdoff);
@@ -372,7 +380,7 @@ int main(int argc, char **argv)
 							break;
 						}
 					}
-					else if (e.jbutton.button == 1) {// (B) button down
+					else if (e.jbutton.button == GOD.BT_B) {// (B) button down
 
 						switch (statenow)
 						{
@@ -413,7 +421,7 @@ int main(int argc, char **argv)
 							break;
 						}
 					}
-					else if (e.jbutton.button == 2) {// (X) button down
+					else if (e.jbutton.button == GOD.BT_X) {// (X) button down
 						switch (statenow)
 						{
 						case programationstate:
@@ -455,12 +463,11 @@ int main(int argc, char **argv)
 								get_favorites();
 								statenow = favoritesstate;
 							}
-							callimage(favchapter,BD["arrays"]["favorites"]["images"]);
 						break;
 
 						}
 					}
-					else if (e.jbutton.button == 3) {// (Y) button down
+					else if (e.jbutton.button == GOD.BT_Y) {// (Y) button down
 
 
 						switch (statenow)
@@ -471,7 +478,6 @@ int main(int argc, char **argv)
 								get_favorites();
 								returnnow = tofavorite;
 								statenow = favoritesstate;
-								callimage(favchapter,BD["arrays"]["favorites"]["images"]);
 							}
 							break;
 						case downloadstate:
@@ -502,7 +508,7 @@ int main(int argc, char **argv)
 
 						}
 					}
-					else if (e.jbutton.button == 5) {// (R3) button down
+					else if (e.jbutton.button == GOD.BT_R3) {// (R3) button down
 						switch (statenow)
 						{//only for test 
 							case chapterstate:
@@ -516,7 +522,7 @@ int main(int argc, char **argv)
 						}
 
 					}
-					else if (e.jbutton.button == 7) {// (R) button down
+					else if (e.jbutton.button == GOD.BT_R) {// (R) button down
 
 						switch (statenow)
 						{
@@ -548,7 +554,7 @@ int main(int argc, char **argv)
 						}
 
 					}
-					else if (e.jbutton.button == 12 || e.jbutton.button == 16) {// (left) button down
+					else if (e.jbutton.button == GOD.BT_LEFT || e.jbutton.button == GOD.BT_LS_LEFT) {// (left) button down
 
 						switch (statenow)
 						{
@@ -565,7 +571,7 @@ int main(int argc, char **argv)
 							break;
 						}
 					}
-					else if (e.jbutton.button == 14 || e.jbutton.button == 18) {// (right) button down
+					else if (e.jbutton.button == GOD.BT_RIGHT || e.jbutton.button == GOD.BT_LS_RIGHT) {// (right) button down
 
 						switch (statenow)
 						{
@@ -583,14 +589,13 @@ int main(int argc, char **argv)
 							break;
 						}
 					}
-					else if (e.jbutton.button == 17 || e.jbutton.button == 13) {// (up) button down
+					else if (e.jbutton.button == GOD.BT_UP || e.jbutton.button == GOD.BT_LS_UP) {// (up) button down
 
 						switch (statenow)
 						{
 						case programationstate:
 							if (!reloading)
 							{
-								TPreview.free();
 								if (selectchapter > 0)
 								{
 									selectchapter--;
@@ -599,8 +604,6 @@ int main(int argc, char **argv)
 								else {
 									selectchapter = BD["arrays"]["chapter"]["link"].size() - 1;
 								}
-								callimage(selectchapter,BD["arrays"]["chapter"]["images"]);
-
 							}
 
 							break;
@@ -634,7 +637,6 @@ int main(int argc, char **argv)
 								else {
 									searchchapter = BD["arrays"]["search"]["link"].size() - 1;
 								}
-								callimage(searchchapter,BD["arrays"]["search"]["images"]);
 
 							}
 							break;
@@ -650,12 +652,11 @@ int main(int argc, char **argv)
 							else {
 								favchapter = (int)BD["arrays"]["favorites"]["link"].size() - 1;
 							}
-							callimage(favchapter,BD["arrays"]["favorites"]["images"]);
 							break;
 
 						}
 					}
-					else if (e.jbutton.button == 19 || e.jbutton.button == 15) {// (down) button down
+					else if (e.jbutton.button == GOD.BT_DOWN || e.jbutton.button == GOD.BT_LS_DOWN) {// (down) button down
 
 						switch (statenow)
 						{
@@ -672,16 +673,13 @@ int main(int argc, char **argv)
 								else {
 									searchchapter = 0;
 								}
-								callimage(searchchapter,BD["arrays"]["search"]["images"]);
+
 							}
 							break;
 
 						case programationstate:
 							if (!reloading)
 							{
-								TPreview.free();
-
-
 								if (selectchapter < (int)BD["arrays"]["chapter"]["link"].size() - 1)
 								{
 									selectchapter++;
@@ -691,9 +689,6 @@ int main(int argc, char **argv)
 								else {
 									selectchapter = 0;
 								}
-
-								callimage(selectchapter,BD["arrays"]["chapter"]["images"]);
-
 							}
 							break;
 
@@ -717,7 +712,6 @@ int main(int argc, char **argv)
 							break;
 
 						case favoritesstate:
-							
 							if (favchapter < (int)BD["arrays"]["favorites"]["link"].size() - 1)
 							{
 								favchapter++;
@@ -727,7 +721,6 @@ int main(int argc, char **argv)
 							else {
 								favchapter = 0;
 							}
-							callimage(favchapter,BD["arrays"]["favorites"]["images"]);
 							break;
 
 						}
@@ -932,12 +925,7 @@ int main(int argc, char **argv)
 						replace(temptext, "/", " ");
 						replace(temptext, "-", " ");
 						mayus(temptext);
-						if (x == selectchapter) { seltext = temptext;}
 
-						
-						std::string temp = BD["arrays"]["chapter"]["images"][x];
-						replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
-						temp = rootdirectory+"DATA/"+temp;
 						temptext = (temptext.substr(0,temptext.rfind(" ")).substr(0,53) + " " + temptext.substr(temptext.rfind(" ")) );
 
 						if (x == selectchapter) {
@@ -946,43 +934,17 @@ int main(int argc, char **argv)
 							T_T.render(posxbase, posybase + (x * 22));
 
 							Heart.render(posxbase - 18, posybase + 3 + (x * 22));
+							
 						}
 						else
 						{
-							//if (x < 6) GOD.Cover(temp,posxbase+600, posybase + (x * 22),temp,20);
 							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
 							gTextTexture.render(posxbase, posybase + (x * 22));
-
 						}
-
-					}
-					if (activatefirstimage)
-					{
-						TPreview.free();
-						callimage(selectchapter,BD["arrays"]["chapter"]["images"]);
-						activatefirstimage = false;
-					}
-					if (preview)
-					{
-						{
-						seltext = (seltext.substr(0,seltext.rfind(" ")).substr(0,68) + " " + seltext.substr(seltext.rfind(" ")) );
-						int cfx=-230,cfy=-200;
-						int bfx=340+cfx, bfy=-50+cfy, afx=-150+cfx, afy=350+cfy;
-						//after
-						VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
-						TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
-						//text
-						gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext, { 255,255,255 }, 300);
 						
-						//curret
-						VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
-						TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
-						//text
-						gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + sizeportraitx +3+ cfy);
-						//before
-						VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
-						TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
-
+						if (preview)
+						{
+							GOD.ListCover(x,selectchapter,BD["arrays"]["chapter"]["images"][x],temptext);
 						}
 					}
 
@@ -1032,8 +994,6 @@ int main(int argc, char **argv)
 						u32 sel=(GOD.TouchY*30/670);
 						if (sel >= 0 && sel < BD["arrays"]["search"]["link"].size()){
 							searchchapter = sel;
-							
-							callimage(searchchapter,BD["arrays"]["search"]["images"]);					
 						}
 					}
 					if ((int)BD["arrays"]["search"]["link"].size() >= 1){
@@ -1069,36 +1029,12 @@ int main(int argc, char **argv)
 								gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 
 							}
-
-						}
-
-						if (activatefirstsearchimage)
-						{
-							callimage(searchchapter,BD["arrays"]["search"]["images"]);
-							activatefirstsearchimage = false;
-						}
-						if (preview)
-						{
+							if (preview)
 							{
-							int cfx=-230,cfy=-200;
-							int bfx=340+cfx, bfy=-50+cfy, afx=-150+cfx, afy=350+cfy;
-							//after
-							VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
-							TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
-							//text
-							gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext.substr(0,68), { 255,255,255 }, 300);
-							
-							//curret
-							VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
-							TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
-							//text
-							gTextTexture.render(posxbase + xdistance + cfx+2,  posybase + ydistance + sizeportraitx +3+ cfy);
-							//before
-							VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
-							TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
-
+								GOD.ListCover(x,searchchapter,BD["arrays"]["search"]["images"],temptext);
 							}
 						}
+
 					}else {
 						NOP.render_T(230, 355,"?");
 						BD["searchtext"]="";
@@ -1128,7 +1064,6 @@ int main(int argc, char **argv)
 					u32 sel=(GOD.TouchY*30/660);
 					if (sel >= 0 && sel < BD["arrays"]["favorites"]["link"].size()){
 						favchapter = sel;
-						callimage(favchapter,BD["arrays"]["favorites"]["images"]);
 					}
 				}
 
@@ -1151,7 +1086,6 @@ int main(int argc, char **argv)
 						if (x == favchapter) {
 							seltext = temptext;
 	//						CheckImgNet(machu);
-	//						BD["com"]["tempimage"] = machu;
 								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 								T_T.render(posxbase, posybase + ((x-of) * 22));
@@ -1164,26 +1098,10 @@ int main(int argc, char **argv)
 							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
 							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 						}
+						GOD.ListCover(x,favchapter,BD["arrays"]["favorites"]["images"][x],temptext);
 					}
 				}
-				
-				{
-					int cfx=-230,cfy=-200;
-					int bfx=340+cfx, bfy=-50+cfy, afx=-150+cfx, afy=350+cfy;
-					//after
-					VOX.render_VOX({ xdistance + 18 + afx, ydistance + 8 + afy, TPreviewa.getWidth() + 4, TPreviewa.getHeight() + 4}, 0, 0, 0, 200);
-					TPreviewa.render(posxbase + xdistance +afx, posybase + ydistance + afy);
-					//text
-					gTextTexture.loadFromRenderedTextWrap(GOD.digifontC, seltext.substr(0,68), { 255,255,255 }, 300);
-					//curret
-					VOX.render_VOX({ xdistance + 18 + cfx, ydistance + 8 + cfy, sizeportraity + 4, sizeportraitx + gTextTexture.getHeight()+10}, 0, 0, 0, 200);
-					TPreview.render(posxbase + xdistance + cfx, posybase + ydistance + cfy);
-					//text
-					gTextTexture.render(posxbase + xdistance + cfx+2, posybase + ydistance + sizeportraitx +3+ cfy);
-					//before
-					VOX.render_VOX({ xdistance + 18 + bfx, ydistance + 8 + bfy, TPreviewb.getWidth() + 4, TPreviewb.getHeight() + 4}, 0, 0, 0, 200);
-					TPreviewb.render(posxbase + xdistance + bfx, posybase + ydistance + bfy);
-				}
+
 				if (porcentajebufferF > 0){
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering fav: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
@@ -1354,7 +1272,6 @@ int main(int argc, char **argv)
 	gTextTexture.free();
 	Farest.free();
 	Heart.free();
-	TPreview.free();
 	TChapters.free();
 	
 	B_A.free();

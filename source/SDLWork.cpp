@@ -155,53 +155,41 @@ void SDLB::Image(std::string path,int X, int Y,std::string Text,bool off){
 		
 		
 }
-
-void SDLB::Cover(std::string path,int X, int Y,std::string Text,int HS){
-
-		SDL_Surface* DrawImg = NULL;
-		DrawImg = IMG_Load(path.c_str());
-		int WS=0;
-		
-		if (DrawImg == NULL)
-		{
-			printf("Unable to load image %s ! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-		}else{
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-		SDL_Texture* CLUST = SDL_CreateTextureFromSurface(gRenderer, DrawImg);
-			
-		WS = (DrawImg->w * (HS * 1000 /DrawImg->h) /1000);
-		
-		
-		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 100);
-		SDL_Rect HeaderRect = {X+5,Y+5, WS+6, HS+6};
-		SDL_RenderFillRect(gRenderer, &HeaderRect);
-		
-		SDL_Rect ImagetRect2 = {X, Y, WS, HS};
-		SDL_RenderCopy(gRenderer, CLUST , NULL, &ImagetRect2);
-		SDL_DestroyTexture(CLUST);
-
+void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key){
+		//std::cout << path << std::endl;
+		std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
+		std::string KeyText=Text+"-"+std::to_string(WS);
+		//std::cout << KeyImage << std::endl;
+		if (!isFileExist(path)) {
+			KeyImage="nop.png";
+			path = "romfs:/nop.png";
 		}
+		int sizeportraitx = 300;
+		int sizeportraity =424;
+		//make the math
 
+		int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
+
+		if ( MapT.find(KeyImage) == MapT.end() ) {
+			MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+		}
 		if (Text.length()){
-			SDL_Surface* textSurface = TTF_RenderText_Blended(gFont, Text.c_str(), { 50, 50, 50 });
-			if (textSurface == NULL)
-			{
-				printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+			//text
+			if ( MapT.find(KeyText) == MapT.end() ) {
+				int kinsize =11;
+				if (WS < 101){kinsize =7;Text=Text.substr(0,20);}//
+				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
+				MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 			}
-			else
-			{
-				SDL_Rect TextRect = {X+WS+3, Y +(HS/3), textSurface->w, textSurface->h};
-				//Create texture from surface pixels
-				SDL_Texture* TextureT = SDL_CreateTextureFromSurface(gRenderer, textSurface);
-				//Render to screen
-				SDL_RenderCopy(gRenderer, TextureT, NULL, &TextRect);
-				SDL_DestroyTexture(TextureT);
-			}
-			SDL_FreeSurface(textSurface);
+			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, 0, 200);
+			MapT[KeyText].render(X + 4, Y + 4+MapT[KeyImage].getHeight());
+		} else {
+			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, 0, 200);
 		}
-		SDL_FreeSurface(DrawImg);
-}
 
+		MapT[KeyImage].render(X, Y);
+		if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
+}
 void SDLB::PleaseWait(std::string text,bool render){
 	//Clear screen
 	SDL_SetRenderDrawColor(gRenderer, 0x55, 0x55, 0x55, 0xFF);
@@ -216,6 +204,30 @@ void SDLB::PleaseWait(std::string text,bool render){
 	gTextTexture.loadFromRenderedText(gFont3, text.c_str(), { 50, 50, 50 });
 	gTextTexture.render(1280/2 - gTextTexture.getWidth()/2, 720/2 - gTextTexture.getHeight() / 2);
 	if (render)	SDL_RenderPresent(gRenderer);
+}
+void SDLB::ListCover(int x,int selectchapter,std::string temp,std::string temptext)
+{
+	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
+	temp = rootdirectory+"DATA/"+temp;
+
+	static int offset1 =1;static int offset2 =1;
+	if (x==0){offset1 =1; offset2 =1;}
+	if ((x > selectchapter-5) && (x < selectchapter)){
+		int comp=0;
+		if (selectchapter < 5){
+			comp = offset1+(4-selectchapter);
+		} else {
+			comp = offset1;
+		}
+		Cover(temp,600+  (comp * 30),  (comp * 22),temptext,100,BT_UP);
+		offset1++;
+	}
+	if (x == selectchapter)
+	{Cover(temp,680+ 132,  132,temptext,255,BT_A);}
+	if ((x < selectchapter+5) && (x > selectchapter)){
+		Cover(temp,1030+ (offset2 * 30), 400 + (offset2 * 22),temptext,100,BT_DOWN);
+		offset2++;
+	}
 }
 
 void SDLB::deint(){
