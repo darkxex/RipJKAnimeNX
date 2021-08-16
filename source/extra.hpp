@@ -38,9 +38,6 @@ LTexture gTextTexture;
 LTexture Farest;
 LTexture Heart;
 LTexture TChapters;
-LTexture TPreview;
-LTexture TPreviewb;
-LTexture TPreviewa;
 //Render Buttons
 LTexture B_A;
 LTexture B_B;
