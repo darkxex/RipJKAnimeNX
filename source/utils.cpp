@@ -23,6 +23,8 @@
 
 extern SDLB GOD;
 extern std::string serverenlace;
+extern int cancelcurl;
+
 using namespace std;
 
 std::string scrapElement(std::string content, std::string get,std::string delim){
@@ -285,6 +287,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 			std::cout << videourl << std::endl;
 			serverenlace = videourl;
 			if(downloadfile(videourl, directorydownload)) return true;
+			if(cancelcurl == 1) return false;
 		}
 	}
 
@@ -300,6 +303,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 			std::cout << videourl << std::endl;
 			serverenlace = videourl;
 			if(downloadfile(videourl, directorydownload)) return true;
+			if(cancelcurl == 1) return false;
 		}
 	}
 
@@ -312,6 +316,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 			std::cout << videourl << std::endl;
 			serverenlace = videourl;
 			if (downloadfile(videourl, directorydownload)) return true;
+			if(cancelcurl == 1) return false;
 		}
 	}
 
@@ -327,6 +332,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 			std::cout << videourl << std::endl;
 			serverenlace = videourl;
 			if(downloadfile(videourl, directorydownload)) return true;
+			if(cancelcurl == 1) return false;
 		}
 	}
 
@@ -338,6 +344,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 		std::cout << videourl << std::endl;
 		serverenlace = videourl;
 		if(downloadfile(videourl, directorydownload)) return true;
+		if(cancelcurl == 1) return false;
 	}
 
 	videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
@@ -349,6 +356,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 		std::cout << videourl << std::endl;
 		serverenlace = videourl;
 		if(downloadfile(videourl, directorydownload)) return true;
+		if(cancelcurl == 1) return false;
 	}
 	return false;
 }

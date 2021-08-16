@@ -38,9 +38,6 @@ LTexture gTextTexture;
 LTexture Farest;
 LTexture Heart;
 LTexture TChapters;
-LTexture TPreview;
-LTexture TPreviewb;
-LTexture TPreviewa;
 //Render Buttons
 LTexture B_A;
 LTexture B_B;
@@ -66,7 +63,7 @@ LTexture T_T;
 LTexture T_D;
 LTexture T_R;
 
-//main SLD funct (Grafics On Display = GOD)
+//main SLD funct (Grafics On Display == GOD)
 SDLB GOD;
 	
 //Gui Vars
@@ -99,7 +96,6 @@ std::string DownTitle="...";
 int searchchapter = 0;
 bool reloadingsearch = false;
 bool activatefirstsearchimage = true;
-std::string tempimage = "";
 //downloads
 bool isDownloading=false;
 std::string speedD="";

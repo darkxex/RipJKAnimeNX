@@ -1,29 +1,4 @@
-
-
-class SDLB {
-public:
-void intA();
-SDL_Renderer* gRenderer = NULL;
-SDL_Window* gWindow = NULL;
-//Globally used font
-TTF_Font *B_O_F = NULL;
-TTF_Font *gFont = NULL;
-TTF_Font *gFont2 = NULL;
-TTF_Font *gFont3 = NULL;
-TTF_Font *gFont4 = NULL;
-TTF_Font *gFont5 = NULL;
-TTF_Font* digifont = NULL;
-TTF_Font* digifontC = NULL;
-TTF_Font *gFontcapit = NULL;
-Mix_Music* gMusic = NULL;
-int TouchX=-1;
-int TouchY=-1;
-int GenState=-1;
-void Image(std::string path,int X, int Y,std::string Text = "",bool off=false);
-void Cover(std::string path,int X, int Y,std::string Text = "",int HS = 100);
-void PleaseWait(std::string text,bool render = true);
-void deint();
-};
+#include <map>
 
 //Texture wrapper class
 class LTexture
@@ -78,6 +53,51 @@ private:
 	int mY;
 	int SelIns;
 	
+};
+
+
+class SDLB {
+public:
+void intA();
+std::map<std::string,LTexture> MapT {};
+SDL_Renderer* gRenderer = NULL;
+SDL_Window* gWindow = NULL;
+//Globally used font
+TTF_Font *B_O_F = NULL;
+TTF_Font *gFont = NULL;
+TTF_Font *gFont2 = NULL;
+TTF_Font *gFont3 = NULL;
+TTF_Font *gFont4 = NULL;
+TTF_Font *gFont5 = NULL;
+TTF_Font* digifont = NULL;
+TTF_Font* digifontC = NULL;
+TTF_Font *gFontcapit = NULL;
+Mix_Music* gMusic = NULL;
+
+enum SDL_Keys {
+	BT_A, BT_B, BT_X, BT_Y,
+	BT_L3, BT_R3,
+	BT_L, BT_R, BT_ZL, BT_ZR,
+	BT_P, BT_M,
+	BT_LEFT, BT_UP, BT_RIGHT, BT_DOWN,
+	BT_LS_LEFT, BT_LS_UP, BT_LS_RIGHT, BT_LS_DOWN,
+	BT_RS_LEFT, BT_RS_UP, BT_RS_RIGHT, BT_RS_DOWN,
+	BT_1
+};
+
+
+//Touch cords
+int TouchX=-1;
+int TouchY=-1;
+int GenState=-1;
+int MasKey=-1;
+std::string WorKey="00";
+
+void Image(std::string path,int X, int Y,std::string Text = "",bool off=false);
+void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1);
+void PleaseWait(std::string text,bool render = true);
+void ListCover(int x,int selectchapter,std::string Link);
+void deint();
 };
 
 

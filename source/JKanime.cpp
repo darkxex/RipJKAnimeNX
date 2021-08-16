@@ -4,7 +4,7 @@
 #include "JKanime.hpp"
 #include "SDLWork.hpp"
 
-extern json BD;//BD["com"]["tempimage"]
+extern json BD;
 extern int mincapit;
 extern int maxcapit;
 extern int capmore;
@@ -16,9 +16,6 @@ extern LTexture gTextTexture;
 extern LTexture Farest;
 extern LTexture Heart;
 extern LTexture TChapters;
-extern LTexture TPreview;
-extern LTexture TPreviewb;
-extern LTexture TPreviewa;
 extern int sizeportraity;
 extern int sizeportraitx;
 
@@ -50,42 +47,6 @@ extern int returnnow;
 extern bool reloadingsearch;
 extern bool activatefirstsearchimage;
 
-
-void callimage(int pos,std::vector<std::string> imageV) {
-	TPreview.free();
-	TPreviewb.free();
-	TPreviewa.free();
-	
-	std::string temp = imageV[pos];
-	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
-	temp = rootdirectory+"DATA/"+temp;
-
-	if(!isFileExist(temp)){
-		temp="romfs:/nop.png";
-		printf("# %d callimage imagen: %s \n",pos,temp.c_str());
-	}
-	
-	TPreview.loadFromFileCustom(temp.c_str(), sizeportraitx, sizeportraity);
-	BD["com"]["tempimage"] = temp;
-	
-	//extra img 
-	int bval,aval;
-	int sisea = imageV.size();
-	if (pos == 0){bval = sisea-1;} else {bval = pos-1;}
-	if (pos+1 == sisea){aval = 0;} else {aval = pos+1;}
-	
-	temp = imageV[bval];
-	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
-	temp = rootdirectory+"DATA/"+temp;
-	if(!isFileExist(temp)){temp = "romfs:/nop.png";}
-	TPreviewb.loadFromFileCustom(temp, 155, 110);
-	
-	temp = imageV[aval];
-	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
-	temp = rootdirectory+"DATA/"+temp;
-	if(!isFileExist(temp)){temp = "romfs:/nop.png";}
-	TPreviewa.loadFromFileCustom(temp, 155, 110);
-}
 void PushDirBuffer(std::string a,std::string name) {
 	if(quit) return;
 
@@ -250,6 +211,7 @@ int downloadjkanimevideo(void* data) {
 			BD["arrays"]["downloads"]["log"][x] = "100% : "+namedownload;
 		}
 	}
+	cancelcurl = 0;
 	isDownloading=false;
 	statenow = downloadstate;
 	led_on(3);
