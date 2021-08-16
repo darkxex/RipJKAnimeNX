@@ -223,11 +223,12 @@ int downloadjkanimevideo(void* data) {
 int refrescarpro(void* data){
 	appletSetAutoSleepDisabled(true);
 	//clear allocate
-	BD["arrays"] = "{}"_json;;
 
-	while (!HasConnection()){SDL_Delay(2000);if(quit) return 0;}
-	activatefirstimage = true;
+	while (!HasConnection()){preview = true;SDL_Delay(2000);if(quit) return 0;}
+	preview = false;
 	reloading = true;
+	BD["arrays"] = "{}"_json;
+	activatefirstimage = true;
 	porcentajereload = 0;
 	int  val0 = 0, val1 = 1, val2, val3, val4;
 	std::string temporal = "";
@@ -442,6 +443,7 @@ int searchjk(void* data) {
 //get cap thread
 std::string linktmpc="";
 int capit(void* data) {
+	if (!HasConnection()) return 0;
 	std::string bb = linktmpc;
 	std::string a = "";
 	a = gethtml(bb);

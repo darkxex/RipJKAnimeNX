@@ -25,12 +25,12 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](/out/RipJKAnime%20NX[05B9DB505A
 
 ## ToDo
 - [ ] **Añadir Sección de Programación semanal**
-- [ ] **Agregar un Historial**
+- [x] **Agregar un Historial**
 - [ ] **Gestor de Pieles**
-- [ ] **Agregar slideshow de recomendados**
+- [x] **Agregar slideshow**
 - [ ] **Agregar sección de recomendados**
-- [ ] **Gestionar la interfaz de decargas**
-- [ ] **Precargar luego del vector #30**
+- [x] **Gestionar la interfaz de decargas**
+- [x] **Precargar luego del vector #30**
 - [x] **Agregar Eliminar Cache**
 ### Maybe 
 - [ ] **Gestionar la UI de forma mas simple**
@@ -38,5 +38,5 @@ Copiar [RipJKAnime NX[05B9DB505ABBE000][v0].nsp](/out/RipJKAnime%20NX[05B9DB505A
 - [ ] **Crear un Auto Actualizador**
 - [ ] **Autoinstalar el nsp cuando se actualize**
 - [ ] **Sección de ajustes**
-- [ ] **Hacer una lista de imagenes en lugar de plana**
+- [x] **Hacer una lista de imagenes en lugar de plana**
 </details>

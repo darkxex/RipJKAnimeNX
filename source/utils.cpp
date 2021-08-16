@@ -546,23 +546,35 @@ void led_on(int inter)
             // Get the UniquePadIds for the specified controller, which will then be used with hidsysSetNotificationLedPattern*.
             // If you want to get the UniquePadIds for all controllers, you can use hidsysGetUniquePadIds instead.
             rc = hidsysGetUniquePadsFromNpad(padIsHandheld(&pad) ? HidNpadIdType_Handheld : HidNpadIdType_No1, unique_pad_ids, 2, &total_entries);
-            printf("hidsysGetUniquePadsFromNpad(): 0x%x", rc);
-            if (R_SUCCEEDED(rc)) printf(", %d", total_entries);
-            printf("\n");
+            //printf("hidsysGetUniquePadsFromNpad(): 0x%x", rc);
+           if (!R_SUCCEEDED(rc)) printf(",error %d", total_entries);
+           // printf("\n");
 
             if (R_SUCCEEDED(rc)) {
                 for(i=0; i<total_entries; i++) { // System will skip sending the subcommand to controllers where this isn't available.
-                    printf("[%d] = 0x%lx ", i, unique_pad_ids[i].id);
+                   // printf("[%d] = 0x%lx ", i, unique_pad_ids[i].id);
 
                     // Attempt to use hidsysSetNotificationLedPatternWithTimeout first with a 2 second timeout, then fallback to hidsysSetNotificationLedPattern on failure. See hidsys.h for the requirements for using these.
                      rc = hidsysSetNotificationLedPatternWithTimeout(&pattern, unique_pad_ids[i], 100000000000ULL);
-					   printf("hidsysSetNotificationLedPatternWithTimeout(): 0x%x\n", rc);
+					   //printf("hidsysSetNotificationLedPatternWithTimeout(): 0x%x\n", rc);
                     if (R_FAILED(rc)) {
                         rc = hidsysSetNotificationLedPattern(&pattern, unique_pad_ids[i]);
-                        printf("hidsysSetNotificationLedPattern(): 0x%x\n", rc);
+                       // printf("hidsysSetNotificationLedPattern(): 0x%x\n", rc);
                     }
                 }
             }
         
 }
 
+bool onTimeC(int sec)
+{
+	if (sec > 0) sec--;
+	std::time_t t = std::time(0);
+	int time1 = t;
+	static int time2 = t;
+	if (time1 > time2+sec){
+		time2 = time1;
+		return true;
+	}
+	return false;
+}

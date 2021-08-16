@@ -168,6 +168,7 @@ std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
 
 bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 {
+	if(!HasConnection()){return false;}
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 	curl = curl_easy_init();
@@ -195,8 +196,9 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 			
 			res = curl_easy_perform(curl);
 			if ((res == CURLE_OK)){
-				printf("#size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
-				if (chunk.size < 1000000  && directorydown.find(".mp4") != -1){
+				int thism = directorydown.find(".mp4");
+				printf("#size:%ld found:%ld %d in:%s\n",chunk.size,directorydown.find(".mp4"),thism,directorydown.c_str());
+				if (chunk.size < 1000000  && thism != -1){
 					printf("####size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
 					allok=false;//
 				} else {

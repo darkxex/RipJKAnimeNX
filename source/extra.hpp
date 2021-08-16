@@ -134,4 +134,4 @@ int sizeportraity = 300;
 int sizeportraitx =424;
 int xdistance = 1010;
 int ydistance = 340;
-
+bool isConnected = true;
