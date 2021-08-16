@@ -96,7 +96,7 @@ std::string WorKey="00";
 void Image(std::string path,int X, int Y,std::string Text = "",bool off=false);
 void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1);
 void PleaseWait(std::string text,bool render = true);
-void ListCover(int x,int selectchapter,std::string temp,std::string temptext);
+void ListCover(int x,int selectchapter,std::string Link);
 void deint();
 };
 

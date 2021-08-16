@@ -158,6 +158,7 @@ int main(int argc, char **argv)
 		}
 	}
 
+try{
 	//While application is running
 	while (!quit)
 	{
@@ -213,12 +214,9 @@ int main(int argc, char **argv)
 						if(GOD.MapT[GOD.WorKey].SP()){
 							e.jbutton.button=GOD.MasKey;
 						}
-						GOD.WorKey="0";
-						GOD.MasKey=-1;
+						GOD.WorKey="0";GOD.MasKey=-1;
 					}
-					else if (B_A.SP() || T_T.SP() || TChapters.SP() || TPreview.SP() ) e.jbutton.button = GOD.BT_A;
-					else if (TPreviewb.SP()) e.jbutton.button = GOD.BT_UP;
-					else if (TPreviewa.SP()) e.jbutton.button = GOD.BT_DOWN;
+					else if (B_A.SP() || T_T.SP() || TChapters.SP() ) e.jbutton.button = GOD.BT_A;
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
 					else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
 					else if (B_Y.SP()) e.jbutton.button = GOD.BT_Y;
@@ -247,7 +245,7 @@ int main(int argc, char **argv)
 				GOD.TouchY = -1;
 			}
 			case SDL_JOYBUTTONDOWN :
-				SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
+				//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 				// seek for joystick #0
 				if (e.jbutton.which == 0) {
@@ -599,13 +597,10 @@ int main(int argc, char **argv)
 								if (selectchapter > 0)
 								{
 									selectchapter--;
-									//std::cout << selectchapter << std::endl;
-								}
-								else {
+								} else {
 									selectchapter = BD["arrays"]["chapter"]["link"].size() - 1;
 								}
 							}
-
 							break;
 						case chapterstate:
 							if(!serverpront){//selectserver
@@ -624,40 +619,30 @@ int main(int argc, char **argv)
 								}
 							}
 							break;
-
 						case searchstate:
 							if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
 							{
-								
 								if (searchchapter > 0)
 								{
 									searchchapter--;
-									//std::cout << searchchapter << std::endl;
-								}
-								else {
+								} else {
 									searchchapter = BD["arrays"]["search"]["link"].size() - 1;
 								}
-
 							}
 							break;
 
 						case favoritesstate:
-
-							
 							if (favchapter > 0)
 							{
 								favchapter--;
-								//std::cout << favchapter << std::endl;
 							}
 							else {
 								favchapter = (int)BD["arrays"]["favorites"]["link"].size() - 1;
 							}
 							break;
-
 						}
 					}
 					else if (e.jbutton.button == GOD.BT_DOWN || e.jbutton.button == GOD.BT_LS_DOWN) {// (down) button down
-
 						switch (statenow)
 						{
 						case searchstate:
@@ -667,10 +652,7 @@ int main(int argc, char **argv)
 								if (searchchapter < (int)BD["arrays"]["search"]["link"].size() - 1)
 								{
 									searchchapter++;
-
-									//std::cout << searchchapter << std::endl;
-								}
-								else {
+								} else {
 									searchchapter = 0;
 								}
 
@@ -683,10 +665,7 @@ int main(int argc, char **argv)
 								if (selectchapter < (int)BD["arrays"]["chapter"]["link"].size() - 1)
 								{
 									selectchapter++;
-
-									//std::cout << selectchapter << std::endl;
-								}
-								else {
+								} else {
 									selectchapter = 0;
 								}
 							}
@@ -706,8 +685,7 @@ int main(int argc, char **argv)
 								if (selectserver < (int)arrayservers.size()-1)
 								{
 									selectserver++;
-								}else if(serverpront){serverpront = false;selectserver=0;}
-
+								} else if(serverpront){serverpront = false;selectserver=0;}
 							}
 							break;
 
@@ -715,14 +693,10 @@ int main(int argc, char **argv)
 							if (favchapter < (int)BD["arrays"]["favorites"]["link"].size() - 1)
 							{
 								favchapter++;
-
-								//std::cout << favchapter << std::endl;
-							}
-							else {
+							} else {
 								favchapter = 0;
 							}
 							break;
-
 						}
 					}
 				}
@@ -917,7 +891,6 @@ int main(int argc, char **argv)
 							activatefirstimage=true;
 						} 
 					}
-					std::string seltext ="";
 					for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size(); x++) {
 						std::string temptext = BD["arrays"]["chapter"]["link"][x];
 						temptext = temptext.substr(0,temptext.length()-1);
@@ -944,7 +917,7 @@ int main(int argc, char **argv)
 						
 						if (preview)
 						{
-							GOD.ListCover(x,selectchapter,BD["arrays"]["chapter"]["images"][x],temptext);
+							GOD.ListCover(x,selectchapter,BD["arrays"]["chapter"]["link"][x]);
 						}
 					}
 
@@ -996,18 +969,17 @@ int main(int argc, char **argv)
 							searchchapter = sel;
 						}
 					}
-					if ((int)BD["arrays"]["search"]["link"].size() >= 1){
-						
+					int srchsize=BD["arrays"]["search"]["link"].size();
+					if (srchsize >= 1){
 						VOX.render_VOX({0,0, 620, 670}, 100, 100, 100, 115);
 						VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 
 						int of = searchchapter < 30 ? 0 : searchchapter - 26;
-						if (BD["arrays"]["search"]["link"].size() > 30) {
+						if (srchsize > 30) {
 							gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(searchchapter+1)+"/"+std::to_string(BD["arrays"]["search"]["link"].size()), {0,0,0});
 							gTextTexture.render(400, 690);
 						}
-						std::string seltext;
-						for (int x = of; x < (int)BD["arrays"]["search"]["link"].size(); x++) {
+						for (int x = of; x < srchsize; x++) {
 							std::string temptext = BD["arrays"]["search"]["link"][x];
 						
 							replace(temptext, "https://jkanime.net/", "");
@@ -1015,7 +987,6 @@ int main(int argc, char **argv)
 							replace(temptext, "-", " ");
 							mayus(temptext);
 							if (x == searchchapter) {
-								seltext= temptext;
 								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 								T_T.render(posxbase, posybase + ((x-of) * 22));
@@ -1024,27 +995,27 @@ int main(int argc, char **argv)
 							}
 							else if ((x-of)<30)
 							{
-
 								gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
 								gTextTexture.render(posxbase, posybase + ((x-of) * 22));
-
-							}
-							if (preview)
-							{
-								GOD.ListCover(x,searchchapter,BD["arrays"]["search"]["images"],temptext);
 							}
 						}
-
+						if (preview)
+						{
+							for (int x = 0; x < srchsize; x++) {
+								GOD.ListCover(x,searchchapter,BD["arrays"]["search"]["link"][x]);
+							}
+						}
 					}else {
 						NOP.render_T(230, 355,"?");
 						BD["searchtext"]="";
 					}
 					
 					{//Draw footer buttons
-					int dist = 1100,posdist = 160;
-					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
-					B_B.render_T(dist, 680,"Atras");dist -= posdist;
-					B_R.render_T(dist, 680,"Buscar");dist -= posdist;}
+						int dist = 1100,posdist = 160;
+						B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+						B_B.render_T(dist, 680,"Atras");dist -= posdist;
+						B_R.render_T(dist, 680,"Buscar");dist -= posdist;
+					}
 					B_UP.render_T(580, 5,"");
 					B_DOWN.render_T(580, 630,"");
 				}
@@ -1067,38 +1038,37 @@ int main(int argc, char **argv)
 					}
 				}
 
-				std::string seltext;
-				if ((int)BD["arrays"]["favorites"]["link"].size() >= 1 ){
-				VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
-				int of = favchapter < 30 ? 0 : favchapter - 26;
-				if (BD["arrays"]["favorites"]["link"].size() > 30) {
-					gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(BD["arrays"]["favorites"]["link"].size()), {0,0,0});
-					gTextTexture.render(400, 690);
-				}
-				for (int x = of; x < (int)BD["arrays"]["favorites"]["link"].size(); x++) {
-					std::string temptext = BD["arrays"]["favorites"]["link"][x];
+				int FavLsize = BD["arrays"]["favorites"]["link"].size();
+				if (FavLsize >= 1 ){
+					VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
+					if (FavLsize > 30) {
+						gTextTexture.loadFromRenderedText(GOD.gFont, std::to_string(favchapter+1)+"/"+std::to_string(FavLsize), {0,0,0});
+						gTextTexture.render(400, 690);
+					}
+					int of = favchapter < 30 ? 0 : favchapter - 26;
+					for (int x = of; x < FavLsize; x++) {
+						std::string temptext = BD["arrays"]["favorites"]["link"][x];
 
-					replace(temptext, "https://jkanime.net/", "");
-					replace(temptext, "/", "");
-	//				std::string machu = rootdirectory+temptext+".jpg";
-					replace(temptext, "-", " ");
+						replace(temptext, "https://jkanime.net/", "");
+						replace(temptext, "/", "");
+		//				std::string machu = rootdirectory+temptext+".jpg";
+						replace(temptext, "-", " ");
 						mayus(temptext);
 						if (x == favchapter) {
-							seltext = temptext;
 	//						CheckImgNet(machu);
-								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
-								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
-								T_T.render(posxbase, posybase + ((x-of) * 22));
-
-								{
-								Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));}
+							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
+							VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
+							T_T.render(posxbase, posybase + ((x-of) * 22));
+							Heart.render(posxbase - 18, posybase + 3 + ((x-of) * 22));
 						}
 						else if((x-of) < 30)
 						{
 							gTextTexture.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), textColor);
 							gTextTexture.render(posxbase, posybase + ((x-of) * 22));
 						}
-						GOD.ListCover(x,favchapter,BD["arrays"]["favorites"]["images"][x],temptext);
+					}
+					for (int x = 0; x < FavLsize; x++) {
+						GOD.ListCover(x,favchapter,BD["arrays"]["favorites"]["link"][x]);
 					}
 				}
 
@@ -1221,6 +1191,10 @@ int main(int argc, char **argv)
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
 	}
+	
+} catch(...){
+	printf("Error Catched\n");
+}
 	cancelcurl=1;
 	//clear allocate
 	BD["arrays"] = "{}"_json;

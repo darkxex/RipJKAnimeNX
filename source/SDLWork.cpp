@@ -155,13 +155,29 @@ void SDLB::Image(std::string path,int X, int Y,std::string Text,bool off){
 		
 		
 }
+void SDLB::PleaseWait(std::string text,bool render){
+	//Clear screen
+	SDL_SetRenderDrawColor(gRenderer, 0x55, 0x55, 0x55, 0xFF);
+	SDL_RenderClear(gRenderer);
+
+	//wallpaper
+	Farest.render((0), (0));	
+	SDL_Rect fillRect = { 0, 720/2 - 25, 1280, 50 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(gRenderer, &fillRect);
+	
+	gTextTexture.loadFromRenderedText(gFont3, text.c_str(), { 50, 50, 50 });
+	gTextTexture.render(1280/2 - gTextTexture.getWidth()/2, 720/2 - gTextTexture.getHeight() / 2);
+	if (render)	SDL_RenderPresent(gRenderer);
+}
 void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key){
-		//std::cout << path << std::endl;
+//render images and map to memory for fast display
 		std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
 		std::string KeyText=Text+"-"+std::to_string(WS);
-		//std::cout << KeyImage << std::endl;
+
 		if (!isFileExist(path)) {
 			KeyImage="nop.png";
+			KeyImage+="-"+std::to_string(WS);
 			path = "romfs:/nop.png";
 		}
 		int sizeportraitx = 300;
@@ -190,42 +206,45 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key){
 		MapT[KeyImage].render(X, Y);
 		if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
 }
-void SDLB::PleaseWait(std::string text,bool render){
-	//Clear screen
-	SDL_SetRenderDrawColor(gRenderer, 0x55, 0x55, 0x55, 0xFF);
-	SDL_RenderClear(gRenderer);
+void SDLB::ListCover(int x,int selectchapter,std::string Link)
+{//This controll the image order and logic
 
-	//wallpaper
-	Farest.render((0), (0));	
-	SDL_Rect fillRect = { 0, 720/2 - 25, 1280, 50 };
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(gRenderer, &fillRect);
+	//Get the Cap Key
+	replace(Link, "https://jkanime.net/", "");
+	int val0 = Link.find("/");
+	Link=Link.substr(0,val0);
+
+	//Cap Key to name 
+	std::string TEXT=Link;
+	replace(TEXT, "/", " ");
+	replace(TEXT, "-", " ");
+	mayus(TEXT);
+
+	//Image of cap
+	Link = rootdirectory+"DATA/"+Link+".jpg";
 	
-	gTextTexture.loadFromRenderedText(gFont3, text.c_str(), { 50, 50, 50 });
-	gTextTexture.render(1280/2 - gTextTexture.getWidth()/2, 720/2 - gTextTexture.getHeight() / 2);
-	if (render)	SDL_RenderPresent(gRenderer);
-}
-void SDLB::ListCover(int x,int selectchapter,std::string temp,std::string temptext)
-{
-	replace(temp,"https://cdn.jkanime.net/assets/images/animes/image/","");
-	temp = rootdirectory+"DATA/"+temp;
-
+	//set the offset position of images
 	static int offset1 =1;static int offset2 =1;
 	if (x==0){offset1 =1; offset2 =1;}
+	
+	//Get 4 Images before, rendre Small
 	if ((x > selectchapter-5) && (x < selectchapter)){
-		int comp=0;
+		int comp=0;//this is to get closer to te main image
 		if (selectchapter < 5){
 			comp = offset1+(4-selectchapter);
 		} else {
 			comp = offset1;
 		}
-		Cover(temp,600+  (comp * 30),  (comp * 22),temptext,100,BT_UP);
+		Cover(Link,600+  (comp * 30),  (comp * 22),TEXT,100,BT_UP);
 		offset1++;
 	}
-	if (x == selectchapter)
-	{Cover(temp,680+ 132,  132,temptext,255,BT_A);}
+	//Central Big image
+	if (x == selectchapter) {
+		Cover(Link,680+ 132,  132,TEXT,255,BT_A);
+	}
+	//Get 4 Images After, render small
 	if ((x < selectchapter+5) && (x > selectchapter)){
-		Cover(temp,1030+ (offset2 * 30), 400 + (offset2 * 22),temptext,100,BT_DOWN);
+		Cover(Link,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,100,BT_DOWN);
 		offset2++;
 	}
 }
