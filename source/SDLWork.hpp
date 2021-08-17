@@ -36,6 +36,7 @@ public:
 	void render_VOX(SDL_Rect Form ,int R, int G, int B, int A);
 	//get touch
 	bool SP();
+	bool SPr();
 	//Gets image dimensions
 	int getWidth();
 	int getHeight();
@@ -87,6 +88,8 @@ enum SDL_Keys {
 
 
 //Touch cords
+bool fingerdown = false;
+bool fingermotion = false;
 int TouchX=-1;
 int TouchY=-1;
 int GenState=-1;
@@ -94,9 +97,10 @@ int MasKey=-1;
 std::string WorKey="00";
 
 void Image(std::string path,int X, int Y,int W, int H,int key);
-void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1);
+void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,bool selected=false);
 void PleaseWait(std::string text,bool render = true);
-void ListCover(int x,int selectchapter,std::string Link);
+void ListCover(int x,int& selectindex,std::string Link,bool ongrid=false);
+void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select);
 void deint();
 };
 

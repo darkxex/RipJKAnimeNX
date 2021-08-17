@@ -106,6 +106,7 @@ bool serverpront = false;
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
+bool ongrid=true;
 AccountUid uid;
 SDL_Thread* capithread = NULL;
 bool quit=false;

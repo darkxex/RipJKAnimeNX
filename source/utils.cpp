@@ -576,6 +576,25 @@ bool onTimeC(int sec)
 	}
 	return false;
 }
+void TikerColor(int& color,int time)
+{
+	static bool reverse=false;
+	if (onTimeC(time))
+	{
+		if (reverse){
+			color-=50;
+			if(color < 150){
+				reverse=false;
+			}
+		} else {
+			color+=50;
+			if(color > 200){
+				reverse=true;
+			}
+		}
+//		printf("blink: %d \n",color);
+	}
+}
 
 void RemoveAccents(std::string& word){
 	replace(word, "á","a");

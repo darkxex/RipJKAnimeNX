@@ -154,7 +154,7 @@ void SDLB::PleaseWait(std::string text,bool render){
 	gTextTexture.render(1280/2 - gTextTexture.getWidth()/2, 720/2 - gTextTexture.getHeight() / 2);
 	if (render)	SDL_RenderPresent(gRenderer);
 }
-void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key){
+void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,bool selected){
 //render images and map to memory for fast display
 		std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
 		std::string KeyText=Text+"-"+std::to_string(WS);
@@ -173,24 +173,82 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key){
 		if ( MapT.find(KeyImage) == MapT.end() ) {
 			MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 		}
+		
+		static int blue=0;
+		if(selected){
+			TikerColor(blue,1);
+		} else blue=0;
+
+		
 		if (Text.length()){
 			//text
 			if ( MapT.find(KeyText) == MapT.end() ) {
 				int kinsize =11;
-				if (WS < 101){kinsize =7;Text=Text.substr(0,20);}//
+				if (WS < 115){kinsize =7;Text=Text.substr(0,20);}//
 				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
 				MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 			}
-			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, 0, 200);
+			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, blue, 200);
 			MapT[KeyText].render(X + 4, Y + 4+MapT[KeyImage].getHeight());
 		} else {
-			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, 0, 200);
+			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, blue, 200);
 		}
 
 		MapT[KeyImage].render(X, Y);
 		if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
 }
-void SDLB::ListCover(int x,int selectchapter,std::string Link)
+void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select){
+//render images and map to memory for fast display
+	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
+	std::string KeyText=Text+"-"+std::to_string(WS);
+
+	if (!isFileExist(path)) {
+		KeyImage="nop.png";
+		KeyImage+="-"+std::to_string(WS);
+		path = "romfs:/nop.png";
+	}
+	int sizeportraitx = 300;
+	int sizeportraity =424;
+	//make the math
+
+	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
+	if ( MapT.find(KeyImage) == MapT.end() ) {
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+	}
+	if (Text.length()){
+		//text
+		if ( MapT.find(KeyText) == MapT.end() ) {
+			int kinsize =11;
+			if (WS < 115){kinsize =9;Text=Text.substr(0,19);}//
+			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
+			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
+		}
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, 0, 200);
+		MapT[KeyText].render(X + 4, Y + 4+MapT[KeyImage].getHeight());
+	} else {
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, 0, 200);
+	}
+
+	MapT[KeyImage].render(X, Y);
+		
+	//How not to handle a touch input, wala, yolo
+	static int findex = -1;
+	if (findex >= 0 && !GOD.fingerdown){
+		printf("relea %d to %d %s\n",select,index,KeyImage.c_str());
+		select=findex;
+		findex=-1;
+	} else {
+		if(MapT[KeyImage].SP()){
+			printf("touch %d to %d %s\n",select,index,KeyImage.c_str());
+			findex = index;
+		} 
+		if(fingermotion) {
+			printf("reset %d to %d %s\n",select,index,KeyImage.c_str());
+			findex=-1;
+		}
+	}
+}
+void SDLB::ListCover(int x,int& selectindex,std::string Link, bool ongrid)
 {//This controll the image order and logic
 
 	//Get the Cap Key
@@ -202,39 +260,73 @@ void SDLB::ListCover(int x,int selectchapter,std::string Link)
 
 	//Cap Key to name 
 	std::string TEXT=imagelocal;
+	std::string TEXTH=imagelocal;
 	replace(TEXT, "/", " ");
 	replace(TEXT, "-", " ");
 	if (Link.length() > 0) {
-		TEXT+=" #"+Link;
+		TEXT=TEXT.substr(0,20)+" #"+Link;
+		TEXTH+=" #"+Link;
 	}
 	mayus(TEXT);
+	mayus(TEXTH);
 
 	//Image of cap
 	imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 	
 	//set the offset position of images
-	static int offset1 =1;static int offset2 =1;
-	if (x==0){offset1 =1; offset2 =1;}
+	static int MainOffSet=1,offset1=1,offset2=1,offset3=1;
 	
-	//Get 4 Images before, rendre Small
-	if ((x > selectchapter-5) && (x < selectchapter)){
-		int comp=0;//this is to get closer to te main image
-		if (selectchapter < 5){
-			comp = offset1+(4-selectchapter);
-		} else {
-			comp = offset1;
+	if (ongrid)
+	{
+		if (x == selectindex) {
+			//draw Title
+			gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
+			gTextTexture.render(20, 10);
 		}
-		Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,100,BT_UP);
-		offset1++;
-	}
-	//Central Big image
-	if (x == selectchapter) {
-		Cover(imagelocal,680+ 132,  132,TEXT,255,BT_A);
-	}
-	//Get 4 Images After, render small
-	if ((x < selectchapter+5) && (x > selectchapter)){
-		Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,100,BT_DOWN);
-		offset2++;
+
+		if (x==0){MainOffSet=0;offset1=0; offset2=0;offset3=0;}
+		int HO = 0;
+		//Get Images , render Small
+		if (x < 10){
+			MainOffSet=offset1;
+			HO = 70;
+			offset1++;
+		} else if (x < 20){
+			HO = 270;
+			MainOffSet=offset2;
+			offset2++;
+		} else if (x < 30){
+			MainOffSet=offset3;
+			HO = 470;
+			offset3++;
+		}
+		if (x == selectindex) {
+			Cover(imagelocal,10 +  (MainOffSet * 127)-5,HO-13,TEXT,120,BT_A,true);
+		} else {
+			Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,113,x,selectindex);
+		}
+	} else {
+		if (x==0){offset1 =1; offset2 =1;}
+		//Get 4 Images before, render Small
+		if ((x > selectindex-5) && (x < selectindex)){
+			int comp=0;//this is to get closer to te main image
+			if (selectindex < 5){
+				comp = offset1+(4-selectindex);
+			} else {
+				comp = offset1;
+			}
+			Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,113,BT_UP);
+			offset1++;
+		}
+		//Central Big image
+		if (x == selectindex) {
+			Cover(imagelocal,680+ 132,  132,TEXT,255,BT_A);
+		}
+		//Get 4 Images After, render small
+		if ((x < selectindex+5) && (x > selectindex)){
+			Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,113,BT_DOWN);
+			offset2++;
+		}
 	}
 }
 
@@ -617,8 +709,20 @@ bool LTexture::SP()
 	
 	//check if touched
 	if(GOD.TouchX > mX-3 && GOD.TouchX < mX + mWidth +3 && GOD.TouchY > mY-3 && GOD.TouchY < mY + mHeight +3){
-		printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
+		//printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
 		return true;
+	}
+return false;
+}
+//is press relesed
+bool LTexture::SPr()
+{
+	static bool isRe = false;
+	if (SP()){
+		if (!isRe) isRe = true;
+	} else if (isRe){
+		isRe=false;
+		if (!GOD.fingerdown) return true;
 	}
 return false;
 }
