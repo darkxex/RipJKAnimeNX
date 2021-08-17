@@ -221,12 +221,10 @@ std::string Fembed_Link(std::string Link) {
 
 bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 {
-	std::string text = "Cargando... "+onlineenlace.substr(0,62)+"... desde "+server;
-	
-	replace(text,"https://jkanime.net/","");
-	replace(text,"-"," ");
-	replace(text,"/","");
-	GOD.PleaseWait(text+"...");
+	std::string temp = onlineenlace;
+	NameOfLink(temp);
+	std::string text = "Cargando "+temp.substr(0,62)+"... desde "+server+" ...";
+	GOD.PleaseWait(text);
 	std::string videourl = "";
 	std::string content = "";
 	std::string tempcon = "";
@@ -577,4 +575,43 @@ bool onTimeC(int sec)
 		return true;
 	}
 	return false;
+}
+void TikerColor(int& color,int time)
+{
+	static bool reverse=false;
+	if (onTimeC(time))
+	{
+		if (reverse){
+			color-=50;
+			if(color < 150){
+				reverse=false;
+			}
+		} else {
+			color+=50;
+			if(color > 200){
+				reverse=true;
+			}
+		}
+//		printf("blink: %d \n",color);
+	}
+}
+
+void RemoveAccents(std::string& word){
+	replace(word, "á","a");
+	replace(word, "é","e");
+	replace(word, "í","i");
+	replace(word, "ó","o");
+	replace(word, "ú","u");
+	replace(word, "à","a");
+	replace(word, "è","e");
+	replace(word, "ì","i");
+	replace(word, "ò","o");
+	replace(word, "ù","u");
+}
+
+void NameOfLink(std::string& word){
+	replace(word, "https://jkanime.net/", "");
+	replace(word, "/", " ");
+	replace(word, "-", " ");
+	mayus(word);
 }

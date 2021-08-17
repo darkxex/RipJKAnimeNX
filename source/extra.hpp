@@ -37,7 +37,6 @@ const int SCREEN_HEIGHT = 720;
 LTexture gTextTexture;
 LTexture Farest;
 LTexture Heart;
-LTexture TChapters;
 //Render Buttons
 LTexture B_A;
 LTexture B_B;
@@ -75,19 +74,16 @@ int returnnow = toprogramation;
 std::string urltodownload = "";
 int porcendown = 0;
 int sizeestimated = 0;
-std::string temporallink = "";
 int cancelcurl = 0;
 bool lcdoff=false;
 //img
 bool reloading = false;
 bool preview = false;
 int selectchapter = 0;
-int porcentajereload = 0;
 int imgNumbuffer = 0;
 int porcentajebuffer = 0;
 int porcentajebufferF =0;
 int porcentajebufferFF =0;
-bool activatefirstimage = true;
 std::string serverenlace = "...";
 std::string DownTitle="...";
 
@@ -110,17 +106,18 @@ bool serverpront = false;
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
+bool ongrid=true;
 AccountUid uid;
 SDL_Thread* capithread = NULL;
 bool quit=false;
 std::string KeyName;
 
 std::vector<std::string> arrayservers= {
-"Fembed 2.0","Nozomi","MixDrop","Desu","Xtreme S","Okru"
+"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
 };
 
 std::vector<std::string> arrayserversbak= {
-"Fembed 2.0","Nozomi","MixDrop","Desu","Xtreme S","Okru"
+"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
 };
 
 json BD;
