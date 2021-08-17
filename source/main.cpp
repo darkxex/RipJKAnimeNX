@@ -245,11 +245,11 @@ try{
 			{
 				if (e.jaxis.axis == 1){
 				e.jbutton.button=-1;
-					SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
-					if (e.jaxis.value < 0){
+					//SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
+					if (e.jaxis.value < -22000){
 						e.jbutton.button = GOD.BT_UP;
 					}
-					if (e.jaxis.value > 0){
+					if (e.jaxis.value > 22000){
 						e.jbutton.button = GOD.BT_DOWN;
 					}
 				} else break;
@@ -723,11 +723,7 @@ try{
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
 			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 			std::string temptext = BD["com"]["ActualLink"];
-			replace(temptext, "https://jkanime.net/", "");
-			replace(temptext, "/", " ");
-			replace(temptext, "-", " ");
-			mayus(temptext);
-
+			NameOfLink(temptext);
 
 			//warning , only display in sxos ToDo
 			gTextTexture.loadFromRenderedText(GOD.gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
@@ -894,10 +890,7 @@ try{
 					for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size(); x++) {
 						std::string temptext = BD["arrays"]["chapter"]["link"][x];
 						temptext = temptext.substr(0,temptext.length()-1);
-						replace(temptext, "https://jkanime.net/", "");
-						replace(temptext, "/", " ");
-						replace(temptext, "-", " ");
-						mayus(temptext);
+						NameOfLink(temptext);
 
 						temptext = (temptext.substr(0,temptext.rfind(" ")).substr(0,53) + " " + temptext.substr(temptext.rfind(" ")) );
 
@@ -981,11 +974,8 @@ try{
 						}
 						for (int x = of; x < srchsize; x++) {
 							std::string temptext = BD["arrays"]["search"]["link"][x];
-						
-							replace(temptext, "https://jkanime.net/", "");
-							replace(temptext, "/", " ");
-							replace(temptext, "-", " ");
-							mayus(temptext);
+							NameOfLink(temptext);
+							
 							if (x == searchchapter) {
 								T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 								VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
@@ -1048,12 +1038,8 @@ try{
 					int of = favchapter < 30 ? 0 : favchapter - 26;
 					for (int x = of; x < FavLsize; x++) {
 						std::string temptext = BD["arrays"]["favorites"]["link"][x];
-
-						replace(temptext, "https://jkanime.net/", "");
-						replace(temptext, "/", "");
-		//				std::string machu = rootdirectory+temptext+".jpg";
-						replace(temptext, "-", " ");
-						mayus(temptext);
+						NameOfLink(temptext);
+						
 						if (x == favchapter) {
 							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 							VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
@@ -1135,10 +1121,7 @@ try{
 				gTextTexture.render(posxbase, posybase+310);
 				for (u64 x = 0; x < BD["arrays"]["downloads"]["log"].size(); x++) {
 					std::string descarga = BD["arrays"]["downloads"]["log"][x];
-					replace(descarga, "https://jkanime.net/", "");
-					replace(descarga, "/", " ");
-					replace(descarga, "-", " ");
-					mayus(descarga);
+					NameOfLink(descarga);
 					SDL_Color txtColor = textColor;//{ 50, 50, 50 };
 					
 					if(descarga.substr(0,3) == "100") txtColor = { 0, 100, 0 };

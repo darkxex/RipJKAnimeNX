@@ -15,3 +15,5 @@ bool copy_me(std::string origen, std::string destino);
 bool write_DB(json base,std::string path);
 void led_on(int inter);
 bool onTimeC(int sec);
+void RemoveAccents(std::string& word);
+void NameOfLink(std::string& word);
