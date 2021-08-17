@@ -114,46 +114,27 @@ void SDLB::intA(){
 	digifontC = TTF_OpenFont("romfs:/digifont.otf", 11);
 
 }
-void SDLB::Image(std::string path,int X, int Y,std::string Text,bool off){
+void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
+//render images and map to memory for fast display
 
-		SDL_Surface* DrawImg;
-		DrawImg = IMG_Load(path.c_str());
-		int DW=0,DH=0;
-		if (DrawImg == NULL)
-		{
-			printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-		}else{
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-		SDL_Texture* CLUST = SDL_CreateTextureFromSurface(gRenderer, DrawImg);
-		if (off){SDL_SetTextureColorMod(CLUST, 150, 150, 150);}
+	//Image of cap
+	replace(path, "https://jkanime.net/", "");
+	int val0 = path.find("/");
+	path=path.substr(0,val0);
 
-		SDL_Rect ImagetRect2 = {X, Y, DrawImg->w, DrawImg->h};
-		SDL_RenderCopy(gRenderer, CLUST , NULL, &ImagetRect2);
-		SDL_DestroyTexture(CLUST);
-		DW=DrawImg->w;
-		DH=DrawImg->h;
-		}
-		
-		if (Text.length()){
-			SDL_Surface* textSurface = TTF_RenderText_Blended(gFont, Text.c_str(), { 50, 50, 50 });
-			if (textSurface == NULL)
-			{
-				printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
-			}
-			else
-			{
-				SDL_Rect TextRect = {X+DW+3, Y +(DH/3), textSurface->w, textSurface->h};
-				//Create texture from surface pixels
-				SDL_Texture* TextureT = SDL_CreateTextureFromSurface(gRenderer, textSurface);
-				//Render to screen
-				SDL_RenderCopy(gRenderer, TextureT, NULL, &TextRect);
-				SDL_DestroyTexture(TextureT);
-			}
-			SDL_FreeSurface(textSurface);
-		}
-		SDL_FreeSurface(DrawImg);
-		
-		
+	path = rootdirectory+"DATA/"+path+".jpg";
+
+	std::string KeyImage=path.substr(25)+"-"+std::to_string(W)+"x"+std::to_string(H);
+	if (!isFileExist(path)) {
+		KeyImage="nop.png";
+		KeyImage+="-"+std::to_string(W)+"x"+std::to_string(H);
+		path = "romfs:/nop.png";
+	}
+	if ( MapT.find(KeyImage) == MapT.end() ) {
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), H, W);
+	}
+	MapT[KeyImage].render(X, Y);
+	if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
 }
 void SDLB::PleaseWait(std::string text,bool render){
 	if (render){
@@ -215,16 +196,21 @@ void SDLB::ListCover(int x,int selectchapter,std::string Link)
 	//Get the Cap Key
 	replace(Link, "https://jkanime.net/", "");
 	int val0 = Link.find("/");
-	Link=Link.substr(0,val0);
+	std::string imagelocal=Link.substr(0,val0);
+	replace(Link, imagelocal, "");
+	replace(Link, "/", "");
 
 	//Cap Key to name 
-	std::string TEXT=Link;
+	std::string TEXT=imagelocal;
 	replace(TEXT, "/", " ");
 	replace(TEXT, "-", " ");
+	if (Link.length() > 0) {
+		TEXT+=" #"+Link;
+	}
 	mayus(TEXT);
 
 	//Image of cap
-	Link = rootdirectory+"DATA/"+Link+".jpg";
+	imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 	
 	//set the offset position of images
 	static int offset1 =1;static int offset2 =1;
@@ -238,16 +224,16 @@ void SDLB::ListCover(int x,int selectchapter,std::string Link)
 		} else {
 			comp = offset1;
 		}
-		Cover(Link,600+  (comp * 30),  (comp * 22),TEXT,100,BT_UP);
+		Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,100,BT_UP);
 		offset1++;
 	}
 	//Central Big image
 	if (x == selectchapter) {
-		Cover(Link,680+ 132,  132,TEXT,255,BT_A);
+		Cover(imagelocal,680+ 132,  132,TEXT,255,BT_A);
 	}
 	//Get 4 Images After, render small
 	if ((x < selectchapter+5) && (x > selectchapter)){
-		Cover(Link,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,100,BT_DOWN);
+		Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,100,BT_DOWN);
 		offset2++;
 	}
 }

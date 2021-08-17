@@ -176,9 +176,6 @@ try{
 
 			GOD.GenState = statenow;
 			switch (e.type) {
-			case SDL_JOYAXISMOTION:
-				//SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
-				break;
 			case SDL_FINGERDOWN:
 			GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 			GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
@@ -215,7 +212,7 @@ try{
 						}
 						GOD.WorKey="0";GOD.MasKey=-1;
 					}
-					else if (B_A.SP() || T_T.SP() || TChapters.SP() ) e.jbutton.button = GOD.BT_A;
+					else if (B_A.SP() || T_T.SP() ) e.jbutton.button = GOD.BT_A;
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
 					else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
 					else if (B_Y.SP()) e.jbutton.button = GOD.BT_Y;
@@ -243,6 +240,20 @@ try{
 				GOD.TouchX = -1;
 				GOD.TouchY = -1;
 			}
+			case SDL_JOYAXISMOTION:
+			if (e.type == SDL_JOYAXISMOTION)
+			{
+				if (e.jaxis.axis == 1){
+				e.jbutton.button=-1;
+					SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
+					if (e.jaxis.value < 0){
+						e.jbutton.button = GOD.BT_UP;
+					}
+					if (e.jaxis.value > 0){
+						e.jbutton.button = GOD.BT_DOWN;
+					}
+				} else break;
+			}
 			case SDL_JOYBUTTONDOWN :
 				//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
@@ -256,11 +267,10 @@ try{
 							{
 								if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1)
 								{
-									temporallink = BD["arrays"]["chapter"]["link"][selectchapter];
-									int v2 = temporallink.find("/", 20);
-									temporallink = temporallink.substr(0, v2 + 1);
-									capBuffer(temporallink);								
-									gFAV = isFavorite(temporallink);
+									
+
+									capBuffer(BD["arrays"]["chapter"]["link"][selectchapter];);								
+									gFAV = isFavorite(BD["com"]["temporallink"]);
 								}
 							}
 							break;
@@ -472,7 +482,7 @@ try{
 						{
 						case programationstate:
 							if (!reloading)
-							{activatefirstimage=true;
+							{
 								get_favorites();
 								returnnow = tofavorite;
 								statenow = favoritesstate;
@@ -535,7 +545,7 @@ try{
 						case programationstate:
 						case searchstate:
 							if (!reloadingsearch)
-							{activatefirstimage=true;
+							{
 								if (BD["searchtext"].empty()){BD["searchtext"]="";}
 								BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
 								if ((BD["searchtext"].get<std::string>()).length() > 0){
@@ -685,7 +695,7 @@ try{
 								if (selectserver < (int)arrayservers.size()-1)
 								{
 									selectserver++;
-								} else if(serverpront){serverpront = false;selectserver=0;}
+								}
 							}
 							break;
 
@@ -734,10 +744,11 @@ try{
 			gTextTexture.render(posxbase, 0 );
 			
 			{//draw back rectangle
-				VOX.render_VOX({ SCREEN_WIDTH - TChapters.getWidth() - 40 - 2,58, TChapters.getWidth()+4, TChapters.getHeight()+40}, 0, 0, 0, 200);
+				VOX.render_VOX({ SCREEN_WIDTH - 442,58, 404, 590}, 0, 0, 0, 200);
 				//draw preview image
-				TChapters.render(SCREEN_WIDTH - TChapters.getWidth() - 40,60);
-			}
+				GOD.Image(temporallink,SCREEN_WIDTH - 440, 60,400, 550,GOD.BT_A);
+			}	
+
 
 			//draw Title
 			gTextTexture.loadFromRenderedText(GOD.gFont3, temptext.substr(0,62)+ ":", textColor);
@@ -745,48 +756,42 @@ try{
 
 			{//draw description
 				VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
-					
-					static std::string rese_prot = "..";
-					if (rese_prot != BD["com"]["sinopsis"]){//load texture on text change 
-						T_R.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["sinopsis"], textColor, 750);
-						rese_prot = BD["com"]["sinopsis"];
-					}
-					T_R.render(posxbase+15, posybase + 65);
-					
-					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["Emitido"], textColor,750);
-					gTextTexture.render(posxbase+15, posybase + 350-gTextTexture.getHeight());
+				static std::string rese_prot = "..";
+				if (rese_prot != BD["com"]["sinopsis"]){//load texture on text change 
+					T_R.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["sinopsis"], textColor, 750);
+					rese_prot = BD["com"]["sinopsis"];
+				}
+				T_R.render(posxbase+15, posybase + 65);
 
-					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["generos"], textColor,750);
-					gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
+				gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["Emitido"], textColor,750);
+				gTextTexture.render(posxbase+15, posybase + 350-gTextTexture.getHeight());
 
+				gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["generos"], textColor,750);
+				gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
 			}
-			
+			bool anend=false;
+			int sizefix = 0;
 			if (maxcapit >= 0){
-				
 				if (BD["com"]["nextdate"] == "Pelicula"){
 					gTextTexture.loadFromRenderedText(GOD.gFont3, "Pelicula", { 250,250,250 });
 					gTextTexture.render(posxbase + 820, posybase + 598);
-				}else {
+				} else {
 					if (BD["com"]["enemision"] == "true")
 					{
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
 						gTextTexture.render(posxbase + 820, posybase + 598);
-					}
-					else
-					{
+					} else {
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
 						gTextTexture.render(posxbase + 820, posybase + 598);
 					}
 					gTextTexture.loadFromRenderedText(GOD.gFont, BD["com"]["nextdate"], { 255,255,255 });
 					gTextTexture.render(posxbase + 1020, posybase + 615);
 				}
-
-				int sizefix = 0;
 				int mwide = 35;//52
 				int XD = 310;
 				int YD = 582;
 				sizefix = (int)arrayservers.size() * mwide;
-				bool anend = VOX.render_AH(XD, YD, 190, sizefix, serverpront);
+				anend=VOX.render_AH(XD, YD, 190, sizefix, serverpront);
 				if(serverpront){
 					if (anend){
 						for (int x = 0; x < (int)arrayservers.size(); x++) {
@@ -805,7 +810,12 @@ try{
 
 			//use this to move the element
 			int XS=100 , YS =0;
-			if(serverpront) B_DOWN.render_T(280+XS, 630+YS,"");
+			if(serverpront){
+				if (anend){
+					B_UP.render_T(280+XS, 530+YS-sizefix,"");
+				}
+				B_DOWN.render_T(280+XS, 630+YS,"");
+			}
 			if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula"){//draw caps Scroll
 				VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
 				if (capmore-2 >= mincapit) {
@@ -888,7 +898,7 @@ try{
 						u32 sel=(GOD.TouchY*30/660);
 						if (sel >= 0 && sel < BD["arrays"]["chapter"]["link"].size()){
 							selectchapter = sel;
-							activatefirstimage=true;
+							
 						} 
 					}
 					for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size(); x++) {
@@ -1021,7 +1031,7 @@ try{
 				}
 				else
 				{
-					GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(porcentajereload) + "%)",false);
+					GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(BD["com"]["porcentajereload"]) + "%)",false);
 				}
 				break;
 			}
@@ -1055,7 +1065,6 @@ try{
 						replace(temptext, "-", " ");
 						mayus(temptext);
 						if (x == favchapter) {
-	//						CheckImgNet(machu);
 							T_T.loadFromRenderedText(GOD.digifont, temptext.substr(0,58), { 255,255,255 });
 							VOX.render_VOX({posxbase-2,posybase + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 							T_T.render(posxbase, posybase + ((x-of) * 22));
@@ -1253,7 +1262,6 @@ try{
 	gTextTexture.free();
 	Farest.free();
 	Heart.free();
-	TChapters.free();
 	
 	B_A.free();
 	B_B.free();

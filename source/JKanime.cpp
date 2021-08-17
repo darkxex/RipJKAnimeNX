@@ -15,7 +15,6 @@ extern bool gFAV;
 extern LTexture gTextTexture;
 extern LTexture Farest;
 extern LTexture Heart;
-extern LTexture TChapters;
 extern int sizeportraity;
 extern int sizeportraitx;
 
@@ -23,12 +22,10 @@ extern int sizeportraitx;
 extern bool reloading;
 extern bool preview;
 extern int selectchapter;
-extern int porcentajereload;
 extern int imgNumbuffer;
 extern int porcentajebuffer;
 extern int porcentajebufferF;
 extern int porcentajebufferFF;
-extern bool activatefirstimage;
 extern bool quit;
 extern bool isDownloading;
 extern int porcendown;
@@ -228,8 +225,6 @@ int refrescarpro(void* data){
 	preview = false;
 	reloading = true;
 	BD["arrays"] = "{}"_json;
-	activatefirstimage = true;
-	porcentajereload = 0;
 	int  val0 = 0, val1 = 1, val2, val3, val4;
 	std::string temporal = "";
 	std::string content = gethtml("https://jkanime.net");
@@ -256,7 +251,6 @@ int refrescarpro(void* data){
 		//std::cout << gdrive << "  .  " << gpreview << std::endl;
 		temporal = temporal + gdrive + "\n";
 		temporal = temporal + gpreview + "\n";
-		porcentajereload = val1;
 		val1++;
 	}
 	//printf(temporal.c_str());
@@ -287,15 +281,15 @@ int refrescarpro(void* data){
 	if(!isFileExist(directorydownloadimage)){
 		printf("\n# %d imagen: %s \n",x,tempima.c_str());
 		downloadfile(BD["arrays"]["chapter"]["images"][x],directorydownloadimage,false);
-		activatefirstimage=true;
+		
 	} else printf("-");
 	preview = true;
 
-//	porcentajereload = ((x+1) * 100) / BD["arrays"]["chapter"]["images"].size();
+
 	}
 	printf("#\nEnd Image Download\n");
 	imgNumbuffer=0;
-	activatefirstimage=true;
+	
 	//return 0;
 
 	MKfavimgfix(true);
@@ -373,7 +367,7 @@ int MKfavimgfix(bool images){
 //END THREAD CHAIN
 
 int searchjk(void* data) {
-	porcentajereload = 0;
+	BD["com"]["porcentajereload"] = 0;
 	activatefirstsearchimage = true;
 	reloadingsearch = true;	 
 	
@@ -419,16 +413,15 @@ int searchjk(void* data) {
 		}
 		
 		for (int x = 0; x < (int)BD["arrays"]["search"]["images"].size(); x++) {
-			std::string tempima = BD["arrays"]["search"]["images"][x];
-			replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
+			std::string LocalImg = BD["arrays"]["search"]["images"][x];
+			replace(LocalImg,"https://cdn.jkanime.net/assets/images/animes/image/","");
 
-			std::string directorydownloadimage = rootdirectory+"DATA/";
-			directorydownloadimage.append(tempima);
+			LocalImg = rootdirectory+"DATA/"+LocalImg;
 
-			if(!isFileExist(directorydownloadimage))
-			downloadfile(BD["arrays"]["search"]["images"][x],directorydownloadimage,false);
+			if(!isFileExist(LocalImg))
+			downloadfile(BD["arrays"]["search"]["images"][x],LocalImg,false);
 
-			porcentajereload = ((x + 1) * 100) / BD["arrays"]["search"]["images"].size();
+			BD["com"]["porcentajereload"] = ((x + 1) * 100) / BD["arrays"]["search"]["images"].size();
 		}
 	}
 	else
@@ -469,18 +462,18 @@ return 0;
 }
 //anime manager
 int capBuffer (std::string Tlink) {
+	int v2 = Tlink.find("/", 20);
+	Tlink = Tlink.substr(0, v2 + 1);
+	BD["com"]["temporallink"] = Tlink;
+	
 	std::string name = Tlink;
 	replace(name, "https://jkanime.net/", "");
 	replace(name, "/", "");
 	KeyName = name;
 	std::cout << "KeyName: " << name << std::endl;
 
-	activatefirstimage=true;
 	statenow = chapterstate;
-	std::string temp = rootdirectory+"DATA/"+name+".jpg";
-	CheckImgNet(temp);
-	TChapters.free();
-	TChapters.loadFromFileCustom(temp, 550, 400);
+	CheckImgNet(rootdirectory+"DATA/"+name+".jpg");
 
 	if (BD["DataBase"][name]["TimeStamp"].empty())
 	{
@@ -502,8 +495,15 @@ int capBuffer (std::string Tlink) {
 			BD["com"]["enemision"] = BD["DataBase"][name]["enemision"];
 			maxcapit = BD["DataBase"][name]["maxcapit"];
 			mincapit = BD["DataBase"][name]["mincapit"];
-			if (BD["DataBase"][name]["capmore"].empty())
-				capmore = BD["DataBase"][name]["maxcapit"];
+			//check For latest cap seend
+			if (BD["DataBase"][name]["capmore"].empty()){
+				//get position to the latest cap if in emision
+				if (BD["com"]["enemision"] == "true"){
+					capmore = BD["DataBase"][name]["maxcapit"];//is in emision
+				} else {
+					capmore = BD["DataBase"][name]["mincapit"];//is not in emision 
+				}
+			}
 			else
 				capmore = BD["DataBase"][name]["capmore"];
 			

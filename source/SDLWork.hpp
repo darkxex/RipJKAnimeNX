@@ -93,7 +93,7 @@ int GenState=-1;
 int MasKey=-1;
 std::string WorKey="00";
 
-void Image(std::string path,int X, int Y,std::string Text = "",bool off=false);
+void Image(std::string path,int X, int Y,int W, int H,int key);
 void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1);
 void PleaseWait(std::string text,bool render = true);
 void ListCover(int x,int selectchapter,std::string Link);
