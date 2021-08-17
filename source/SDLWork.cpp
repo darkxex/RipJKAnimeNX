@@ -116,14 +116,14 @@ void SDLB::intA(){
 }
 void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 //render images and map to memory for fast display
-
 	//Image of cap
-	replace(path, "https://jkanime.net/", "");
-	int val0 = path.find("/");
-	path=path.substr(0,val0);
-
-	path = rootdirectory+"DATA/"+path+".jpg";
-
+	int val0 = path.find("https://jkanime.net/");
+	if (val0 != -1) {
+		replace(path, "https://jkanime.net/", "");
+		int val1 = path.find("/");
+		path=path.substr(0,val1);
+		path = rootdirectory+"DATA/"+path+".jpg";
+	}
 	std::string KeyImage=path.substr(25)+"-"+std::to_string(W)+"x"+std::to_string(H);
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
@@ -239,6 +239,8 @@ void SDLB::ListCover(int x,int selectchapter,std::string Link)
 }
 
 void SDLB::deint(){
+	//Clear Texture Map
+	MapT.clear();
 	//Free global font
 	TTF_CloseFont(gFont);
 	gFont = NULL;

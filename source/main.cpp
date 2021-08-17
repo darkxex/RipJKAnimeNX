@@ -267,10 +267,8 @@ try{
 							{
 								if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1)
 								{
-									
-
-									capBuffer(BD["arrays"]["chapter"]["link"][selectchapter];);								
-									gFAV = isFavorite(BD["com"]["temporallink"]);
+									capBuffer(BD["arrays"]["chapter"]["link"][selectchapter]);								
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
 								}
 							}
 							break;
@@ -279,10 +277,8 @@ try{
 							{
 								if (!reloadingsearch && BD["arrays"]["search"]["link"].size()>=1)
 								{
-									temporallink = BD["arrays"]["search"]["link"][searchchapter];
-									std::cout << temporallink << std::endl;
-									capBuffer(temporallink);
-									gFAV = isFavorite(temporallink);
+									capBuffer(BD["arrays"]["search"]["link"][searchchapter]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
 								}
 
 							}
@@ -291,16 +287,14 @@ try{
 							case favoritesstate:
 							{
 								if ((int)BD["arrays"]["favorites"]["link"].size() >= 1 ){
-									temporallink = BD["arrays"]["favorites"]["link"][favchapter];
-									std::cout << temporallink << std::endl;
-									capBuffer(temporallink);
+									capBuffer(BD["arrays"]["favorites"]["link"][favchapter]);
 									gFAV = true;
 								}
 							}
 							break;
 							case chapterstate:
 							if(serverpront){
-								std::string tempurl = temporallink + std::to_string(capmore) + "/";
+								std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(capmore) + "/";
 								if(!onlinejkanimevideo(tempurl,arrayservers[selectserver])){
 									arrayservers.erase(arrayservers.begin()+selectserver);
 								} else {
@@ -355,10 +349,8 @@ try{
 					else if (e.jbutton.button == GOD.BT_L || e.jbutton.button == GOD.BT_ZL) {// (L & ZL) button down
 						if (statenow == chapterstate&&e.jbutton.button == GOD.BT_L){
 							if(!BD["DataBase"][KeyName]["Precuela"].empty()&&!serverpront){
-								temporallink = BD["DataBase"][KeyName]["Precuela"];
-								std::cout << temporallink << std::endl;
-								capBuffer(temporallink);
-								gFAV = isFavorite(temporallink);
+								capBuffer(BD["DataBase"][KeyName]["Precuela"]);
+								gFAV = isFavorite(BD["com"]["ActualLink"]);
 							}
 						}
 				
@@ -443,7 +435,7 @@ try{
 							statenow = downloadstate;
 							cancelcurl = 0;
 //							GOD.PleaseWait("Calculando Links Espere...");
-							urltodownload  = temporallink + std::to_string(capmore) + "/";
+							urltodownload  = BD["com"]["ActualLink"].get<std::string>() + std::to_string(capmore) + "/";
 							if(isDownloading){
 								bool gogo = false;
 								for (u64 x=0; x < BD["arrays"]["downloads"]["queue"].size();x++){
@@ -495,10 +487,10 @@ try{
 							break;
 						case chapterstate:
 						{//AGREGAR A FAVORITOS
-							if(!isFavorite(temporallink)){
+							if(!isFavorite(BD["com"]["ActualLink"])){
 								std::ofstream outfile;
 								outfile.open(rootdirectory+"favoritos.txt", std::ios_base::app); // append instead of overwrite
-								outfile << temporallink;
+								outfile << BD["com"]["ActualLink"];
 								outfile << "\n";
 								outfile.close();
 							}
@@ -523,7 +515,7 @@ try{
 							if(serverpront){
 								arrayservers.push_back("test");
 							} else {
-								std::string tempurl = temporallink + std::to_string(capmore) + "/";
+								std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(capmore) + "/";
 								WebBrowserCall(tempurl);
 							}
 							break;
@@ -536,10 +528,8 @@ try{
 						{
 						case chapterstate:
 							if(!BD["DataBase"][KeyName]["Secuela"].empty()&&!serverpront){
-								temporallink = BD["DataBase"][KeyName]["Secuela"];
-								std::cout << temporallink << std::endl;
-								capBuffer(temporallink);
-								gFAV = isFavorite(temporallink);
+								capBuffer(BD["DataBase"][KeyName]["Secuela"]);
+								gFAV = isFavorite(BD["com"]["ActualLink"]);
 							}
 						break;
 						case programationstate:
@@ -732,7 +722,7 @@ try{
 			//Draw a background to a nice view
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
 			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
-			std::string temptext = temporallink;
+			std::string temptext = BD["com"]["ActualLink"];
 			replace(temptext, "https://jkanime.net/", "");
 			replace(temptext, "/", " ");
 			replace(temptext, "-", " ");
@@ -746,7 +736,7 @@ try{
 			{//draw back rectangle
 				VOX.render_VOX({ SCREEN_WIDTH - 442,58, 404, 590}, 0, 0, 0, 200);
 				//draw preview image
-				GOD.Image(temporallink,SCREEN_WIDTH - 440, 60,400, 550,GOD.BT_A);
+				GOD.Image(BD["com"]["ActualLink"],SCREEN_WIDTH - 440, 60,400, 550,GOD.BT_A);
 			}	
 
 
@@ -1031,7 +1021,7 @@ try{
 				}
 				else
 				{
-					GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(BD["com"]["porcentajereload"]) + "%)",false);
+					GOD.PleaseWait("Cargando búsqueda... (" + std::to_string(BD["com"]["porcentajereload"].get<int>()) + "%)",false);
 				}
 				break;
 			}
@@ -1208,7 +1198,6 @@ try{
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
 	}
-	
 } catch(...){
 	printf("Error Catched\n");
 }

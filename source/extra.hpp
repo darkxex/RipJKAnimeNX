@@ -74,7 +74,6 @@ int returnnow = toprogramation;
 std::string urltodownload = "";
 int porcendown = 0;
 int sizeestimated = 0;
-std::string temporallink = "";
 int cancelcurl = 0;
 bool lcdoff=false;
 //img

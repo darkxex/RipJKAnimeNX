@@ -434,10 +434,9 @@ int searchjk(void* data) {
 }
 
 //get cap thread
-std::string linktmpc="";
 int capit(void* data) {
 	if (!HasConnection()) return 0;
-	std::string bb = linktmpc;
+	std::string bb = BD["com"]["ActualLink"];
 	std::string a = "";
 	a = gethtml(bb);
 	std::string name = bb;
@@ -453,18 +452,19 @@ int capit(void* data) {
 		BD["com"]["enemision"] = BD["DataBase"][name]["enemision"];
 		mincapit = BD["DataBase"][name]["mincapit"];//1;
 		maxcapit = BD["DataBase"][name]["maxcapit"];//-1;
+		//write json
+		write_DB(BD,rootdirectory+"DataBase.json");
 	}catch(...){
 		printf("Error \n");
 	}
-	//write json
-	write_DB(BD,rootdirectory+"DataBase.json");
 return 0;
 }
 //anime manager
 int capBuffer (std::string Tlink) {
 	int v2 = Tlink.find("/", 20);
 	Tlink = Tlink.substr(0, v2 + 1);
-	BD["com"]["temporallink"] = Tlink;
+	std::cout << "Link: " << Tlink << std::endl;
+	BD["com"]["ActualLink"] = Tlink;
 	
 	std::string name = Tlink;
 	replace(name, "https://jkanime.net/", "");
@@ -484,7 +484,6 @@ int capBuffer (std::string Tlink) {
 		maxcapit = -1;
 		mincapit = 1;
 		capmore = 1;
-		linktmpc=Tlink;
 		capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 	} else {
 		try{
@@ -509,7 +508,6 @@ int capBuffer (std::string Tlink) {
 			
 			if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
 				BD["com"]["nextdate"] = "Loading...";
-				linktmpc=Tlink;
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 			}
 		}catch(...){
