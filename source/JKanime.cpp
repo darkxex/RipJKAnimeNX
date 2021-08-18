@@ -329,7 +329,9 @@ int MKfavimgfix(bool images){
 			replace(name, "/", "");
 			porcentajebufferF=y+1;
 			if (BD["DataBase"][name]["TimeStamp"].empty() || BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
-				std::string a = gethtml(BD["arrays"]["favorites"]["link"][y]);
+				std::string lingrt=BD["arrays"]["favorites"]["link"][y];
+				replace(lingrt,"\"","");
+				std::string a = gethtml(lingrt);
 				PushDirBuffer(a,name);
 				hasanychange=true;
 			}
@@ -527,6 +529,7 @@ void getFavorite() {
 	std::string str;
 	while (std::getline(file, str)) {
 		std::string strtmp = str;
+		replace(str,"\"","");
 		if (str.find("jkanime"))
 		{
 			BD["arrays"]["favorites"]["link"].push_back(str);

@@ -234,12 +234,14 @@ void CheckImgVector(std::vector<std::string> List,int& index){
 	{
 		index = x+1;
 		std::string tempima = List[x];
+		replace(tempima,"\"","");
 		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
 		CheckImgNet(rootdirectory+"DATA/"+tempima);
 	}
 	index=0;
 }
 bool CheckImgNet(std::string image){
+	replace(image,"\"","");
 	if (!isFileExist(image.c_str())) {
 		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
 		printf("# Missing %s Downloading\n",image.c_str());

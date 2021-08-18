@@ -503,7 +503,7 @@ try{
 							if(!isFavorite(BD["com"]["ActualLink"])){
 								std::ofstream outfile;
 								outfile.open(rootdirectory+"favoritos.txt", std::ios_base::app); // append instead of overwrite
-								outfile << BD["com"]["ActualLink"];
+								outfile << BD["com"]["ActualLink"].get<std::string>();
 								outfile << "\n";
 								outfile.close();
 							}
