@@ -19,6 +19,7 @@ extern int porcendown;
 extern int sizeestimated;
 extern int cancelcurl;
 extern std::string speedD;
+extern std::string rootdirectory;
 
 //Write file in mem to increase download speed on 3 or 5 times
 struct MemoryStruct
@@ -226,7 +227,18 @@ bool HasConnection()
     nifmGetInternetConnectionStatus(NULL, &strg, NULL);
 	return (strg > 0);
 }
-
+void CheckImgVector(std::vector<std::string> List,int& index){
+	index=0;
+	int listsize=List.size();
+	for (int x = 0; x < listsize; x++)
+	{
+		index = x+1;
+		std::string tempima = List[x];
+		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
+		CheckImgNet(rootdirectory+"DATA/"+tempima);
+	}
+	index=0;
+}
 bool CheckImgNet(std::string image){
 	if (!isFileExist(image.c_str())) {
 		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
