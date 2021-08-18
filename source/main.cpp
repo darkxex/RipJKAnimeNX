@@ -962,10 +962,18 @@ try{
 							selectchapter = selectchapter-chapsize;
 							//selectchapter--;
 						}
-						for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size(); x++) {				
-							if (preview)
-							{
+						if (preview)
+						{
+							for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size(); x++) {
+								if (Frames>0 && Frames < x) break;
 								GOD.ListCover(x,selectchapter,BD["arrays"]["chapter"]["link"][x],ongrid);
+								if(!BD["arrays"]["chapter"]["date"].empty()){
+									if (x == selectchapter) {
+										//draw Title
+										gTextTexture.loadFromRenderedText(GOD.digifont, BD["arrays"]["chapter"]["date"][x], { 0, 0, 0 });
+										gTextTexture.render(20, 37);
+									}
+								}
 							}
 						}
 					} else {
@@ -1257,6 +1265,12 @@ try{
 				isConnected=true;
 				net=maxt;
 			}
+			if (Frames>0){
+				static int rest=0;
+				printf("Frames %d - FPS: %d \r",Frames,Frames-rest);
+				fflush(stdout);
+				rest=Frames;
+			}
 		}
 		if (!isConnected){
 			gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet, Cerrando: "+std::to_string(net), {255,0,0});
@@ -1270,6 +1284,11 @@ try{
 		
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
+		//Display the list
+		if (!reloading&&!AppletMode&&Frames>2) {preview = true;}
+		
+		if (Frames>1000)Frames=0;
+		if (Frames>0)Frames++;
 	}
 } catch(...){
 	printf("Error Catched\n");

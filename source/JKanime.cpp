@@ -43,6 +43,8 @@ extern int returnnow;
 
 extern bool reloadingsearch;
 extern bool activatefirstsearchimage;
+extern int Frames;
+
 
 void PushDirBuffer(std::string a,std::string name) {
 	if(quit) return;
@@ -163,7 +165,7 @@ void PushDirBuffer(std::string a,std::string name) {
 	}
 	BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
 	std::cout << "Bufered: " << name << std::endl;
-
+	fflush(stdout);
 }
 //Download THREAD
 int downloadjkanimevideo(void* data) {
@@ -203,15 +205,25 @@ int downloadjkanimevideo(void* data) {
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
 	appletSetAutoSleepDisabled(true);
-	while (!HasConnection()){if (!AppletMode) preview = true;SDL_Delay(2000);if(quit) return 0;}
-	preview = false;
-	reloading = true;
-	//clear allocate
-	BD["arrays"] = "{}"_json;
+	//Wait for connection
+	if (BD["arrays"]["chapter"]["link"].empty()){
+		//hide the list for rebuild
+		reloading = true;
+		preview = false;
+	}
+	while (!HasConnection()){
+		if (AppletMode) preview = false;
+		SDL_Delay(3000);
+		if (AppletMode) quit=true;
+		if(quit) return 0;
+	}
+	
+	if(!reloading){
+		//Download All not existing images
+		CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
+	}
 	
 	//Get main page
-	int  val0 = 0, val1 = 1, val2, val3, val4;
-	std::string temporal = "";
 	std::string content = gethtml("https://jkanime.net");
 	
 	//Get Programation list, Links and Images
@@ -219,58 +231,42 @@ int refrescarpro(void* data){
 	temp0=content.find("Programación");
 	temp1=content.find("TOP ANIMES",temp0);
 	content = content.substr(temp0,temp1-temp0);
-	while (val0 != -1 && !quit) {
-		val0 = content.find("<a href=", val1);
-		if (val0 == -1) { break; }
 
-		val1 = 9 + content.find("<a href=", val1);
-		val2 = (content.find('"', val1));
-		std::string gdrive = content.substr(val1, val2 - val1);
-		//std::cout << gdrive << std::endl;
-		BD["arrays"]["chapter"]["link"].push_back(gdrive);
-		val3 = content.find("<img src=", val2) + 10;
-		val4 = content.find('"', val3);
-		std::string gpreview = content.substr(val3, val4 - val3);
-		BD["arrays"]["chapter"]["images"].push_back(gpreview);
-		
-		temporal = temporal + gdrive + "\n";
-		temporal = temporal + gpreview + "\n";
-		val1++;
-	}
-	//Display List
-	reloading = false;
+	//clear allocate
+	//BD["arrays"] = "{}"_json;
 	
+	//rebuild list 
+	std::vector<std::string> ChapLink=scrapElementAll(content, "https://jkanime.net/");
+	std::vector<std::string> ChapImag=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/");
+	BD["arrays"]["chapter"]["date"]=scrapElementAll(content, "<span>","</span>");
+
+	//Download All not existing images
+	CheckImgVector(ChapImag,imgNumbuffer);
+	std::cout << "# End Image Download\n" << std::endl;
+
+	//Display List
+	if(reloading) {Frames=0;reloading = false;}
+
 	//'haschange' See if there is any new chap
 	bool haschange = true;
 	if (!BD["latestchapter"].empty()){
-		if (BD["latestchapter"] == BD["arrays"]["chapter"]["link"][0]) {haschange = false;}
+		if (BD["latestchapter"] == ChapLink[0])
+		{
+			haschange = false;
+		}
 	}
 	//TimeStamp indicate if a chap sout be reloaded
 	if (haschange || BD["TimeStamp"].empty()){
 		//update TimeStamp
-		if (BD["latestchaptertemp"] != BD["arrays"]["chapter"]["link"][0] || BD["TimeStamp"].empty()){
+		if (BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].empty()){
 			std::time_t t = std::time(0);
 			BD["TimeStamp"] = std::to_string(t);
 			std::cout << "New TimeStamp: " << BD["TimeStamp"] << std::endl;
-			BD["latestchaptertemp"] = BD["arrays"]["chapter"]["link"][0];
+			Frames=1;
+			BD["arrays"]["chapter"]["images"]=ChapImag;
+			BD["arrays"]["chapter"]["link"]=ChapLink;
 		}
 	}
-	//Download All not existing images
-	for (int x = 0; x < (int)BD["arrays"]["chapter"]["images"].size(); x++)
-	{
-		imgNumbuffer = x+1;
-		std::string tempima = BD["arrays"]["chapter"]["images"][x];
-		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
-		std::string directorydownloadimage = rootdirectory+"DATA/";
-		directorydownloadimage.append(tempima);
-		if(!isFileExist(directorydownloadimage)){
-			printf("\n# %d imagen: %s \n",x,tempima.c_str());
-			downloadfile(BD["arrays"]["chapter"]["images"][x],directorydownloadimage,false);
-		}
-		preview = true;
-	}
-	imgNumbuffer=0;
-	std::cout << "#\nEnd Image Download\n" << std::endl;
 
 	//Download All not existing images of Favorites
 	MKfavimgfix(true);
@@ -448,7 +444,6 @@ return 0;
 int capBuffer (std::string Tlink) {
 	int v2 = Tlink.find("/", 20);
 	Tlink = Tlink.substr(0, v2 + 1);
-	std::cout << "Link: " << Tlink << std::endl;
 	BD["com"]["ActualLink"] = Tlink;
 	
 	std::string name = Tlink;
@@ -456,6 +451,8 @@ int capBuffer (std::string Tlink) {
 	replace(name, "/", "");
 	KeyName = name;
 	std::cout << "KeyName: " << name << std::endl;
+	fflush(stdout);
+	std::cout << "Link: " << Tlink << std::endl;
 
 	statenow = chapterstate;
 	CheckImgNet(rootdirectory+"DATA/"+name+".jpg");
