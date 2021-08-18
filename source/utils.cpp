@@ -94,7 +94,7 @@ vector<string> scrapElementAll(std::string content, std::string get,std::string 
 			break;
 		}
 	}
-std::cout << "Vector Size: " << std::to_string(res.size()) << std::endl;
+//std::cout << "Vector Size: " << std::to_string(res.size()) << std::endl;
 return res;
 }
 
