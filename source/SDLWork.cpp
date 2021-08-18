@@ -248,8 +248,8 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 		}
 	}
 }
-void SDLB::ListCover(int x,int& selectindex,std::string Link, bool ongrid)
-{//This controll the image order and logic
+void SDLB::ListCover(int x,int& selectindex,std::string Link, bool ongrid){
+	//This controll the image order and logic
 
 	//Get the Cap Key
 	replace(Link, "https://jkanime.net/", "");

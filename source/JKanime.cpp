@@ -195,7 +195,7 @@ int downloadjkanimevideo(void* data) {
 	cancelcurl = 0;
 	isDownloading=false;
 	statenow = downloadstate;
-	led_on(3);
+	if(cancelcurl==0)led_on(3); else led_on(0);
 	appletSetAutoSleepDisabled(false);
 	return 0;
 }
@@ -203,8 +203,7 @@ int downloadjkanimevideo(void* data) {
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
 	appletSetAutoSleepDisabled(true);
-
-	while (!HasConnection()){preview = true;SDL_Delay(2000);if(quit) return 0;}
+	while (!HasConnection()){if (!AppletMode) preview = true;SDL_Delay(2000);if(quit) return 0;}
 	preview = false;
 	reloading = true;
 	//clear allocate

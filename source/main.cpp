@@ -161,6 +161,7 @@ try{
 	//While application is running
 	while (!quit)
 	{
+		bool GRIDC=true;
 		//Handle events on queue
 		while (SDL_PollEvent(&e))
 		{
@@ -183,8 +184,9 @@ try{
 			}
 			break;
 			case SDL_FINGERMOTION:
-				if(GOD.TouchX > 55 && GOD.TouchX < 620 && statenow != chapterstate){
-					
+				if (statenow == programationstate && ongrid) {GRIDC=false;}
+			
+				if(GOD.TouchX > 55 && GOD.TouchX < 620 && statenow != chapterstate && GRIDC){
 					//swipe down go up
 					if(e.tfinger.dy * SCREEN_HEIGHT > 15)
 					{
@@ -1015,12 +1017,12 @@ try{
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 					if (imgNumbuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
-						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
-						Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
+						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
+						//Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
 					}
 					if (porcentajebuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/30)", {0,100,0});
-						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
+						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 					}
 
 					//Draw footer buttons
@@ -1230,17 +1232,17 @@ try{
 		//global render
 		if(isDownloading&& downloadstate != statenow){
 			int het=40;
-			T_D.loadFromRenderedText(GOD.digifont, "Downloading: "+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {100,100,0});
+			T_D.loadFromRenderedText(GOD.digifont, "Downloading: "+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {50,150,0});
 			if (statenow == programationstate){
 				het = porcentajebuffer > 0 ? T_D.getHeight()+22 : 20;
 			}
 			if (statenow == favoritesstate){
-				het = porcentajebufferF > 0 ? T_D.getHeight()+22 : 20;
+				het = porcentajebufferF > 0 ? T_D.getHeight()+42 : 40;
 			}
 			if (statenow == chapterstate){
 				het=10;
 			}
-			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, het);
+			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 15, het);
 		}
 		if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
 		
@@ -1287,25 +1289,25 @@ try{
 	} 
 
 	if (NULL == capithread) {
-		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
+		printf("capithread Not in use: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(capithread, NULL);
 	}
 	if (NULL == downloadthread) {
-		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
+		printf("downloadthread Not in use: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(downloadthread, NULL);
 	}
 	if (NULL == prothread) {
-		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
+		printf("prothread Not in use: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(prothread, NULL);
 	}
 	if (NULL == searchthread) {
-		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
+		printf("searchthread Not in use: %s\n", SDL_GetError());
 	}
 	else {
 		SDL_WaitThread(searchthread,NULL);
