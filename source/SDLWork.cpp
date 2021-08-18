@@ -160,9 +160,9 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 		std::string KeyText=Text+"-"+std::to_string(WS);
 
 		if (!isFileExist(path)) {
-			KeyImage="nop.png";
+			KeyImage="SuperPro.jpg";
 			KeyImage+="-"+std::to_string(WS);
-			path = "romfs:/nop.png";
+			path = "romfs:/SuperPro.jpg";
 		}
 		int sizeportraitx = 300;
 		int sizeportraity =424;
@@ -174,7 +174,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 			MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 		}
 		
-		static int blue=0;
+		static int blue=205;
 		if(selected){
 			TikerColor(blue,1);
 		} else blue=0;
