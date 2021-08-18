@@ -111,6 +111,7 @@ AccountUid uid;
 SDL_Thread* capithread = NULL;
 bool quit=false;
 std::string KeyName;
+int Frames=1;
 
 std::vector<std::string> arrayservers= {
 "Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"

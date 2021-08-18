@@ -161,6 +161,7 @@ try{
 	//While application is running
 	while (!quit)
 	{
+		bool GRIDC=true;
 		//Handle events on queue
 		while (SDL_PollEvent(&e))
 		{
@@ -183,8 +184,9 @@ try{
 			}
 			break;
 			case SDL_FINGERMOTION:
-				if(GOD.TouchX > 55 && GOD.TouchX < 620 && statenow != chapterstate){
-					
+				if (statenow == programationstate && ongrid) {GRIDC=false;}
+			
+				if(GOD.TouchX > 55 && GOD.TouchX < 620 && statenow != chapterstate && GRIDC){
 					//swipe down go up
 					if(e.tfinger.dy * SCREEN_HEIGHT > 15)
 					{
@@ -243,10 +245,12 @@ try{
 					else if (CLEAR.SP()){
 						GOD.PleaseWait("Borrando cache");
 						BD["DataBase"] = "{}"_json;
+						BD["arrays"]["chapter"] = "{}"_json;
 						BD["latestchapter"] = "";
 						fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
-							cancelcurl = 1;
-							quit = true;
+						cancelcurl = 1;
+						preview = false;
+						quit = true;
 					}
 					SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
 				}
@@ -469,13 +473,9 @@ try{
 							break;
 						case favoritesstate:
 							delFavorite(favchapter);
-							
-							if (!reloading)
-							{
-								if (favchapter > 0) favchapter--;
-								get_favorites();
-								statenow = favoritesstate;
-							}
+							if (favchapter > 0) favchapter--;
+							getFavorite();
+							statenow = favoritesstate;
 						break;
 
 						}
@@ -488,7 +488,7 @@ try{
 						case programationstate:
 							if (!reloading)
 							{
-								get_favorites();
+								getFavorite();
 								returnnow = tofavorite;
 								statenow = favoritesstate;
 							}
@@ -503,7 +503,7 @@ try{
 							if(!isFavorite(BD["com"]["ActualLink"])){
 								std::ofstream outfile;
 								outfile.open(rootdirectory+"favoritos.txt", std::ios_base::app); // append instead of overwrite
-								outfile << BD["com"]["ActualLink"];
+								outfile << BD["com"]["ActualLink"].get<std::string>();
 								outfile << "\n";
 								outfile.close();
 							}
@@ -960,10 +960,18 @@ try{
 							selectchapter = selectchapter-chapsize;
 							//selectchapter--;
 						}
-						for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size(); x++) {				
-							if (preview)
-							{
+						if (preview)
+						{
+							for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size(); x++) {
+								if (Frames>0 && Frames < x) break;
 								GOD.ListCover(x,selectchapter,BD["arrays"]["chapter"]["link"][x],ongrid);
+								if(!BD["arrays"]["chapter"]["date"].empty()){
+									if (x == selectchapter) {
+										//draw Title
+										gTextTexture.loadFromRenderedText(GOD.digifont, BD["arrays"]["chapter"]["date"][x], { 0, 0, 0 });
+										gTextTexture.render(20, 37);
+									}
+								}
 							}
 						}
 					} else {
@@ -1015,12 +1023,12 @@ try{
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 					if (imgNumbuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
-						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
-						Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
+						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
+						//Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
 					}
 					if (porcentajebuffer > 0){
 						gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/30)", {0,100,0});
-						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 40);
+						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 					}
 
 					//Draw footer buttons
@@ -1230,17 +1238,17 @@ try{
 		//global render
 		if(isDownloading&& downloadstate != statenow){
 			int het=40;
-			T_D.loadFromRenderedText(GOD.digifont, "Downloading: "+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {100,100,0});
+			T_D.loadFromRenderedText(GOD.digifont, "Downloading: "+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {50,150,0});
 			if (statenow == programationstate){
 				het = porcentajebuffer > 0 ? T_D.getHeight()+22 : 20;
 			}
 			if (statenow == favoritesstate){
-				het = porcentajebufferF > 0 ? T_D.getHeight()+22 : 20;
+				het = porcentajebufferF > 0 ? T_D.getHeight()+42 : 40;
 			}
 			if (statenow == chapterstate){
 				het=10;
 			}
-			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 30, het);
+			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 15, het);
 		}
 		if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
 		
@@ -1255,6 +1263,12 @@ try{
 				isConnected=true;
 				net=maxt;
 			}
+			if (Frames>0){
+				static int rest=0;
+				printf("Frames %d - FPS: %d \r",Frames,Frames-rest);
+				fflush(stdout);
+				rest=Frames;
+			}
 		}
 		if (!isConnected){
 			gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet, Cerrando: "+std::to_string(net), {255,0,0});
@@ -1268,6 +1282,11 @@ try{
 		
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
+		//Display the list
+		if (!quit&&!reloading&&!AppletMode&&Frames>2) {preview = true;}
+		
+		if (Frames>1000)Frames=0;
+		if (Frames>0)Frames++;
 	}
 } catch(...){
 	printf("Error Catched\n");
@@ -1282,32 +1301,35 @@ try{
 	//appletEndBlockingHomeButton();
 	
 	if (AppletMode){
-		SDL_Delay(2000);
 		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
 	} 
 
 	if (NULL == capithread) {
-		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
+		printf("capithread Not in use: %s\n", SDL_GetError());
 	}
 	else {
+		printf("capithread in use: %s\n", SDL_GetError());
 		SDL_WaitThread(capithread, NULL);
 	}
 	if (NULL == downloadthread) {
-		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
+		printf("downloadthread Not in use: %s\n", SDL_GetError());
 	}
 	else {
+		printf("downloadthread in use: %s\n", SDL_GetError());
 		SDL_WaitThread(downloadthread, NULL);
 	}
 	if (NULL == prothread) {
-		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
+		printf("prothread Not in use: %s\n", SDL_GetError());
 	}
 	else {
+		printf("prothread in use: %s\n", SDL_GetError());
 		SDL_WaitThread(prothread, NULL);
 	}
 	if (NULL == searchthread) {
-		printf("SDL_CreateThread Not used: %s\n", SDL_GetError());
+		printf("searchthread Not in use: %s\n", SDL_GetError());
 	}
 	else {
+		printf("searchthread in use: %s\n", SDL_GetError());
 		SDL_WaitThread(searchthread,NULL);
 	}
 	

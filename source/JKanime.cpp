@@ -43,7 +43,9 @@ extern int returnnow;
 
 extern bool reloadingsearch;
 extern bool activatefirstsearchimage;
+extern int Frames;
 
+//Get info off chapter
 void PushDirBuffer(std::string a,std::string name) {
 	if(quit) return;
 
@@ -163,7 +165,6 @@ void PushDirBuffer(std::string a,std::string name) {
 	}
 	BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
 	std::cout << "Bufered: " << name << std::endl;
-
 }
 //Download THREAD
 int downloadjkanimevideo(void* data) {
@@ -195,7 +196,7 @@ int downloadjkanimevideo(void* data) {
 	cancelcurl = 0;
 	isDownloading=false;
 	statenow = downloadstate;
-	led_on(3);
+	if(cancelcurl==0)led_on(3); else led_on(0);
 	appletSetAutoSleepDisabled(false);
 	return 0;
 }
@@ -203,16 +204,25 @@ int downloadjkanimevideo(void* data) {
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
 	appletSetAutoSleepDisabled(true);
-
-	while (!HasConnection()){preview = true;SDL_Delay(2000);if(quit) return 0;}
-	preview = false;
-	reloading = true;
-	//clear allocate
-	BD["arrays"] = "{}"_json;
+	//Wait for connection
+	if (BD["arrays"]["chapter"]["link"].empty()){
+		//hide the list for rebuild
+		reloading = true;
+		preview = false;
+	}
+	while (!HasConnection()){
+		if (AppletMode) preview = false;
+		SDL_Delay(3000);
+		if (AppletMode) quit=true;
+		if(quit) return 0;
+	}
+	
+	if(!reloading){
+		//Download All not existing images
+		CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
+	}
 	
 	//Get main page
-	int  val0 = 0, val1 = 1, val2, val3, val4;
-	std::string temporal = "";
 	std::string content = gethtml("https://jkanime.net");
 	
 	//Get Programation list, Links and Images
@@ -220,68 +230,55 @@ int refrescarpro(void* data){
 	temp0=content.find("Programación");
 	temp1=content.find("TOP ANIMES",temp0);
 	content = content.substr(temp0,temp1-temp0);
-	while (val0 != -1 && !quit) {
-		val0 = content.find("<a href=", val1);
-		if (val0 == -1) { break; }
 
-		val1 = 9 + content.find("<a href=", val1);
-		val2 = (content.find('"', val1));
-		std::string gdrive = content.substr(val1, val2 - val1);
-		//std::cout << gdrive << std::endl;
-		BD["arrays"]["chapter"]["link"].push_back(gdrive);
-		val3 = content.find("<img src=", val2) + 10;
-		val4 = content.find('"', val3);
-		std::string gpreview = content.substr(val3, val4 - val3);
-		BD["arrays"]["chapter"]["images"].push_back(gpreview);
-		
-		temporal = temporal + gdrive + "\n";
-		temporal = temporal + gpreview + "\n";
-		val1++;
-	}
-	//Display List
-	reloading = false;
+	//clear allocate
+	//BD["arrays"] = "{}"_json;
 	
+	//rebuild list 
+	std::vector<std::string> ChapLink=scrapElementAll(content, "https://jkanime.net/");
+	std::vector<std::string> ChapImag=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/");
+	BD["arrays"]["chapter"]["date"]=scrapElementAll(content, "<span>","</span>");
+
+	//Download All not existing images
+	CheckImgVector(ChapImag,imgNumbuffer);
+	std::cout << "# End Image Download\n" << std::endl;
+
+	//Display List
+	if(reloading) {Frames=0;reloading = false;}
+
 	//'haschange' See if there is any new chap
 	bool haschange = true;
 	if (!BD["latestchapter"].empty()){
-		if (BD["latestchapter"] == BD["arrays"]["chapter"]["link"][0]) {haschange = false;}
+		if (BD["latestchapter"] == ChapLink[0])
+		{
+			haschange = false;
+		}
 	}
+
 	//TimeStamp indicate if a chap sout be reloaded
 	if (haschange || BD["TimeStamp"].empty()){
 		//update TimeStamp
-		if (BD["latestchaptertemp"] != BD["arrays"]["chapter"]["link"][0] || BD["TimeStamp"].empty()){
+		if (BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].empty()){
 			std::time_t t = std::time(0);
 			BD["TimeStamp"] = std::to_string(t);
 			std::cout << "New TimeStamp: " << BD["TimeStamp"] << std::endl;
-			BD["latestchaptertemp"] = BD["arrays"]["chapter"]["link"][0];
+			Frames=1;
+			BD["arrays"]["chapter"]["images"]=ChapImag;
+			BD["arrays"]["chapter"]["link"]=ChapLink;
 		}
 	}
-	//Download All not existing images
-	for (int x = 0; x < (int)BD["arrays"]["chapter"]["images"].size(); x++)
-	{
-		imgNumbuffer = x+1;
-		std::string tempima = BD["arrays"]["chapter"]["images"][x];
-		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
-		std::string directorydownloadimage = rootdirectory+"DATA/";
-		directorydownloadimage.append(tempima);
-		if(!isFileExist(directorydownloadimage)){
-			printf("\n# %d imagen: %s \n",x,tempima.c_str());
-			downloadfile(BD["arrays"]["chapter"]["images"][x],directorydownloadimage,false);
-		}
-		preview = true;
-	}
-	imgNumbuffer=0;
-	std::cout << "#\nEnd Image Download\n" << std::endl;
 
 	//Download All not existing images of Favorites
 	MKfavimgfix(true);
-	
+
 	//Load to cache all Programation Chaps
 	if (haschange) {
 		MKcapitBuffer();
-		BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
+		if(!quit){
+			BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
+		}
 	}
-	
+
 	//Load to cache all Favorites Chaps
 	MKfavimgfix(false);
 	if (!isDownloading) appletSetAutoSleepDisabled(false);
@@ -306,45 +303,43 @@ int MKcapitBuffer() {
 			PushDirBuffer(a,name);
 		}
 	}
+	porcentajebuffer = 0;
+	if(quit) return 0;
 	//write json
 	write_DB(BD,rootdirectory+"DataBase.json");
-	porcentajebuffer = 0;
 	return true;
 }
 int MKfavimgfix(bool images){
-	std::ifstream file(rootdirectory+"favoritos.txt");
-	std::string str;
-	std::string name ="";
+	if(quit) return 0;
 	bool hasanychange=false;
-	while (std::getline(file, str)) {
-		//std::cout << str << "\n";
-		if(quit) return 0;
-		if (str.find("jkanime"))
+	if(BD["arrays"]["favorites"]["images"].empty() || BD["arrays"]["favorites"]["link"].empty()){
+		printf("# Get fav list\n");
+		getFavorite();
+	}
+	porcentajebufferFF = BD["arrays"]["favorites"]["link"].size();
+	
+	if (images) {
+		CheckImgVector(BD["arrays"]["favorites"]["images"],porcentajebufferF);
+		porcentajebufferFF=0;
+	} else {
+		for (int y=0; y < porcentajebufferFF && !quit; y++)
 		{
-			name=str;
+			std::string name=BD["arrays"]["favorites"]["link"][y];
 			replace(name, "https://jkanime.net/", "");
 			replace(name, "/", "");
-				
-			if (images) {
-				porcentajebufferFF++;
-				CheckImgNet(rootdirectory+"DATA/"+name+".jpg");
-			} else {
-				porcentajebufferF++;
-				if (BD["DataBase"][name]["TimeStamp"].empty() || BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
-					std::string a = gethtml(str);
-					PushDirBuffer(a,name);
-					hasanychange=true;
-				}
+			porcentajebufferF=y+1;
+			if (BD["DataBase"][name]["TimeStamp"].empty() || BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
+				std::string lingrt=BD["arrays"]["favorites"]["link"][y];
+				replace(lingrt,"\"","");
+				std::string a = gethtml(lingrt);
+				PushDirBuffer(a,name);
+				hasanychange=true;
 			}
 		}
-	}
-	file.close();
-	porcentajebufferF=0;
-	if (!images) {
+		porcentajebufferF=0;
 		porcentajebufferFF=0;
 		printf("# End fav Download\n");
-		if (hasanychange){
-			//write json
+		if (hasanychange){//write json
 			write_DB(BD,rootdirectory+"DataBase.json");
 		}
 	}
@@ -449,7 +444,6 @@ return 0;
 int capBuffer (std::string Tlink) {
 	int v2 = Tlink.find("/", 20);
 	Tlink = Tlink.substr(0, v2 + 1);
-	std::cout << "Link: " << Tlink << std::endl;
 	BD["com"]["ActualLink"] = Tlink;
 	
 	std::string name = Tlink;
@@ -457,6 +451,8 @@ int capBuffer (std::string Tlink) {
 	replace(name, "/", "");
 	KeyName = name;
 	std::cout << "KeyName: " << name << std::endl;
+	fflush(stdout);
+	std::cout << "Link: " << Tlink << std::endl;
 
 	statenow = chapterstate;
 	CheckImgNet(rootdirectory+"DATA/"+name+".jpg");
@@ -503,16 +499,14 @@ int capBuffer (std::string Tlink) {
 return 0;
 }
 
-void get_favorites() {
+void addFavorite(std::string text) {
+/*
 	BD["arrays"]["favorites"]["link"].clear();
 	BD["arrays"]["favorites"]["images"].clear();
 	std::string temp;
-	std::ifstream infile;
-
 	std::ifstream file(rootdirectory+"favoritos.txt");
 	std::string str;
 	while (std::getline(file, str)) {
-		//std::cout << str << "\n";
 		std::string strtmp = str;
 		if (str.find("jkanime"))
 		{
@@ -524,10 +518,34 @@ void get_favorites() {
 		}
 	}
 	file.close();
-	//std::cout << "-----  " << BD << std::endl;
+
+*/
+}
+void getFavorite() {
+	BD["arrays"]["favorites"]["link"].clear();
+	BD["arrays"]["favorites"]["images"].clear();
+	std::string temp;
+	std::ifstream file(rootdirectory+"favoritos.txt");
+	std::string str;
+	while (std::getline(file, str)) {
+		std::string strtmp = str;
+		replace(str,"\"","");
+		if (str.find("jkanime"))
+		{
+			BD["arrays"]["favorites"]["link"].push_back(str);
+			replace(strtmp, "https://jkanime.net/", "");
+			replace(strtmp, "/", ".jpg");
+			strtmp = "https://cdn.jkanime.net/assets/images/animes/image/"+strtmp;
+			BD["arrays"]["favorites"]["images"].push_back(strtmp);				
+		}
+	}
+	file.close();
 }
 bool isFavorite(std::string fav){
 	/*
+	if(BD["arrays"]["favorites"]["images"].empty() || BD["arrays"]["favorites"]["link"].empty()){
+		getFavorite();
+	}
 		static std::string limit = "";
 		if (limit == fav){
 			return gFAV;

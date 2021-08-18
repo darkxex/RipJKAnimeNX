@@ -81,16 +81,20 @@ vector<string> scrapElementAll(std::string content, std::string get,std::string 
 			val2 = content.find(elmetTMP, val1+get.length()+1);
 
 			Element = content.substr(val1, val2 - val1);
-			replace(Element, "\\", "");
-			res.push_back (Element);
 			val1 = val1 + Element.length();
+			replace(Element, "\\", "");
+			replace(Element, "\n", "");
+			replace(Element, "<span>", "");
+			replace(Element, " ", "");
+			
+			res.push_back (Element);
 		} else {
 			if (res.size() == 0)
 				res.push_back ("");
 			break;
 		}
 	}
-std::cout << "Vector Size: " << std::to_string(res.size()) << std::endl;
+//std::cout << "Vector Size: " << std::to_string(res.size()) << std::endl;
 return res;
 }
 
