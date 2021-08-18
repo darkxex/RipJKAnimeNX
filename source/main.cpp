@@ -245,10 +245,12 @@ try{
 					else if (CLEAR.SP()){
 						GOD.PleaseWait("Borrando cache");
 						BD["DataBase"] = "{}"_json;
+						BD["arrays"]["chapter"] = "{}"_json;
 						BD["latestchapter"] = "";
 						fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
-							cancelcurl = 1;
-							quit = true;
+						cancelcurl = 1;
+						preview = false;
+						quit = true;
 					}
 					SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
 				}
@@ -1281,7 +1283,7 @@ try{
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
 		//Display the list
-		if (!reloading&&!AppletMode&&Frames>2) {preview = true;}
+		if (!quit&&!reloading&&!AppletMode&&Frames>2) {preview = true;}
 		
 		if (Frames>1000)Frames=0;
 		if (Frames>0)Frames++;
@@ -1299,7 +1301,6 @@ try{
 	//appletEndBlockingHomeButton();
 	
 	if (AppletMode){
-		SDL_Delay(2000);
 		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
 	} 
 
@@ -1307,24 +1308,28 @@ try{
 		printf("capithread Not in use: %s\n", SDL_GetError());
 	}
 	else {
+		printf("capithread in use: %s\n", SDL_GetError());
 		SDL_WaitThread(capithread, NULL);
 	}
 	if (NULL == downloadthread) {
 		printf("downloadthread Not in use: %s\n", SDL_GetError());
 	}
 	else {
+		printf("downloadthread in use: %s\n", SDL_GetError());
 		SDL_WaitThread(downloadthread, NULL);
 	}
 	if (NULL == prothread) {
 		printf("prothread Not in use: %s\n", SDL_GetError());
 	}
 	else {
+		printf("prothread in use: %s\n", SDL_GetError());
 		SDL_WaitThread(prothread, NULL);
 	}
 	if (NULL == searchthread) {
 		printf("searchthread Not in use: %s\n", SDL_GetError());
 	}
 	else {
+		printf("searchthread in use: %s\n", SDL_GetError());
 		SDL_WaitThread(searchthread,NULL);
 	}
 	

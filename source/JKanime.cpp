@@ -45,7 +45,7 @@ extern bool reloadingsearch;
 extern bool activatefirstsearchimage;
 extern int Frames;
 
-
+//Get info off chapter
 void PushDirBuffer(std::string a,std::string name) {
 	if(quit) return;
 
@@ -165,7 +165,6 @@ void PushDirBuffer(std::string a,std::string name) {
 	}
 	BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
 	std::cout << "Bufered: " << name << std::endl;
-	fflush(stdout);
 }
 //Download THREAD
 int downloadjkanimevideo(void* data) {
@@ -311,8 +310,10 @@ int MKcapitBuffer() {
 	return true;
 }
 int MKfavimgfix(bool images){
+	if(quit) return 0;
 	bool hasanychange=false;
 	if(BD["arrays"]["favorites"]["images"].empty() || BD["arrays"]["favorites"]["link"].empty()){
+		printf("# Get fav list\n");
 		getFavorite();
 	}
 	porcentajebufferFF = BD["arrays"]["favorites"]["link"].size();
@@ -321,7 +322,7 @@ int MKfavimgfix(bool images){
 		CheckImgVector(BD["arrays"]["favorites"]["images"],porcentajebufferF);
 		porcentajebufferFF=0;
 	} else {
-		for (int y=0; y < porcentajebufferFF; y++)
+		for (int y=0; y < porcentajebufferFF && !quit; y++)
 		{
 			std::string name=BD["arrays"]["favorites"]["link"][y];
 			replace(name, "https://jkanime.net/", "");
