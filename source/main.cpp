@@ -471,13 +471,9 @@ try{
 							break;
 						case favoritesstate:
 							delFavorite(favchapter);
-							
-							if (!reloading)
-							{
-								if (favchapter > 0) favchapter--;
-								get_favorites();
-								statenow = favoritesstate;
-							}
+							if (favchapter > 0) favchapter--;
+							getFavorite();
+							statenow = favoritesstate;
 						break;
 
 						}
@@ -490,7 +486,7 @@ try{
 						case programationstate:
 							if (!reloading)
 							{
-								get_favorites();
+								getFavorite();
 								returnnow = tofavorite;
 								statenow = favoritesstate;
 							}

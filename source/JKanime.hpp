@@ -34,7 +34,8 @@ void PushDirBuffer(std::string a,std::string name);
 int capit(void* data);
 int capBuffer (std::string Tlink);
 
-void get_favorites();
+void addFavorite(std::string text);
+void getFavorite();
 bool isFavorite(std::string fav);
 void delFavorite(int inst = -1);
 
