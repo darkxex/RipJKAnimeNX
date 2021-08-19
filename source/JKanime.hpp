@@ -25,7 +25,7 @@ void callimage(int pos,std::vector<std::string> imageV);
 int downloadjkanimevideo(void* data);
 
 int refrescarpro(void* data);
-int MKcapitBuffer();
+int MKcapitBuffer(std::vector<std::string> LinkList);
 int MKfavimgfix(bool images);
 
 int searchjk(void* data);

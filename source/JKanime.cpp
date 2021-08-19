@@ -24,6 +24,7 @@ extern bool preview;
 extern int selectchapter;
 extern int imgNumbuffer;
 extern int porcentajebuffer;
+extern int porcentajebufferAll;
 extern int porcentajebufferF;
 extern int porcentajebufferFF;
 extern bool quit;
@@ -42,7 +43,6 @@ extern int statenow;
 extern int returnnow;
 
 extern bool reloadingsearch;
-extern bool activatefirstsearchimage;
 extern int Frames;
 
 //Get info off chapter
@@ -231,9 +231,6 @@ int refrescarpro(void* data){
 	temp1=content.find("TOP ANIMES",temp0);
 	content = content.substr(temp0,temp1-temp0);
 
-	//clear allocate
-	//BD["arrays"] = "{}"_json;
-	
 	//rebuild list 
 	std::vector<std::string> ChapLink=scrapElementAll(content, "https://jkanime.net/");
 	std::vector<std::string> ChapImag=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/");
@@ -273,7 +270,7 @@ int refrescarpro(void* data){
 
 	//Load to cache all Programation Chaps
 	if (haschange) {
-		MKcapitBuffer();
+		MKcapitBuffer(BD["arrays"]["chapter"]["link"]);
 		if(!quit){
 			BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 		}
@@ -281,32 +278,78 @@ int refrescarpro(void* data){
 
 	//Load to cache all Favorites Chaps
 	MKfavimgfix(false);
+
+	//extra vector
+	std::vector<std::string> vec={};
+
+	//load main
+	content = gethtml("https://jkanime.net");
+	replace(content, "\"https://jkanime.net/\"", "");
+	vec=scrapElementAll(content, "https://jkanime.net/");
+	sort( vec.begin(),vec.end());
+	vec.erase(unique(vec.begin(),vec.end()),vec.end());
+	BD["arrays"]["Main"]["link"]=vec;
+	MKcapitBuffer(vec);
+
+	
+	//load Top
+	content=gethtml("https://jkanime.net/top/");
+	replace(content,"https://jkanime.net/top/","");
+	replace(content,"https://jkanime.net///","");
+	vec=scrapElementAll(content,"https://jkanime.net/");
+	sort(vec.begin(),vec.end());
+	vec.erase(unique(vec.begin(),vec.end()),vec.end());
+	BD["arrays"]["Top"]["link"]=vec;
+	MKcapitBuffer(vec);
+
+	//load Horario
+	content=gethtml("https://jkanime.net/horario/");
+	replace(content,"https://jkanime.net/horario/","");
+	vec=scrapElementAll(content,"https://jkanime.net/");
+	sort(vec.begin(),vec.end());
+	vec.erase(unique(vec.begin(),vec.end()),vec.end());
+	BD["arrays"]["HourGlass"]["link"]=vec;
+	MKcapitBuffer(vec);
+
+	std::cout << "# End Thread   \n" << std::endl;
 	if (!isDownloading) appletSetAutoSleepDisabled(false);
 	//exit after load the cache if are in applet mode
 	if (AppletMode) quit=true;
 	return 0;
 }
-int MKcapitBuffer() {
+int MKcapitBuffer(std::vector<std::string> LinkList) {
+	bool hasmchap=false;
 	std::string a = "";
-	for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size()&& !quit; x++)
+	porcentajebufferAll=LinkList.size();
+	for (int x = 0; x < porcentajebufferAll&& !quit; x++)
 	{
-		porcentajebuffer = x+1;
+		if(hasmchap) porcentajebuffer = x+1;
 		while (!HasConnection()){SDL_Delay(2000);if(quit) return 0;}
-		std::string link = BD["arrays"]["chapter"]["link"][x];
+		std::string link = LinkList[x];
 		int trace = link.find("/", 20);
 		link = link.substr(0, trace + 1);
 		std::string name = link;
 		replace(name, "https://jkanime.net/", "");
 		replace(name, "/", "");
-		if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
-			a = gethtml(link);
-			PushDirBuffer(a,name);
+
+		if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"] ){
+			if (BD["DataBase"][name]["enemision"]=="true" || BD["DataBase"][name]["TimeStamp"].empty()){
+				porcentajebuffer = x+1;
+				a = gethtml(link);
+				PushDirBuffer(a,name);
+				hasmchap=true;
+			} else {
+				//BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
+			}
 		}
 	}
-	porcentajebuffer = 0;
+	porcentajebuffer=0;
+	porcentajebufferAll=0;
 	if(quit) return 0;
-	//write json
-	write_DB(BD,rootdirectory+"DataBase.json");
+	if(hasmchap){
+		//write json
+		write_DB(BD,rootdirectory+"DataBase.json");
+	}
 	return true;
 }
 int MKfavimgfix(bool images){
@@ -349,9 +392,12 @@ int MKfavimgfix(bool images){
 
 int searchjk(void* data) {
 	BD["com"]["porcentajereload"] = 0;
-	activatefirstsearchimage = true;
+	BD["com"]["porcentajereloadAll"]=0;
+	BD["arrays"]["search"]["link"].clear();
+	BD["arrays"]["search"]["images"].clear();
+	BD["arrays"]["search"]["date"].clear();
 	reloadingsearch = true;	 
-	
+
 	std::string texts = BD["searchtext"];
 	replace(texts, " ", "_");
 	replace(texts, "!", "");
@@ -381,29 +427,26 @@ int searchjk(void* data) {
 			val1 = 6 + content.find("href=", val0);
 			val2 = (content.find('"', val1));
 			std::string gdrive = content.substr(val1, val2 - val1);
-		
-
 			BD["arrays"]["search"]["link"].push_back(gdrive);
+
 			val3 = content.find("data-setbg=", val2) + 12;
 			val4 = content.find('"', val3);
 			std::string gsearchpreview = content.substr(val3, val4 - val3);
 			BD["arrays"]["search"]["images"].push_back(gsearchpreview);
-			std::cout << gsearchpreview << std::endl;
-			
+			//std::cout << gsearchpreview << std::endl;
+
+			val3 = content.find("<p>", val4) + 3;
+			val4 = content.find("</p>", val3);
+			gsearchpreview = content.substr(val3, val4 - val3);
+			RemoveAccents(gsearchpreview);
+			BD["arrays"]["search"]["date"].push_back(gsearchpreview.substr(0,90));
+
 			val1++;
 		}
 		
-		for (int x = 0; x < (int)BD["arrays"]["search"]["images"].size(); x++) {
-			std::string LocalImg = BD["arrays"]["search"]["images"][x];
-			replace(LocalImg,"https://cdn.jkanime.net/assets/images/animes/image/","");
-
-			LocalImg = rootdirectory+"DATA/"+LocalImg;
-
-			if(!isFileExist(LocalImg))
-			downloadfile(BD["arrays"]["search"]["images"][x],LocalImg,false);
-
-			BD["com"]["porcentajereload"] = ((x + 1) * 100) / BD["arrays"]["search"]["images"].size();
-		}
+		porcentajebufferFF=BD["arrays"]["search"]["images"].size();
+		CheckImgVector(BD["arrays"]["search"]["images"],porcentajebufferF);
+		porcentajebufferFF=0;		
 	}
 	else
 	{
@@ -411,6 +454,7 @@ int searchjk(void* data) {
 		returnnow = toprogramation;
 	}
 	reloadingsearch = false;
+	MKcapitBuffer(BD["arrays"]["search"]["link"]);
 	return 0;
 }
 
