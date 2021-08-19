@@ -614,6 +614,22 @@ void RemoveAccents(std::string& word){
 	replace(word, "ì","i");
 	replace(word, "ò","o");
 	replace(word, "ù","u");
+	replace(word, "ñ","n");
+	
+	replace(word, "Á","A");
+	replace(word, "É","E");
+	replace(word, "Í","I");
+	replace(word, "Ó","O");
+	replace(word, "Ú","U");
+	replace(word, "À","A");
+	replace(word, "È","E");
+	replace(word, "Ì","I");
+	replace(word, "Ò","O");
+	replace(word, "Ù","U");
+	replace(word, "Ñ","N");
+	
+	replace(word, "&amp;","");
+	replace(word, "#8230;","");
 }
 
 void NameOfLink(std::string& word){

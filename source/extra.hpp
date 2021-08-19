@@ -82,6 +82,7 @@ bool preview = false;
 int selectchapter = 0;
 int imgNumbuffer = 0;
 int porcentajebuffer = 0;
+int porcentajebufferAll = 0;
 int porcentajebufferF =0;
 int porcentajebufferFF =0;
 std::string serverenlace = "...";
@@ -91,7 +92,6 @@ std::string DownTitle="...";
 //search
 int searchchapter = 0;
 bool reloadingsearch = false;
-bool activatefirstsearchimage = true;
 //downloads
 bool isDownloading=false;
 std::string speedD="";
