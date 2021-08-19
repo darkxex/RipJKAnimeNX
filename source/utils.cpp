@@ -604,6 +604,7 @@ void TikerColor(int& color,int time)
 }
 
 void RemoveAccents(std::string& word){
+	//std::cout << word << std::endl;
 	replace(word, "á","a");
 	replace(word, "é","e");
 	replace(word, "í","i");
@@ -630,6 +631,16 @@ void RemoveAccents(std::string& word){
 	
 	replace(word, "&amp;","");
 	replace(word, "#8230;","");
+	replace(word, "”","");
+	replace(word, "“","");
+	replace(word, "\n","");
+	
+	replace(word, "¡","");
+	replace(word, "!","");
+	replace(word, "?","");
+	replace(word, "¿","");
+	
+
 }
 
 void NameOfLink(std::string& word){

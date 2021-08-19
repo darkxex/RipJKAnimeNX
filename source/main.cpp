@@ -1080,7 +1080,7 @@ try{
 				{
 					std::string added="";
 					if(porcentajebufferF > 0){
-						int persen = ((porcentajebufferF + 1) * 100) / porcentajebufferFF;
+						int persen = ((porcentajebufferF) * 100) / porcentajebufferFF;
 						added=" ("+std::to_string(persen)+"%)";
 					}
 					GOD.PleaseWait("Cargando búsqueda..."+added,false);
@@ -1095,13 +1095,13 @@ try{
 				
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Lista de Favoritos", {100,0,0});
-				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
+				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 				//Draw footer
 				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
 
 				if (porcentajebufferF > 0){
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering fav: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
-					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				}
 
 				{//Draw footer buttons
@@ -1184,7 +1184,7 @@ try{
 		//global render
 		if(isDownloading&& downloadstate != statenow){
 			int het=40;
-			T_D.loadFromRenderedText(GOD.digifont, "Downloading: "+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {50,150,0});
+			T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {50,150,0});
 			if (statenow == programationstate){
 				het = porcentajebuffer > 0 ? T_D.getHeight()+22 : 20;
 			}
@@ -1197,7 +1197,7 @@ try{
 			if (statenow == chapterstate){
 				het=10;
 			}
-			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 15, het);
+			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 8, het);
 		}
 		if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
 		

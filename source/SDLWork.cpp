@@ -293,8 +293,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				VOX.render_VOX({0,0, 1280, 670} ,170, 170, 170, 100);
 				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
 			}
-			
-			
+
 			int chapsize = Jlinks["link"].size() - 1;
 			static int preval=0;
 			if (chapsize < 29){
@@ -311,7 +310,6 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 					selectindex = selectindex-chapsize;
 					//selectindex--;
 				}
-				
 			}
 
 			preval=selectindex;
@@ -322,7 +320,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			if (x == selectindex) {
 				//draw Title
 				gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
-				gTextTexture.render(20, 10);
+				gTextTexture.render(20, 7);
 				if(!Jlinks["date"].empty()){
 					//draw Title
 					gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x], { 0, 0, 0 });

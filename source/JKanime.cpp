@@ -193,10 +193,10 @@ int downloadjkanimevideo(void* data) {
 			BD["arrays"]["downloads"]["log"][x] = "100% : "+namedownload;
 		}
 	}
+	if(cancelcurl==0)led_on(3); else led_on(0);
 	cancelcurl = 0;
 	isDownloading=false;
 	statenow = downloadstate;
-	if(cancelcurl==0)led_on(3); else led_on(0);
 	appletSetAutoSleepDisabled(false);
 	return 0;
 }
@@ -439,8 +439,10 @@ int searchjk(void* data) {
 			val4 = content.find("</p>", val3);
 			gsearchpreview = content.substr(val3, val4 - val3);
 			RemoveAccents(gsearchpreview);
-			BD["arrays"]["search"]["date"].push_back(gsearchpreview.substr(0,90));
-
+			if (gsearchpreview.length() > 120){
+				gsearchpreview=gsearchpreview.substr(0,105)+"...";
+			}
+			BD["arrays"]["search"]["date"].push_back(gsearchpreview);
 			val1++;
 		}
 		
