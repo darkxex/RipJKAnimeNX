@@ -1,4 +1,9 @@
 #include <map>
+#include <vector>
+#include "nlohmann/json.hpp"
+#include <iomanip>
+using namespace std;
+using json = nlohmann::json;
 
 //Texture wrapper class
 class LTexture
@@ -99,7 +104,8 @@ std::string WorKey="00";
 void Image(std::string path,int X, int Y,int W, int H,int key);
 void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,bool selected=false);
 void PleaseWait(std::string text,bool render = true);
-void ListCover(int x,int& selectindex,std::string Link,bool ongrid=false);
+void ListCover(int& selectindex,json Jlinks, bool ongrid=false,int limit=0);
+void ListClassic(int& selectindex,json Jlinks);
 void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select);
 void deint();
 };

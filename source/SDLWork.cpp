@@ -12,14 +12,18 @@
 #include <string>
 #include <cmath>
 #include <iostream>
-#include <math.h>  
-#include <Vector>
-#include "SDLWork.hpp"
+#include <math.h> 
 #include "utils.hpp"
+#include "SDLWork.hpp"
 
 extern SDLB GOD;
 extern LTexture gTextTexture;
 extern LTexture Farest;
+extern LTexture VOX;
+extern LTexture T_T;
+extern LTexture Heart;
+
+
 extern std::string rootdirectory;
 
 void SDLB::intA(){
@@ -233,99 +237,175 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 		
 	//How not to handle a touch input, wala, yolo
 	static int findex = -1;
-	if (findex >= 0 && !GOD.fingerdown){
-		printf("relea %d to %d %s\n",select,index,KeyImage.c_str());
+	if (findex >= 0 && !fingerdown){
+		//printf("relea %d to %d %s\n",select,index,KeyImage.c_str());
 		select=findex;
 		findex=-1;
 	} else {
 		if(MapT[KeyImage].SP()){
-			printf("touch %d to %d %s\n",select,index,KeyImage.c_str());
+			//printf("touch %d to %d %s\n",select,index,KeyImage.c_str());
 			findex = index;
 		} 
-		if(fingermotion) {
-			printf("reset %d to %d %s\n",select,index,KeyImage.c_str());
+		if(fingermotion&&fingerdown) {
+			//printf("reset %d to %d %s\n",select,index,KeyImage.c_str());
 			findex=-1;
 		}
 	}
 }
-void SDLB::ListCover(int x,int& selectindex,std::string Link, bool ongrid){
-	//This controll the image order and logic
+void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
+	int JlinksSize=Jlinks["link"].size();
+	for (int x = 0; x < JlinksSize; x++) {
 
-	//Get the Cap Key
-	replace(Link, "https://jkanime.net/", "");
-	int val0 = Link.find("/");
-	std::string imagelocal=Link.substr(0,val0);
-	replace(Link, imagelocal, "");
-	replace(Link, "/", "");
+		//This controll the image order and logic
+		std::string Link=Jlinks["link"][x];
+		//Get the Cap Key
+		replace(Link, "https://jkanime.net/", "");
+		int val0 = Link.find("/");
+		std::string imagelocal=Link.substr(0,val0);
+		replace(Link, imagelocal, "");
+		replace(Link, "/", "");
 
-	//Cap Key to name 
-	std::string TEXT=imagelocal;
-	std::string TEXTH=imagelocal;
-	replace(TEXT, "/", " ");
-	replace(TEXT, "-", " ");
-	if (Link.length() > 0) {
-		TEXT=TEXT.substr(0,20)+" #"+Link;
-		TEXTH+=" #"+Link;
-	}
-	mayus(TEXT);
-	mayus(TEXTH);
-
-	//Image of cap
-	imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
-	
-	//set the offset position of images
-	static int MainOffSet=1,offset1=1,offset2=1,offset3=1;
-	
-	if (ongrid)
-	{
-		if (x == selectindex) {
-			//draw Title
-			gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
-			gTextTexture.render(20, 10);
-		}
-
-		if (x==0){MainOffSet=0;offset1=0; offset2=0;offset3=0;}
-		int HO = 0;
-		//Get Images , render Small
-		if (x < 10){
-			MainOffSet=offset1;
-			HO = 70;
-			offset1++;
-		} else if (x < 20){
-			HO = 270;
-			MainOffSet=offset2;
-			offset2++;
-		} else if (x < 30){
-			MainOffSet=offset3;
-			HO = 470;
-			offset3++;
-		}
-		if (x == selectindex) {
-			Cover(imagelocal,10 +  (MainOffSet * 127)-5,HO-13,TEXT,120,BT_A,true);
+		//Cap Key to name 
+		std::string TEXT=imagelocal;
+		replace(TEXT, "/", " ");
+		replace(TEXT, "-", " ");
+		mayus(TEXT);
+		std::string TEXTH=TEXT;
+		
+		if (Link.length() > 0) {
+			TEXT=TEXT.substr(0,20)+" #"+Link;
+			TEXTH+=" #"+Link;
 		} else {
-			Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,113,x,selectindex);
+			TEXT=TEXT.substr(0,25);
 		}
-	} else {
-		if (x==0){offset1 =1; offset2 =1;}
-		//Get 4 Images before, render Small
-		if ((x > selectindex-5) && (x < selectindex)){
-			int comp=0;//this is to get closer to te main image
-			if (selectindex < 5){
-				comp = offset1+(4-selectindex);
-			} else {
-				comp = offset1;
+
+		//Image of cap
+		imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
+		
+		//set the offset position of images
+		static int MainOffSet=1,offset1=1,offset2=1,offset3=1;
+		
+		if (ongrid)
+		{
+			if(x >= 30) break;
+			
+			if (x == 0) {
+				VOX.render_VOX({0,0, 1280, 670} ,170, 170, 170, 100);
+				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
 			}
-			Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,113,BT_UP);
-			offset1++;
+			
+			
+			int chapsize = Jlinks["link"].size() - 1;
+			static int preval=0;
+			if (chapsize < 29){
+				if (selectindex < 0) {
+					selectindex=preval;
+				} else if (selectindex > chapsize) {
+					selectindex=preval;
+				}
+			} else {
+				if (selectindex < 0) {
+					selectindex = chapsize+selectindex;
+					//selectindex++;
+				} else if (selectindex > chapsize) {
+					selectindex = selectindex-chapsize;
+					//selectindex--;
+				}
+				
+			}
+
+			preval=selectindex;
+			
+			//Grid Animation
+			if (limit>0 && limit < x) break;
+		
+			if (x == selectindex) {
+				//draw Title
+				gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
+				gTextTexture.render(20, 10);
+				if(!Jlinks["date"].empty()){
+					//draw Title
+					gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x], { 0, 0, 0 });
+					gTextTexture.render(20, 37);
+				}
+			}
+
+			if (x==0){MainOffSet=0;offset1=0; offset2=0;offset3=0;}
+			int HO = 0;
+			//Get Images , render Small
+			if (x < 10){
+				MainOffSet=offset1;
+				HO = 70;
+				offset1++;
+			} else if (x < 20){
+				HO = 270;
+				MainOffSet=offset2;
+				offset2++;
+			} else if (x < 30){
+				MainOffSet=offset3;
+				HO = 470;
+				offset3++;
+			}
+			if (x == selectindex) {
+				Cover(imagelocal,10 +  (MainOffSet * 127)-5,HO-13,TEXT,120,BT_A,true);
+			} else {
+				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,113,x,selectindex);
+			}
+		} else {
+			if (x==0){offset1 =1; offset2 =1;}
+			//Get 4 Images before, render Small
+			if ((x > selectindex-5) && (x < selectindex)){
+				int comp=0;//this is to get closer to te main image
+				if (selectindex < 5){
+					comp = offset1+(4-selectindex);
+				} else {
+					comp = offset1;
+				}
+				Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,113,BT_UP);
+				offset1++;
+			}
+			//Central Big image
+			if (x == selectindex) {
+				Cover(imagelocal,680+ 132,  132,TEXT,255,BT_A);
+			}
+			//Get 4 Images After, render small
+			if ((x < selectindex+5) && (x > selectindex)){
+				Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,113,BT_DOWN);
+				offset2++;
+			}
 		}
-		//Central Big image
-		if (x == selectindex) {
-			Cover(imagelocal,680+ 132,  132,TEXT,255,BT_A);
+	}
+}
+void SDLB::ListClassic(int& selectindex,json Jlinks) {
+	int indexLsize = Jlinks["link"].size();
+	if(TouchY < 670 && TouchX < 530 && TouchY > 5 && TouchX > 15){
+		int sel=(TouchY*30/660);
+		if (sel >= 0 && sel < indexLsize){
+			selectindex = sel;
 		}
-		//Get 4 Images After, render small
-		if ((x < selectindex+5) && (x > selectindex)){
-			Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,113,BT_DOWN);
-			offset2++;
+	}
+	if (indexLsize > 0 ){
+		VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
+		if (indexLsize > 30) {
+			gTextTexture.loadFromRenderedText(gFont, std::to_string(selectindex+1)+"/"+std::to_string(indexLsize), {0,0,0});
+			gTextTexture.render(400, 690);
+		}
+		int of = selectindex < 30 ? 0 : selectindex - 26;
+		for (int x = of; x < indexLsize; x++) {
+			std::string temptext = Jlinks["link"][x];
+			NameOfLink(temptext);
+			
+			if (x == selectindex) {
+				T_T.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
+				VOX.render_VOX({20-2,10 + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
+				T_T.render(20, 10 + ((x-of) * 22));
+				Heart.render(20 - 18, 10 + 3 + ((x-of) * 22));
+			}
+			else if((x-of) < 30)
+			{
+				gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 50, 50, 50 });
+				gTextTexture.render(20, 10 + ((x-of) * 22));
+			}
 		}
 	}
 }
