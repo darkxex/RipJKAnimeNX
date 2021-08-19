@@ -20,6 +20,7 @@ extern int sizeestimated;
 extern int cancelcurl;
 extern std::string speedD;
 extern std::string rootdirectory;
+extern bool quit;
 
 //Write file in mem to increase download speed on 3 or 5 times
 struct MemoryStruct
@@ -230,7 +231,7 @@ bool HasConnection()
 void CheckImgVector(std::vector<std::string> List,int& index){
 	index=0;
 	int listsize=List.size();
-	for (int x = 0; x < listsize; x++)
+	for (int x = 0; x < listsize && !quit; x++)
 	{
 		index = x+1;
 		std::string tempima = List[x];
