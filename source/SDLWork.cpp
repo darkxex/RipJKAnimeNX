@@ -115,7 +115,7 @@ void SDLB::intA(){
 	gFont5 = TTF_OpenFont("romfs:/lazy2.ttf", 20);
 	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
 	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
-	digifontC = TTF_OpenFont("romfs:/digifont.otf", 11);
+	digifontC = TTF_OpenFont("romfs:/digifont.otf", 9);
 
 }
 void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
@@ -134,9 +134,13 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 		KeyImage+="-"+std::to_string(W)+"x"+std::to_string(H);
 		path = "romfs:/nop.png";
 	}
-	if ( MapT.find(KeyImage) == MapT.end() ) {
+
+	if ( MapT.find(KeyImage) == MapT.end()) {
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), H, W);
+	} else if (MapT[KeyImage].getHeight() < H){
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), H, W);
 	}
+	
 	MapT[KeyImage].render(X, Y);
 	if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
 }
@@ -160,51 +164,67 @@ void SDLB::PleaseWait(std::string text,bool render){
 }
 void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,bool selected){
 //render images and map to memory for fast display
-		std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
-		std::string KeyText=Text+"-"+std::to_string(WS);
+	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
+	std::string KeyText=Text+"-"+std::to_string(WS);
+	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
 
-		if (!isFileExist(path)) {
-			KeyImage="SuperPro.jpg";
-			KeyImage+="-"+std::to_string(WS);
-			path = "romfs:/SuperPro.jpg";
-		}
-		int sizeportraitx = 300;
-		int sizeportraity =424;
-		//make the math
+	if (!isFileExist(path)) {
+		KeyImage="SuperPro.jpg";
+		KeyImage+="-"+std::to_string(WS);
+		path = "romfs:/SuperPro.jpg";
+	}
+	int sizeportraitx = 300;
+	int sizeportraity =424;
+	//make the math
 
-		int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-
-		if ( MapT.find(KeyImage) == MapT.end() ) {
-			MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
-		}
+	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
+	
+	if ( MapT.find(KeyImage) == MapT.end()) {
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+	} else if (MapT[KeyImage].getHeight() < HS){
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+	}
 		
-		static int blue=205;
-		if(selected){
-			TikerColor(blue,1);
-		} else blue=0;
+	static int blue=250;
+	if(selected){
+		TikerColor(blue,150,250);
+	} else blue=0;
 
-		
-		if (Text.length()){
-			//text
-			if ( MapT.find(KeyText) == MapT.end() ) {
-				int kinsize =11;
-				if (WS < 115){kinsize =7;Text=Text.substr(0,20);}//
-				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
-				MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
+	if (Text.length()){
+		//text
+		if ( MapT.find(KeyText) == MapT.end() ) {
+			std::string numhe=scrapElement(Text, "#");
+			if (numhe.length() > 0){
+				replace(Text, numhe, "");
+				replace(numhe, " #", "");replace(numhe, "#", "");
+				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", 11);
+				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
 			}
-			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, blue, 200);
-			MapT[KeyText].render(X + 4, Y + 4+MapT[KeyImage].getHeight());
-		} else {
-			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, blue, 200);
-		}
 
-		MapT[KeyImage].render(X, Y);
-		if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
+			int kinsize =11;
+			if (WS < 115){kinsize =7;Text=Text.substr(0,20);}//
+			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
+			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
+		}
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, blue, 200);
+		MapT[KeyText].render(X + 2, Y + 4+MapT[KeyImage].getHeight());
+	} else {
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, blue, 200);
+	}
+
+	MapT[KeyImage].render(X, Y);
+	if (MapT.find(KeyTextH) != MapT.end()){
+		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y , MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()+1}, 0, 0, 0, 200);
+		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
+	}
+	if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
+		
 }
 void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select){
 //render images and map to memory for fast display
 	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
 	std::string KeyText=Text+"-"+std::to_string(WS);
+	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
 
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
@@ -216,24 +236,39 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	//make the math
 
 	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-	if ( MapT.find(KeyImage) == MapT.end() ) {
+
+	if ( MapT.find(KeyImage) == MapT.end()) {
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+	} else if (MapT[KeyImage].getHeight() < HS){
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 	}
+
 	if (Text.length()){
 		//text
 		if ( MapT.find(KeyText) == MapT.end() ) {
+			std::string numhe=scrapElement(Text, "#");
+			if (numhe.length() > 0){
+				replace(Text, numhe, "");
+				replace(numhe, " #", "");replace(numhe, "#", "");
+				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", 11);
+				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
+			}
 			int kinsize =11;
 			if (WS < 115){kinsize =9;Text=Text.substr(0,19);}//
 			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, 0, 200);
-		MapT[KeyText].render(X + 4, Y + 4+MapT[KeyImage].getHeight());
+		MapT[KeyText].render(X + 2, Y + 4+MapT[KeyImage].getHeight());
 	} else {
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, 0, 200);
 	}
 
 	MapT[KeyImage].render(X, Y);
+	if (MapT.find(KeyTextH) != MapT.end()){
+		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 3, Y , MapT[KeyTextH].getWidth() + 3, MapT[KeyTextH].getHeight()+1}, 0, 0, 0, 200);
+		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
+	}
 		
 	//How not to handle a touch input, wala, yolo
 	static int findex = -1;
@@ -271,12 +306,25 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		replace(TEXT, "-", " ");
 		mayus(TEXT);
 		std::string TEXTH=TEXT;
+		int offsettval=0;
+		if (x == selectindex){
+			static int take=selectindex;
+			static int laof=-1;
+			if (selectindex != take){
+				take = selectindex;
+				laof=-1;
+			}
+			if (TEXT.length() > 25){
+				TikerName(laof,200,0,TEXT.length()-25);
+				offsettval=laof;
+			}
+		}
 		
 		if (Link.length() > 0) {
-			TEXT=TEXT.substr(0,20)+" #"+Link;
+			TEXT=TEXT.substr(offsettval,25)+" #"+Link;
 			TEXTH+=" #"+Link;
 		} else {
-			TEXT=TEXT.substr(0,25);
+			TEXT=TEXT.substr(offsettval,25);
 		}
 
 		//Image of cap
@@ -345,7 +393,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				offset3++;
 			}
 			if (x == selectindex) {
-				Cover(imagelocal,10 +  (MainOffSet * 127)-5,HO-13,TEXT,120,BT_A,true);
+				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,120,BT_A,true);
 			} else {
 				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,113,x,selectindex);
 			}
@@ -407,6 +455,74 @@ void SDLB::ListClassic(int& selectindex,json Jlinks) {
 		}
 	}
 }
+void SDLB::HandleList(int& selectchapter, int allsize, int key,bool ongrid){
+	allsize--;
+//	std::cout << selectchapter << " - " << allsize << std::endl;
+	switch(key){
+		case BT_LEFT:
+		case BT_LS_LEFT:
+			if(ongrid){
+				if (selectchapter > 0)
+				{
+					selectchapter--;
+				} else {
+					selectchapter = allsize;
+				}
+			}
+			break;
+		case BT_RIGHT:
+		case BT_LS_RIGHT:
+			if(ongrid){
+				if (selectchapter < allsize)
+				{
+					selectchapter++;
+				} else {
+					selectchapter = 0;
+				}
+			}
+			break;
+		case BT_UP:
+		case BT_LS_UP:{
+			if(ongrid){
+				if (selectchapter > 0)
+				{
+					selectchapter-=10;
+				} else {
+					selectchapter = allsize;
+				}
+			} else {
+				if (selectchapter > 0)
+				{
+					selectchapter--;
+				} else {
+					selectchapter = allsize;
+				}
+			}
+			break;
+		}
+		case BT_DOWN:
+		case BT_LS_DOWN:{
+			if(ongrid){
+				if (selectchapter < allsize)
+				{
+					selectchapter+=10;
+				} else {
+					selectchapter = 0;
+				}
+			} else {
+				if (selectchapter < allsize)
+				{
+					selectchapter++;
+				} else {
+					selectchapter = 0;
+				}
+			}
+			break;
+		}
+	}
+//	std::cout << selectchapter << " - " << allsize << std::endl;
+}
+
 
 void SDLB::deint(){
 	//Clear Texture Map

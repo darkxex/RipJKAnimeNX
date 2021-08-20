@@ -107,6 +107,7 @@ void PleaseWait(std::string text,bool render = true);
 void ListCover(int& selectindex,json Jlinks, bool ongrid=false,int limit=0);
 void ListClassic(int& selectindex,json Jlinks);
 void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select);
+void HandleList(int& selectchapter, int allsize, int key,bool ongrid);
 void deint();
 };
 
