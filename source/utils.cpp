@@ -568,8 +568,26 @@ void led_on(int inter)
         
 }
 
-bool onTimeC(int sec)
+bool onTimeC(int sec,int& time2)
 {
+    struct timeval time_now{};
+    gettimeofday(&time_now, nullptr);
+    time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+	
+	int time1 = msecs_time;
+	//static int time2 = msecs_time;
+
+	if (time1 > time2+sec){
+		time2 = time1;
+		return true;
+	}
+	return false;
+/*
+    cout << "seconds since epoch: " << time_now.tv_sec << endl;
+    cout << "milliseconds since epoch: "  << msecs_time << endl << endl;
+
+
+
 	if (sec > 0) sec--;
 	std::time_t t = std::time(0);
 	int time1 = t;
@@ -579,30 +597,75 @@ bool onTimeC(int sec)
 		return true;
 	}
 	return false;
+*/
+
 }
-void TikerColor(int& color,int time)
+void TikerColor(int& color,int min,int max)
 {
 	static bool reverse=false;
 		if (reverse){
 			color-=1;
-			if(color < 150){
+			if(color < min){
 				reverse=false;
 			}
 		} else {
 			color+=5;
-			if(color > 245){
+			if(color > max){
 				reverse=true;
 			}
 		}
-/*
-	if (onTimeC(time))
-	{
-//		printf("blink: %d \n",color);
+}
+void TikerName(int& color,int sec,int min,int max)
+{
+	static bool running=false;
+	static bool Start=false;
+	
+	static int time2 = 0;
+	static int increment = 5;
+	if (color < 0){
+		color=0;
+		running=false;
+		Start=true;
+	}
+	
+	if(!running){
+		//delay
+		if (onTimeC(sec*increment,time2))
+		{
+			if (color > 0 || Start){
+				color=0;
+				increment=13;
+				Start=false;
+			} else {
+				running=true;
+			}
+		//cout << "> "  << color << endl;
+		}
+	} else {
+		//running time
+		if (onTimeC(sec,time2))
+		{
+			color+=1;
+			if(color >= max){
+				color = max;
+				increment=8;
+				running=false;
+			}
+		//cout << "> "  << color << endl;
+		}
 	}
 
-*/
-}
+			
+/*
+			color-=1;
+			if(color < min){
+				color=0;
+				running=false;
+			}
 
+		} else {
+*/			
+}
 void RemoveAccents(std::string& word){
 	//std::cout << word << std::endl;
 	replace(word, "á","a");
@@ -639,7 +702,6 @@ void RemoveAccents(std::string& word){
 	replace(word, "!","");
 	replace(word, "?","");
 	replace(word, "¿","");
-	
 
 }
 
