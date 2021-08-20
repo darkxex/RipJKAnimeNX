@@ -793,13 +793,13 @@ try{
 					if (BD["com"]["enemision"] == "true")
 					{
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
-						gTextTexture.render(posxbase + 820, posybase + 598);
+						gTextTexture.render(posxbase + 840, posybase + 598);
 					} else {
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
-						gTextTexture.render(posxbase + 820, posybase + 598);
+						gTextTexture.render(posxbase + 840, posybase + 598);
 					}
 					gTextTexture.loadFromRenderedText(GOD.gFont, BD["com"]["nextdate"], { 255,255,255 });
-					gTextTexture.render(posxbase + 1020, posybase + 615);
+					gTextTexture.render(posxbase + 1040, posybase + 615);
 				}
 				int mwide = 35;//52
 				int XD = 310;
@@ -888,7 +888,7 @@ try{
 				B_X.render_T(dist, 680,"Descargar");dist -= posdist;
 			}
 
-			if(gFAV){FAV.render_T(1190, 70,"");}
+			if(gFAV){FAV.render_T(1210, 70,"");}
 			else {B_Y.render_T(dist, 680,"Favorito");dist -= posdist;}
 			
 			if(!serverpront){
