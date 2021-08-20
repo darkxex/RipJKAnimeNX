@@ -65,7 +65,6 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 	double TotalToUpload, double NowUploaded)
 {
 
-
 	// ensure that the file to be downloaded is not empty
 	// because that would cause a division by zero error later on
 	if (TotalToDownload <= 0.0) {
@@ -96,7 +95,6 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 		temporal = NowDownloaded/1000000;
 		secr = tm->tm_sec;
 	}
-
 
 	// create the "meter"
 	int ii = 0;
