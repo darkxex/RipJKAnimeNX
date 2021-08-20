@@ -494,6 +494,7 @@ try{
 								getFavorite();
 								returnnow = tofavorite;
 								statenow = favoritesstate;
+								Frames=1;
 							}
 							break;
 						case downloadstate:
@@ -539,7 +540,10 @@ try{
 							ongrid = !ongrid;
 							break;
 						case searchstate:
-							ongrid = !ongrid;
+							ongridS = !ongridS;
+							break;
+						case favoritesstate:
+							ongridF = !ongridF;
 							break;
 						}
 					}
@@ -597,26 +601,17 @@ try{
 						case programationstate:
 							if (!reloading)
 							{
-								if(ongrid){
-									if (selectchapter > 0)
-									{
-										selectchapter--;
-									} else {
-										selectchapter = BD["arrays"]["chapter"]["link"].size() - 1;
-									}
-								}
+								GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);								
 							}
 							break;
 						case searchstate:
 							if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
 							{
-								if (searchchapter > 0)
-								{
-									searchchapter--;
-								} else {
-									selectchapter = BD["arrays"]["search"]["link"].size() - 1;
-								}
+								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
+							break;
+						case favoritesstate:
+							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
 						}
 					}
@@ -638,26 +633,17 @@ try{
 						case programationstate:
 							if (!reloading)
 							{
-								if(ongrid){
-									if (selectchapter < (int)BD["arrays"]["chapter"]["link"].size() - 1)
-									{
-										selectchapter++;
-									} else {
-										selectchapter = 0;
-									}
-								}
+								GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
 							}
 							break;
 						case searchstate:
 							if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
 							{
-								if (searchchapter < (int)BD["arrays"]["search"]["link"].size() - 1)
-								{
-									searchchapter++;
-								} else {
-									searchchapter = 0;
-								}
+								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
+							break;
+						case favoritesstate:
+							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
 						}
 					}
@@ -668,22 +654,7 @@ try{
 						case programationstate:
 							if (!reloading)
 							{
-								if(ongrid){
-									if (selectchapter > 0)
-									{
-										selectchapter-=10;
-									} else {
-										selectchapter = BD["arrays"]["chapter"]["link"].size() - 1;
-									}
-								} else {
-									if (selectchapter > 0)
-									{
-										selectchapter--;
-									} else {
-										selectchapter = BD["arrays"]["chapter"]["link"].size() - 1;
-									}
-								}
-
+								GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
 							}
 							break;
 						case chapterstate:
@@ -706,77 +677,29 @@ try{
 						case searchstate:
 							if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
 							{
-								if(ongrid){
-									if (searchchapter > 0)
-									{
-										searchchapter-=10;
-									} else {
-										searchchapter = BD["arrays"]["search"]["link"].size() - 1;
-									}
-								} else {
-									if (searchchapter > 0)
-									{
-										searchchapter--;
-									} else {
-										searchchapter = BD["arrays"]["search"]["link"].size() - 1;
-									}
-								}
+								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
 							break;
 
 						case favoritesstate:
-							if (favchapter > 0)
-							{
-								favchapter--;
-							}
-							else {
-								favchapter = (int)BD["arrays"]["favorites"]["link"].size() - 1;
-							}
+							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
 						}
 					}
 					else if (e.jbutton.button == GOD.BT_DOWN || e.jbutton.button == GOD.BT_LS_DOWN) {// (down) button down
 						switch (statenow)
 						{
-						case searchstate:
-							if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-							{
-								if(ongrid){
-									if (searchchapter < (int)BD["arrays"]["search"]["link"].size() - 1)
-									{
-										searchchapter+=10;
-									} else {
-										searchchapter = 0;
-									}
-								} else {
-									if (searchchapter < (int)BD["arrays"]["search"]["link"].size() - 1)
-									{
-										searchchapter++;
-									} else {
-										searchchapter = 0;
-									}
-								}
-							}
-							break;
-
 						case programationstate:
 							if (!reloading)
 							{
-								if(ongrid){
-									if (selectchapter < (int)BD["arrays"]["chapter"]["link"].size() - 1)
-									{
-										selectchapter+=10;
-									} else {
-										selectchapter = 0;
-									}
-								} else {
-									if (selectchapter < (int)BD["arrays"]["chapter"]["link"].size() - 1)
-									{
-										selectchapter++;
-									} else {
-										selectchapter = 0;
-									}
-								}
+								GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
+							}
+							break;
+
+						case searchstate:
+							if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
+							{
+								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
 							break;
 
@@ -799,12 +722,7 @@ try{
 							break;
 
 						case favoritesstate:
-							if (favchapter < (int)BD["arrays"]["favorites"]["link"].size() - 1)
-							{
-								favchapter++;
-							} else {
-								favchapter = 0;
-							}
+							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
 						}
 					}
@@ -830,39 +748,40 @@ try{
 			case chapterstate:		{
 			//Draw a background to a nice view
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
+			VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
 			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 			std::string temptext = BD["com"]["ActualLink"];
 			NameOfLink(temptext);
 
+			/*
 			//warning , only display in sxos ToDo
 			gTextTexture.loadFromRenderedText(GOD.gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
 			gTextTexture.render(posxbase, 0 );
+			*/
 			
-			{//draw back rectangle
-				VOX.render_VOX({ SCREEN_WIDTH - 442,58, 404, 590}, 0, 0, 0, 200);
-				//draw preview image
-				GOD.Image(BD["com"]["ActualLink"],SCREEN_WIDTH - 440, 60,400, 550,GOD.BT_A);
+			{//draw preview image
+				VOX.render_VOX({ SCREEN_WIDTH - 412,63, 404, 590}, 0, 0, 0, 200);
+				GOD.Image(BD["com"]["ActualLink"],SCREEN_WIDTH - 410, 65,400, 550,GOD.BT_A);
 			}	
-
 
 			//draw Title
 			gTextTexture.loadFromRenderedText(GOD.gFont3, temptext.substr(0,62)+ ":", textColor);
-			gTextTexture.render(posxbase+10, posybase);
+			gTextTexture.render(posxbase, posybase);
 
 			{//draw description
-				VOX.render_VOX({25,60, 770, 340}, 255, 255, 255, 100);
+				VOX.render_VOX({10,63, 770, 340}, 255, 255, 255, 100);
 				static std::string rese_prot = "..";
 				if (rese_prot != BD["com"]["sinopsis"]){//load texture on text change 
 					T_R.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["sinopsis"], textColor, 750);
 					rese_prot = BD["com"]["sinopsis"];
 				}
-				T_R.render(posxbase+15, posybase + 65);
+				T_R.render(posxbase, posybase + 65);
 
 				gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["Emitido"], textColor,750);
-				gTextTexture.render(posxbase+15, posybase + 350-gTextTexture.getHeight());
+				gTextTexture.render(posxbase, posybase + 350-gTextTexture.getHeight());
 
 				gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["generos"], textColor,750);
-				gTextTexture.render(posxbase+25, posybase + 380-gTextTexture.getHeight());
+				gTextTexture.render(posxbase, posybase + 380-gTextTexture.getHeight());
 			}
 			bool anend=false;
 			int sizefix = 0;
@@ -1010,15 +929,18 @@ try{
 					#else
 						std::string TYPEA =  "sdmc";
 					#endif
-					gTextTexture.loadFromRenderedText(GOD.gFont, (TYPEA+" (Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.digifontC, (TYPEA+" (Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 670);
+					
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Recientes", {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 					if (imgNumbuffer > 0){
-						gTextTexture.loadFromRenderedText(GOD.gFont, "Imagenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
+						gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 						//Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
 					}
 					if (porcentajebuffer > 0){
-						gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/"+std::to_string(porcentajebufferAll)+")", {0,100,0});
+						gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(porcentajebuffer)+"/"+std::to_string(porcentajebufferAll)+")", {0,100,0});
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 					}
 
@@ -1041,14 +963,17 @@ try{
 			}
 			case searchstate:		{
 				if (!reloadingsearch) {
-
+					//Draw footer
+					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
+					
 					int srchsize=BD["arrays"]["search"]["link"].size();
 					if (srchsize > 0){
-						if ((srchsize > 30) || !ongrid) GOD.ListClassic(searchchapter,BD["arrays"]["search"]);
+						if (srchsize > 30) ongridS=false;
+						if (!ongridS) GOD.ListClassic(searchchapter,BD["arrays"]["search"]);
 						if (preview)
 						{
-							if ((srchsize < 30)&ongrid){
-								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongrid,Frames);
+							if (ongridS){
+								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongridS,Frames);
 							} else {
 								GOD.ListCover(searchchapter,BD["arrays"]["search"]);
 								B_UP.render_T(580, 5,"");
@@ -1063,8 +988,6 @@ try{
 					//Draw Header
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Búsqueda", {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
-					//Draw footer
-					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
 					{//Draw footer buttons
 						int dist = 1100,posdist = 160;
 						B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
@@ -1089,18 +1012,31 @@ try{
 				break;
 			}
 			case favoritesstate:	{
-				
-				GOD.ListClassic(favchapter,BD["arrays"]["favorites"]);
-				GOD.ListCover(favchapter,BD["arrays"]["favorites"]);
-				
-				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Lista de Favoritos", {100,0,0});
-				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 				//Draw footer
 				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
+				
+				int favsize=BD["arrays"]["favorites"]["link"].size();
+				if (favsize > 0){
+					if (favsize > 30) ongridF=false;
+					if (!ongridF) GOD.ListClassic(favchapter,BD["arrays"]["favorites"]);
+					if (preview)
+					{
+						if (ongridF){
+							GOD.ListCover(favchapter,BD["arrays"]["favorites"],ongridF,Frames);
+						} else {
+							GOD.ListCover(favchapter,BD["arrays"]["favorites"]);
+							B_UP.render_T(580, 5,"");
+							B_DOWN.render_T(580, 630,"");
+						}
+					}
+				}
+				
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
+				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 
 				if (porcentajebufferF > 0){
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering fav: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 				}
 
@@ -1111,9 +1047,6 @@ try{
 					if ((int)BD["arrays"]["favorites"]["link"].size() >= 1){
 						B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
 					}else NOP.render_T(230, 355,"");
-					
-					B_UP.render_T(580, 5,"");
-					B_DOWN.render_T(580, 630,"");
 				}
 			break;
 			}
@@ -1204,7 +1137,8 @@ try{
 		//clock cicle 1s
 		int maxt=100;
 		static int net=maxt;
-		if (onTimeC(1)){		
+		static int time2 = 0;
+		if (onTimeC(1000,time2)){		
 			if (!HasConnection()) {
 				isConnected=false;
 				if (net <= 0){quit=true;} else {net--;}

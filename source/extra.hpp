@@ -107,6 +107,8 @@ bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
 bool ongrid=true;
+bool ongridS=true;
+bool ongridF=true;
 AccountUid uid;
 SDL_Thread* capithread = NULL;
 bool quit=false;
