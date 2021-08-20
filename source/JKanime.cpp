@@ -54,7 +54,11 @@ void PushDirBuffer(std::string a,std::string name) {
 	replace(terese, "<p rel=\"sinopsis\">", ""); replace(terese, "<br/>", ""); replace(terese, "&quot;", "");
 	BD["DataBase"][name]["sinopsis"] = terese.substr(0,810);
 	//std::cout << BD["DataBase"][name]["sinopsis"] << std::endl;
-
+	
+	//get image
+	terese = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
+	BD["DataBase"][name]["Image"] = terese;
+	
 	//Anime info
 	terese = scrapElement(a, "<span>Tipo:","</li");
 	replace(terese, "<span>Tipo:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
@@ -270,7 +274,7 @@ int refrescarpro(void* data){
 
 	//Load to cache all Programation Chaps
 	if (haschange) {
-		MKcapitBuffer(BD["arrays"]["chapter"]["link"]);
+		MKcapitBuffer(BD["arrays"]["chapter"]["link"], porcentajebuffer, porcentajebufferAll);
 		if(!quit){
 			BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 		}
@@ -289,7 +293,7 @@ int refrescarpro(void* data){
 	sort( vec.begin(),vec.end());
 	vec.erase(unique(vec.begin(),vec.end()),vec.end());
 	BD["arrays"]["Main"]["link"]=vec;
-	MKcapitBuffer(vec);
+	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	
 	//load Top
@@ -300,7 +304,7 @@ int refrescarpro(void* data){
 	sort(vec.begin(),vec.end());
 	vec.erase(unique(vec.begin(),vec.end()),vec.end());
 	BD["arrays"]["Top"]["link"]=vec;
-	MKcapitBuffer(vec);
+	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	//load Horario
 	content=gethtml("https://jkanime.net/horario/");
@@ -309,7 +313,7 @@ int refrescarpro(void* data){
 	sort(vec.begin(),vec.end());
 	vec.erase(unique(vec.begin(),vec.end()),vec.end());
 	BD["arrays"]["HourGlass"]["link"]=vec;
-	MKcapitBuffer(vec);
+	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	std::cout << "# End Thread   \n" << std::endl;
 	if (!isDownloading) appletSetAutoSleepDisabled(false);
@@ -317,13 +321,14 @@ int refrescarpro(void* data){
 	if (AppletMode) quit=true;
 	return 0;
 }
-int MKcapitBuffer(std::vector<std::string> LinkList) {
+int MKcapitBuffer(std::vector<std::string> LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
 	std::string a = "";
-	porcentajebufferAll=LinkList.size();
-	for (int x = 0; x < porcentajebufferAll&& !quit; x++)
+	part=0;
+	ofall=LinkList.size();
+	for (int x = 0; x < ofall&& !quit; x++)
 	{
-		if(hasmchap) porcentajebuffer = x+1;
+		if(hasmchap) part = x+1;
 		while (!HasConnection()){SDL_Delay(2000);if(quit) return 0;}
 		std::string link = LinkList[x];
 		int trace = link.find("/", 20);
@@ -334,7 +339,7 @@ int MKcapitBuffer(std::vector<std::string> LinkList) {
 
 		if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"] ){
 			if (BD["DataBase"][name]["enemision"]=="true" || BD["DataBase"][name]["TimeStamp"].empty()){
-				porcentajebuffer = x+1;
+				part = x+1;
 				a = gethtml(link);
 				PushDirBuffer(a,name);
 				hasmchap=true;
@@ -343,8 +348,8 @@ int MKcapitBuffer(std::vector<std::string> LinkList) {
 			}
 		}
 	}
-	porcentajebuffer=0;
-	porcentajebufferAll=0;
+	part=0;
+	ofall=0;
 	if(quit) return 0;
 	if(hasmchap){
 		//write json
@@ -456,7 +461,7 @@ int searchjk(void* data) {
 		returnnow = toprogramation;
 	}
 	reloadingsearch = false;
-	MKcapitBuffer(BD["arrays"]["search"]["link"]);
+	MKcapitBuffer(BD["arrays"]["search"]["link"], porcentajebuffer, porcentajebufferAll);
 	return 0;
 }
 
@@ -499,9 +504,9 @@ int capBuffer (std::string Tlink) {
 	std::cout << "KeyName: " << name << std::endl;
 	fflush(stdout);
 	std::cout << "Link: " << Tlink << std::endl;
-
+	
+	std::string image = rootdirectory+"DATA/"+name+".jpg";
 	statenow = chapterstate;
-	CheckImgNet(rootdirectory+"DATA/"+name+".jpg");
 
 	if (BD["DataBase"][name]["TimeStamp"].empty())
 	{
@@ -534,6 +539,13 @@ int capBuffer (std::string Tlink) {
 			else
 				capmore = BD["DataBase"][name]["capmore"];
 			
+			if (!BD["DataBase"][name]["Image"].empty()){
+				if (!isFileExist(image.c_str())) {
+					printf("# Missing %s Downloading from chapbuffer\n",image.c_str());
+					downloadfile(BD["DataBase"][name]["Image"],image,false);
+				}
+			}
+			
 			if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
 				BD["com"]["nextdate"] = "Loading...";
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
@@ -542,6 +554,7 @@ int capBuffer (std::string Tlink) {
 			printf("Error \n");
 		}
 	}
+	CheckImgNet(image);
 return 0;
 }
 
