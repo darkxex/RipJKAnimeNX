@@ -305,7 +305,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		replace(TEXT, "/", " ");
 		replace(TEXT, "-", " ");
 		mayus(TEXT);
-		std::string TEXTH=TEXT;
+		std::string TEXTH=TEXT.substr(0,62);
 		int offsettval=0;
 		if (x == selectindex){
 			static int take=selectindex;
@@ -332,7 +332,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		
 		//set the offset position of images
 		static int MainOffSet=1,offset1=1,offset2=1,offset3=1;
-		
+		int nosel=113,issel=120;
 		if (ongrid)
 		{
 			if(x >= 30) break;
@@ -361,18 +361,23 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			}
 
 			preval=selectindex;
-			
+
 			//Grid Animation
-			if (limit>0 && limit < x) break;
+			if (limit>0){
+				std::string KeyImage=imagelocal.substr(25)+"-"+std::to_string(nosel);
+				if ( MapT.find(KeyImage) == MapT.end()) {
+					if (limit < x) break;
+				} 
+			}
 		
 			if (x == selectindex) {
 				//draw Title
 				gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
-				gTextTexture.render(20, 7);
+				gTextTexture.render(50, 7);
 				if(!Jlinks["date"].empty()){
 					//draw Title
 					gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x], { 0, 0, 0 });
-					gTextTexture.render(20, 37);
+					gTextTexture.render(50, 37);
 				}
 			}
 
@@ -393,9 +398,9 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				offset3++;
 			}
 			if (x == selectindex) {
-				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,120,BT_A,true);
+				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,issel,BT_A,true);
 			} else {
-				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,113,x,selectindex);
+				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,nosel,x,selectindex);
 			}
 		} else {
 			if (x==0){offset1 =1; offset2 =1;}
@@ -407,7 +412,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				} else {
 					comp = offset1;
 				}
-				Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,113,BT_UP);
+				Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,nosel,BT_UP);
 				offset1++;
 			}
 			//Central Big image
@@ -416,7 +421,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			}
 			//Get 4 Images After, render small
 			if ((x < selectindex+5) && (x > selectindex)){
-				Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,113,BT_DOWN);
+				Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,nosel,BT_DOWN);
 				offset2++;
 			}
 		}

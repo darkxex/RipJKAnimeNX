@@ -227,7 +227,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 {
 	std::string temp = onlineenlace;
 	NameOfLink(temp);
-	std::string text = "Cargando "+temp.substr(0,62)+"... desde "+server+" ...";
+	std::string text = "Cargando "+temp.substr(0,42)+"... desde "+server+" ...";
 	GOD.PleaseWait(text);
 	std::string videourl = "";
 	std::string content = "";

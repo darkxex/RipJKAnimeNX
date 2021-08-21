@@ -136,6 +136,8 @@ int main(int argc, char **argv)
 	CLEAR.loadFromFile("romfs:/buttons/clear.png");
 	SCREEN.loadFromFile("romfs:/buttons/screen.png");
 	FAV.loadFromFile("romfs:/buttons/FAV.png");/////
+	REC.loadFromFile("romfs:/buttons/REC.png");
+	BUS.loadFromFile("romfs:/buttons/BUS.png");
 	NOP.loadFromFile("romfs:/nop.png");
 
 
@@ -322,12 +324,12 @@ try{
 									BD["DataBase"][KeyName]["capmore"] = capmore;
 									//if (BD["history"].find(tempurl)){
 									int hsize = BD["history"].size();
-									if (hsize > 50){BD["history"].erase(0);}//limit history
+									if (hsize > 56){BD["history"].erase(0);}//limit history
 									if (hsize > 0){
-										if(BD["history"][hsize-1] != tempurl){
-											BD["history"].push_back(tempurl);
+										if(BD["history"][hsize-1] != BD["com"]["ActualLink"].get<std::string>()){
+											BD["history"].push_back(BD["com"]["ActualLink"].get<std::string>());
 										}
-									} else {BD["history"].push_back(tempurl);}
+									} else {BD["history"].push_back(BD["com"]["ActualLink"].get<std::string>());}
 								}
 							} else {
 								if (isConnected) serverpront = true;
@@ -788,18 +790,18 @@ try{
 			if (maxcapit >= 0){
 				if (BD["com"]["nextdate"] == "Pelicula"){
 					gTextTexture.loadFromRenderedText(GOD.gFont3, "Pelicula", { 250,250,250 });
-					gTextTexture.render(posxbase + 820, posybase + 598);
+					gTextTexture.render(posxbase + 855, posybase + 598);
 				} else {
 					if (BD["com"]["enemision"] == "true")
 					{
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
-						gTextTexture.render(posxbase + 840, posybase + 598);
+						gTextTexture.render(posxbase + 855, posybase + 598);
 					} else {
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
-						gTextTexture.render(posxbase + 840, posybase + 598);
+						gTextTexture.render(posxbase + 855, posybase + 598);
 					}
 					gTextTexture.loadFromRenderedText(GOD.gFont, BD["com"]["nextdate"], { 255,255,255 });
-					gTextTexture.render(posxbase + 1040, posybase + 615);
+					gTextTexture.render(posxbase + 1055, posybase + 615);
 				}
 				int mwide = 35;//52
 				int XD = 310;
@@ -912,6 +914,7 @@ try{
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
 						}
+						REC.render_T(5, 15,"");
 					} else {
 						GOD.ListClassic(selectchapter,BD["arrays"]["chapter"]);
 						if (preview)
@@ -974,6 +977,7 @@ try{
 						{
 							if (ongridS){
 								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongridS,Frames);
+								BUS.render_T(5, 15,"");
 							} else {
 								GOD.ListCover(searchchapter,BD["arrays"]["search"]);
 								B_UP.render_T(580, 5,"");
@@ -1023,6 +1027,7 @@ try{
 					{
 						if (ongridF){
 							GOD.ListCover(favchapter,BD["arrays"]["favorites"],ongridF,Frames);
+							FAV.render_T(5, 15,"");
 						} else {
 							GOD.ListCover(favchapter,BD["arrays"]["favorites"]);
 							B_UP.render_T(580, 5,"");

@@ -38,24 +38,9 @@ LTexture gTextTexture;
 LTexture Farest;
 LTexture Heart;
 //Render Buttons
-LTexture B_A;
-LTexture B_B;
-LTexture B_Y;
-LTexture B_X;
-LTexture B_L;
-LTexture B_R;
-LTexture B_ZR;
-LTexture B_M;
-LTexture B_P;
-LTexture B_RIGHT;
-LTexture B_LEFT;
-LTexture B_UP;
-LTexture B_DOWN;
+LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
-LTexture FAV;
-LTexture NOP;
-LTexture CLEAR;
-LTexture SCREEN;
+LTexture BUS, REC, FAV, NOP, CLEAR, SCREEN;
 //Text and BOXES
 LTexture VOX;
 LTexture T_T;
