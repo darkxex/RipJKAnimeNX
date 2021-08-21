@@ -239,10 +239,13 @@ void CheckImgVector(std::vector<std::string> List,int& index){
 	}
 	index=0;
 }
-bool CheckImgNet(std::string image){
+bool CheckImgNet(std::string image,std::string url){
 	replace(image,"\"","");
 	if (!isFileExist(image.c_str())) {
 		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
+		if(url.length() > 0){
+			tmp = url;
+		}
 		printf("# Missing %s Downloading\n",image.c_str());
 		return downloadfile(tmp,image,false);
 	}

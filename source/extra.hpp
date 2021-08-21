@@ -113,7 +113,7 @@ json BD;
 //caps vars
 int maxcapit = 1;
 int mincapit = 0;
-int capmore = 1;
+int latest = 1;
 
 int sizeportraity = 300;
 int sizeportraitx =424;

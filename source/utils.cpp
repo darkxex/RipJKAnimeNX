@@ -711,3 +711,10 @@ void NameOfLink(std::string& word){
 	replace(word, "-", " ");
 	mayus(word);
 }
+std::string KeyOfLink(std::string word){
+	int v2 = word.find("/", 20);
+	word = word.substr(0, v2 + 1);
+	replace(word, "https://jkanime.net/", "");
+	replace(word, "/", "");
+	return word;
+}

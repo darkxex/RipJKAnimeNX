@@ -19,3 +19,4 @@ void TikerColor(int& color,int min,int max);
 void TikerName(int& color,int sec,int min,int max);
 void RemoveAccents(std::string& word);
 void NameOfLink(std::string& word);
+std::string KeyOfLink(std::string word);

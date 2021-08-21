@@ -7,7 +7,7 @@
 extern json BD;
 extern int mincapit;
 extern int maxcapit;
-extern int capmore;
+extern int latest;
 extern std::string rootdirectory;
 extern SDL_Thread* capithread;
 extern bool gFAV;
@@ -486,6 +486,12 @@ int capit(void* data) {
 		maxcapit = BD["DataBase"][name]["maxcapit"];//-1;
 		//write json
 		write_DB(BD,rootdirectory+"DataBase.json");
+		
+		//Get Image
+		std::string image = rootdirectory+"DATA/"+name+".jpg";
+		if (!BD["DataBase"][name]["Image"].empty()){
+			CheckImgNet(image,BD["DataBase"][name]["Image"]);
+		}
 	}catch(...){
 		printf("Error \n");
 	}
@@ -516,7 +522,7 @@ int capBuffer (std::string Tlink) {
 		BD["com"]["Emitido"] = "......";
 		maxcapit = -1;
 		mincapit = 1;
-		capmore = 1;
+		latest = 1;
 		capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 	} else {
 		try{
@@ -528,24 +534,22 @@ int capBuffer (std::string Tlink) {
 			maxcapit = BD["DataBase"][name]["maxcapit"];
 			mincapit = BD["DataBase"][name]["mincapit"];
 			//check For latest cap seend
-			if (BD["DataBase"][name]["capmore"].empty()){
+			if (BD["USER"]["chapter"][name]["latest"].empty()){
 				//get position to the latest cap if in emision
 				if (BD["com"]["enemision"] == "true"){
-					capmore = BD["DataBase"][name]["maxcapit"];//is in emision
+					latest = BD["DataBase"][name]["maxcapit"];//is in emision
 				} else {
-					capmore = BD["DataBase"][name]["mincapit"];//is not in emision 
+					latest = BD["DataBase"][name]["mincapit"];//is not in emision 
 				}
 			}
 			else
-				capmore = BD["DataBase"][name]["capmore"];
-			
+				latest = BD["USER"]["chapter"][name]["latest"];
+
+			//Get Image
 			if (!BD["DataBase"][name]["Image"].empty()){
-				if (!isFileExist(image.c_str())) {
-					printf("# Missing %s Downloading from chapbuffer\n",image.c_str());
-					downloadfile(BD["DataBase"][name]["Image"],image,false);
-				}
+				CheckImgNet(image,BD["DataBase"][name]["Image"]);
 			}
-			
+
 			if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
 				BD["com"]["nextdate"] = "Loading...";
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
