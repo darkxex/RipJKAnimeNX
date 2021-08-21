@@ -316,20 +316,20 @@ try{
 							break;
 							case chapterstate:
 							if(serverpront){
-								std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(capmore) + "/";
+								std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(latest) + "/";
 								if(!onlinejkanimevideo(tempurl,arrayservers[selectserver])){
 									arrayservers.erase(arrayservers.begin()+selectserver);
 								} else {
 									serverpront = false;
-									BD["DataBase"][KeyName]["capmore"] = capmore;
-									//if (BD["history"].find(tempurl)){
-									int hsize = BD["history"].size();
-									if (hsize > 56){BD["history"].erase(0);}//limit history
+									BD["USER"]["chapter"][KeyName]["latest"] = latest;
+									
+									std::string item=BD["com"]["ActualLink"].get<std::string>();
+									int hsize = BD["USER"]["history"].size();
+									if (hsize > 56){BD["USER"]["history"].erase(0);}//limit history
 									if (hsize > 0){
-										if(BD["history"][hsize-1] != BD["com"]["ActualLink"].get<std::string>()){
-											BD["history"].push_back(BD["com"]["ActualLink"].get<std::string>());
-										}
-									} else {BD["history"].push_back(BD["com"]["ActualLink"].get<std::string>());}
+										BD["USER"]["history"].erase(std::remove(BD["USER"]["history"].begin(), BD["USER"]["history"].end(), item), BD["USER"]["history"].end());
+									}
+									BD["USER"]["history"].push_back(item);
 								}
 							} else {
 								if (isConnected) serverpront = true;
@@ -457,7 +457,7 @@ try{
 							statenow = downloadstate;
 							cancelcurl = 0;
 //							GOD.PleaseWait("Calculando Links Espere...");
-							urltodownload  = BD["com"]["ActualLink"].get<std::string>() + std::to_string(capmore) + "/";
+							urltodownload  = BD["com"]["ActualLink"].get<std::string>() + std::to_string(latest) + "/";
 							if(isDownloading){
 								bool gogo = false;
 								for (u64 x=0; x < BD["arrays"]["downloads"]["queue"].size();x++){
@@ -477,6 +477,8 @@ try{
 
 							break;
 						case favoritesstate:
+							std::string namefav=KeyOfLink(BD["arrays"]["favorites"]["link"][favchapter]);
+							BD["USER"]["chapter"][namefav].erase("Favorite");
 							delFavorite(favchapter);
 							if (favchapter > 0) favchapter--;
 							getFavorite();
@@ -500,12 +502,10 @@ try{
 							}
 							break;
 						case downloadstate:
-
-
-
 							break;
 						case chapterstate:
 						{//AGREGAR A FAVORITOS
+							BD["USER"]["chapter"][KeyName]["Favorite"] = "true";
 							if(!isFavorite(BD["com"]["ActualLink"])){
 								std::ofstream outfile;
 								outfile.open(rootdirectory+"favoritos.txt", std::ios_base::app); // append instead of overwrite
@@ -534,7 +534,7 @@ try{
 							if(serverpront){
 								arrayservers.push_back("test");
 							} else {
-								std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(capmore) + "/";
+								std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(latest) + "/";
 								WebBrowserCall(tempurl);
 							}
 							break;
@@ -591,13 +591,13 @@ try{
 						{
 						case chapterstate:
 							if(serverpront){serverpront = false;}
-							if (capmore > mincapit)
+							if (latest > mincapit)
 							{
-								capmore--;
+								latest--;
 							}
-							if (capmore < mincapit)
+							if (latest < mincapit)
 							{
-								capmore = mincapit;
+								latest = mincapit;
 							}
 							break;
 						case programationstate:
@@ -623,13 +623,13 @@ try{
 						case chapterstate:
 						
 							if(serverpront){serverpront = false;}
-							if (capmore < maxcapit)
+							if (latest < maxcapit)
 							{
-								capmore++;
+								latest++;
 							}
-							if (capmore > maxcapit)
+							if (latest > maxcapit)
 							{
-								capmore = maxcapit;
+								latest = maxcapit;
 							}
 							break;
 						case programationstate:
@@ -661,13 +661,13 @@ try{
 							break;
 						case chapterstate:
 							if(!serverpront){//selectserver
-								if (capmore < maxcapit)
+								if (latest < maxcapit)
 								{
-									capmore = capmore + 10;
+									latest = latest + 10;
 								}
-								if (capmore > maxcapit)
+								if (latest > maxcapit)
 								{
-									capmore = maxcapit;
+									latest = maxcapit;
 								}
 							} else {
 								if (selectserver > 0)
@@ -707,13 +707,13 @@ try{
 
 						case chapterstate:
 							if(!serverpront){//selectserver
-								if (capmore > 1)
+								if (latest > 1)
 								{
-									capmore = capmore - 10;
+									latest = latest - 10;
 								}
-								if (capmore < mincapit)
+								if (latest < mincapit)
 								{
-									capmore = mincapit;
+									latest = mincapit;
 								}
 							} else {
 								if (selectserver < (int)arrayservers.size()-1)
@@ -834,29 +834,29 @@ try{
 			}
 			if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula"){//draw caps Scroll
 				VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
-				if (capmore-2 >= mincapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-2), textGray);
+				if (latest-2 >= mincapit) {
+					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), textGray);
 					gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 				}
-				if (capmore-1 >= mincapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore-1), textGray);
+				if (latest-1 >= mincapit) {
+					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), textGray);
 					gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 				}
 				
 				if (serverpront){
-					gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
+					gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
 					gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 				} else {
-					T_T.loadFromRenderedText(GOD.gFont3, std::to_string(capmore), { 255, 255, 255 });
+					T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
 					T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
 				}
 
-				if (capmore+1 <= maxcapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+1), textGray);
+				if (latest+1 <= maxcapit) {
+					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), textGray);
 					gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 				}
-				if (capmore+2 <= maxcapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(capmore+2), textGray);
+				if (latest+2 <= maxcapit) {
+					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), textGray);
 					gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 				}
 
@@ -865,8 +865,8 @@ try{
 					B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
 				}
 				
-				B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),capmore == mincapit);
-				B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),capmore == maxcapit);
+				B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),latest == mincapit);
+				B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),latest == maxcapit);
 			} else {
 				VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
 				if (BD["com"]["nextdate"] == "Pelicula"){
@@ -1182,7 +1182,8 @@ try{
 	cancelcurl=1;
 	//clear allocate
 	BD["com"] = "{}"_json;
-//
+//	BD["history"] = "{}"_json;
+
 	// write prettified JSON
 	write_DB(BD,rootdirectory+"DataBase.json");
 	
