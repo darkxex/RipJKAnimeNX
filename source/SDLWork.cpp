@@ -288,11 +288,26 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	}
 }
 void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
-	int JlinksSize=Jlinks["link"].size();
+	std::vector<std::string> vec = Jlinks["link"];
+	int JlinksSize=vec.size();
+	int outof=0;
+	if(JlinksSize > 30){
+		if(selectindex > 29){
+			for (int x = 29; x-10 < selectindex; x+=10) {
+				outof=x-29;
+			}
+			vec.erase(vec.begin(), vec.begin()+outof);
+			selectindex-=outof;
+		}
+		JlinksSize=vec.size();
+		if (selectindex > JlinksSize-1) {selectindex=JlinksSize-1;} 
+	}
+	
+	JlinksSize=vec.size();
 	for (int x = 0; x < JlinksSize; x++) {
 
 		//This controll the image order and logic
-		std::string Link=Jlinks["link"][x];
+		std::string Link=vec[x];
 		//Get the Cap Key
 		replace(Link, "https://jkanime.net/", "");
 		int val0 = Link.find("/");
@@ -342,7 +357,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
 			}
 
-			int chapsize = Jlinks["link"].size() - 1;
+			int chapsize = JlinksSize - 1;
 			static int preval=0;
 			if (chapsize < 29){
 				if (selectindex < 0) {
@@ -376,7 +391,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				gTextTexture.render(50, 7);
 				if(!Jlinks["date"].empty()){
 					//draw Title
-					gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x], { 0, 0, 0 });
+					gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x+outof], { 0, 0, 0 });
 					gTextTexture.render(50, 37);
 				}
 			}
@@ -400,7 +415,9 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			if (x == selectindex) {
 				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,issel,BT_A,true);
 			} else {
-				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,nosel,x,selectindex);
+				selectindex+=outof;
+				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,nosel,x+outof,selectindex);
+				selectindex-=outof;
 			}
 		} else {
 			if (x==0){offset1 =1; offset2 =1;}
@@ -426,6 +443,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			}
 		}
 	}
+	selectindex+=outof;
 }
 void SDLB::ListClassic(int& selectindex,json Jlinks) {
 	int indexLsize = Jlinks["link"].size();

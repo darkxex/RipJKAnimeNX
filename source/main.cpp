@@ -1021,7 +1021,7 @@ try{
 				
 				int favsize=BD["arrays"]["favorites"]["link"].size();
 				if (favsize > 0){
-					if (favsize > 30) ongridF=false;
+					//if (favsize > 30) ongridF=false;
 					if (!ongridF) GOD.ListClassic(favchapter,BD["arrays"]["favorites"]);
 					if (preview)
 					{
