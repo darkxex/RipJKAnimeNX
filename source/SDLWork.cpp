@@ -295,9 +295,9 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 	if (statte != GenState){statte = GenState;outof=0;}
 
 	JlinksSize=vec.size();
-	//select, bound fiscals
 	if(ongrid){
 		if(JlinksSize > 30){
+			//Touch Handle
 			if(fingermotion){
 				if(fingermotion_DOWN){
 					if(selectindex > 9 && outof>0){
@@ -316,6 +316,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			}
 		}
 		
+		//select, bound fiscals
 		int chapsize = JlinksSize - 1;
 		static int preval=0;
 		if (chapsize+outof < 29){
@@ -327,28 +328,27 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		} else {
 			if (selectindex < 0) {
 				selectindex = chapsize+selectindex;
-				//selectindex++;
 			} else if (selectindex > chapsize) {
 				if (selectindex < chapsize+10&&JlinksSize > 30) {
 					selectindex=chapsize;
 				} else {
 					selectindex = selectindex-chapsize;
 					outof=0;
-					//selectindex--;
 				}
 			}
 		}
 		preval=selectindex;
+		//normal boxes
 		VOX.render_VOX({0,0, 1280, 670} ,170, 170, 170, 100);
 		VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
+		
 		//Calculate Offset of Grid
 		if(JlinksSize > 30){
 			int outofMax=JlinksSize;outofMax+=9;outofMax=outofMax/10;outofMax=outofMax*10;outofMax-=30;
 			if (outof > outofMax) outof = outofMax;
-			printf("part: %d - total: %d - Offset: %d - max offset: %d\r",selectindex,JlinksSize-1,outof,outofMax);fflush(stdout);
+			//printf("part: %d - total: %d - Offset: %d - max offset: %d\r",selectindex,JlinksSize-1,outof,outofMax);fflush(stdout);
 			ScrollBarDraw(1272, 65, 600, 5, outofMax/10+1, outof/10,false);
 			//ScrollBarDraw(1272, 62, 600, 5, JlinksSize+outof, selectindex+1+outof,true);
-		//std::cout << "offset: " << outof << std::endl;
 			if(selectindex > 29+outof){
 				for (int x = 29; x-10 < selectindex; x+=10) {
 					outof=x-29;
