@@ -163,7 +163,6 @@ try{
 	//While application is running
 	while (!quit)
 	{
-		bool GRIDC=true;
 		//Handle events on queue
 		while (SDL_PollEvent(&e))
 		{
@@ -186,33 +185,28 @@ try{
 			}
 			break;
 			case SDL_FINGERMOTION:
-				if (statenow == programationstate && ongrid) {GRIDC=false;}
-				if (statenow == searchstate && ongrid) {GRIDC=false;}
-
-				if(GOD.TouchX > 55 && GOD.TouchX < 620 && statenow != chapterstate && GRIDC){
-					//swipe down go up
-					if(e.tfinger.dy * SCREEN_HEIGHT > 15)
-					{
-						e.jbutton.button = GOD.BT_DOWN;
-					}
-					//swipe up go down
-					else if(e.tfinger.dy * SCREEN_HEIGHT < -15)
-					{
-						e.jbutton.button = GOD.BT_UP;
+				if(e.tfinger.dy * SCREEN_HEIGHT > 30 || e.tfinger.dy * SCREEN_HEIGHT < -30 || e.tfinger.dx * SCREEN_WIDTH > 30 || e.tfinger.dx * SCREEN_WIDTH < -30){
+				SDL_Log("motion %f \n",e.tfinger.dy * SCREEN_HEIGHT);
+					if(!GOD.fingermotion){
+						//swipe up go down
+						if(e.tfinger.dy * SCREEN_HEIGHT > 30 )
+						{
+							GOD.fingermotion_DOWN = true;
+						}
+						//swipe down go up
+						else if(e.tfinger.dy * SCREEN_HEIGHT < -30 )
+						{
+							GOD.fingermotion_UP = true;
+						}
 					} else {
-						break;
+						GOD.fingermotion_DOWN = false;
+						GOD.fingermotion_UP = false;
 					}
-				SDL_Log("motion %f \n",e.tfinger.dy * SCREEN_HEIGHT);
-				} else if(e.tfinger.dy * SCREEN_HEIGHT > 30 || e.tfinger.dy * SCREEN_HEIGHT < -30 || e.tfinger.dx * SCREEN_WIDTH > 30 || e.tfinger.dx * SCREEN_WIDTH < -30){
-				SDL_Log("motion %f \n",e.tfinger.dy * SCREEN_HEIGHT);
 					GOD.fingermotion=true;
 					GOD.TouchX = -1;
 					GOD.TouchY = -1;
-					break;
-				}else {
-					GOD.fingermotion=false;
-					break;
 				}
+				break;
 			case SDL_FINGERUP:
 			if (e.type == SDL_FINGERUP){
 				if(lcdoff){
@@ -220,9 +214,10 @@ try{
 					appletSetLcdBacklightOffEnabled(lcdoff);
 				} else{
 					
+					GOD.fingerdown = false;
+					GOD.fingermotion=false;
 					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-					GOD.fingerdown = false;
 					e.jbutton.button=-1;
 					if (GOD.MasKey >=0){
 						if(GOD.MapT[GOD.WorKey].SP()){
@@ -370,9 +365,13 @@ try{
 					}
 					else if (e.jbutton.button == GOD.BT_L || e.jbutton.button == GOD.BT_ZL) {// (L & ZL) button down
 						if (statenow == chapterstate&&e.jbutton.button == GOD.BT_L){
-							if(!BD["DataBase"][KeyName]["Precuela"].empty()&&!serverpront){
-								capBuffer(BD["DataBase"][KeyName]["Precuela"]);
-								gFAV = isFavorite(BD["com"]["ActualLink"]);
+							if(!BD["DataBase"][KeyName]["Precuela"].empty()){
+								if (!serverpront){
+									capBuffer(BD["DataBase"][KeyName]["Precuela"]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								} else {
+									serverpront=false;
+								}
 							}
 						}
 				
@@ -562,8 +561,12 @@ try{
 						{
 						case chapterstate:
 							if(!BD["DataBase"][KeyName]["Secuela"].empty()&&!serverpront){
-								capBuffer(BD["DataBase"][KeyName]["Secuela"]);
-								gFAV = isFavorite(BD["com"]["ActualLink"]);
+								if (!serverpront){
+									capBuffer(BD["DataBase"][KeyName]["Secuela"]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								} else {
+									serverpront=false;
+								}
 							}
 						break;
 						case programationstate:
@@ -760,15 +763,15 @@ try{
 			gTextTexture.loadFromRenderedText(GOD.gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
 			gTextTexture.render(posxbase, 0 );
 			*/
-			
-			{//draw preview image
-				VOX.render_VOX({ SCREEN_WIDTH - 412,63, 404, 590}, 0, 0, 0, 200);
-				GOD.Image(BD["com"]["ActualLink"],SCREEN_WIDTH - 410, 65,400, 550,GOD.BT_A);
-			}	
 
 			//draw Title
 			gTextTexture.loadFromRenderedText(GOD.gFont3, temptext.substr(0,62)+ ":", textColor);
 			gTextTexture.render(posxbase, posybase);
+
+			{//draw preview image
+				VOX.render_VOX({ SCREEN_WIDTH - 412,63, 404, 590}, 0, 0, 0, 200);
+				GOD.Image(BD["com"]["ActualLink"],SCREEN_WIDTH - 410, 65,400, 550,GOD.BT_B);
+			}	
 
 			{//draw description
 				VOX.render_VOX({10,63, 770, 340}, 255, 255, 255, 100);
@@ -803,82 +806,84 @@ try{
 					gTextTexture.loadFromRenderedText(GOD.gFont, BD["com"]["nextdate"], { 255,255,255 });
 					gTextTexture.render(posxbase + 1055, posybase + 615);
 				}
-				int mwide = 35;//52
-				int XD = 310;
-				int YD = 582;
-				sizefix = (int)arrayservers.size() * mwide;
-				anend=VOX.render_AH(XD, YD, 190, sizefix, serverpront);
-				if(serverpront){
-					if (anend){
-						for (int x = 0; x < (int)arrayservers.size(); x++) {
-							if (x == selectserver){
-								T_T.loadFromRenderedText(GOD.gFont4, arrayservers[x], textWhite);
-								VOX.render_VOX({ posxbase+XD-10,YD + 5 - sizefix + (x * mwide), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
-								T_T.render(posxbase+XD, YD - sizefix + (x * mwide));
-							} else {
-								gTextTexture.loadFromRenderedText(GOD.gFont4, arrayservers[x],textGray);
-								gTextTexture.render(posxbase+XD, YD - sizefix + (x * mwide));
+			}
+
+			{//use this to move the element
+				int XS=-50 , YS =0;
+				if (maxcapit >= 0){
+					int mwide = 35;//52
+					int XD = 210+XS, YD = 582+YS;
+					sizefix = (int)arrayservers.size() * mwide;
+					anend=VOX.render_AH(XD, YD, 190, sizefix, serverpront);
+					if(serverpront){
+						if (anend){
+							for (int x = 0; x < (int)arrayservers.size(); x++) {
+								if (x == selectserver){
+									T_T.loadFromRenderedText(GOD.gFont4, arrayservers[x], textWhite);
+									VOX.render_VOX({ posxbase+XD-10,YD + 5 - sizefix + (x * mwide), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
+									T_T.render(posxbase+XD, YD - sizefix + (x * mwide));
+								} else {
+									gTextTexture.loadFromRenderedText(GOD.gFont4, arrayservers[x],textGray);
+									gTextTexture.render(posxbase+XD, YD - sizefix + (x * mwide));
+								}
 							}
 						}
 					}
 				}
-			}
-
-			//use this to move the element
-			int XS=100 , YS =0;
-			if(serverpront){
-				if (anend){
-					B_UP.render_T(280+XS, 530+YS-sizefix,"");
+				if(serverpront){
+					if (anend){
+						B_UP.render_T(280+XS, 530+YS-sizefix,"");
+					}
+					B_DOWN.render_T(280+XS, 630+YS,"");
 				}
-				B_DOWN.render_T(280+XS, 630+YS,"");
-			}
-			if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula"){//draw caps Scroll
-				VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
-				if (latest-2 >= mincapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), textGray);
-					gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-				if (latest-1 >= mincapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), textGray);
-					gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-				
-				if (serverpront){
-					gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
-					gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				} else {
-					T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
-					T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
-				}
-
-				if (latest+1 <= maxcapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), textGray);
-					gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-				if (latest+2 <= maxcapit) {
-					gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), textGray);
-					gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-
-				if (maxcapit >= 10 && !serverpront){
-					B_UP.render_T(280+XS, 530+YS,"+10",serverpront);
-					B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
-				}
-				
-				B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),latest == mincapit);
-				B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),latest == maxcapit);
-			} else {
-				VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
-				if (BD["com"]["nextdate"] == "Pelicula"){
-					T_T.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
-					T_T.render(posxbase + 282+XS-T_T.getWidth()/2, posybase + 558+YS);
-				} else {
-					gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
-					gTextTexture.render(posxbase + 282+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-				}
-				
-			}
+				if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula"){//draw caps Scroll
+					VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
+					if (latest-2 >= mincapit) {
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), textGray);
+						gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+					}
+					if (latest-1 >= mincapit) {
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), textGray);
+						gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+					}
 					
+					if (serverpront){
+						gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
+						gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+					} else {
+						T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
+						T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
+					}
+
+					if (latest+1 <= maxcapit) {
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), textGray);
+						gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+					}
+					if (latest+2 <= maxcapit) {
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), textGray);
+						gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+					}
+
+					if (maxcapit >= 10 && !serverpront){
+						B_UP.render_T(280+XS, 530+YS,"+10",serverpront);
+						B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
+					}
+					
+					B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),latest == mincapit);
+					B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),latest == maxcapit);
+				} else {
+					VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
+					if (BD["com"]["nextdate"] == "Pelicula"){
+						T_T.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
+						T_T.render(posxbase + 282+XS-T_T.getWidth()/2, posybase + 558+YS);
+					} else {
+						gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
+						gTextTexture.render(posxbase + 282+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+					}
+					
+				}
+			}
+
 			//Draw Footer Buttons
 			int dist = 1100,posdist = 160;
 			if(serverpront){
@@ -890,19 +895,24 @@ try{
 				B_X.render_T(dist, 680,"Descargar");dist -= posdist;
 			}
 
-			if(gFAV){FAV.render_T(1210, 70,"");}
+			if(gFAV){FAV.render_T(1230, 70,"");}
 			else {B_Y.render_T(dist, 680,"Favorito");dist -= posdist;}
 			
-			if(!serverpront){
-				if(!BD["DataBase"][KeyName]["Secuela"].empty()){
-					B_R.render_T(dist, 680,"Secuela");dist -= posdist;
-				}
-				if(!BD["DataBase"][KeyName]["Precuela"].empty()){
-					B_L.render_T(dist, 680,"Precuela");dist -= posdist;
-				}
+			if(!BD["DataBase"][KeyName]["Secuela"].empty()){
+				std::string imagelocal=BD["DataBase"][KeyName]["Secuela"];
+				imagelocal = KeyOfLink(imagelocal);
+				imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
+				if(!serverpront){CheckImgNet(imagelocal);B_R.render_T(dist, 680,"Secuela");dist -= posdist;}
+				GOD.Cover(imagelocal,660,457,"Secuela",120,GOD.BT_R);
 			}
-			
-			
+			if(!BD["DataBase"][KeyName]["Precuela"].empty()){
+				std::string imagelocal=BD["DataBase"][KeyName]["Precuela"];
+				imagelocal = KeyOfLink(imagelocal);
+				imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
+				if(!serverpront){CheckImgNet(imagelocal);B_L.render_T(dist, 680,"Precuela");dist -= posdist;}
+				GOD.Cover(imagelocal,520,457,"Precuela",120,GOD.BT_L);
+			}
+
 			break;
 			}
 			case programationstate:	{
@@ -971,7 +981,7 @@ try{
 					
 					int srchsize=BD["arrays"]["search"]["link"].size();
 					if (srchsize > 0){
-						if (srchsize > 30) ongridS=false;
+						//if (srchsize > 30) ongridS=false;
 						if (!ongridS) GOD.ListClassic(searchchapter,BD["arrays"]["search"]);
 						if (preview)
 						{

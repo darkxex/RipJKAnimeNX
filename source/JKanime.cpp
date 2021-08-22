@@ -248,14 +248,18 @@ int refrescarpro(void* data){
 	if(reloading) {Frames=0;reloading = false;}
 
 	//'haschange' See if there is any new chap
+	std::cout << "# I am Here1\n" << std::endl;
 	bool haschange = true;
 	if (!BD["latestchapter"].empty()){
+	std::cout << "# I am Here2\n" << std::endl;
 		if (BD["latestchapter"] == ChapLink[0])
 		{
+	std::cout << "# I am Here3\n" << std::endl;
 			haschange = false;
 		}
 	}
 
+	std::cout << "# I am Here4\n" << std::endl;
 	//TimeStamp indicate if a chap sout be reloaded
 	if (haschange || BD["TimeStamp"].empty()){
 		//update TimeStamp
@@ -507,8 +511,8 @@ int capBuffer (std::string Tlink) {
 	replace(name, "https://jkanime.net/", "");
 	replace(name, "/", "");
 	KeyName = name;
-	std::cout << "KeyName: " << name << std::endl;
-	fflush(stdout);
+//	std::cout << "KeyName: " << name << std::endl;
+
 	std::cout << "Link: " << Tlink << std::endl;
 	
 	std::string image = rootdirectory+"DATA/"+name+".jpg";

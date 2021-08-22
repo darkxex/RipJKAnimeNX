@@ -90,11 +90,16 @@ enum SDL_Keys {
 	BT_RS_LEFT, BT_RS_UP, BT_RS_RIGHT, BT_RS_DOWN,
 	BT_1
 };
-
+//list vars
+int outof=0;
 
 //Touch cords
 bool fingerdown = false;
 bool fingermotion = false;
+bool fingermotion_UP = false;
+bool fingermotion_DOWN = false;
+bool fingermotion_LEFT = false;
+bool fingermotion_RIGHT = false;
 int TouchX=-1;
 int TouchY=-1;
 int GenState=-1;
@@ -108,6 +113,7 @@ void ListCover(int& selectindex,json Jlinks, bool ongrid=false,int limit=0);
 void ListClassic(int& selectindex,json Jlinks);
 void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select);
 void HandleList(int& selectchapter, int allsize, int key,bool ongrid);
+void ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool ongrid);
 void deint();
 };
 

@@ -26,6 +26,7 @@ extern LTexture Heart;
 
 extern std::string rootdirectory;
 
+
 void SDLB::intA(){
 	//Start up SDL and create window
 	//Initialize SDL
@@ -290,22 +291,81 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 	std::vector<std::string> vec = Jlinks["link"];
 	int JlinksSize=vec.size();
-	int outof=0;
-	if(JlinksSize > 30){
-		if(selectindex > 29){
-			for (int x = 29; x-10 < selectindex; x+=10) {
-				outof=x-29;
-			}
-			vec.erase(vec.begin(), vec.begin()+outof);
-			selectindex-=outof;
-		}
-		JlinksSize=vec.size();
-		if (selectindex > JlinksSize-1) {selectindex=JlinksSize-1;} 
-	}
-	
-	JlinksSize=vec.size();
-	for (int x = 0; x < JlinksSize; x++) {
+	static int statte = GenState;
+	if (statte != GenState){statte = GenState;outof=0;}
 
+	JlinksSize=vec.size();
+	//select, bound fiscals
+	if(ongrid){
+		if(JlinksSize > 30){
+			if(fingermotion){
+				if(fingermotion_DOWN){
+					if(selectindex > 9 && outof>0){
+						selectindex-= 10;
+						outof=-10;
+					}
+				fingermotion_DOWN = false;
+				}
+				if(fingermotion_UP){
+					selectindex+= 10;
+					if(selectindex < JlinksSize-1){
+						outof+=10;
+					} else selectindex=JlinksSize-1;
+				fingermotion_UP = false;
+				}
+			}
+		}
+		
+		int chapsize = JlinksSize - 1;
+		static int preval=0;
+		if (chapsize+outof < 29){
+			if (selectindex < 0) {
+				selectindex=preval;
+			} else if (selectindex > chapsize) {
+				selectindex=chapsize;
+			}
+		} else {
+			if (selectindex < 0) {
+				selectindex = chapsize+selectindex;
+				//selectindex++;
+			} else if (selectindex > chapsize) {
+				if (selectindex < chapsize+10&&JlinksSize > 30) {
+					selectindex=chapsize;
+				} else {
+					selectindex = selectindex-chapsize;
+					outof=0;
+					//selectindex--;
+				}
+			}
+		}
+		preval=selectindex;
+		VOX.render_VOX({0,0, 1280, 670} ,170, 170, 170, 100);
+		VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
+		//Calculate Offset of Grid
+		if(JlinksSize > 30){
+			int outofMax=JlinksSize;outofMax+=9;outofMax=outofMax/10;outofMax=outofMax*10;outofMax-=30;
+			if (outof > outofMax) outof = outofMax;
+			printf("part: %d - total: %d - Offset: %d - max offset: %d\r",selectindex,JlinksSize-1,outof,outofMax);fflush(stdout);
+			ScrollBarDraw(1272, 65, 600, 5, outofMax/10+1, outof/10,false);
+			//ScrollBarDraw(1272, 62, 600, 5, JlinksSize+outof, selectindex+1+outof,true);
+		//std::cout << "offset: " << outof << std::endl;
+			if(selectindex > 29+outof){
+				for (int x = 29; x-10 < selectindex; x+=10) {
+					outof=x-29;
+				}
+			} else if (selectindex < outof){
+				outof-=10;
+				if (outof<0) {outof=0;}
+			}
+			if (outof>0){
+				vec.erase(vec.begin(), vec.begin()+outof);
+				selectindex-=outof;
+			}
+			JlinksSize=vec.size();
+		}
+	}
+
+	for (int x = 0; x < JlinksSize; x++) {
 		//This controll the image order and logic
 		std::string Link=vec[x];
 		//Get the Cap Key
@@ -352,31 +412,6 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		{
 			if(x >= 30) break;
 			
-			if (x == 0) {
-				VOX.render_VOX({0,0, 1280, 670} ,170, 170, 170, 100);
-				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
-			}
-
-			int chapsize = JlinksSize - 1;
-			static int preval=0;
-			if (chapsize < 29){
-				if (selectindex < 0) {
-					selectindex=preval;
-				} else if (selectindex > chapsize) {
-					selectindex=preval;
-				}
-			} else {
-				if (selectindex < 0) {
-					selectindex = chapsize+selectindex;
-					//selectindex++;
-				} else if (selectindex > chapsize) {
-					selectindex = selectindex-chapsize;
-					//selectindex--;
-				}
-			}
-
-			preval=selectindex;
-
 			//Grid Animation
 			if (limit>0){
 				std::string KeyImage=imagelocal.substr(25)+"-"+std::to_string(nosel);
@@ -418,6 +453,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				selectindex+=outof;
 				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,nosel,x+outof,selectindex);
 				selectindex-=outof;
+
 			}
 		} else {
 			if (x==0){offset1 =1; offset2 =1;}
@@ -443,7 +479,9 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			}
 		}
 	}
-	selectindex+=outof;
+	if(ongrid){
+		selectindex+=outof;
+	}
 }
 void SDLB::ListClassic(int& selectindex,json Jlinks) {
 	int indexLsize = Jlinks["link"].size();
@@ -545,6 +583,33 @@ void SDLB::HandleList(int& selectchapter, int allsize, int key,bool ongrid){
 	}
 //	std::cout << selectchapter << " - " << allsize << std::endl;
 }
+void SDLB::ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool ongrid){
+	if(ongrid){
+		int part=Select;
+		int all=Total;
+		part+=9;
+		part=part/10;
+		part--;
+		all+=9;
+		all=all/10;
+		Select=part;
+		Total=all;
+		//printf("part: %d - total: %d \r",part,all);fflush(stdout);
+	}
+	
+	//split the distance in peaces and get exact values
+	double Texact = Total;
+	double Bar = H/Texact;
+	
+	//Get approximate values, 1 pixel of error
+	int BarSize = Bar + 1;       //approximate Size
+	int BarPos  = Bar*Select; //approximate Position
+	
+	//Draw the ScrollBar
+	VOX.render_VOX({X+1,Y+BarPos+1, W,BarSize} ,50, 50, 50, 240);
+	VOX.render_VOX({X,Y+BarPos, W, BarSize} ,255, 255, 255, 240);
+}
+
 
 
 void SDLB::deint(){
