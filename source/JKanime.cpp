@@ -5,6 +5,7 @@
 #include "SDLWork.hpp"
 
 extern json BD;
+extern json UD;
 extern int mincapit;
 extern int maxcapit;
 extern int latest;
@@ -290,17 +291,8 @@ int refrescarpro(void* data){
 	//extra vector
 	std::vector<std::string> vec={};
 
-	//load main
-	content = gethtml("https://jkanime.net");
-	replace(content, "\"https://jkanime.net/\"", "");
-	vec=scrapElementAll(content, "https://jkanime.net/");
-	sort( vec.begin(),vec.end());
-	vec.erase(unique(vec.begin(),vec.end()),vec.end());
-	BD["arrays"]["Main"]["link"]=vec;
-	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
-
-	
 	//load Top
+	std::cout << "# Get Top  \n" << std::endl;
 	content=gethtml("https://jkanime.net/top/");
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
@@ -311,6 +303,7 @@ int refrescarpro(void* data){
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	//load Horario
+	std::cout << "# Get HourGlass\n" << std::endl;
 	content=gethtml("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	vec=scrapElementAll(content,"https://jkanime.net/");
@@ -319,7 +312,17 @@ int refrescarpro(void* data){
 	BD["arrays"]["HourGlass"]["link"]=vec;
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
-	std::cout << "# End Thread   \n" << std::endl;
+	//load main
+	std::cout << "# Get Main\n" << std::endl;
+	content = gethtml("https://jkanime.net");
+	replace(content, "\"https://jkanime.net/\"", "");
+	vec=scrapElementAll(content, "https://jkanime.net/");
+	sort( vec.begin(),vec.end());
+	vec.erase(unique(vec.begin(),vec.end()),vec.end());
+	BD["arrays"]["Main"]["link"]=vec;
+	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
+
+	std::cout << "# End Thread Chain\n" << std::endl;
 	if (!isDownloading) appletSetAutoSleepDisabled(false);
 	//exit after load the cache if are in applet mode
 	if (AppletMode) quit=true;
@@ -538,7 +541,7 @@ int capBuffer (std::string Tlink) {
 			maxcapit = BD["DataBase"][name]["maxcapit"];
 			mincapit = BD["DataBase"][name]["mincapit"];
 			//check For latest cap seend
-			if (BD["USER"]["chapter"][name]["latest"].empty()){
+			if (UD["chapter"][name].empty()||UD["chapter"][name]["latest"].empty()){
 				//get position to the latest cap if in emision
 				if (BD["com"]["enemision"] == "true"){
 					latest = BD["DataBase"][name]["maxcapit"];//is in emision
@@ -546,8 +549,9 @@ int capBuffer (std::string Tlink) {
 					latest = BD["DataBase"][name]["mincapit"];//is not in emision 
 				}
 			}
-			else
-				latest = BD["USER"]["chapter"][name]["latest"];
+			else{
+				latest = UD["chapter"][name]["latest"];
+			}
 
 			//Get Image
 			if (!BD["DataBase"][name]["Image"].empty()){

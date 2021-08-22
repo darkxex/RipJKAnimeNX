@@ -109,6 +109,7 @@ std::vector<std::string> arrayserversbak= {
 };
 
 json BD;
+json UD;
 
 //caps vars
 int maxcapit = 1;

@@ -427,13 +427,34 @@ bool copy_me(std::string origen, std::string destino) {
 	}
 return false;
 }
+bool read_DB(json& base,std::string path){
+	std::ifstream inf(path);
+	if(!inf.fail()){
+		std::string tempjson="";
+		for(int f = 0; !inf.eof(); f++)
+		{
+			string TempLine = "";
+			getline(inf, TempLine);
+			tempjson += TempLine;
+		}
+		inf.close();
+		if(json::accept(tempjson))
+		{
+			//Parse and use the JSON data
+			base = json::parse(tempjson);
+			std::cout  << "Json Readed... "<< path << std::endl;
+			return true;
+		}
+	}
+return false;
+}
 bool write_DB(json base,std::string path){
 	appletBeginBlockingHomeButton (0);
 	std::ofstream otf(path);
 	otf << std::setw(4) << base << std::endl;
 	otf.close();
 	appletEndBlockingHomeButton();
-	std::cout << "Json: writhen..." << std::endl;
+	std::cout << "Json: writhen... "<< path << std::endl;
 
 	return true;
 }

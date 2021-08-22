@@ -45,26 +45,13 @@ int main(int argc, char **argv)
 	} else printf("failed tu get user \n");
 
 	// read a JSON file
-	std::ifstream inf(rootdirectory+"DataBase.json");
-	if(!inf.fail()){
-		std::string tempjson="";
-		for(int f = 0; !inf.eof(); f++)
-		{
-			string TempLine = "";
-			getline(inf, TempLine);
-			tempjson += TempLine;
-		}
-		inf.close();
-		if(json::accept(tempjson))
-		{
-			//Parse and use the JSON data
-			BD = json::parse(tempjson);
-			BD["com"] = "{}"_json;
-			std::cout  << "Json Readed..." << std::endl;
-		}
+	read_DB(BD,rootdirectory+"DataBase.json");
+	BD["com"] = "{}"_json;
+	if(!BD["USER"].empty()){
+		UD=BD["USER"];
+		BD.erase("USER");
 	}
-	//printf("-- %d %d \n",BT_0,BT_1);
-	//std::cout  << BD << std::endl;
+	read_DB(UD,rootdirectory+"UserData.json");
 	
 	SDL_Thread* prothread = NULL;
 	SDL_Thread* searchthread = NULL;
@@ -316,15 +303,17 @@ try{
 									arrayservers.erase(arrayservers.begin()+selectserver);
 								} else {
 									serverpront = false;
-									BD["USER"]["chapter"][KeyName]["latest"] = latest;
+									UD["chapter"][KeyName]["latest"] = latest;
 									
 									std::string item=BD["com"]["ActualLink"].get<std::string>();
-									int hsize = BD["USER"]["history"].size();
-									if (hsize > 56){BD["USER"]["history"].erase(0);}//limit history
+									int hsize = UD["history"].size();
+									if (hsize > 56){UD["history"].erase(0);}//limit history
 									if (hsize > 0){
-										BD["USER"]["history"].erase(std::remove(BD["USER"]["history"].begin(), BD["USER"]["history"].end(), item), BD["USER"]["history"].end());
+										UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
 									}
-									BD["USER"]["history"].push_back(item);
+									UD["history"].push_back(item);
+									write_DB(UD,rootdirectory+"UserData.json");
+
 								}
 							} else {
 								if (isConnected) serverpront = true;
@@ -477,11 +466,15 @@ try{
 							break;
 						case favoritesstate:
 							std::string namefav=KeyOfLink(BD["arrays"]["favorites"]["link"][favchapter]);
-							BD["USER"]["chapter"][namefav].erase("Favorite");
+							if(!UD["chapter"][namefav]["Favorite"].empty()){
+								UD["chapter"][namefav].erase("Favorite");
+							}
+							
 							delFavorite(favchapter);
 							if (favchapter > 0) favchapter--;
 							getFavorite();
 							statenow = favoritesstate;
+							write_DB(UD,rootdirectory+"UserData.json");
 						break;
 
 						}
@@ -504,13 +497,16 @@ try{
 							break;
 						case chapterstate:
 						{//AGREGAR A FAVORITOS
-							BD["USER"]["chapter"][KeyName]["Favorite"] = "true";
 							if(!isFavorite(BD["com"]["ActualLink"])){
+								UD["chapter"][KeyName]["Favorite"] = "true";
+								write_DB(UD,rootdirectory+"UserData.json");
+
 								std::ofstream outfile;
 								outfile.open(rootdirectory+"favoritos.txt", std::ios_base::app); // append instead of overwrite
 								outfile << BD["com"]["ActualLink"].get<std::string>();
 								outfile << "\n";
 								outfile.close();
+								
 							}
 
 							gFAV = true;
@@ -1188,6 +1184,8 @@ try{
 	}
 } catch(...){
 	printf("Error Catched\n");
+	std::cout << "com: " << BD["com"] << std::endl;
+	write_DB(BD,rootdirectory+"DataBase.json.bak");
 }
 	cancelcurl=1;
 	//clear allocate
@@ -1196,7 +1194,8 @@ try{
 
 	// write prettified JSON
 	write_DB(BD,rootdirectory+"DataBase.json");
-	
+//	write_DB(UD,rootdirectory+"UserData.json");
+
 	//appletEndBlockingHomeButton();
 	
 	if (AppletMode){
