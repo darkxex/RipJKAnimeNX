@@ -12,9 +12,12 @@ std::string scrapElement(std::string content, std::string get,std::string delim 
 std::vector<std::string> scrapElementAll(std::string content, std::string get,std::string delim ="" );
 void touch(std::string route);
 bool copy_me(std::string origen, std::string destino);
+bool read_DB(json& base,std::string path);
 bool write_DB(json base,std::string path);
 void led_on(int inter);
-bool onTimeC(int sec);
-void TikerColor(int& color,int time);
+bool onTimeC(int sec,int& time2);
+void TikerColor(int& color,int min,int max);
+void TikerName(int& color,int sec,int min,int max);
 void RemoveAccents(std::string& word);
 void NameOfLink(std::string& word);
+std::string KeyOfLink(std::string word);

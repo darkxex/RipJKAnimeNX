@@ -38,24 +38,9 @@ LTexture gTextTexture;
 LTexture Farest;
 LTexture Heart;
 //Render Buttons
-LTexture B_A;
-LTexture B_B;
-LTexture B_Y;
-LTexture B_X;
-LTexture B_L;
-LTexture B_R;
-LTexture B_ZR;
-LTexture B_M;
-LTexture B_P;
-LTexture B_RIGHT;
-LTexture B_LEFT;
-LTexture B_UP;
-LTexture B_DOWN;
+LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
-LTexture FAV;
-LTexture NOP;
-LTexture CLEAR;
-LTexture SCREEN;
+LTexture BUS, REC, FAV, NOP, CLEAR, SCREEN;
 //Text and BOXES
 LTexture VOX;
 LTexture T_T;
@@ -82,6 +67,7 @@ bool preview = false;
 int selectchapter = 0;
 int imgNumbuffer = 0;
 int porcentajebuffer = 0;
+int porcentajebufferAll = 0;
 int porcentajebufferF =0;
 int porcentajebufferFF =0;
 std::string serverenlace = "...";
@@ -91,7 +77,6 @@ std::string DownTitle="...";
 //search
 int searchchapter = 0;
 bool reloadingsearch = false;
-bool activatefirstsearchimage = true;
 //downloads
 bool isDownloading=false;
 std::string speedD="";
@@ -107,6 +92,8 @@ bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
 bool ongrid=true;
+bool ongridS=true;
+bool ongridF=true;
 AccountUid uid;
 SDL_Thread* capithread = NULL;
 bool quit=false;
@@ -122,11 +109,12 @@ std::vector<std::string> arrayserversbak= {
 };
 
 json BD;
+json UD;
 
 //caps vars
 int maxcapit = 1;
 int mincapit = 0;
-int capmore = 1;
+int latest = 1;
 
 int sizeportraity = 300;
 int sizeportraitx =424;

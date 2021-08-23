@@ -5,9 +5,10 @@
 #include "SDLWork.hpp"
 
 extern json BD;
+extern json UD;
 extern int mincapit;
 extern int maxcapit;
-extern int capmore;
+extern int latest;
 extern std::string rootdirectory;
 extern SDL_Thread* capithread;
 extern bool gFAV;
@@ -24,6 +25,7 @@ extern bool preview;
 extern int selectchapter;
 extern int imgNumbuffer;
 extern int porcentajebuffer;
+extern int porcentajebufferAll;
 extern int porcentajebufferF;
 extern int porcentajebufferFF;
 extern bool quit;
@@ -42,7 +44,6 @@ extern int statenow;
 extern int returnnow;
 
 extern bool reloadingsearch;
-extern bool activatefirstsearchimage;
 extern int Frames;
 
 //Get info off chapter
@@ -54,7 +55,11 @@ void PushDirBuffer(std::string a,std::string name) {
 	replace(terese, "<p rel=\"sinopsis\">", ""); replace(terese, "<br/>", ""); replace(terese, "&quot;", "");
 	BD["DataBase"][name]["sinopsis"] = terese.substr(0,810);
 	//std::cout << BD["DataBase"][name]["sinopsis"] << std::endl;
-
+	
+	//get image
+	terese = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
+	BD["DataBase"][name]["Image"] = terese;
+	
 	//Anime info
 	terese = scrapElement(a, "<span>Tipo:","</li");
 	replace(terese, "<span>Tipo:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
@@ -193,10 +198,10 @@ int downloadjkanimevideo(void* data) {
 			BD["arrays"]["downloads"]["log"][x] = "100% : "+namedownload;
 		}
 	}
+	if(cancelcurl==0)led_on(3); else led_on(0);
 	cancelcurl = 0;
 	isDownloading=false;
 	statenow = downloadstate;
-	if(cancelcurl==0)led_on(3); else led_on(0);
 	appletSetAutoSleepDisabled(false);
 	return 0;
 }
@@ -231,9 +236,6 @@ int refrescarpro(void* data){
 	temp1=content.find("TOP ANIMES",temp0);
 	content = content.substr(temp0,temp1-temp0);
 
-	//clear allocate
-	//BD["arrays"] = "{}"_json;
-	
 	//rebuild list 
 	std::vector<std::string> ChapLink=scrapElementAll(content, "https://jkanime.net/");
 	std::vector<std::string> ChapImag=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/");
@@ -247,14 +249,18 @@ int refrescarpro(void* data){
 	if(reloading) {Frames=0;reloading = false;}
 
 	//'haschange' See if there is any new chap
+	std::cout << "# I am Here1\n" << std::endl;
 	bool haschange = true;
 	if (!BD["latestchapter"].empty()){
+	std::cout << "# I am Here2\n" << std::endl;
 		if (BD["latestchapter"] == ChapLink[0])
 		{
+	std::cout << "# I am Here3\n" << std::endl;
 			haschange = false;
 		}
 	}
 
+	std::cout << "# I am Here4\n" << std::endl;
 	//TimeStamp indicate if a chap sout be reloaded
 	if (haschange || BD["TimeStamp"].empty()){
 		//update TimeStamp
@@ -273,7 +279,7 @@ int refrescarpro(void* data){
 
 	//Load to cache all Programation Chaps
 	if (haschange) {
-		MKcapitBuffer();
+		MKcapitBuffer(BD["arrays"]["chapter"]["link"], porcentajebuffer, porcentajebufferAll);
 		if(!quit){
 			BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 		}
@@ -281,32 +287,81 @@ int refrescarpro(void* data){
 
 	//Load to cache all Favorites Chaps
 	MKfavimgfix(false);
+
+	//extra vector
+	std::vector<std::string> vec={};
+
+	//load Top
+	std::cout << "# Get Top  \n" << std::endl;
+	content=gethtml("https://jkanime.net/top/");
+	replace(content,"https://jkanime.net/top/","");
+	replace(content,"https://jkanime.net///","");
+	vec=scrapElementAll(content,"https://jkanime.net/");
+	sort(vec.begin(),vec.end());
+	vec.erase(unique(vec.begin(),vec.end()),vec.end());
+	BD["arrays"]["Top"]["link"]=vec;
+	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
+
+	//load Horario
+	std::cout << "# Get HourGlass\n" << std::endl;
+	content=gethtml("https://jkanime.net/horario/");
+	replace(content,"https://jkanime.net/horario/","");
+	vec=scrapElementAll(content,"https://jkanime.net/");
+	sort(vec.begin(),vec.end());
+	vec.erase(unique(vec.begin(),vec.end()),vec.end());
+	BD["arrays"]["HourGlass"]["link"]=vec;
+	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
+
+	//load main
+	std::cout << "# Get Main\n" << std::endl;
+	content = gethtml("https://jkanime.net");
+	replace(content, "\"https://jkanime.net/\"", "");
+	vec=scrapElementAll(content, "https://jkanime.net/");
+	sort( vec.begin(),vec.end());
+	vec.erase(unique(vec.begin(),vec.end()),vec.end());
+	BD["arrays"]["Main"]["link"]=vec;
+	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
+
+	std::cout << "# End Thread Chain\n" << std::endl;
 	if (!isDownloading) appletSetAutoSleepDisabled(false);
 	//exit after load the cache if are in applet mode
 	if (AppletMode) quit=true;
 	return 0;
 }
-int MKcapitBuffer() {
+int MKcapitBuffer(std::vector<std::string> LinkList,int& part, int& ofall) {
+	bool hasmchap=false;
 	std::string a = "";
-	for (int x = 0; x < (int)BD["arrays"]["chapter"]["link"].size()&& !quit; x++)
+	part=0;
+	ofall=LinkList.size();
+	for (int x = 0; x < ofall&& !quit; x++)
 	{
-		porcentajebuffer = x+1;
+		if(hasmchap) part = x+1;
 		while (!HasConnection()){SDL_Delay(2000);if(quit) return 0;}
-		std::string link = BD["arrays"]["chapter"]["link"][x];
+		std::string link = LinkList[x];
 		int trace = link.find("/", 20);
 		link = link.substr(0, trace + 1);
 		std::string name = link;
 		replace(name, "https://jkanime.net/", "");
 		replace(name, "/", "");
-		if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
-			a = gethtml(link);
-			PushDirBuffer(a,name);
+
+		if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"] ){
+			if (BD["DataBase"][name]["enemision"]=="true" || BD["DataBase"][name]["TimeStamp"].empty()){
+				part = x+1;
+				a = gethtml(link);
+				PushDirBuffer(a,name);
+				hasmchap=true;
+			} else {
+				//BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
+			}
 		}
 	}
-	porcentajebuffer = 0;
+	part=0;
+	ofall=0;
 	if(quit) return 0;
-	//write json
-	write_DB(BD,rootdirectory+"DataBase.json");
+	if(hasmchap){
+		//write json
+		write_DB(BD,rootdirectory+"DataBase.json");
+	}
 	return true;
 }
 int MKfavimgfix(bool images){
@@ -349,9 +404,12 @@ int MKfavimgfix(bool images){
 
 int searchjk(void* data) {
 	BD["com"]["porcentajereload"] = 0;
-	activatefirstsearchimage = true;
+	BD["com"]["porcentajereloadAll"]=0;
+	BD["arrays"]["search"]["link"].clear();
+	BD["arrays"]["search"]["images"].clear();
+	BD["arrays"]["search"]["date"].clear();
 	reloadingsearch = true;	 
-	
+
 	std::string texts = BD["searchtext"];
 	replace(texts, " ", "_");
 	replace(texts, "!", "");
@@ -381,29 +439,28 @@ int searchjk(void* data) {
 			val1 = 6 + content.find("href=", val0);
 			val2 = (content.find('"', val1));
 			std::string gdrive = content.substr(val1, val2 - val1);
-		
-
 			BD["arrays"]["search"]["link"].push_back(gdrive);
+
 			val3 = content.find("data-setbg=", val2) + 12;
 			val4 = content.find('"', val3);
 			std::string gsearchpreview = content.substr(val3, val4 - val3);
 			BD["arrays"]["search"]["images"].push_back(gsearchpreview);
-			std::cout << gsearchpreview << std::endl;
-			
+			//std::cout << gsearchpreview << std::endl;
+
+			val3 = content.find("<p>", val4) + 3;
+			val4 = content.find("</p>", val3);
+			gsearchpreview = content.substr(val3, val4 - val3);
+			RemoveAccents(gsearchpreview);
+			if (gsearchpreview.length() > 90){
+				gsearchpreview=gsearchpreview.substr(0,90)+"...";
+			}
+			BD["arrays"]["search"]["date"].push_back(gsearchpreview);
 			val1++;
 		}
 		
-		for (int x = 0; x < (int)BD["arrays"]["search"]["images"].size(); x++) {
-			std::string LocalImg = BD["arrays"]["search"]["images"][x];
-			replace(LocalImg,"https://cdn.jkanime.net/assets/images/animes/image/","");
-
-			LocalImg = rootdirectory+"DATA/"+LocalImg;
-
-			if(!isFileExist(LocalImg))
-			downloadfile(BD["arrays"]["search"]["images"][x],LocalImg,false);
-
-			BD["com"]["porcentajereload"] = ((x + 1) * 100) / BD["arrays"]["search"]["images"].size();
-		}
+		porcentajebufferFF=BD["arrays"]["search"]["images"].size();
+		CheckImgVector(BD["arrays"]["search"]["images"],porcentajebufferF);
+		porcentajebufferFF=0;		
 	}
 	else
 	{
@@ -411,6 +468,7 @@ int searchjk(void* data) {
 		returnnow = toprogramation;
 	}
 	reloadingsearch = false;
+	MKcapitBuffer(BD["arrays"]["search"]["link"], porcentajebuffer, porcentajebufferAll);
 	return 0;
 }
 
@@ -435,6 +493,12 @@ int capit(void* data) {
 		maxcapit = BD["DataBase"][name]["maxcapit"];//-1;
 		//write json
 		write_DB(BD,rootdirectory+"DataBase.json");
+		
+		//Get Image
+		std::string image = rootdirectory+"DATA/"+name+".jpg";
+		if (!BD["DataBase"][name]["Image"].empty()){
+			CheckImgNet(image,BD["DataBase"][name]["Image"]);
+		}
 	}catch(...){
 		printf("Error \n");
 	}
@@ -450,12 +514,12 @@ int capBuffer (std::string Tlink) {
 	replace(name, "https://jkanime.net/", "");
 	replace(name, "/", "");
 	KeyName = name;
-	std::cout << "KeyName: " << name << std::endl;
-	fflush(stdout);
-	std::cout << "Link: " << Tlink << std::endl;
+//	std::cout << "KeyName: " << name << std::endl;
 
+	std::cout << "Link: " << Tlink << std::endl;
+	
+	std::string image = rootdirectory+"DATA/"+name+".jpg";
 	statenow = chapterstate;
-	CheckImgNet(rootdirectory+"DATA/"+name+".jpg");
 
 	if (BD["DataBase"][name]["TimeStamp"].empty())
 	{
@@ -465,7 +529,7 @@ int capBuffer (std::string Tlink) {
 		BD["com"]["Emitido"] = "......";
 		maxcapit = -1;
 		mincapit = 1;
-		capmore = 1;
+		latest = 1;
 		capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 	} else {
 		try{
@@ -477,17 +541,23 @@ int capBuffer (std::string Tlink) {
 			maxcapit = BD["DataBase"][name]["maxcapit"];
 			mincapit = BD["DataBase"][name]["mincapit"];
 			//check For latest cap seend
-			if (BD["DataBase"][name]["capmore"].empty()){
+			if (UD["chapter"][name].empty()||UD["chapter"][name]["latest"].empty()){
 				//get position to the latest cap if in emision
 				if (BD["com"]["enemision"] == "true"){
-					capmore = BD["DataBase"][name]["maxcapit"];//is in emision
+					latest = BD["DataBase"][name]["maxcapit"];//is in emision
 				} else {
-					capmore = BD["DataBase"][name]["mincapit"];//is not in emision 
+					latest = BD["DataBase"][name]["mincapit"];//is not in emision 
 				}
 			}
-			else
-				capmore = BD["DataBase"][name]["capmore"];
-			
+			else{
+				latest = UD["chapter"][name]["latest"];
+			}
+
+			//Get Image
+			if (!BD["DataBase"][name]["Image"].empty()){
+				CheckImgNet(image,BD["DataBase"][name]["Image"]);
+			}
+
 			if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
 				BD["com"]["nextdate"] = "Loading...";
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
@@ -496,6 +566,7 @@ int capBuffer (std::string Tlink) {
 			printf("Error \n");
 		}
 	}
+	CheckImgNet(image);
 return 0;
 }
 

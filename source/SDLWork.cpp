@@ -12,15 +12,20 @@
 #include <string>
 #include <cmath>
 #include <iostream>
-#include <math.h>  
-#include <Vector>
-#include "SDLWork.hpp"
+#include <math.h> 
 #include "utils.hpp"
+#include "SDLWork.hpp"
 
 extern SDLB GOD;
 extern LTexture gTextTexture;
 extern LTexture Farest;
+extern LTexture VOX;
+extern LTexture T_T;
+extern LTexture Heart;
+
+
 extern std::string rootdirectory;
+
 
 void SDLB::intA(){
 	//Start up SDL and create window
@@ -111,7 +116,7 @@ void SDLB::intA(){
 	gFont5 = TTF_OpenFont("romfs:/lazy2.ttf", 20);
 	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
 	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
-	digifontC = TTF_OpenFont("romfs:/digifont.otf", 11);
+	digifontC = TTF_OpenFont("romfs:/digifont.otf", 9);
 
 }
 void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
@@ -130,9 +135,13 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 		KeyImage+="-"+std::to_string(W)+"x"+std::to_string(H);
 		path = "romfs:/nop.png";
 	}
-	if ( MapT.find(KeyImage) == MapT.end() ) {
+
+	if ( MapT.find(KeyImage) == MapT.end()) {
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), H, W);
+	} else if (MapT[KeyImage].getHeight() < H){
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), H, W);
 	}
+	
 	MapT[KeyImage].render(X, Y);
 	if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
 }
@@ -156,51 +165,67 @@ void SDLB::PleaseWait(std::string text,bool render){
 }
 void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,bool selected){
 //render images and map to memory for fast display
-		std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
-		std::string KeyText=Text+"-"+std::to_string(WS);
+	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
+	std::string KeyText=Text+"-"+std::to_string(WS);
+	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
 
-		if (!isFileExist(path)) {
-			KeyImage="SuperPro.jpg";
-			KeyImage+="-"+std::to_string(WS);
-			path = "romfs:/SuperPro.jpg";
-		}
-		int sizeportraitx = 300;
-		int sizeportraity =424;
-		//make the math
+	if (!isFileExist(path)) {
+		KeyImage="SuperPro.jpg";
+		KeyImage+="-"+std::to_string(WS);
+		path = "romfs:/SuperPro.jpg";
+	}
+	int sizeportraitx = 300;
+	int sizeportraity =424;
+	//make the math
 
-		int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-
-		if ( MapT.find(KeyImage) == MapT.end() ) {
-			MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
-		}
+	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
+	
+	if ( MapT.find(KeyImage) == MapT.end()) {
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+	} else if (MapT[KeyImage].getHeight() < HS){
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+	}
 		
-		static int blue=205;
-		if(selected){
-			TikerColor(blue,1);
-		} else blue=0;
+	static int blue=250;
+	if(selected){
+		TikerColor(blue,150,250);
+	} else blue=0;
 
-		
-		if (Text.length()){
-			//text
-			if ( MapT.find(KeyText) == MapT.end() ) {
-				int kinsize =11;
-				if (WS < 115){kinsize =7;Text=Text.substr(0,20);}//
-				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
-				MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
+	if (Text.length()){
+		//text
+		if ( MapT.find(KeyText) == MapT.end() ) {
+			std::string numhe=scrapElement(Text, "#");
+			if (numhe.length() > 0){
+				replace(Text, numhe, "");
+				replace(numhe, " #", "");replace(numhe, "#", "");
+				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", 11);
+				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
 			}
-			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, blue, 200);
-			MapT[KeyText].render(X + 4, Y + 4+MapT[KeyImage].getHeight());
-		} else {
-			MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, blue, 200);
-		}
 
-		MapT[KeyImage].render(X, Y);
-		if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
+			int kinsize =11;
+			if (WS < 115){kinsize =7;Text=Text.substr(0,20);}//
+			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
+			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
+		}
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, blue, 200);
+		MapT[KeyText].render(X + 2, Y + 4+MapT[KeyImage].getHeight());
+	} else {
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, blue, 200);
+	}
+
+	MapT[KeyImage].render(X, Y);
+	if (MapT.find(KeyTextH) != MapT.end()){
+		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y , MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()+1}, 0, 0, 0, 200);
+		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
+	}
+	if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
+		
 }
 void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select){
 //render images and map to memory for fast display
 	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
 	std::string KeyText=Text+"-"+std::to_string(WS);
+	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
 
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
@@ -212,123 +237,380 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	//make the math
 
 	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-	if ( MapT.find(KeyImage) == MapT.end() ) {
+
+	if ( MapT.find(KeyImage) == MapT.end()) {
+		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+	} else if (MapT[KeyImage].getHeight() < HS){
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 	}
+
 	if (Text.length()){
 		//text
 		if ( MapT.find(KeyText) == MapT.end() ) {
+			std::string numhe=scrapElement(Text, "#");
+			if (numhe.length() > 0){
+				replace(Text, numhe, "");
+				replace(numhe, " #", "");replace(numhe, "#", "");
+				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", 11);
+				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
+			}
 			int kinsize =11;
 			if (WS < 115){kinsize =9;Text=Text.substr(0,19);}//
 			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, 0, 200);
-		MapT[KeyText].render(X + 4, Y + 4+MapT[KeyImage].getHeight());
+		MapT[KeyText].render(X + 2, Y + 4+MapT[KeyImage].getHeight());
 	} else {
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, 0, 200);
 	}
 
 	MapT[KeyImage].render(X, Y);
+	if (MapT.find(KeyTextH) != MapT.end()){
+		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 3, Y , MapT[KeyTextH].getWidth() + 3, MapT[KeyTextH].getHeight()+1}, 0, 0, 0, 200);
+		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
+	}
 		
 	//How not to handle a touch input, wala, yolo
 	static int findex = -1;
-	if (findex >= 0 && !GOD.fingerdown){
-		printf("relea %d to %d %s\n",select,index,KeyImage.c_str());
+	if (findex >= 0 && !fingerdown){
+		//printf("relea %d to %d %s\n",select,index,KeyImage.c_str());
 		select=findex;
 		findex=-1;
 	} else {
 		if(MapT[KeyImage].SP()){
-			printf("touch %d to %d %s\n",select,index,KeyImage.c_str());
+			//printf("touch %d to %d %s\n",select,index,KeyImage.c_str());
 			findex = index;
 		} 
-		if(fingermotion) {
-			printf("reset %d to %d %s\n",select,index,KeyImage.c_str());
+		if(fingermotion&&fingerdown) {
+			//printf("reset %d to %d %s\n",select,index,KeyImage.c_str());
 			findex=-1;
 		}
 	}
 }
-void SDLB::ListCover(int x,int& selectindex,std::string Link, bool ongrid){
-	//This controll the image order and logic
+void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
+	std::vector<std::string> vec = Jlinks["link"];
+	int JlinksSize=vec.size();
+	static int statte = GenState;
+	if (statte != GenState){statte = GenState;outof=0;}
 
-	//Get the Cap Key
-	replace(Link, "https://jkanime.net/", "");
-	int val0 = Link.find("/");
-	std::string imagelocal=Link.substr(0,val0);
-	replace(Link, imagelocal, "");
-	replace(Link, "/", "");
-
-	//Cap Key to name 
-	std::string TEXT=imagelocal;
-	std::string TEXTH=imagelocal;
-	replace(TEXT, "/", " ");
-	replace(TEXT, "-", " ");
-	if (Link.length() > 0) {
-		TEXT=TEXT.substr(0,20)+" #"+Link;
-		TEXTH+=" #"+Link;
-	}
-	mayus(TEXT);
-	mayus(TEXTH);
-
-	//Image of cap
-	imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
-	
-	//set the offset position of images
-	static int MainOffSet=1,offset1=1,offset2=1,offset3=1;
-	
-	if (ongrid)
-	{
-		if (x == selectindex) {
-			//draw Title
-			gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
-			gTextTexture.render(20, 10);
-		}
-
-		if (x==0){MainOffSet=0;offset1=0; offset2=0;offset3=0;}
-		int HO = 0;
-		//Get Images , render Small
-		if (x < 10){
-			MainOffSet=offset1;
-			HO = 70;
-			offset1++;
-		} else if (x < 20){
-			HO = 270;
-			MainOffSet=offset2;
-			offset2++;
-		} else if (x < 30){
-			MainOffSet=offset3;
-			HO = 470;
-			offset3++;
-		}
-		if (x == selectindex) {
-			Cover(imagelocal,10 +  (MainOffSet * 127)-5,HO-13,TEXT,120,BT_A,true);
-		} else {
-			Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,113,x,selectindex);
-		}
-	} else {
-		if (x==0){offset1 =1; offset2 =1;}
-		//Get 4 Images before, render Small
-		if ((x > selectindex-5) && (x < selectindex)){
-			int comp=0;//this is to get closer to te main image
-			if (selectindex < 5){
-				comp = offset1+(4-selectindex);
-			} else {
-				comp = offset1;
+	JlinksSize=vec.size();
+	if(ongrid){
+		if(JlinksSize > 30){
+			//Touch Handle
+			if(fingermotion){
+				if(fingermotion_DOWN){
+					if(selectindex > 9 && outof>0){
+						selectindex-= 10;
+						outof=-10;
+					}
+				fingermotion_DOWN = false;
+				}
+				if(fingermotion_UP){
+					selectindex+= 10;
+					if(selectindex < JlinksSize-1){
+						outof+=10;
+					} else selectindex=JlinksSize-1;
+				fingermotion_UP = false;
+				}
 			}
-			Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,113,BT_UP);
-			offset1++;
 		}
-		//Central Big image
-		if (x == selectindex) {
-			Cover(imagelocal,680+ 132,  132,TEXT,255,BT_A);
+		
+		//select, bound fiscals
+		int chapsize = JlinksSize - 1;
+		static int preval=0;
+		if (chapsize+outof < 29){
+			if (selectindex < 0) {
+				selectindex=preval;
+			} else if (selectindex > chapsize) {
+				selectindex=chapsize;
+			}
+		} else {
+			if (selectindex < 0) {
+				selectindex = chapsize+selectindex;
+			} else if (selectindex > chapsize) {
+				if (selectindex < chapsize+10&&JlinksSize > 30) {
+					selectindex=chapsize;
+				} else {
+					selectindex = selectindex-chapsize;
+					outof=0;
+				}
+			}
 		}
-		//Get 4 Images After, render small
-		if ((x < selectindex+5) && (x > selectindex)){
-			Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,113,BT_DOWN);
-			offset2++;
+		preval=selectindex;
+		//normal boxes
+		VOX.render_VOX({0,0, 1280, 670} ,170, 170, 170, 100);
+		VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
+		
+		//Calculate Offset of Grid
+		if(JlinksSize > 30){
+			int outofMax=JlinksSize;outofMax+=9;outofMax=outofMax/10;outofMax=outofMax*10;outofMax-=30;
+			if (outof > outofMax) outof = outofMax;
+			//printf("part: %d - total: %d - Offset: %d - max offset: %d\r",selectindex,JlinksSize-1,outof,outofMax);fflush(stdout);
+			ScrollBarDraw(1272, 65, 600, 5, outofMax/10+1, outof/10,false);
+			//ScrollBarDraw(1272, 62, 600, 5, JlinksSize+outof, selectindex+1+outof,true);
+			if(selectindex > 29+outof){
+				for (int x = 29; x-10 < selectindex; x+=10) {
+					outof=x-29;
+				}
+			} else if (selectindex < outof){
+				outof-=10;
+				if (outof<0) {outof=0;}
+			}
+			if (outof>0){
+				vec.erase(vec.begin(), vec.begin()+outof);
+				selectindex-=outof;
+			}
+			JlinksSize=vec.size();
+		}
+	}
+
+	for (int x = 0; x < JlinksSize; x++) {
+		//This controll the image order and logic
+		std::string Link=vec[x];
+		//Get the Cap Key
+		replace(Link, "https://jkanime.net/", "");
+		int val0 = Link.find("/");
+		std::string imagelocal=Link.substr(0,val0);
+		replace(Link, imagelocal, "");
+		replace(Link, "/", "");
+
+		//Cap Key to name 
+		std::string TEXT=imagelocal;
+		replace(TEXT, "/", " ");
+		replace(TEXT, "-", " ");
+		mayus(TEXT);
+		std::string TEXTH=TEXT.substr(0,62);
+		int offsettval=0;
+		if (x == selectindex){
+			static int take=selectindex;
+			static int laof=-1;
+			if (selectindex != take){
+				take = selectindex;
+				laof=-1;
+			}
+			if (TEXT.length() > 25){
+				TikerName(laof,200,0,TEXT.length()-25);
+				offsettval=laof;
+			}
+		}
+		
+		if (Link.length() > 0) {
+			TEXT=TEXT.substr(offsettval,25)+" #"+Link;
+			TEXTH+=" #"+Link;
+		} else {
+			TEXT=TEXT.substr(offsettval,25);
+		}
+
+		//Image of cap
+		imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
+		
+		//set the offset position of images
+		static int MainOffSet=1,offset1=1,offset2=1,offset3=1;
+		int nosel=113,issel=120;
+		if (ongrid)
+		{
+			if(x >= 30) break;
+			
+			//Grid Animation
+			if (limit>0){
+				std::string KeyImage=imagelocal.substr(25)+"-"+std::to_string(nosel);
+				if ( MapT.find(KeyImage) == MapT.end()) {
+					if (limit < x) break;
+				} 
+			}
+		
+			if (x == selectindex) {
+				//draw Title
+				gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
+				gTextTexture.render(50, 7);
+				if(!Jlinks["date"].empty()){
+					//draw Title
+					gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x+outof], { 0, 0, 0 });
+					gTextTexture.render(50, 37);
+				}
+			}
+
+			if (x==0){MainOffSet=0;offset1=0; offset2=0;offset3=0;}
+			int HO = 0;
+			//Get Images , render Small
+			if (x < 10){
+				MainOffSet=offset1;
+				HO = 70;
+				offset1++;
+			} else if (x < 20){
+				HO = 270;
+				MainOffSet=offset2;
+				offset2++;
+			} else if (x < 30){
+				MainOffSet=offset3;
+				HO = 470;
+				offset3++;
+			}
+			if (x == selectindex) {
+				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,issel,BT_A,true);
+			} else {
+				selectindex+=outof;
+				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,nosel,x+outof,selectindex);
+				selectindex-=outof;
+
+			}
+		} else {
+			if (x==0){offset1 =1; offset2 =1;}
+			//Get 4 Images before, render Small
+			if ((x > selectindex-5) && (x < selectindex)){
+				int comp=0;//this is to get closer to te main image
+				if (selectindex < 5){
+					comp = offset1+(4-selectindex);
+				} else {
+					comp = offset1;
+				}
+				Cover(imagelocal,600+  (comp * 30),  (comp * 22),TEXT,nosel,BT_UP);
+				offset1++;
+			}
+			//Central Big image
+			if (x == selectindex) {
+				Cover(imagelocal,680+ 132,  132,TEXT,255,BT_A);
+			}
+			//Get 4 Images After, render small
+			if ((x < selectindex+5) && (x > selectindex)){
+				Cover(imagelocal,1030+ (offset2 * 30), 400 + (offset2 * 22),TEXT,nosel,BT_DOWN);
+				offset2++;
+			}
+		}
+	}
+	if(ongrid){
+		selectindex+=outof;
+	}
+}
+void SDLB::ListClassic(int& selectindex,json Jlinks) {
+	int indexLsize = Jlinks["link"].size();
+	if(TouchY < 670 && TouchX < 530 && TouchY > 5 && TouchX > 15){
+		int sel=(TouchY*30/660);
+		if (sel >= 0 && sel < indexLsize){
+			selectindex = sel;
+		}
+	}
+	if (indexLsize > 0 ){
+		VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
+		if (indexLsize > 30) {
+			gTextTexture.loadFromRenderedText(gFont, std::to_string(selectindex+1)+"/"+std::to_string(indexLsize), {0,0,0});
+			gTextTexture.render(400, 690);
+		}
+		int of = selectindex < 30 ? 0 : selectindex - 26;
+		for (int x = of; x < indexLsize; x++) {
+			std::string temptext = Jlinks["link"][x];
+			NameOfLink(temptext);
+			
+			if (x == selectindex) {
+				T_T.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
+				VOX.render_VOX({20-2,10 + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
+				T_T.render(20, 10 + ((x-of) * 22));
+				Heart.render(20 - 18, 10 + 3 + ((x-of) * 22));
+			}
+			else if((x-of) < 30)
+			{
+				gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 50, 50, 50 });
+				gTextTexture.render(20, 10 + ((x-of) * 22));
+			}
 		}
 	}
 }
+void SDLB::HandleList(int& selectchapter, int allsize, int key,bool ongrid){
+	allsize--;
+//	std::cout << selectchapter << " - " << allsize << std::endl;
+	switch(key){
+		case BT_LEFT:
+		case BT_LS_LEFT:
+			if(ongrid){
+				if (selectchapter > 0)
+				{
+					selectchapter--;
+				} else {
+					selectchapter = allsize;
+				}
+			}
+			break;
+		case BT_RIGHT:
+		case BT_LS_RIGHT:
+			if(ongrid){
+				if (selectchapter < allsize)
+				{
+					selectchapter++;
+				} else {
+					selectchapter = 0;
+				}
+			}
+			break;
+		case BT_UP:
+		case BT_LS_UP:{
+			if(ongrid){
+				if (selectchapter > 0)
+				{
+					selectchapter-=10;
+				} else {
+					selectchapter = allsize;
+				}
+			} else {
+				if (selectchapter > 0)
+				{
+					selectchapter--;
+				} else {
+					selectchapter = allsize;
+				}
+			}
+			break;
+		}
+		case BT_DOWN:
+		case BT_LS_DOWN:{
+			if(ongrid){
+				if (selectchapter < allsize)
+				{
+					selectchapter+=10;
+				} else {
+					selectchapter = 0;
+				}
+			} else {
+				if (selectchapter < allsize)
+				{
+					selectchapter++;
+				} else {
+					selectchapter = 0;
+				}
+			}
+			break;
+		}
+	}
+//	std::cout << selectchapter << " - " << allsize << std::endl;
+}
+void SDLB::ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool ongrid){
+	if(ongrid){
+		int part=Select;
+		int all=Total;
+		part+=9;
+		part=part/10;
+		part--;
+		all+=9;
+		all=all/10;
+		Select=part;
+		Total=all;
+		//printf("part: %d - total: %d \r",part,all);fflush(stdout);
+	}
+	
+	//split the distance in peaces and get exact values
+	double Texact = Total;
+	double Bar = H/Texact;
+	
+	//Get approximate values, 1 pixel of error
+	int BarSize = Bar + 1;       //approximate Size
+	int BarPos  = Bar*Select; //approximate Position
+	
+	//Draw the ScrollBar
+	VOX.render_VOX({X+1,Y+BarPos+1, W,BarSize} ,50, 50, 50, 240);
+	VOX.render_VOX({X,Y+BarPos, W, BarSize} ,255, 255, 255, 240);
+}
+
+
 
 void SDLB::deint(){
 	//Clear Texture Map

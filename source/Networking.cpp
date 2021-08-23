@@ -20,6 +20,7 @@ extern int sizeestimated;
 extern int cancelcurl;
 extern std::string speedD;
 extern std::string rootdirectory;
+extern bool quit;
 
 //Write file in mem to increase download speed on 3 or 5 times
 struct MemoryStruct
@@ -64,7 +65,6 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 	double TotalToUpload, double NowUploaded)
 {
 
-
 	// ensure that the file to be downloaded is not empty
 	// because that would cause a division by zero error later on
 	if (TotalToDownload <= 0.0) {
@@ -95,7 +95,6 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 		temporal = NowDownloaded/1000000;
 		secr = tm->tm_sec;
 	}
-
 
 	// create the "meter"
 	int ii = 0;
@@ -230,7 +229,7 @@ bool HasConnection()
 void CheckImgVector(std::vector<std::string> List,int& index){
 	index=0;
 	int listsize=List.size();
-	for (int x = 0; x < listsize; x++)
+	for (int x = 0; x < listsize && !quit; x++)
 	{
 		index = x+1;
 		std::string tempima = List[x];
@@ -240,10 +239,13 @@ void CheckImgVector(std::vector<std::string> List,int& index){
 	}
 	index=0;
 }
-bool CheckImgNet(std::string image){
+bool CheckImgNet(std::string image,std::string url){
 	replace(image,"\"","");
 	if (!isFileExist(image.c_str())) {
 		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
+		if(url.length() > 0){
+			tmp = url;
+		}
 		printf("# Missing %s Downloading\n",image.c_str());
 		return downloadfile(tmp,image,false);
 	}

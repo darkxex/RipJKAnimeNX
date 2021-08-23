@@ -227,7 +227,7 @@ bool onlinejkanimevideo(std::string onlineenlace,std::string server)
 {
 	std::string temp = onlineenlace;
 	NameOfLink(temp);
-	std::string text = "Cargando "+temp.substr(0,62)+"... desde "+server+" ...";
+	std::string text = "Cargando "+temp.substr(0,42)+"... desde "+server+" ...";
 	GOD.PleaseWait(text);
 	std::string videourl = "";
 	std::string content = "";
@@ -427,13 +427,34 @@ bool copy_me(std::string origen, std::string destino) {
 	}
 return false;
 }
+bool read_DB(json& base,std::string path){
+	std::ifstream inf(path);
+	if(!inf.fail()){
+		std::string tempjson="";
+		for(int f = 0; !inf.eof(); f++)
+		{
+			string TempLine = "";
+			getline(inf, TempLine);
+			tempjson += TempLine;
+		}
+		inf.close();
+		if(json::accept(tempjson))
+		{
+			//Parse and use the JSON data
+			base = json::parse(tempjson);
+			std::cout  << "Json Readed... "<< path << std::endl;
+			return true;
+		}
+	}
+return false;
+}
 bool write_DB(json base,std::string path){
 	appletBeginBlockingHomeButton (0);
 	std::ofstream otf(path);
 	otf << std::setw(4) << base << std::endl;
 	otf.close();
 	appletEndBlockingHomeButton();
-	std::cout << "Json: writhen..." << std::endl;
+	std::cout << "Json: writhen... "<< path << std::endl;
 
 	return true;
 }
@@ -568,8 +589,26 @@ void led_on(int inter)
         
 }
 
-bool onTimeC(int sec)
+bool onTimeC(int sec,int& time2)
 {
+    struct timeval time_now{};
+    gettimeofday(&time_now, nullptr);
+    time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+	
+	int time1 = msecs_time;
+	//static int time2 = msecs_time;
+
+	if (time1 > time2+sec){
+		time2 = time1;
+		return true;
+	}
+	return false;
+/*
+    cout << "seconds since epoch: " << time_now.tv_sec << endl;
+    cout << "milliseconds since epoch: "  << msecs_time << endl << endl;
+
+
+
 	if (sec > 0) sec--;
 	std::time_t t = std::time(0);
 	int time1 = t;
@@ -579,28 +618,77 @@ bool onTimeC(int sec)
 		return true;
 	}
 	return false;
+*/
+
 }
-void TikerColor(int& color,int time)
+void TikerColor(int& color,int min,int max)
 {
 	static bool reverse=false;
-	if (onTimeC(time))
-	{
 		if (reverse){
-			color-=50;
-			if(color < 150){
+			color-=1;
+			if(color < min){
 				reverse=false;
 			}
 		} else {
-			color+=50;
-			if(color > 200){
+			color+=5;
+			if(color > max){
 				reverse=true;
 			}
 		}
-//		printf("blink: %d \n",color);
-	}
 }
+void TikerName(int& color,int sec,int min,int max)
+{
+	static bool running=false;
+	static bool Start=false;
+	
+	static int time2 = 0;
+	static int increment = 5;
+	if (color < 0){
+		color=0;
+		running=false;
+		Start=true;
+	}
+	
+	if(!running){
+		//delay
+		if (onTimeC(sec*increment,time2))
+		{
+			if (color > 0 || Start){
+				color=0;
+				increment=13;
+				Start=false;
+			} else {
+				running=true;
+			}
+		//cout << "> "  << color << endl;
+		}
+	} else {
+		//running time
+		if (onTimeC(sec,time2))
+		{
+			color+=1;
+			if(color >= max){
+				color = max;
+				increment=8;
+				running=false;
+			}
+		//cout << "> "  << color << endl;
+		}
+	}
 
+			
+/*
+			color-=1;
+			if(color < min){
+				color=0;
+				running=false;
+			}
+
+		} else {
+*/			
+}
 void RemoveAccents(std::string& word){
+	//std::cout << word << std::endl;
 	replace(word, "á","a");
 	replace(word, "é","e");
 	replace(word, "í","i");
@@ -611,6 +699,31 @@ void RemoveAccents(std::string& word){
 	replace(word, "ì","i");
 	replace(word, "ò","o");
 	replace(word, "ù","u");
+	replace(word, "ñ","n");
+	
+	replace(word, "Á","A");
+	replace(word, "É","E");
+	replace(word, "Í","I");
+	replace(word, "Ó","O");
+	replace(word, "Ú","U");
+	replace(word, "À","A");
+	replace(word, "È","E");
+	replace(word, "Ì","I");
+	replace(word, "Ò","O");
+	replace(word, "Ù","U");
+	replace(word, "Ñ","N");
+	
+	replace(word, "&amp;","");
+	replace(word, "#8230;","");
+	replace(word, "”","");
+	replace(word, "“","");
+	replace(word, "\n","");
+	
+	replace(word, "¡","");
+	replace(word, "!","");
+	replace(word, "?","");
+	replace(word, "¿","");
+
 }
 
 void NameOfLink(std::string& word){
@@ -618,4 +731,11 @@ void NameOfLink(std::string& word){
 	replace(word, "/", " ");
 	replace(word, "-", " ");
 	mayus(word);
+}
+std::string KeyOfLink(std::string word){
+	int v2 = word.find("/", 20);
+	word = word.substr(0, v2 + 1);
+	replace(word, "https://jkanime.net/", "");
+	replace(word, "/", "");
+	return word;
 }
