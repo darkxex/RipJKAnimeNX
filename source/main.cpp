@@ -57,8 +57,6 @@ int main(int argc, char **argv)
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* downloadthread = NULL;
 	
-	//Set main Thread get images and descriptions
-	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
 
 	//set custom music 
 	GOD.intA();//init the SDL
@@ -147,6 +145,9 @@ int main(int argc, char **argv)
 	}
 
 try{
+	//Set main Thread get images and descriptions
+	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
+
 	//While application is running
 	while (!quit)
 	{

@@ -370,8 +370,10 @@ int MKfavimgfix(bool images){
 	if(BD["arrays"]["favorites"]["images"].empty() || BD["arrays"]["favorites"]["link"].empty()){
 		printf("# Get fav list\n");
 		getFavorite();
+		printf("# Goted fav list\n");
 	}
 	porcentajebufferFF = BD["arrays"]["favorites"]["link"].size();
+	if (porcentajebufferFF <= 0)  return 0;
 	
 	if (images) {
 		CheckImgVector(BD["arrays"]["favorites"]["images"],porcentajebufferF);
@@ -593,8 +595,10 @@ void addFavorite(std::string text) {
 */
 }
 void getFavorite() {
-	BD["arrays"]["favorites"]["link"].clear();
-	BD["arrays"]["favorites"]["images"].clear();
+	if(!BD["arrays"]["favorites"].empty()){
+		BD["arrays"]["favorites"]["link"].clear();
+		BD["arrays"]["favorites"]["images"].clear();
+	}
 	std::string temp;
 	std::ifstream file(rootdirectory+"favoritos.txt");
 	std::string str;
