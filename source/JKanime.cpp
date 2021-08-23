@@ -451,8 +451,8 @@ int searchjk(void* data) {
 			val4 = content.find("</p>", val3);
 			gsearchpreview = content.substr(val3, val4 - val3);
 			RemoveAccents(gsearchpreview);
-			if (gsearchpreview.length() > 120){
-				gsearchpreview=gsearchpreview.substr(0,105)+"...";
+			if (gsearchpreview.length() > 90){
+				gsearchpreview=gsearchpreview.substr(0,90)+"...";
 			}
 			BD["arrays"]["search"]["date"].push_back(gsearchpreview);
 			val1++;

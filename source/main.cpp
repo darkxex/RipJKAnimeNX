@@ -996,7 +996,7 @@ try{
 					}
 					
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Búsqueda", {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Resultados de Búsqueda:", {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 					{//Draw footer buttons
 						int dist = 1100,posdist = 160;
@@ -1004,10 +1004,8 @@ try{
 						B_B.render_T(dist, 680,"Atras");dist -= posdist;
 						B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 					}
-					if (porcentajebuffer > 0){
-						gTextTexture.loadFromRenderedText(GOD.gFont, "Buffering: ("+std::to_string(porcentajebuffer)+"/"+std::to_string(porcentajebufferAll)+")", {0,100,0});
-						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
-					}
+					gTextTexture.loadFromRenderedText(GOD.gFont, BD["searchtext"], {0,0,0});
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 				}
 				else
 				{
@@ -1133,7 +1131,7 @@ try{
 				het = porcentajebuffer > 0 ? T_D.getHeight()+22 : 20;
 			}
 			if (statenow == searchstate){
-				het = porcentajebuffer > 0 ? T_D.getHeight()+22 : 20;
+				het = 42;
 			}
 			if (statenow == favoritesstate){
 				het = porcentajebufferF > 0 ? T_D.getHeight()+22 : 20;
