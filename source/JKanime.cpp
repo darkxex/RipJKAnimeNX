@@ -617,6 +617,7 @@ void getFavorite() {
 				}
 			}
 			file.close();
+			rename((rootdirectory+"favoritos.txt").c_str(), (rootdirectory+"favoritos.bak").c_str());
 			remove((rootdirectory+"favoritos.txt").c_str());
 			write_DB(UD,rootsave+"UserData.json");
 		}
