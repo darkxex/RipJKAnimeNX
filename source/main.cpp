@@ -140,6 +140,7 @@ int main(int argc, char **argv)
 	BUS.loadFromFile("romfs:/buttons/BUS.png");
 	NOP.loadFromFile("romfs:/nop.png");
 	NOP.loadFromFile("romfs:/nop.png");
+	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",58, 58);
 	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",58, 58);
 	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",58, 58);
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
@@ -255,6 +256,7 @@ try{
 					}
 					else if (B_A.SP() || T_T.SP() ) e.jbutton.button = GOD.BT_A;
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
+					else if (BACK.SP()) e.jbutton.button = GOD.BT_B;
 					else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
 					else if (B_Y.SP()) e.jbutton.button = GOD.BT_Y;
 					else if (FAVB.SP()) e.jbutton.button = GOD.BT_Y;
@@ -774,6 +776,7 @@ try{
 		{
 			case chapterstate:		{
 			//Draw a background to a nice view
+			USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
 			VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
 			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
@@ -906,6 +909,7 @@ try{
 				}
 			}
 
+
 			//Draw Footer Buttons
 			int dist = 1095,posdist = 160;
 			if(serverpront){
@@ -950,9 +954,9 @@ try{
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
+							FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
+							BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
 						}
-						FAVB.render(SCREEN_WIDTH - USER.getWidth() - BUS.getWidth() - 40, 1);
-						BUSB.render(SCREEN_WIDTH - USER.getWidth() - BUS.getWidth() - FAVB.getWidth() - 60, 1);
 						REC.render_T(5, 15,"");
 					} else {
 						GOD.ListClassic(selectchapter,BD["arrays"]["chapter"]);
@@ -1012,6 +1016,7 @@ try{
 					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
 					
 					int srchsize=BD["arrays"]["search"]["link"].size();
+					if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 					if (srchsize > 0){
 						//if (srchsize > 30) ongridS=false;
 						if (!ongridS) GOD.ListClassic(searchchapter,BD["arrays"]["search"]);
@@ -1030,7 +1035,6 @@ try{
 						NOP.render_T(230, 355,"?");
 						BD["searchtext"]="";
 					}
-					
 					//Draw Header
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Resultados de Búsqueda:", {100,0,0});
 					if(ongridS){
@@ -1106,22 +1110,24 @@ try{
 				}
 			break;
 			}
-			case downloadstate:		{
-				VOX.render_VOX({16,5, 900, 282}, 210, 210, 210, 115);//Draw a rectagle to a nice view
+			case downloadstate:	{
+				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
+				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
+				VOX.render_VOX({16,65, 900, 222}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 				
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
-				gTextTexture.render(posxbase, posybase);
+				gTextTexture.render(posxbase, posybase+15);
 				
-				gTextTexture.loadFromRenderedText(GOD.gFont3, DownTitle, textColor);
-				VOX.render_VOX({17,35, gTextTexture.getWidth()+5, 45}, 210, 210, 210, 215);//Draw title back
-				gTextTexture.render(posxbase, posybase + 20);
+				gTextTexture.loadFromRenderedText(GOD.gFont4, DownTitle, textColor);
+				VOX.render_VOX({17,65, gTextTexture.getWidth()+15, 45}, 210, 210, 210, 155);//Draw title back
+				gTextTexture.render(posxbase, posybase + 60);
 
 				gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
 				gTextTexture.render(posxbase , posybase + 280);
 				if (serverenlace != "Error de descarga"){
-					gTextTexture.loadFromRenderedText(GOD.gFont2, std::to_string(porcendown) + "\%", textColor);
-					gTextTexture.render(posxbase + 40, posybase + 40);
+					gTextTexture.loadFromRenderedText(GOD.gFontcapit, std::to_string(porcendown) + "\%", textColor);
+					gTextTexture.render(posxbase + 40, posybase + 90);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
 					gTextTexture.render(posxbase + 100, posybase + 220);
@@ -1140,7 +1146,7 @@ try{
 						gTextTexture.loadFromRenderedText(GOD.digifont, "Velocidad: " +speedD+" M/S", textColor);
 						VOX.render_VOX({ posxbase + 120, posybase + 240, gTextTexture.getWidth()+15, 20 }, 255, 255, 255, 145);
 						gTextTexture.render(posxbase + 130, posybase + 240);
-						SCREEN.render(1150, 10);
+						SCREEN.render(1180, 65);
 						B_ZR.render_T(550, 680,"Apagar Pantalla");
 					 }
 				} else {
@@ -1172,7 +1178,7 @@ try{
 		}
 		//global render
 		if(isDownloading&& downloadstate != statenow){
-			T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {50,50,50});
+			T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,42)+"... ("+std::to_string(porcendown)+"\%)", {50,50,50});
 			VOX.render_VOX({SCREEN_WIDTH - T_D.getWidth() - 2, 671-T_D.getHeight()+4, T_D.getWidth()+4, T_D.getHeight()-5}, 255, 255, 255, 180);
 			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 1, 671-T_D.getHeight());
 		}
@@ -1203,6 +1209,7 @@ try{
 			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 1 );
 		}
 
+		if(programationstate != statenow){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
 		B_P.render_T(160, 680,"Salir",quit);
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
