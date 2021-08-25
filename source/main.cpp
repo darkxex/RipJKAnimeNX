@@ -290,7 +290,7 @@ try{
 			case SDL_JOYAXISMOTION:
 			if (e.type == SDL_JOYAXISMOTION)
 			{
-				if (e.jaxis.axis == 1){
+				if (e.jaxis.axis == 1 && statenow==chapterstate){
 				e.jbutton.button=-1;
 					//SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
 					if (e.jaxis.value < -22000){
@@ -299,7 +299,8 @@ try{
 					if (e.jaxis.value > 22000){
 						e.jbutton.button = GOD.BT_DOWN;
 					}
-				} else break;
+				} else break;				
+
 			}
 			case SDL_JOYBUTTONDOWN :
 				//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
@@ -946,12 +947,12 @@ try{
 
 					if(ongrid){
 						USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
-						FAVB.render(SCREEN_WIDTH - USER.getWidth() - BUS.getWidth() - 40, 1);
-						BUSB.render(SCREEN_WIDTH - USER.getWidth() - BUS.getWidth() - FAVB.getWidth() - 60, 1);
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
 						}
+						FAVB.render(SCREEN_WIDTH - USER.getWidth() - BUS.getWidth() - 40, 1);
+						BUSB.render(SCREEN_WIDTH - USER.getWidth() - BUS.getWidth() - FAVB.getWidth() - 60, 1);
 						REC.render_T(5, 15,"");
 					} else {
 						GOD.ListClassic(selectchapter,BD["arrays"]["chapter"]);
