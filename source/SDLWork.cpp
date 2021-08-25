@@ -303,8 +303,8 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			if(fingermotion){
 				if(fingermotion_DOWN){
 					if(selectindex > 9 && outof>0){
-						selectindex-= 10;
-						outof=-10;
+						selectindex-=10;
+						outof-=10;
 					}
 				fingermotion_DOWN = false;
 				}
