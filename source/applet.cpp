@@ -13,6 +13,7 @@
 #include "utils.hpp"
 
 extern AccountUid uid;
+extern std::string AccountID;
 extern u32 __nx_applet_exit_mode;
 extern std::string urlc;
 extern bool quit;
@@ -31,6 +32,16 @@ std::cout << "No Existe:" << path << std::endl;
 return false;
 }
 
+   
+std::string FormatHex128(AccountUid Number)
+{
+    auto ptr = reinterpret_cast<u8*>(Number.uid);
+    std::stringstream strm;
+    strm << std::hex << std::uppercase;
+    for(u32 i = 0; i < 16; i++) strm << (u32)ptr[i];
+    return strm.str();
+}
+
 bool SelectUser(){
     AccountUid user = LaunchPlayerSelect();
     if(accountUidIsValid(&user))
@@ -45,7 +56,8 @@ bool GetUserID(){
 	rc =  accountInitialize(AccountServiceType_Application);
 	if (R_SUCCEEDED(rc)) {
 		accountGetPreselectedUser(&uid);
-		printf("Goted user uid\n");
+		AccountID=FormatHex128(uid);
+		printf("Goted user uid: %s\n",AccountID.c_str());
 		return true;
 	} else {
 		printf("failed to get user\n");
@@ -94,8 +106,9 @@ bool GetUserImage(){
 				}
 			}
 			delete[] icon;
-	    }
-		printf("failed user image size\n");
+	    } else
+			printf("failed user image size\n");
+		
 	    accountProfileClose(&prof);
 		return true;
 	}
@@ -114,21 +127,26 @@ bool GetAppletMode(){
 	return false;
 }
 AccountUid LaunchPlayerSelect() {
-    AccountUid out_id = {};
-    LibAppletArgs args;
-    libappletArgsCreate(&args, 0x10000);
-    u8 st_in[0xA0] = {0};
-    u8 st_out[0x18] = {0};
-    size_t repsz;
-    auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
-    if(R_SUCCEEDED(res))
-    {
-        u64 lres = *(u64*)st_out;
-        AccountUid *uid_ptr = (AccountUid*)&st_out[8];
-        if(lres == 0) memcpy(&out_id, uid_ptr, sizeof(out_id));
-    }
-    
-    return out_id;
+	AccountUid uids;
+	s32 max_uids=10,actual_total;
+	accountListAllUsers(&uids,max_uids,&actual_total);
+	std::cout << "# accountListAllUsers: " << actual_total << std::endl;
+	AccountUid out_id = {};
+	if(actual_total > 1){
+		LibAppletArgs args;
+		libappletArgsCreate(&args, 0x10000);
+		u8 st_in[0xA0] = {0};
+		u8 st_out[0x18] = {0};
+		size_t repsz;
+		auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
+		if(R_SUCCEEDED(res))
+		{
+			u64 lres = *(u64*)st_out;
+			AccountUid *uid_ptr = (AccountUid*)&st_out[8];
+			if(lres == 0) memcpy(&out_id, uid_ptr, sizeof(out_id));
+		}
+	}
+	return out_id;
 }
 
 SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {

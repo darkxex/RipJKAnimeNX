@@ -245,24 +245,24 @@ int refrescarpro(void* data){
 
 	//Download All not existing images
 	CheckImgVector(ChapImag,imgNumbuffer);
-	std::cout << "# End Image Download\n" << std::endl;
+	std::cout << "# End Image Download" << std::endl;
 
 	//Display List
 	if(reloading) {Frames=0;reloading = false;}
 
 	//'haschange' See if there is any new chap
-	std::cout << "# I am Here1\n" << std::endl;
+	std::cout << "# I am Here1" << std::endl;
 	bool haschange = true;
 	if (!BD["latestchapter"].empty()){
-	std::cout << "# I am Here2\n" << std::endl;
+	std::cout << "# I am Here2" << std::endl;
 		if (BD["latestchapter"] == ChapLink[0])
 		{
-	std::cout << "# I am Here3\n" << std::endl;
+	std::cout << "# I am Here3" << std::endl;
 			haschange = false;
 		}
 	}
 
-	std::cout << "# I am Here4\n" << std::endl;
+	std::cout << "# I am Here4" << std::endl;
 	//TimeStamp indicate if a chap sout be reloaded
 	if (haschange || BD["TimeStamp"].empty()){
 		//update TimeStamp
@@ -294,7 +294,7 @@ int refrescarpro(void* data){
 	std::vector<std::string> vec={};
 
 	//load Top
-	std::cout << "# Get Top  \n" << std::endl;
+	std::cout << "# Get Top" << std::endl;
 	content=gethtml("https://jkanime.net/top/");
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
@@ -305,7 +305,7 @@ int refrescarpro(void* data){
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	//load Horario
-	std::cout << "# Get HourGlass\n" << std::endl;
+	std::cout << "# Get HourGlass" << std::endl;
 	content=gethtml("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	vec=scrapElementAll(content,"https://jkanime.net/");
@@ -315,7 +315,7 @@ int refrescarpro(void* data){
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	//load main
-	std::cout << "# Get Main\n" << std::endl;
+	std::cout << "# Get Main" << std::endl;
 	content = gethtml("https://jkanime.net");
 	replace(content, "\"https://jkanime.net/\"", "");
 	vec=scrapElementAll(content, "https://jkanime.net/");
@@ -324,7 +324,7 @@ int refrescarpro(void* data){
 	BD["arrays"]["Main"]["link"]=vec;
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
-	std::cout << "# End Thread Chain\n" << std::endl;
+	std::cout << "# End Thread Chain" << std::endl;
 	if (!isDownloading) appletSetAutoSleepDisabled(false);
 	//exit after load the cache if are in applet mode
 	if (AppletMode) quit=true;

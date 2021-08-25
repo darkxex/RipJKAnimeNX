@@ -27,22 +27,30 @@ int main(int argc, char **argv)
 	printf("Nxlink server Conected\n");
 	AppletMode=GetAppletMode();
 	#ifdef USENAND
-		//mount user
+		//Mount user
 		FsFileSystem data;
 		fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
 		fsdevMountDevice("user", data);
 		
+		//Mount Save Data
 		FsFileSystem acc;
 		if (MountUserSave(acc)){
+			if(isFileExist(rootdirectory+AccountID+"UserData.json")){
+				if(!isFileExist(rootdirectory+AccountID+"UserData.json")){
+					copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json");
+					fsdevCommitDevice("save");
+					remove((rootdirectory+AccountID+"UserData.json").c_str());
+				}
+			}
 			if(isFileExist(rootdirectory+"UserData.json")){
-				if(isFileExist(rootsave+"UserData.json")){
+				if(!isFileExist(rootsave+"UserData.json")){
 					copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json");
 					fsdevCommitDevice("save");
+					remove((rootdirectory+"UserData.json").c_str());
 				}
-				remove((rootdirectory+"UserData.json").c_str());
 			}
 		} else {
-			rootsave = "sdmc:/";
+			rootsave = rootdirectory+AccountID;
 		}	
 	#endif
 	struct stat st = { 0 };
@@ -132,6 +140,8 @@ int main(int argc, char **argv)
 	BUS.loadFromFile("romfs:/buttons/BUS.png");
 	NOP.loadFromFile("romfs:/nop.png");
 	NOP.loadFromFile("romfs:/nop.png");
+	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",58, 58);
+	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",58, 58);
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 			
 
@@ -210,7 +220,6 @@ try{
 					lcdoff=false;
 					appletSetLcdBacklightOffEnabled(lcdoff);
 				} else{
-					
 					GOD.fingerdown = false;
 					GOD.fingermotion=false;
 					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
@@ -230,15 +239,17 @@ try{
 							e.jbutton.button=GOD.MasKey;
 						}
 						GOD.WorKey="0";GOD.MasKey=-1;
-						
 					}
 					else if (USER.SP()) {
 						if (SelectUser()){
 							if (MountUserSave(acc)){
-								read_DB(UD,rootsave+"UserData.json");
-								getFavorite();
 								USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
-								Frames=1;							
+								UD = "{}"_json;
+								read_DB(UD,rootsave+"UserData.json");
+								if(statenow==favoritesstate){
+									getFavorite();
+									Frames=1;							
+								}
 							}
 						}
 					}
@@ -246,8 +257,10 @@ try{
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
 					else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
 					else if (B_Y.SP()) e.jbutton.button = GOD.BT_Y;
+					else if (FAVB.SP()) e.jbutton.button = GOD.BT_Y;
 					else if (B_L.SP()) e.jbutton.button = GOD.BT_L;
 					else if (B_R.SP()) e.jbutton.button = GOD.BT_R;
+					else if (BUSB.SP()) e.jbutton.button = GOD.BT_R;
 					else if (B_ZR.SP()) e.jbutton.button = GOD.BT_ZR;
 					else if (B_P.SP()) e.jbutton.button = GOD.BT_P;
 					else if (B_M.SP()) e.jbutton.button = GOD.BT_M;
@@ -412,6 +425,7 @@ try{
 						{
 						case programationstate:
 							std::cout  << BD << std::endl;
+							std::cout  << UD << std::endl;
 							break;
 						case favoritesstate:
 							break;
@@ -932,6 +946,8 @@ try{
 
 					if(ongrid){
 						USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
+						FAVB.render(SCREEN_WIDTH - USER.getWidth() - BUS.getWidth() - 40, 1);
+						BUSB.render(SCREEN_WIDTH - USER.getWidth() - BUS.getWidth() - FAVB.getWidth() - 60, 1);
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
@@ -1048,6 +1064,7 @@ try{
 			case favoritesstate:	{
 				//Draw footer
 				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
+				if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int favsize=BD["arrays"]["favorites"]["link"].size();
 				if (favsize > 0){
 					//if (favsize > 30) ongridF=false;
@@ -1055,7 +1072,6 @@ try{
 					if (preview)
 					{
 						if (ongridF){
-							USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 							GOD.ListCover(favchapter,BD["arrays"]["favorites"],ongridF,Frames);
 							FAV.render_T(5, 15,"");
 						} else {
@@ -1156,7 +1172,7 @@ try{
 		//global render
 		if(isDownloading&& downloadstate != statenow){
 			T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {50,150,0});
-			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 8, 668-T_D.getHeight());
+			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 8, 670-T_D.getHeight());
 		}
 		if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
 		
@@ -1222,11 +1238,6 @@ try{
 	if (NULL == searchthread) {printf("searchthread Not in use: %s\n", SDL_GetError());} else {printf("searchthread in use: %s\n", SDL_GetError());SDL_WaitThread(searchthread,NULL);}
 	
 	
-	//Free resources and close SDL
-	accountExit();
-	hidsysExit();
-	socketExit();
-	romfsExit();
 
 	//Free loaded images
 	gTextTexture.free();
@@ -1248,8 +1259,19 @@ try{
 	B_DOWN.free();
 	FAV.free();
 	NOP.free();
+	BUS.free();
+	REC.free();
+	USER.free();
+	NFAV.free();
+	CLEAR.free();
+	SCREEN.free();
 
+	//Free resources and close SDL
 	GOD.deint();
+	accountExit();
+	hidsysExit();
+	socketExit();
+	romfsExit();
 #ifdef USENAND
 	//unmount and commit
 	fsdevCommitDevice("save");

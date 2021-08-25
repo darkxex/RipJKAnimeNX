@@ -40,7 +40,7 @@ LTexture Heart;
 //Render Buttons
 LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
-LTexture BUS, REC, USER, NFAV, FAV, NOP, CLEAR, SCREEN;
+LTexture BUS, BUSB, REC, USER, NFAV, FAV, FAVB, NOP, CLEAR, SCREEN;
 //Text and BOXES
 LTexture VOX;
 LTexture T_T;
@@ -95,7 +95,7 @@ bool ongrid=true;
 bool ongridS=true;
 bool ongridF=true;
 AccountUid uid;
-std::string AccountID="";
+std::string AccountID="-.-";
 SDL_Thread* capithread = NULL;
 bool quit=false;
 std::string KeyName;

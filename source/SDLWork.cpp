@@ -217,7 +217,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 
 	MapT[KeyImage].render(X, Y);
 	if (MapT.find(KeyTextH) != MapT.end()){
-		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y , MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()+1}, 0, 0, 0, 200);
+		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y , MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()}, 0, 0, 0, 200);
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
 	if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
@@ -269,7 +269,7 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 
 	MapT[KeyImage].render(X, Y);
 	if (MapT.find(KeyTextH) != MapT.end()){
-		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 3, Y , MapT[KeyTextH].getWidth() + 3, MapT[KeyTextH].getHeight()+1}, 0, 0, 0, 200);
+		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y , MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()}, 0, 0, 0, 200);
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
 		
