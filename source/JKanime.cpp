@@ -10,6 +10,7 @@ extern int mincapit;
 extern int maxcapit;
 extern int latest;
 extern std::string rootdirectory;
+extern std::string rootsave;
 extern SDL_Thread* capithread;
 extern bool gFAV;
 
@@ -209,6 +210,7 @@ int downloadjkanimevideo(void* data) {
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
 	appletSetAutoSleepDisabled(true);
+
 	//Wait for connection
 	if (BD["arrays"]["chapter"]["link"].empty()){
 		//hide the list for rebuild
@@ -243,24 +245,24 @@ int refrescarpro(void* data){
 
 	//Download All not existing images
 	CheckImgVector(ChapImag,imgNumbuffer);
-	std::cout << "# End Image Download\n" << std::endl;
+	std::cout << "# End Image Download" << std::endl;
 
 	//Display List
 	if(reloading) {Frames=0;reloading = false;}
 
 	//'haschange' See if there is any new chap
-	std::cout << "# I am Here1\n" << std::endl;
+	std::cout << "# I am Here1" << std::endl;
 	bool haschange = true;
 	if (!BD["latestchapter"].empty()){
-	std::cout << "# I am Here2\n" << std::endl;
+	std::cout << "# I am Here2" << std::endl;
 		if (BD["latestchapter"] == ChapLink[0])
 		{
-	std::cout << "# I am Here3\n" << std::endl;
+	std::cout << "# I am Here3" << std::endl;
 			haschange = false;
 		}
 	}
 
-	std::cout << "# I am Here4\n" << std::endl;
+	std::cout << "# I am Here4" << std::endl;
 	//TimeStamp indicate if a chap sout be reloaded
 	if (haschange || BD["TimeStamp"].empty()){
 		//update TimeStamp
@@ -292,7 +294,7 @@ int refrescarpro(void* data){
 	std::vector<std::string> vec={};
 
 	//load Top
-	std::cout << "# Get Top  \n" << std::endl;
+	std::cout << "# Get Top" << std::endl;
 	content=gethtml("https://jkanime.net/top/");
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
@@ -303,7 +305,7 @@ int refrescarpro(void* data){
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	//load Horario
-	std::cout << "# Get HourGlass\n" << std::endl;
+	std::cout << "# Get HourGlass" << std::endl;
 	content=gethtml("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	vec=scrapElementAll(content,"https://jkanime.net/");
@@ -313,7 +315,7 @@ int refrescarpro(void* data){
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	//load main
-	std::cout << "# Get Main\n" << std::endl;
+	std::cout << "# Get Main" << std::endl;
 	content = gethtml("https://jkanime.net");
 	replace(content, "\"https://jkanime.net/\"", "");
 	vec=scrapElementAll(content, "https://jkanime.net/");
@@ -322,7 +324,7 @@ int refrescarpro(void* data){
 	BD["arrays"]["Main"]["link"]=vec;
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
-	std::cout << "# End Thread Chain\n" << std::endl;
+	std::cout << "# End Thread Chain" << std::endl;
 	if (!isDownloading) appletSetAutoSleepDisabled(false);
 	//exit after load the cache if are in applet mode
 	if (AppletMode) quit=true;
@@ -573,88 +575,67 @@ return 0;
 }
 
 void addFavorite(std::string text) {
-/*
-	BD["arrays"]["favorites"]["link"].clear();
-	BD["arrays"]["favorites"]["images"].clear();
-	std::string temp;
-	std::ifstream file(rootdirectory+"favoritos.txt");
-	std::string str;
-	while (std::getline(file, str)) {
-		std::string strtmp = str;
-		if (str.find("jkanime"))
-		{
-			BD["arrays"]["favorites"]["link"].push_back(str);
-			replace(strtmp, "https://jkanime.net/", "");
-			replace(strtmp, "/", ".jpg");
-			strtmp = "https://cdn.jkanime.net/assets/images/animes/image/"+strtmp;
-			BD["arrays"]["favorites"]["images"].push_back(strtmp);				
-		}
+	if(!isFavorite(text)){
+		UD["favoritos"].push_back(text);
+		write_DB(UD,rootsave+"UserData.json");
 	}
-	file.close();
-
-*/
 }
 void getFavorite() {
 	if(!BD["arrays"]["favorites"].empty()){
 		BD["arrays"]["favorites"]["link"].clear();
 		BD["arrays"]["favorites"]["images"].clear();
 	}
-	std::string temp;
-	std::ifstream file(rootdirectory+"favoritos.txt");
-	std::string str;
-	while (std::getline(file, str)) {
-		std::string strtmp = str;
-		replace(str,"\"","");
-		if (str.find("jkanime"))
-		{
-			BD["arrays"]["favorites"]["link"].push_back(str);
-			replace(strtmp, "https://jkanime.net/", "");
-			replace(strtmp, "/", ".jpg");
-			strtmp = "https://cdn.jkanime.net/assets/images/animes/image/"+strtmp;
-			BD["arrays"]["favorites"]["images"].push_back(strtmp);				
+	if (!UD["favoritos"].empty()){
+		for (int x=0; x < (int)UD["favoritos"].size(); x++){
+			std::string str = UD["favoritos"][x];
+			replace(str,"\"","");
+			if (str.find("jkanime"))
+			{
+				BD["arrays"]["favorites"]["link"].push_back(str);
+				replace(str, "https://jkanime.net/", "");
+				replace(str, "/", ".jpg");
+				str = "https://cdn.jkanime.net/assets/images/animes/image/"+str;
+				BD["arrays"]["favorites"]["images"].push_back(str);				
+			}
+		}
+	} else {
+		if (isFileExist(rootdirectory+"favoritos.txt")) {
+			std::string temp;
+			std::ifstream file(rootdirectory+"favoritos.txt");
+			std::string str;
+			while (std::getline(file, str)) {
+				std::string strtmp = str;
+				replace(str,"\"","");
+				if (str.find("jkanime"))
+				{
+					BD["arrays"]["favorites"]["link"].push_back(str);
+					UD["favoritos"].push_back(str);
+					replace(strtmp, "https://jkanime.net/", "");
+					replace(strtmp, "/", ".jpg");
+					strtmp = "https://cdn.jkanime.net/assets/images/animes/image/"+strtmp;
+					BD["arrays"]["favorites"]["images"].push_back(strtmp);				
+				}
+			}
+			file.close();
+			rename((rootdirectory+"favoritos.txt").c_str(), (rootdirectory+"favoritos.bak").c_str());
+			remove((rootdirectory+"favoritos.txt").c_str());
+			write_DB(UD,rootsave+"UserData.json");
 		}
 	}
-	file.close();
 }
 bool isFavorite(std::string fav){
-	/*
-	if(BD["arrays"]["favorites"]["images"].empty() || BD["arrays"]["favorites"]["link"].empty()){
-		getFavorite();
-	}
-		static std::string limit = "";
-		if (limit == fav){
-			return gFAV;
-		} else limit = fav;
-	*/
-	std::ifstream file(rootdirectory+"favoritos.txt");
-	std::string str;
-	while (std::getline(file, str)) {
-	//	std::cout << str << "\n";
-		if (str.find("jkanime"))
+	if (!UD["favoritos"].empty()){
+		if(std::find(UD["favoritos"].begin(), UD["favoritos"].end(), fav) != UD["favoritos"].end())
 		{
-//			printf("---\n");
-//			printf("%s---\n",fav.c_str());
-//			printf("%s\n",str.c_str());
-			if (fav == str){file.close(); return true;}
-		}
+		  return true;
+		} 
+		
 	}
-file.close();
 return false;
 }
 void delFavorite(int inst){
-	std::string tmp="";
-	if (inst >= 0){//delete all if is -1  delFavorite();
-		std::ifstream file(rootdirectory+"favoritos.txt");
-		std::string str = "";
-
-		int index = 0;
-		while (std::getline(file, str)) {
-			if (inst != index){tmp += str+"\n";}
-			index++;
-		}
-		file.close();	
-	} else gFAV=false;
-	std::ofstream outfile(rootdirectory+"favoritos.txt");
-	outfile << tmp;
-	outfile.close();
+	if (!UD["favoritos"].empty()){
+		UD["favoritos"].erase(inst);
+		write_DB(UD,rootsave+"UserData.json");
+	}
 }

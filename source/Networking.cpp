@@ -229,6 +229,7 @@ bool HasConnection()
 void CheckImgVector(std::vector<std::string> List,int& index){
 	index=0;
 	int listsize=List.size();
+	if (listsize <= 0) {return;}
 	for (int x = 0; x < listsize && !quit; x++)
 	{
 		index = x+1;
