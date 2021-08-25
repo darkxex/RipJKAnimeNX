@@ -970,7 +970,7 @@ try{
 						TYPEA =  "emmc";
 					#endif
 					gTextTexture.loadFromRenderedText(GOD.digifontC, (TYPEA+" (Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
-					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 670);
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 3, 672);
 					
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Recientes", {100,0,0});
 					if(ongrid){
@@ -994,8 +994,8 @@ try{
 					B_R.render_T(dist, 680,"Buscar");dist -= posdist;
 					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 					B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
+					if(isDownloading) {B_X.render_T(dist, 680,"Descargas");dist -= posdist-10;}
 					CLEAR.render_T(dist, 680,"Cache");dist -= posdist;
-					if(isDownloading) {B_X.render_T(dist, 680,"Descargas");dist -= posdist;}
 				}
 				else
 				{
@@ -1171,8 +1171,9 @@ try{
 		}
 		//global render
 		if(isDownloading&& downloadstate != statenow){
-			T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {50,150,0});
-			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 8, 670-T_D.getHeight());
+			T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,22)+"... ("+std::to_string(porcendown)+"\%)", {50,50,50});
+			VOX.render_VOX({SCREEN_WIDTH - T_D.getWidth() - 2, 671-T_D.getHeight()+4, T_D.getWidth()+4, T_D.getHeight()-5}, 255, 255, 255, 180);
+			T_D.render(SCREEN_WIDTH - T_D.getWidth() - 1, 671-T_D.getHeight());
 		}
 		if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
 		

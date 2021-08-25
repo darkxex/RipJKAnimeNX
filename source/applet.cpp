@@ -130,7 +130,7 @@ AccountUid LaunchPlayerSelect() {
 	AccountUid uids;
 	s32 max_uids=10,actual_total;
 	accountListAllUsers(&uids,max_uids,&actual_total);
-	std::cout << "# accountListAllUsers: " << actual_total << std::endl;
+	//std::cout << "# accountListAllUsers: " << actual_total << std::endl;
 	AccountUid out_id = {};
 	if(actual_total > 1){
 		LibAppletArgs args;
