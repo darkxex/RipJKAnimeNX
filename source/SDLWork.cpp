@@ -143,7 +143,9 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 	}
 	
 	MapT[KeyImage].render(X, Y);
-	if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
+	if(key >= 0){
+		if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
+	}
 }
 void SDLB::PleaseWait(std::string text,bool render){
 	if (render){
@@ -170,9 +172,9 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
 
 	if (!isFileExist(path)) {
-		KeyImage="SuperPro.jpg";
+		KeyImage="nop.png";
 		KeyImage+="-"+std::to_string(WS);
-		path = "romfs:/SuperPro.jpg";
+		path = "romfs:/nop.png";
 	}
 	int sizeportraitx = 300;
 	int sizeportraity =424;
@@ -228,9 +230,9 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
 
 	if (!isFileExist(path)) {
-		KeyImage="nop.png";
+		KeyImage="SuperPro.jpg";
 		KeyImage+="-"+std::to_string(WS);
-		path = "romfs:/nop.png";
+		path = "romfs:/SuperPro.jpg";
 	}
 	int sizeportraitx = 300;
 	int sizeportraity =424;
@@ -423,7 +425,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			if (x == selectindex) {
 				//draw Title
 				gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
-				gTextTexture.render(50, 7);
+				gTextTexture.render(50, 9);
 				if(!Jlinks["date"].empty()){
 					//draw Title
 					gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x+outof], { 0, 0, 0 });
