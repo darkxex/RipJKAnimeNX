@@ -31,9 +31,78 @@ std::cout << "No Existe:" << path << std::endl;
 return false;
 }
 
-
-bool GetAppletMode()
-{
+bool SelectUser(){
+    AccountUid user = LaunchPlayerSelect();
+    if(accountUidIsValid(&user))
+    {
+        uid=user;
+        return true;
+    }
+    return false;
+}
+bool GetUserID(){
+	Result rc = 0;
+	rc =  accountInitialize(AccountServiceType_Application);
+	if (R_SUCCEEDED(rc)) {
+		accountGetPreselectedUser(&uid);
+		printf("Goted user uid\n");
+		return true;
+	} else {
+		printf("failed to get user\n");
+		return false;
+	}
+}
+bool MountUserSave(FsFileSystem& acc){
+	fsdevCommitDevice("save");
+	fsdevUnmountDevice("save");
+	fsFsClose(&acc);
+	
+	if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
+		fsdevMountDevice("save", acc);
+		GetUserImage();
+		return true;
+	}
+printf("failed to Mount User Save\n");
+return false;
+}
+bool GetUserImage(){
+	AccountProfile prof;
+	auto res = accountGetProfile(&prof, uid);
+	if(res == 0)
+	{
+	    u32 iconsize = 0;
+	    accountProfileGetImageSize(&prof, &iconsize);
+	    if(iconsize > 0)
+	    {
+			u8 *icon = new u8[iconsize]();
+			u32 tmpsz;
+			res = accountProfileLoadImage(&prof, icon, iconsize, &tmpsz);
+			if(res == 0)
+			{
+	#ifdef USENAND
+			    FILE *f = fopen("save:/User.jpg", "wb");
+	#else
+			    FILE *f = fopen("sdmc:/switch/RipJKAnime_NX/User.jpg", "wb");
+	#endif
+			    if(f)
+			    {
+					fwrite(icon, 1, iconsize, f);
+					printf("saved user image\n");
+					fclose(f);
+			    } else {
+					printf("failed to open output file image\n");
+				}
+			}
+			delete[] icon;
+	    }
+		printf("failed user image size\n");
+	    accountProfileClose(&prof);
+		return true;
+	}
+printf("failed user image\n");
+return false;
+}
+bool GetAppletMode(){
 	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
@@ -41,7 +110,25 @@ bool GetAppletMode()
 		return true;
 	}
 	__nx_applet_exit_mode = 1;
+	GetUserID();
 	return false;
+}
+AccountUid LaunchPlayerSelect() {
+    AccountUid out_id = {};
+    LibAppletArgs args;
+    libappletArgsCreate(&args, 0x10000);
+    u8 st_in[0xA0] = {0};
+    u8 st_out[0x18] = {0};
+    size_t repsz;
+    auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
+    if(R_SUCCEEDED(res))
+    {
+        u64 lres = *(u64*)st_out;
+        AccountUid *uid_ptr = (AccountUid*)&st_out[8];
+        if(lres == 0) memcpy(&out_id, uid_ptr, sizeof(out_id));
+    }
+    
+    return out_id;
 }
 
 SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
