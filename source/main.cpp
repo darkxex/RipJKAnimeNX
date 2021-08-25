@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	socketInitializeDefault();
 	romfsInit();
 	nxlinkStdio();
-	printf("Nxlink server Conected \n");
+	printf("Nxlink server Conected\n");
 	AppletMode=GetAppletMode();
 	#ifdef USENAND
 		//mount user
