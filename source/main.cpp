@@ -36,21 +36,25 @@ int main(int argc, char **argv)
 		FsFileSystem acc;
 		if (MountUserSave(acc)){
 			if(isFileExist(rootdirectory+AccountID+"UserData.json")){
-				if(!isFileExist(rootdirectory+AccountID+"UserData.json")){
-					copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json");
-					fsdevCommitDevice("save");
-					remove((rootdirectory+AccountID+"UserData.json").c_str());
+				if(!isFileExist(rootsave+"UserData.json")){
+					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+						fsdevCommitDevice("save");
+						remove((rootdirectory+AccountID+"UserData.json").c_str());
+						remove((rootdirectory+AccountID+"User.jpg").c_str());
+					}
 				}
 			}
 			if(isFileExist(rootdirectory+"UserData.json")){
 				if(!isFileExist(rootsave+"UserData.json")){
-					copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json");
-					fsdevCommitDevice("save");
-					remove((rootdirectory+"UserData.json").c_str());
+					if (copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json")){
+						fsdevCommitDevice("save");
+						remove((rootdirectory+"UserData.json").c_str());
+					}
 				}
 			}
 		} else {
 			rootsave = rootdirectory+AccountID;
+			GetUserImage();
 		}	
 	#endif
 	struct stat st = { 0 };
@@ -140,9 +144,9 @@ int main(int argc, char **argv)
 	BUS.loadFromFile("romfs:/buttons/BUS.png");
 	NOP.loadFromFile("romfs:/nop.png");
 	NOP.loadFromFile("romfs:/nop.png");
-	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",58, 58);
-	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",58, 58);
-	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",58, 58);
+	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
+	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
+	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",55, 55);
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 			
 
@@ -244,13 +248,25 @@ try{
 					else if (USER.SP()) {
 						if (SelectUser()){
 							if (MountUserSave(acc)){
-								USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
-								UD = "{}"_json;
-								read_DB(UD,rootsave+"UserData.json");
-								if(statenow==favoritesstate){
-									getFavorite();
-									Frames=1;							
+								rootsave = "save:/";
+								if(isFileExist(rootdirectory+AccountID+"UserData.json")){
+									if(!isFileExist(rootsave+"UserData.json")){
+										if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+											fsdevCommitDevice("save");
+											remove((rootdirectory+AccountID+"UserData.json").c_str());
+											remove((rootdirectory+AccountID+"User.jpg").c_str());
+										}
+									}
 								}
+							}else {
+								rootsave = rootdirectory+AccountID;
+							}
+							USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
+							UD = "{}"_json;
+							read_DB(UD,rootsave+"UserData.json");
+							if(statenow==favoritesstate){
+								getFavorite();
+								Frames=1;							
 							}
 						}
 					}

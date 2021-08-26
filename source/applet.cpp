@@ -18,6 +18,7 @@ extern u32 __nx_applet_exit_mode;
 extern std::string urlc;
 extern bool quit;
 extern int cancelcurl;
+extern std::string rootsave;
 
 bool LoadNRO(std::string path){
 if(isFileExist(path)){
@@ -92,7 +93,7 @@ bool GetUserImage(){
 			if(res == 0)
 			{
 	#ifdef USENAND
-			    FILE *f = fopen("save:/User.jpg", "wb");
+			    FILE *f = fopen((rootsave+"User.jpg").c_str(), "wb");
 	#else
 			    FILE *f = fopen("sdmc:/switch/RipJKAnime_NX/User.jpg", "wb");
 	#endif
