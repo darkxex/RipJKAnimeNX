@@ -34,7 +34,7 @@ extern bool isDownloading;
 extern int porcendown;
 extern int cancelcurl;
 extern bool AppletMode;
-
+extern bool isChained;
 extern std::string serverenlace;
 extern std::string DownTitle;
 extern std::string KeyName;
@@ -174,9 +174,9 @@ void PushDirBuffer(std::string a,std::string name) {
 }
 //Download THREAD
 int downloadjkanimevideo(void* data) {
-	led_on(1);
-	appletSetAutoSleepDisabled(true);
+	ChainManager(true,true);
 	for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size();x++){
+		if (x==0){led_on(1);}
 		DownTitle="................";
 		serverenlace = "................";
 		isDownloading=true;
@@ -185,10 +185,10 @@ int downloadjkanimevideo(void* data) {
 		std::string urldown=BD["arrays"]["downloads"]["queue"][x];
 		std::string namedownload = urldown;
 		NameOfLink(namedownload);
-		namedownload = namedownload.substr(0, namedownload.length() - 1);
 		mayus(namedownload);
 		DownTitle=namedownload;
-		BD["arrays"]["downloads"]["log"][x] = ">>>> "+namedownload;
+		//namedownload = namedownload.substr(0, namedownload.length() - 1);
+		BD["arrays"]["downloads"]["log"][x] = ">>>>  "+namedownload;
 		mkdir("sdmc:/Videos",0777);
 		std::string directorydownload = "sdmc:/Videos/" +namedownload + ".mp4";
 
@@ -203,13 +203,14 @@ int downloadjkanimevideo(void* data) {
 	cancelcurl = 0;
 	isDownloading=false;
 	statenow = downloadstate;
-	appletSetAutoSleepDisabled(false);
+	ChainManager(false,!isDownloading&&!isChained);
 	return 0;
 }
 
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
-	appletSetAutoSleepDisabled(true);
+	isChained=true;
+	ChainManager(true,true);
 
 	//Wait for connection
 	if (BD["arrays"]["chapter"]["link"].empty()){
@@ -325,7 +326,8 @@ int refrescarpro(void* data){
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	std::cout << "# End Thread Chain" << std::endl;
-	if (!isDownloading) appletSetAutoSleepDisabled(false);
+	isChained=false;
+	ChainManager(false,!isDownloading&&!isChained);
 	//exit after load the cache if are in applet mode
 	if (AppletMode) quit=true;
 	return 0;

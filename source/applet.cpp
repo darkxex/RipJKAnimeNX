@@ -43,27 +43,37 @@ std::string FormatHex128(AccountUid Number)
     return strm.str();
 }
 
-bool SelectUser(){
-    AccountUid user = LaunchPlayerSelect();
-    if(accountUidIsValid(&user))
-    {
-        uid=user;
-        return true;
-    }
-    return false;
-}
-bool GetUserID(){
+bool initUser(){
 	Result rc = 0;
 	rc =  accountInitialize(AccountServiceType_Application);
 	if (R_SUCCEEDED(rc)) {
 		accountGetPreselectedUser(&uid);
-		AccountID=FormatHex128(uid);
-		printf("Goted user uid: %s\n",AccountID.c_str());
-		return true;
+		printf("User Init OK\n");
+		return GetUserID();
 	} else {
-		printf("failed to get user\n");
+		printf("failed to init User\n");
 		return false;
 	}
+}
+
+bool SelectUser(){
+    AccountUid user = LaunchPlayerSelect();
+    if(accountUidIsValid(&user))
+    {
+		uid=user;
+		return GetUserID();
+    }
+return false;
+}
+bool GetUserID(){
+    if(accountUidIsValid(&uid))
+    {
+		AccountID=FormatHex128(uid);
+ 		printf("Gotted user uid: %s\n",AccountID.c_str());
+       return true;
+    }
+printf("failed to get user ID\n");
+return false;
 }
 bool MountUserSave(FsFileSystem& acc){
 	fsdevCommitDevice("save");
@@ -100,7 +110,7 @@ bool GetUserImage(){
 			    if(f)
 			    {
 					fwrite(icon, 1, iconsize, f);
-					printf("saved user image\n");
+					printf("Saved user image: %s\n",(rootsave+"User.jpg").c_str());
 					fclose(f);
 			    } else {
 					printf("failed to open output file image\n");
@@ -124,7 +134,7 @@ bool GetAppletMode(){
 		return true;
 	}
 	__nx_applet_exit_mode = 1;
-	GetUserID();
+	initUser();
 	return false;
 }
 AccountUid LaunchPlayerSelect() {
@@ -148,6 +158,29 @@ AccountUid LaunchPlayerSelect() {
 		}
 	}
 	return out_id;
+}
+
+
+bool ChainManager(bool Chain,bool AndChaing){
+	if (Chain){
+		if (AndChaing){
+			appletSetAutoSleepDisabled(true);
+			appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
+			appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
+			printf("Chain App...\n");
+			return true;
+		} else return false;
+	} else {
+		if (AndChaing){
+			appletSetAutoSleepDisabled(false);
+			appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
+			appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);
+			printf("UnChain App...\n");
+			return true;
+		} else return false;
+	}
+
+	
 }
 
 SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {

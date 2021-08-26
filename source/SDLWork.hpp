@@ -14,7 +14,10 @@ public:
 
 	//Deallocates memory
 	~LTexture();
-
+	//peer key funct
+	bool reverse=false;
+	void TikerColor(int& color,int min,int max);
+	
 	//Loads image at specified path
 	bool loadFromFile(std::string path);
 	bool loadFromFileCustom(std::string path, int h, int w);

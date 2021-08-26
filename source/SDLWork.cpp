@@ -188,9 +188,9 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 	}
 		
-	static int blue=250;
+	static int blue=255;
 	if(selected){
-		TikerColor(blue,150,250);
+		MapT[KeyImage].TikerColor(blue,150,250);
 	} else blue=0;
 
 	if (Text.length()){
@@ -663,7 +663,24 @@ LTexture::~LTexture()
 	//Deallocate
 	free();
 }
-
+void LTexture::TikerColor(int& color,int min,int max)
+{
+	int fcolor=color;
+	if (reverse){
+		fcolor-=1;
+		if(fcolor < min){
+			fcolor=min;
+			reverse=false;
+		}
+	} else {
+		fcolor+=5;
+		if(fcolor > max){
+			fcolor=max;
+			reverse=true;
+		}
+	}
+	color=fcolor;
+}
 bool LTexture::loadFromFile(std::string path)
 {
 	//Get rid of preexisting texture

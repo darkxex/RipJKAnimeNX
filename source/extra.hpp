@@ -88,6 +88,8 @@ int selectserver = 0;
 bool serverpront = false;
 
 //my vars
+bool isHandheld=true;
+bool isChained=false;
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;

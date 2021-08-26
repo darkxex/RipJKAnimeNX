@@ -71,6 +71,7 @@ int main(int argc, char **argv)
 	}
 	read_DB(UD,rootsave+"UserData.json");
 	
+	GOD.intA();//init the SDL
 
 	#ifdef USENAND
 		if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
@@ -79,6 +80,7 @@ int main(int argc, char **argv)
 			if (stat((oldroot+"DATA").c_str(), &st) != -1){
 				GOD.PleaseWait("Copiando Archivos Importantes Espere...",true);
 				copy_me(oldroot+"favoritos.txt",rootdirectory+"favoritos.txt");
+				
 				GOD.PleaseWait("Copiando Archivos Importantes Espere.",true);
 				copy_me(oldroot+"texture.png",rootdirectory+"texture.png");
 				GOD.PleaseWait("Copiando Archivos Importantes Espere..",true);
@@ -86,6 +88,7 @@ int main(int argc, char **argv)
 				GOD.PleaseWait("Copiando Archivos Importantes Espere....",true);
 				copy_me(oldroot+"wada.ogg",rootdirectory+"wada.ogg");
 				GOD.PleaseWait("Copiando Archivos Importantes Espere......",true);
+				//set custom music 
 				if (isFileExist(rootdirectory+"wada.ogg")){
 					GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 				}
@@ -103,8 +106,6 @@ int main(int argc, char **argv)
 	SDL_Thread* searchthread = NULL;
 	SDL_Thread* downloadthread = NULL;
 	
-	//set custom music 
-	GOD.intA();//init the SDL
 
 
 	if (isFileExist(rootdirectory+"texture.png")){
@@ -173,8 +174,13 @@ try{
 	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
 
 	//While application is running
-	while (!quit)
+	while (!quit&&appletMainLoop())
 	{
+		//get if console is dokked
+		AppletOperationMode stus=appletGetOperationMode();
+		if (stus == AppletOperationMode_Handheld){isHandheld=true;}
+		if (stus == AppletOperationMode_Console){isHandheld=false;}
+
 		//Handle events on queue
 		while (SDL_PollEvent(&e))
 		{
@@ -260,10 +266,16 @@ try{
 								}
 							}else {
 								rootsave = rootdirectory+AccountID;
+								GetUserImage();
 							}
 							USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 							UD = "{}"_json;
 							read_DB(UD,rootsave+"UserData.json");
+							
+							if(statenow==chapterstate){
+								capBuffer(BD["com"]["ActualLink"]);
+								gFAV = isFavorite(BD["com"]["ActualLink"]);
+							}
 							if(statenow==favoritesstate){
 								getFavorite();
 								Frames=1;							
@@ -287,7 +299,7 @@ try{
 					else if (B_UP.SP()) e.jbutton.button = GOD.BT_UP;
 					else if (B_DOWN.SP()) e.jbutton.button = GOD.BT_DOWN;
 					else if (T_D.SP()&&isDownloading) statenow = downloadstate;
-					else if (SCREEN.SP()){lcdoff=true; appletSetLcdBacklightOffEnabled(lcdoff); }
+					else if (SCREEN.SP()) e.jbutton.button = GOD.BT_ZR;
 					else if (CLEAR.SP()){
 						preview = false;
 						quit = true;
@@ -435,7 +447,7 @@ try{
 						}
 					}
 					else if (e.jbutton.button == GOD.BT_ZR) {// (ZR) button down
-						if(isDownloading){
+						if(isDownloading && isHandheld){
 							lcdoff = !lcdoff;
 							appletSetLcdBacklightOffEnabled(lcdoff);
 						}
@@ -970,8 +982,10 @@ try{
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
-							FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
-							BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+							if (isHandheld){
+								FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
+								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+							}
 						}
 						REC.render_T(5, 15,"");
 					} else {
@@ -1016,7 +1030,8 @@ try{
 					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 					B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
 					if(isDownloading) {B_X.render_T(dist, 680,"Descargas");dist -= posdist-10;}
-					CLEAR.render_T(dist, 680,"Cache");dist -= posdist;
+					if (isHandheld){CLEAR.render_T(dist, 680,"Cache");dist -= posdist;}
+					
 				}
 				else
 				{
@@ -1032,7 +1047,7 @@ try{
 					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
 					
 					int srchsize=BD["arrays"]["search"]["link"].size();
-					if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+					if(ongridS){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 					if (srchsize > 0){
 						//if (srchsize > 30) ongridS=false;
 						if (!ongridS) GOD.ListClassic(searchchapter,BD["arrays"]["search"]);
@@ -1041,6 +1056,9 @@ try{
 							if (ongridS){
 								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongridS,Frames);
 								BUS.render_T(5, 15,"");
+								if (isHandheld){
+									BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+								}
 							} else {
 								GOD.ListCover(searchchapter,BD["arrays"]["search"]);
 								B_UP.render_T(580, 5,"");
@@ -1057,6 +1075,8 @@ try{
 						int distan = gTextTexture.getWidth()+10;
 						gTextTexture.render(5, 1);
 						gTextTexture.loadFromRenderedText(GOD.gFont, BD["searchtext"], {0,0,0});
+						VOX.render_VOX({distan-2,1, gTextTexture.getWidth()+4, gTextTexture.getHeight()}, 210, 210, 210, 155);
+						//T_D.getWidth()+4, T_D.getHeight()
 						gTextTexture.render(distan, 1);
 					}else {
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
@@ -1128,9 +1148,9 @@ try{
 			}
 			case downloadstate:	{
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
-				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
-				VOX.render_VOX({16,65, 900, 222}, 210, 210, 210, 115);//Draw a rectagle to a nice view
-				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
+				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);//Head
+				VOX.render_VOX({16,65, 900, 162}, 210, 210, 210, 115);//Rectangle
+				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Footer
 				
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
 				gTextTexture.render(posxbase, posybase+15);
@@ -1139,55 +1159,59 @@ try{
 				VOX.render_VOX({17,65, gTextTexture.getWidth()+15, 45}, 210, 210, 210, 155);//Draw title back
 				gTextTexture.render(posxbase, posybase + 60);
 
-				gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
-				gTextTexture.render(posxbase , posybase + 280);
 				if (serverenlace != "Error de descarga"){
 					gTextTexture.loadFromRenderedText(GOD.gFontcapit, std::to_string(porcendown) + "\%", textColor);
-					gTextTexture.render(posxbase + 40, posybase + 90);
+					gTextTexture.render(posxbase + 280, posybase + 90);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
-					gTextTexture.render(posxbase + 100, posybase + 220);
-					
+					gTextTexture.render(posxbase, posybase + 160);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
-					gTextTexture.render(posxbase, posybase + 260);
+					gTextTexture.render(posxbase, posybase + 200);
 
 					if (std::to_string(porcendown) == "100"&&!isDownloading) {
 						//Render red filled quad
-						VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
+						VOX.render_VOX({ posxbase + 198, posybase + 500, 580, 50 }, 255, 255, 255, 195);
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
-						gTextTexture.render(posxbase + 100, posybase + 400);
+						gTextTexture.render(posxbase + 200, posybase + 500);
 						if(lcdoff){lcdoff=false; appletSetLcdBacklightOffEnabled(lcdoff);}
 					 }else{
 						gTextTexture.loadFromRenderedText(GOD.digifont, "Velocidad: " +speedD+" M/S", textColor);
-						VOX.render_VOX({ posxbase + 120, posybase + 240, gTextTexture.getWidth()+15, 20 }, 255, 255, 255, 145);
-						gTextTexture.render(posxbase + 130, posybase + 240);
-						SCREEN.render(1180, 65);
-						B_ZR.render_T(550, 680,"Apagar Pantalla");
+						VOX.render_VOX({ posxbase, posybase + 180, gTextTexture.getWidth()+6, 20 }, 255, 255, 255, 145);
+						gTextTexture.render(posxbase + 2, posybase + 180);
+						if (isHandheld){
+							SCREEN.render(1180, 65);
+							B_ZR.render_T(550, 680,"Apagar Pantalla");
+						}
 					 }
 				} else {
 					porcendown=0;
 				}
 				
-				VOX.render_VOX({posxbase-5,posybase + 300 , 750, ((int)BD["arrays"]["downloads"]["log"].size() * 22)+53}, 200, 200, 200, 105);
-				gTextTexture.loadFromRenderedText(GOD.digifont, "Cola De Descarga::", textColor);
-				gTextTexture.render(posxbase, posybase+310);
+				gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace.substr(0,300), {168,0,0});
+				gTextTexture.render(posxbase , posybase + 220);
+				
+				static int tatic = 850;
+				VOX.render_VOX({posxbase-5,posybase + 240 , tatic, ((int)BD["arrays"]["downloads"]["log"].size() * 22)+33}, 200, 200, 200, 105);
+				gTextTexture.loadFromRenderedText(GOD.digifont, "Cola De Descarga :", textColor);
+				gTextTexture.render(posxbase, posybase+240);
 				for (u64 x = 0; x < BD["arrays"]["downloads"]["log"].size(); x++) {
 					std::string descarga = BD["arrays"]["downloads"]["log"][x];
-					NameOfLink(descarga);
+					//NameOfLink(descarga);
 					SDL_Color txtColor = textColor;//{ 50, 50, 50 };
 					
 					if(descarga.substr(0,3) == "100") txtColor = { 0, 100, 0 };
 					if(descarga.substr(0,3) == "Err") txtColor = { 150, 50, 50 };
-					if(descarga.substr(0,3) == ">>>") txtColor = { 0, 0, 0 };
+					if(descarga.substr(0,3) == ">>>") {txtColor = { 0, 0, 0 }; replace(descarga,">>>>",">>"+std::to_string(porcendown)+"\%");}
+					if(descarga.substr(0,3) == "htt") {txtColor = { 100, 100, 100}; NameOfLink(descarga);descarga="En Cola: "+descarga;}
 
 					gTextTexture.loadFromRenderedText(GOD.digifont, descarga, txtColor);
-					gTextTexture.render(posxbase, posybase+350 + ((x) * 22));
+					if (tatic < gTextTexture.getWidth()){tatic = gTextTexture.getWidth()+35;}
+					gTextTexture.render(posxbase, posybase+260 + ((x) * 22));
 					
 				}
 				
-				if(isDownloading)
-				B_X.render_T(800, 680,"Cancelar la descarga");
+				if(isDownloading) B_X.render_T(800, 680,"Cancelar la descarga");
 				B_B.render_T(1100, 680,"Volver");
 			break;
 			}
@@ -1225,7 +1249,7 @@ try{
 			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 1 );
 		}
 
-		if(programationstate != statenow){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
+		if(programationstate != statenow && isHandheld){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
 		B_P.render_T(160, 680,"Salir",quit);
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
@@ -1245,6 +1269,8 @@ try{
 	write_DB(BD,rootdirectory+"DataBase.json.bak");
 	quit=true;
 }
+	//Quit if loop break for no reason
+	quit=true;
 	cancelcurl=1;
 	//clear allocate
 	BD["com"] = "{}"_json;
