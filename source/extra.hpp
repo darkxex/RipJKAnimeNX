@@ -31,21 +31,15 @@
 #include "utils.hpp"
 //////////////////////////////////aquí empieza el pc.
 //Screen dimension constants
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;
 //Rendered texture
-LTexture gTextTexture;
-LTexture Farest;
-LTexture Heart;
+LTexture gTextTexture, Farest, Heart;
 //Render Buttons
 LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
 LTexture BUS, BUSB, REC, BACK, USER, NFAV, FAV, FAVB, NOP, CLEAR, SCREEN;
 //Text and BOXES
-LTexture VOX;
-LTexture T_T;
-LTexture T_D;
-LTexture T_R;
+LTexture VOX, T_T, T_N, T_D, T_R;
 
 //main SLD funct (Grafics On Display == GOD)
 SDLB GOD;

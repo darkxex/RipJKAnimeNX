@@ -241,6 +241,7 @@ try{
 						{//AGREGAR A FAVORITOS
 							addFavorite(BD["com"]["ActualLink"]);
 							gFAV = true;
+							FAV.TikerBomb();
 							GOD.TouchX = -1;
 							GOD.TouchY = -1;
 						}
@@ -282,7 +283,8 @@ try{
 							}
 						}
 					}
-					else if (B_A.SP() || T_T.SP() ) e.jbutton.button = GOD.BT_A;
+					else if (B_A.SP()) {e.jbutton.button = GOD.BT_A; B_A.TikerBomb();}
+					else if (T_T.SP() ) e.jbutton.button = GOD.BT_A;
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
 					else if (BACK.SP()) e.jbutton.button = GOD.BT_B;
 					else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
@@ -391,6 +393,7 @@ try{
 								}
 							} else {
 								if (isConnected) serverpront = true;
+								T_N.TikerBomb();
 							}
 							break;
 						}
@@ -566,6 +569,7 @@ try{
 						{//AGREGAR A FAVORITOS
 							addFavorite(BD["com"]["ActualLink"]);
 							gFAV = true;
+							FAV.TikerBomb();
 						}
 
 						break;
@@ -901,8 +905,8 @@ try{
 					}
 					
 					if (serverpront){
-						gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
-						gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						T_N.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
+						T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 558+YS);
 					} else {
 						T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
 						T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
@@ -927,8 +931,8 @@ try{
 				} else {
 					VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
 					if (BD["com"]["nextdate"] == "Pelicula"){
-						T_T.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
-						T_T.render(posxbase + 282+XS-T_T.getWidth()/2, posybase + 558+YS);
+						T_N.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
+						T_N.render(posxbase + 282+XS-T_N.getWidth()/2, posybase + 558+YS);
 					} else {
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
 						gTextTexture.render(posxbase + 282+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
@@ -936,7 +940,6 @@ try{
 					
 				}
 			}
-
 
 			//Draw Footer Buttons
 			int dist = 1095,posdist = 160;
@@ -950,7 +953,7 @@ try{
 			}
 
 			if(gFAV){
-				FAV.render_T(1230, 70,"");
+				FAV.render(1230, 70);
 			} else {
 				NFAV.render_T(1230, 70,"");
 				B_Y.render_T(dist, 680,"Favorito");dist -= posdist;
@@ -987,7 +990,18 @@ try{
 								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
 							}
 						}
-						REC.render_T(5, 15,"");
+						double angle = 0.0;
+						static int tiker=0;
+						if (isChained){
+							REC.TikerRotate(tiker,0,360,2,isChained);
+							angle=tiker;
+						} else if (tiker > 0){
+							REC.TikerRotate(tiker,-25,360,5,isChained);
+							angle=tiker;
+						}else if (tiker < 0){
+							tiker=0;
+						}
+						REC.render(5, 15,NULL,angle);
 					} else {
 						GOD.ListClassic(selectchapter,BD["arrays"]["chapter"]);
 						if (preview)

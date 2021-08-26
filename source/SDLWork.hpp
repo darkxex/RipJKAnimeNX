@@ -17,6 +17,9 @@ public:
 	//peer key funct
 	bool reverse=false;
 	void TikerColor(int& color,int min,int max);
+	void TikerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
+	void TikerBomb(int sizescale=0);
+	void TikerScale();
 	
 	//Loads image at specified path
 	bool loadFromFile(std::string path);
@@ -51,17 +54,24 @@ public:
 	int getX();
 	int getY();
 	bool mark;
+	
+	//texture Scale
+	int offtik=0;
+	
+	//texture boom
+	int offboom=0;
+	//default boom size
+	int offboom_min=0, offboom_size=11;
+	
 private:
 	//The actual hardware texture
 	SDL_Texture* mTexture;
 
+	//W H overwrite
+	int offW=0, offH=0;
+
 	//Image dimensions
-	int mWidth;
-	int mHeight;
-	int mX;
-	int mY;
-	int SelIns;
-	
+	int mWidth, mHeight, mX, mY, SelIns;
 };
 
 
