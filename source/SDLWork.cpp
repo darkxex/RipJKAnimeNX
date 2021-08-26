@@ -260,7 +260,7 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
-		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+8}, 0, 0, 0, 200);
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+6}, 0, 0, 0, 200);
 		MapT[KeyText].render(X + 2, Y + 8+MapT[KeyImage].getHeight());
 	} else {
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, 0, 200);
@@ -367,7 +367,6 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 	}
 
 	for (int x = 0; x < JlinksSize; x++) {
-		if (ongrid){if(x >= 30) break;}
 		//This controll the image order and logic
 		std::string Link=vec[x];
 		//Get the Cap Key
@@ -396,6 +395,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				offsettval=laof;
 			}
 		}
+		//cout << ">>>>> "  << TEXT.length() <<  ">>>>> "  << offsettval <<  ">>>>> "  << laof << endl;
 		
 		if (Link.length() > 0) {
 			TEXT=TEXT.substr(offsettval,25)+" #"+Link;
@@ -412,7 +412,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		int nosel=113,issel=120;
 		if (ongrid)
 		{
-			
+			if(x >= 30) break;
 			//Grid Animation
 			if (limit>0){
 				std::string KeyImage=imagelocal.substr(25)+"-"+std::to_string(nosel);

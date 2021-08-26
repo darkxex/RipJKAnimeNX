@@ -5,7 +5,6 @@
 #include <string>
 #include <cmath>
 #include <Vector>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
 #include <iostream>
@@ -619,53 +618,36 @@ void led_on(int inter){
         
 }
 
-bool onTimeC(int sec,int& time2){
+bool onTimeC(unsigned long long sec,unsigned long long& time2){
     struct timeval time_now{};
     gettimeofday(&time_now, nullptr);
     time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
 	
-	int time1 = msecs_time;
+	unsigned long long time1 = msecs_time;
+//	if (time1<0){time1=-time1;}
 	//static int time2 = msecs_time;
-
 	if (time1 > time2+sec){
 		time2 = time1;
 		return true;
 	}
 	return false;
-/*
-    cout << "seconds since epoch: " << time_now.tv_sec << endl;
-    cout << "milliseconds since epoch: "  << msecs_time << endl << endl;
-
-
-
-	if (sec > 0) sec--;
-	std::time_t t = std::time(0);
-	int time1 = t;
-	static int time2 = t;
-	if (time1 > time2+sec){
-		time2 = time1;
-		return true;
-	}
-	return false;
-*/
-
 }
 void TikerName(int& color,int sec,int min,int max){
 	static bool running=false;
 	static bool Start=false;
 	
-	static int time2 = 0;
+	static unsigned long long time2 = 0;
 	static int increment = 5;
 	if (color < 0){
 		color=0;
 		running=false;
 		Start=true;
 	}
-	
 	if(!running){
 		//delay
 		if (onTimeC(sec*increment,time2))
 		{
+		//cout << "<< "  << color << endl;
 			if (color > 0 || Start){
 				color=0;
 				increment=13;
@@ -673,19 +655,18 @@ void TikerName(int& color,int sec,int min,int max){
 			} else {
 				running=true;
 			}
-		//cout << "> "  << color << endl;
 		}
 	} else {
 		//running time
 		if (onTimeC(sec,time2))
 		{
+		//cout << ">> "  << color << endl;
 			color+=1;
 			if(color >= max){
 				color = max;
 				increment=8;
 				running=false;
 			}
-		//cout << "> "  << color << endl;
 		}
 	}
 

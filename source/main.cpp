@@ -1241,7 +1241,7 @@ try{
 		//clock cicle 1s
 		int maxt=100;
 		static int net=maxt;
-		static int time2 = 0;
+		static unsigned long long time2 = 0;
 		if (onTimeC(1000,time2)){		
 			if (!HasConnection()) {
 				isConnected=false;
