@@ -9,6 +9,7 @@ extern json UD;
 extern int mincapit;
 extern int maxcapit;
 extern int latest;
+extern int latestcolor;
 extern std::string rootdirectory;
 extern std::string rootsave;
 extern SDL_Thread* capithread;
@@ -554,9 +555,11 @@ int capBuffer (std::string Tlink) {
 				} else {
 					latest = BD["DataBase"][name]["mincapit"];//is not in emision 
 				}
+				latestcolor = -1;
 			}
 			else{
 				latest = UD["chapter"][name]["latest"];
+				latestcolor = UD["chapter"][name]["latest"];
 			}
 
 			//Get Image

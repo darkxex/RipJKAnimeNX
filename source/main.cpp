@@ -154,6 +154,8 @@ int main(int argc, char **argv)
 	SDL_Color textColor = { 50, 50, 50 };
 	SDL_Color textWhite = { 255, 255, 255 };
 	SDL_Color textGray = { 200, 200, 200 };
+	SDL_Color textGrayGreen = { 100, 200, 100 };
+	SDL_Color textWhiteGreen = { 80, 255, 80 };
 
 	int posxbase = 20;
 	int posybase = 10;
@@ -380,6 +382,7 @@ try{
 								} else {
 									serverpront = false;
 									UD["chapter"][KeyName]["latest"] = latest;
+									latestcolor = latest;
 									
 									std::string item=BD["com"]["ActualLink"].get<std::string>();
 									int hsize = UD["history"].size();
@@ -893,31 +896,44 @@ try{
 					}
 					B_DOWN.render_T(280+XS, 630+YS,"");
 				}
-				if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula"){//draw caps Scroll
+				if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula"){//draw caps numbers Slider
 					VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
+					SDL_Color com = {};
 					if (latest-2 >= mincapit) {
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), textGray);
+						com=textGray;
+						if (latest-2 == latestcolor) com=textGrayGreen;
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), com);
 						gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
 					if (latest-1 >= mincapit) {
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), textGray);
+						com=textGray;
+						if (latest-1 == latestcolor) com=textGrayGreen;
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), com);
 						gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
 					
-					if (serverpront){
-						T_N.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
-						T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 558+YS);
-					} else {
-						T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
-						T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
+					{
+						com=textWhite;
+						if (latest == latestcolor) com=textWhiteGreen;
+						if (serverpront){
+							T_N.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
+							T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 558+YS);
+						} else {
+							T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
+							T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
+						}
 					}
 
 					if (latest+1 <= maxcapit) {
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), textGray);
+						com=textGray;
+						if (latest+1 == latestcolor) com=textGrayGreen;
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), com);
 						gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
 					if (latest+2 <= maxcapit) {
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), textGray);
+						com=textGray;
+						if (latest+2 == latestcolor) com=textGrayGreen;
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), com);
 						gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
 
@@ -971,7 +987,7 @@ try{
 				imagelocal = KeyOfLink(imagelocal);
 				imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 				if(!serverpront){CheckImgNet(imagelocal);B_L.render_T(dist, 680,"Precuela");dist -= posdist;}
-				GOD.Cover(imagelocal,20,457,"Precuela",120,GOD.BT_L);
+				GOD.Cover(imagelocal,10,457,"Precuela",120,GOD.BT_L);
 			}
 
 			break;
