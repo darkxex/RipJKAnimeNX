@@ -190,7 +190,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 		
 	static int blue=255;
 	if(selected){
-		MapT[KeyImage].TikerColor(blue,150,250);
+		MapT[KeyImage].TickerColor(blue,150,250);
 	} else blue=0;
 
 	if (Text.length()){
@@ -392,7 +392,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				laof=-1;
 			}
 			if (TEXT.length() > 25){
-				TikerName(laof,200,0,TEXT.length()-25);
+				TickerName(laof,200,0,TEXT.length()-25);
 				offsettval=laof;
 			}
 		}
@@ -663,7 +663,7 @@ LTexture::~LTexture()
 	//Deallocate
 	free();
 }
-void LTexture::TikerColor(int& color,int min,int max)
+void LTexture::TickerColor(int& color,int min,int max)
 {
 	int fcolor=color;
 	if (reverse){
@@ -681,7 +681,7 @@ void LTexture::TikerColor(int& color,int min,int max)
 	}
 	color=fcolor;
 }
-void LTexture::TikerRotate(int& angle,int min,int max, int addangle,bool clock)
+void LTexture::TickerRotate(int& angle,int min,int max, int addangle,bool clock)
 {
 	int fangle=angle;
 	if(clock){
@@ -698,14 +698,14 @@ void LTexture::TikerRotate(int& angle,int min,int max, int addangle,bool clock)
 	
 	angle=fangle;
 }
-void LTexture::TikerBomb(int sizescale){
+void LTexture::TickerBomb(int sizescale){
 	reverse=false;
 	offboom_min=sizescale;
 	offboom=sizescale+1;
 }
-void LTexture::TikerScale(){
+void LTexture::TickerScale(){
 	if (offboom > offboom_min){
-		TikerColor(offboom,offboom_min,offboom_size);
+		TickerColor(offboom,offboom_min,offboom_size);
 		offtik=offboom;
 	}
 	if (offboom < offboom_min){
@@ -894,7 +894,7 @@ void LTexture::setAlpha(Uint8 alpha)
 void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//texture boom
-	TikerScale();
+	TickerScale();
 	int offtikx2=offtik*2;
 	
 	//Set rendering space and render to screen

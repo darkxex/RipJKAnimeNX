@@ -17,7 +17,7 @@ bool read_DB(json& base,std::string path);
 bool write_DB(json base,std::string path);
 void led_on(int inter);
 bool onTimeC(unsigned long long sec,unsigned long long& time2);
-void TikerName(int& color,int sec,int min,int max);
+void TickerName(int& color,int sec,int min,int max);
 void RemoveAccents(std::string& word);
 void NameOfLink(std::string& word);
 std::string KeyOfLink(std::string word);

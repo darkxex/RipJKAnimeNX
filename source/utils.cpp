@@ -632,7 +632,7 @@ bool onTimeC(unsigned long long sec,unsigned long long& time2){
 	}
 	return false;
 }
-void TikerName(int& color,int sec,int min,int max){
+void TickerName(int& color,int sec,int min,int max){
 	static bool running=false;
 	static bool Start=false;
 	

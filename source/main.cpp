@@ -240,7 +240,7 @@ try{
 						{//AGREGAR A FAVORITOS
 							addFavorite(BD["com"]["ActualLink"]);
 							gFAV = true;
-							FAV.TikerBomb();
+							FAV.TickerBomb();
 							GOD.TouchX = -1;
 							GOD.TouchY = -1;
 						}
@@ -285,7 +285,7 @@ try{
 							}
 						}
 					}
-					else if (B_A.SP()) {e.jbutton.button = GOD.BT_A; B_A.TikerBomb();}
+					else if (B_A.SP()) {e.jbutton.button = GOD.BT_A; B_A.TickerBomb();}
 					else if (T_T.SP() ) e.jbutton.button = GOD.BT_A;
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
 					else if (BACK.SP()) e.jbutton.button = GOD.BT_B;
@@ -400,7 +400,7 @@ try{
 								}
 							} else {
 								if (isConnected) serverpront = true;
-								T_N.TikerBomb();
+								T_N.TickerBomb();
 							}
 							break;
 						}
@@ -578,7 +578,7 @@ try{
 						{//AGREGAR A FAVORITOS
 							addFavorite(BD["com"]["ActualLink"]);
 							gFAV = true;
-							FAV.TikerBomb();
+							FAV.TickerBomb();
 						}
 
 						break;
@@ -1009,15 +1009,15 @@ try{
 							}
 						}
 						double angle = 0.0;
-						static int tiker=0;
+						static int Ticker=0;
 						if (isChained){
-							REC.TikerRotate(tiker,0,360,2,isChained);
-							angle=tiker;
-						} else if (tiker > 0){
-							REC.TikerRotate(tiker,-25,360,5,isChained);
-							angle=tiker;
-						}else if (tiker < 0){
-							tiker=0;
+							REC.TickerRotate(Ticker,0,360,2,isChained);
+							angle=Ticker;
+						} else if (Ticker > 0){
+							REC.TickerRotate(Ticker,-25,360,5,isChained);
+							angle=Ticker;
+						}else if (Ticker < 0){
+							Ticker=0;
 						}
 						REC.render(5, 15,NULL,angle);
 					} else {

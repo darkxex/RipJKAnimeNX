@@ -16,10 +16,10 @@ public:
 	~LTexture();
 	//peer key funct
 	bool reverse=false;
-	void TikerColor(int& color,int min,int max);
-	void TikerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
-	void TikerBomb(int sizescale=0);
-	void TikerScale();
+	void TickerColor(int& color,int min,int max);
+	void TickerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
+	void TickerBomb(int sizescale=0);
+	void TickerScale();
 	
 	//Loads image at specified path
 	bool loadFromFile(std::string path);
