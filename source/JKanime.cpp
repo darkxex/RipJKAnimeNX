@@ -40,8 +40,7 @@ extern std::string serverenlace;
 extern std::string DownTitle;
 extern std::string KeyName;
 
-enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
-enum statesreturn { toprogramation, tosearch, tofavorite };
+enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, hourglass, topstate, programationsliderstate};
 extern int statenow;
 extern int returnnow;
 
@@ -472,7 +471,7 @@ int searchjk(void* data) {
 	else
 	{
 		statenow = programationstate;
-		returnnow = toprogramation;
+		returnnow = programationstate;
 	}
 	reloadingsearch = false;
 	MKcapitBuffer(BD["arrays"]["search"]["link"], porcentajebuffer, porcentajebufferAll);

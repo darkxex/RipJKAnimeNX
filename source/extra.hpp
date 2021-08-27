@@ -37,7 +37,7 @@ LTexture gTextTexture, Farest, Heart;
 //Render Buttons
 LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
-LTexture BUS, BUSB, REC, BACK, USER, NFAV, FAV, FAVB, NOP, CLEAR, SCREEN;
+LTexture BUS, BUSB, REC, BACK, USER, NFAV, FAV, FAVB, AFLV, NOP, CLEAR, SCREEN;
 //Text and BOXES
 LTexture VOX, T_T, T_N, T_D, T_R;
 
@@ -45,10 +45,9 @@ LTexture VOX, T_T, T_N, T_D, T_R;
 SDLB GOD;
 	
 //Gui Vars
-enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate };
-enum statesreturn { toprogramation, tosearch, tofavorite };
+enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, hourglass, topstate, programationsliderstate};
 int statenow = programationstate;
-int returnnow = toprogramation;
+int returnnow = programationstate;
 //net
 std::string urltodownload = "";
 int porcendown = 0;
@@ -80,6 +79,9 @@ bool gFAV = false;
 //server
 int selectserver = 0;
 bool serverpront = false;
+//slider
+int selectelement = 0;
+
 
 //my vars
 bool isHandheld=true;
@@ -92,6 +94,10 @@ bool ongridS=true;
 bool ongridF=true;
 AccountUid uid;
 std::string AccountID="-.-";
+//Threads
+SDL_Thread* prothread = NULL;
+SDL_Thread* searchthread = NULL;
+SDL_Thread* downloadthread = NULL;
 SDL_Thread* capithread = NULL;
 bool quit=false;
 std::string KeyName;
@@ -105,6 +111,7 @@ std::vector<std::string> arrayserversbak= {
 "Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
 };
 
+std::vector<std::string> StatesList= {};
 json BD;
 json UD;
 
@@ -119,3 +126,38 @@ int sizeportraitx =424;
 int xdistance = 1010;
 int ydistance = 340;
 bool isConnected = true;
+
+
+//call states
+void callsearch(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	if (!reloadingsearch)
+	{
+		if (BD["searchtext"].empty()){BD["searchtext"]="";}
+		BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
+		if ((BD["searchtext"].get<std::string>()).length() > 0){
+			searchchapter = 0;
+			reloadingsearch = true;	 
+			statenow = searchstate;
+			returnnow = searchstate;
+			searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
+		}
+	}
+}
+
+void callfavs(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	if (!reloading)
+	{
+		getFavorite();
+		returnnow = favoritesstate;
+		statenow = favoritesstate;
+		Frames=1;
+	}
+}
+
+void callAflv(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	statenow=programationstate;
+	WebBrowserCall("https://animeflv.net",true);
+}

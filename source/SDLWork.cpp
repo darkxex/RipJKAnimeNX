@@ -113,6 +113,7 @@ void SDLB::intA(){
 	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
 	gFont4 = TTF_OpenFont("romfs:/lazy2.ttf", 30);
 	gFont5 = TTF_OpenFont("romfs:/lazy2.ttf", 20);
+	gFont6 = TTF_OpenFont("romfs:/lazy2.ttf", 50);
 	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
 	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
 	digifontC = TTF_OpenFont("romfs:/digifont.otf", 9);

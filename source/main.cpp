@@ -101,13 +101,6 @@ int main(int argc, char **argv)
 	mkdir((rootdirectory+"DATA").c_str(), 0777);
 	#endif
 
-
-	SDL_Thread* prothread = NULL;
-	SDL_Thread* searchthread = NULL;
-	SDL_Thread* downloadthread = NULL;
-	
-
-
 	if (isFileExist(rootdirectory+"texture.png")){
 		Farest.loadFromFile(rootdirectory+"texture.png");
 	} else {
@@ -148,8 +141,8 @@ int main(int argc, char **argv)
 	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
 	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
 	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",55, 55);
+	AFLV.loadFromFileCustom("romfs:/buttons/AF.png",55, 55);
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
-			
 
 	SDL_Color textColor = { 50, 50, 50 };
 	SDL_Color textWhite = { 255, 255, 255 };
@@ -238,7 +231,11 @@ try{
 					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
 					e.jbutton.button=-1;
-					if (NFAV.SP() && !gFAV){
+					if (BUSB.SP()) {callsearch();}
+					else if (FAVB.SP()) {callfavs();}
+					else if (AFLV.SP()) {callAflv();}
+					
+					else if (NFAV.SP() && !gFAV){
 						GOD.WorKey="0";GOD.MasKey=-1;
 						{//AGREGAR A FAVORITOS
 							addFavorite(BD["com"]["ActualLink"]);
@@ -248,9 +245,12 @@ try{
 							GOD.TouchY = -1;
 						}
 						break;
-					} else if (GOD.MasKey >=0){
-						if(GOD.MapT[GOD.WorKey].SP()){
-							e.jbutton.button=GOD.MasKey;
+					}
+					else if (GOD.MasKey >=0){
+						if (statenow != programationsliderstate){
+							if(GOD.MapT[GOD.WorKey].SP()){
+								e.jbutton.button=GOD.MasKey;
+							}
 						}
 						GOD.WorKey="0";GOD.MasKey=-1;
 					}
@@ -291,10 +291,8 @@ try{
 					else if (BACK.SP()) e.jbutton.button = GOD.BT_B;
 					else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
 					else if (B_Y.SP()) e.jbutton.button = GOD.BT_Y;
-					else if (FAVB.SP()) e.jbutton.button = GOD.BT_Y;
 					else if (B_L.SP()) e.jbutton.button = GOD.BT_L;
 					else if (B_R.SP()) e.jbutton.button = GOD.BT_R;
-					else if (BUSB.SP()) e.jbutton.button = GOD.BT_R;
 					else if (B_ZR.SP()) e.jbutton.button = GOD.BT_ZR;
 					else if (B_P.SP()) e.jbutton.button = GOD.BT_P;
 					else if (B_M.SP()) e.jbutton.button = GOD.BT_M;
@@ -345,6 +343,12 @@ try{
 
 						switch (statenow)
 						{
+						case programationsliderstate:
+							if(selectelement==0){callsearch();}
+							if(selectelement==1){callfavs();}
+							if(selectelement==2){}
+							if(selectelement==5){callAflv();}
+							break;
 							case programationstate:
 							{
 								if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1)
@@ -449,7 +453,7 @@ try{
 							if (e.jbutton.button == GOD.BT_ZL)
 								WebBrowserCall(urlc,true);
 							else 
-								WebBrowserCall("https://animeflv.net",true);
+								callAflv();
 						}
 					}
 					else if (e.jbutton.button == GOD.BT_ZR) {// (ZR) button down
@@ -461,8 +465,12 @@ try{
 						switch (statenow)
 						{
 						case programationstate:
+							statenow=programationsliderstate;
 							std::cout  << BD << std::endl;
 							std::cout  << UD << std::endl;
+							break;
+						case programationsliderstate:
+							statenow=programationstate;
 							break;
 						case favoritesstate:
 							break;
@@ -481,31 +489,23 @@ try{
 								serverpront=false;
 								arrayservers=arrayserversbak;
 							} else {
-								switch (returnnow)
-								{
-								case toprogramation:
-									statenow = programationstate;
-									break;
-								case tosearch:
-									statenow = searchstate;
-									break;
-								case tofavorite:
-									statenow = favoritesstate;
-									break;
-								}
+								statenow=returnnow;
 							}
 							break;
 						case searchstate:
 							if (!reloadingsearch)
 							{
-								returnnow = toprogramation;
+								returnnow = programationstate;
 								statenow = programationstate;
 							}
 							break;
 
 						case favoritesstate:
-							returnnow = toprogramation;
+							returnnow = programationstate;
 							statenow = programationstate;
+							break;
+						case programationsliderstate:
+							statenow=programationstate;
 							break;
 						}
 					}
@@ -558,13 +558,19 @@ try{
 						switch (statenow)
 						{
 						case programationstate:
+							statenow=programationsliderstate;
+							selectelement = 1;
+							break;
+						/*
 							if (!reloading)
 							{
 								getFavorite();
-								returnnow = tofavorite;
+								returnnow = favoritesstate;
 								statenow = favoritesstate;
 								Frames=1;
 							}
+						
+						*/
 							break;
 						case downloadstate:
 							break;
@@ -630,18 +636,7 @@ try{
 						break;
 						case programationstate:
 						case searchstate:
-							if (!reloadingsearch)
-							{
-								if (BD["searchtext"].empty()){BD["searchtext"]="";}
-								BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
-								if ((BD["searchtext"].get<std::string>()).length() > 0){
-									searchchapter = 0;
-									reloadingsearch = true;	 
-									statenow = searchstate;
-									returnnow = tosearch;
-									searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
-								}
-							}
+							callsearch();
 							break;
 
 						}
@@ -748,6 +743,9 @@ try{
 						case favoritesstate:
 							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
+						case programationsliderstate:
+							GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
+							break;
 						}
 					}
 					else if (e.jbutton.button == GOD.BT_DOWN || e.jbutton.button == GOD.BT_LS_DOWN) {// (down) button down
@@ -787,6 +785,9 @@ try{
 
 						case favoritesstate:
 							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							break;
+						case programationsliderstate:
+							GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
 							break;
 						}
 					}
@@ -992,6 +993,7 @@ try{
 
 			break;
 			}
+			case programationsliderstate:
 			case programationstate:	{
 				if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1) {
 					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
@@ -1001,7 +1003,7 @@ try{
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
-							if (isHandheld){
+							if (isHandheld && statenow!=programationsliderstate){
 								FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
 								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
 							}
@@ -1052,13 +1054,59 @@ try{
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 						}
 					}
+					if (statenow==programationsliderstate){
+						
+						{
+							StatesList= {"Busqueda","Favoritos","Historial","Horario","Top Anime","AnimeFLV","ToDo..."};
 
+							int mwide = 60,XD=920,YD=120,W=1280-XD;
+							VOX.render_VOX({XD,61, 1280, 608}, 210, 210, 210, 215);
+							VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);//head line
+							VOX.render_VOX({XD,668, W, 1}, 255, 255, 255, 235);//bottom line
+							VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);//line left
+							gTextTexture.loadFromRenderedText(GOD.gFont5, "Menú Primario",textColor);
+							gTextTexture.render(XD+20, 65);
+							
+							int indexLsize = StatesList.size();
+							int Ymaxsize = indexLsize*mwide;
+							if(GOD.TouchX < 1280 && GOD.TouchY < Ymaxsize+YD && GOD.TouchY > YD && GOD.TouchX > XD+100){
+								int sel=(GOD.TouchY-YD) / mwide;
+								VOX.render_VOX({XD+80-10,YD+(sel*mwide)+5, W-100, mwide-5}, 0, 0, 255, 235);
+								if (sel >= 0 && sel < indexLsize){
+									selectelement = sel;
+								}
+							}
+							for (int x = 0; x < (int)StatesList.size(); x++) {
+								if(x == 0){BUSB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 1){FAVB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 5){AFLV.render(XD+10, YD + (x * mwide)+5);}
+
+								if (x == selectelement){
+									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);
+									VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-50, T_T.getHeight()-5}, 50, 50, 50, 200);
+									T_T.render(XD+80, YD + (x * mwide));
+								} else {
+									gTextTexture.loadFromRenderedText(GOD.gFont6, StatesList[x],textColor);
+									gTextTexture.render(XD+80, YD + (x * mwide));
+								}
+								if (x < (int)StatesList.size()-1){
+									VOX.render_VOX({XD+80,YD + (x * mwide)+mwide+2, W-130, 1}, 255, 255, 255, 235);
+								}
+							}
+						}
+
+						//Draw footer buttons
+						int dist = 1100,posdist = 170;
+						B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+						B_B.render_T(dist, 680,"Atrás");dist -= posdist;
+						break;
+					}
 					//Draw footer buttons
 					int dist = 1100,posdist = 170;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_R.render_T(dist, 680,"Buscar");dist -= posdist;
-					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
-					B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
+					//B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
+					B_Y.render_T(dist, 680,"Menú");dist -= posdist;
 					if(isDownloading) {B_X.render_T(dist, 680,"Descargas");dist -= posdist-10;}
 					if (isHandheld){CLEAR.render_T(dist, 680,"Cache");dist -= posdist;}
 					
@@ -1069,6 +1117,7 @@ try{
 					if(imgNumbuffer>0){textpro+=" "+std::to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
 					GOD.PleaseWait(textpro,false);
 				}
+
 				break;
 			}
 			case searchstate:		{

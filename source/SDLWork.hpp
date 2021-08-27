@@ -88,6 +88,7 @@ TTF_Font *gFont2 = NULL;
 TTF_Font *gFont3 = NULL;
 TTF_Font *gFont4 = NULL;
 TTF_Font *gFont5 = NULL;
+TTF_Font *gFont6 = NULL;
 TTF_Font* digifont = NULL;
 TTF_Font* digifontC = NULL;
 TTF_Font *gFontcapit = NULL;
