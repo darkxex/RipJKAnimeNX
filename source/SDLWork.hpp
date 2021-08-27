@@ -14,7 +14,13 @@ public:
 
 	//Deallocates memory
 	~LTexture();
-
+	//peer key funct
+	bool reverse=false;
+	void TickerColor(int& color,int min,int max);
+	void TickerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
+	void TickerBomb(int sizescale=0);
+	void TickerScale();
+	
 	//Loads image at specified path
 	bool loadFromFile(std::string path);
 	bool loadFromFileCustom(std::string path, int h, int w);
@@ -48,17 +54,24 @@ public:
 	int getX();
 	int getY();
 	bool mark;
+	
+	//texture Scale
+	int offtik=0;
+	
+	//texture boom
+	int offboom=0;
+	//default boom size
+	int offboom_min=0, offboom_size=11;
+	
 private:
 	//The actual hardware texture
 	SDL_Texture* mTexture;
 
+	//W H overwrite
+	int offW=0, offH=0;
+
 	//Image dimensions
-	int mWidth;
-	int mHeight;
-	int mX;
-	int mY;
-	int SelIns;
-	
+	int mWidth, mHeight, mX, mY, SelIns;
 };
 
 
@@ -75,6 +88,7 @@ TTF_Font *gFont2 = NULL;
 TTF_Font *gFont3 = NULL;
 TTF_Font *gFont4 = NULL;
 TTF_Font *gFont5 = NULL;
+TTF_Font *gFont6 = NULL;
 TTF_Font* digifont = NULL;
 TTF_Font* digifontC = NULL;
 TTF_Font *gFontcapit = NULL;

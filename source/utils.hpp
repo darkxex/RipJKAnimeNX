@@ -1,6 +1,7 @@
 #include <vector>
 #include "nlohmann/json.hpp"
 #include <iomanip>
+#include <sys/types.h>
 using namespace std;
 using json = nlohmann::json;
 bool isFileExist(std::string file);
@@ -15,9 +16,8 @@ bool copy_me(std::string origen, std::string destino);
 bool read_DB(json& base,std::string path);
 bool write_DB(json base,std::string path);
 void led_on(int inter);
-bool onTimeC(int sec,int& time2);
-void TikerColor(int& color,int min,int max);
-void TikerName(int& color,int sec,int min,int max);
+bool onTimeC(unsigned long long sec,unsigned long long& time2);
+void TickerName(int& color,int sec,int min,int max);
 void RemoveAccents(std::string& word);
 void NameOfLink(std::string& word);
 std::string KeyOfLink(std::string word);

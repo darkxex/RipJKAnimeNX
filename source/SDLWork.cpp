@@ -23,7 +23,6 @@ extern LTexture VOX;
 extern LTexture T_T;
 extern LTexture Heart;
 
-
 extern std::string rootdirectory;
 
 
@@ -114,6 +113,7 @@ void SDLB::intA(){
 	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
 	gFont4 = TTF_OpenFont("romfs:/lazy2.ttf", 30);
 	gFont5 = TTF_OpenFont("romfs:/lazy2.ttf", 20);
+	gFont6 = TTF_OpenFont("romfs:/lazy2.ttf", 50);
 	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
 	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
 	digifontC = TTF_OpenFont("romfs:/digifont.otf", 9);
@@ -188,9 +188,9 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 	}
 		
-	static int blue=250;
+	static int blue=255;
 	if(selected){
-		TikerColor(blue,150,250);
+		MapT[KeyImage].TickerColor(blue,150,250);
 	} else blue=0;
 
 	if (Text.length()){
@@ -257,12 +257,12 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
 			}
 			int kinsize =11;
-			if (WS < 115){kinsize =9;Text=Text.substr(0,19);}//
+			if (WS < 115){kinsize =10;Text=Text.substr(0,16);}//
 			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
-		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, 0, 200);
-		MapT[KeyText].render(X + 2, Y + 4+MapT[KeyImage].getHeight());
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+6}, 0, 0, 0, 200);
+		MapT[KeyText].render(X + 2, Y + 8+MapT[KeyImage].getHeight());
 	} else {
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, 0, 200);
 	}
@@ -392,10 +392,11 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				laof=-1;
 			}
 			if (TEXT.length() > 25){
-				TikerName(laof,200,0,TEXT.length()-25);
+				TickerName(laof,200,0,TEXT.length()-25);
 				offsettval=laof;
 			}
 		}
+		//cout << ">>>>> "  << TEXT.length() <<  ">>>>> "  << offsettval <<  ">>>>> "  << laof << endl;
 		
 		if (Link.length() > 0) {
 			TEXT=TEXT.substr(offsettval,25)+" #"+Link;
@@ -413,7 +414,6 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		if (ongrid)
 		{
 			if(x >= 30) break;
-			
 			//Grid Animation
 			if (limit>0){
 				std::string KeyImage=imagelocal.substr(25)+"-"+std::to_string(nosel);
@@ -663,7 +663,56 @@ LTexture::~LTexture()
 	//Deallocate
 	free();
 }
-
+void LTexture::TickerColor(int& color,int min,int max)
+{
+	int fcolor=color;
+	if (reverse){
+		fcolor-=1;
+		if(fcolor < min){
+			fcolor=min;
+			reverse=false;
+		}
+	} else {
+		fcolor+=5;
+		if(fcolor > max){
+			fcolor=max;
+			reverse=true;
+		}
+	}
+	color=fcolor;
+}
+void LTexture::TickerRotate(int& angle,int min,int max, int addangle,bool clock)
+{
+	int fangle=angle;
+	if(clock){
+		fangle+=addangle;
+		if(fangle > max){
+			fangle=fangle-max;
+		}
+	} else {
+		fangle-=addangle;
+		if(fangle < min){
+			fangle=max;
+		}
+	}
+	
+	angle=fangle;
+}
+void LTexture::TickerBomb(int sizescale){
+	reverse=false;
+	offboom_min=sizescale;
+	offboom=sizescale+1;
+}
+void LTexture::TickerScale(){
+	if (offboom > offboom_min){
+		TickerColor(offboom,offboom_min,offboom_size);
+		offtik=offboom;
+	}
+	if (offboom < offboom_min){
+		offtik=offboom_min;
+		offboom=offboom_min;
+	}
+}
 bool LTexture::loadFromFile(std::string path)
 {
 	//Get rid of preexisting texture
@@ -832,23 +881,24 @@ void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
 	//Modulate texture rgb
 	SDL_SetTextureColorMod(mTexture, red, green, blue);
 }
-
 void LTexture::setBlendMode(SDL_BlendMode blending)
 {
 	//Set blending function
 	SDL_SetTextureBlendMode(mTexture, blending);
 }
-
 void LTexture::setAlpha(Uint8 alpha)
 {
 	//Modulate texture alpha
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
-
 void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
+	//texture boom
+	TickerScale();
+	int offtikx2=offtik*2;
+	
 	//Set rendering space and render to screen
-	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
+	SDL_Rect renderQuad = { x-offtik, y-offtik, mWidth+offtikx2, mHeight+offtikx2 };
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	//Set clip rendering dimensions
 	if (clip != NULL)

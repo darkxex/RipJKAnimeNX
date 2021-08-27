@@ -36,21 +36,25 @@ int main(int argc, char **argv)
 		FsFileSystem acc;
 		if (MountUserSave(acc)){
 			if(isFileExist(rootdirectory+AccountID+"UserData.json")){
-				if(!isFileExist(rootdirectory+AccountID+"UserData.json")){
-					copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json");
-					fsdevCommitDevice("save");
-					remove((rootdirectory+AccountID+"UserData.json").c_str());
+				if(!isFileExist(rootsave+"UserData.json")){
+					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+						fsdevCommitDevice("save");
+						remove((rootdirectory+AccountID+"UserData.json").c_str());
+						remove((rootdirectory+AccountID+"User.jpg").c_str());
+					}
 				}
 			}
 			if(isFileExist(rootdirectory+"UserData.json")){
 				if(!isFileExist(rootsave+"UserData.json")){
-					copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json");
-					fsdevCommitDevice("save");
-					remove((rootdirectory+"UserData.json").c_str());
+					if (copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json")){
+						fsdevCommitDevice("save");
+						remove((rootdirectory+"UserData.json").c_str());
+					}
 				}
 			}
 		} else {
 			rootsave = rootdirectory+AccountID;
+			GetUserImage();
 		}	
 	#endif
 	struct stat st = { 0 };
@@ -67,6 +71,7 @@ int main(int argc, char **argv)
 	}
 	read_DB(UD,rootsave+"UserData.json");
 	
+	GOD.intA();//init the SDL
 
 	#ifdef USENAND
 		if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
@@ -75,6 +80,7 @@ int main(int argc, char **argv)
 			if (stat((oldroot+"DATA").c_str(), &st) != -1){
 				GOD.PleaseWait("Copiando Archivos Importantes Espere...",true);
 				copy_me(oldroot+"favoritos.txt",rootdirectory+"favoritos.txt");
+				
 				GOD.PleaseWait("Copiando Archivos Importantes Espere.",true);
 				copy_me(oldroot+"texture.png",rootdirectory+"texture.png");
 				GOD.PleaseWait("Copiando Archivos Importantes Espere..",true);
@@ -82,6 +88,7 @@ int main(int argc, char **argv)
 				GOD.PleaseWait("Copiando Archivos Importantes Espere....",true);
 				copy_me(oldroot+"wada.ogg",rootdirectory+"wada.ogg");
 				GOD.PleaseWait("Copiando Archivos Importantes Espere......",true);
+				//set custom music 
 				if (isFileExist(rootdirectory+"wada.ogg")){
 					GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 				}
@@ -93,15 +100,6 @@ int main(int argc, char **argv)
 	mkdir(rootdirectory.c_str(), 0777);
 	mkdir((rootdirectory+"DATA").c_str(), 0777);
 	#endif
-
-
-	SDL_Thread* prothread = NULL;
-	SDL_Thread* searchthread = NULL;
-	SDL_Thread* downloadthread = NULL;
-	
-	//set custom music 
-	GOD.intA();//init the SDL
-
 
 	if (isFileExist(rootdirectory+"texture.png")){
 		Farest.loadFromFile(rootdirectory+"texture.png");
@@ -140,15 +138,17 @@ int main(int argc, char **argv)
 	BUS.loadFromFile("romfs:/buttons/BUS.png");
 	NOP.loadFromFile("romfs:/nop.png");
 	NOP.loadFromFile("romfs:/nop.png");
-	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",58, 58);
-	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",58, 58);
-	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",58, 58);
+	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
+	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
+	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",55, 55);
+	AFLV.loadFromFileCustom("romfs:/buttons/AF.png",55, 55);
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
-			
 
 	SDL_Color textColor = { 50, 50, 50 };
 	SDL_Color textWhite = { 255, 255, 255 };
 	SDL_Color textGray = { 200, 200, 200 };
+	SDL_Color textGrayGreen = { 100, 200, 100 };
+	SDL_Color textWhiteGreen = { 80, 255, 80 };
 
 	int posxbase = 20;
 	int posybase = 10;
@@ -169,8 +169,13 @@ try{
 	prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
 
 	//While application is running
-	while (!quit)
+	while (!quit&&appletMainLoop())
 	{
+		//get if console is dokked
+		AppletOperationMode stus=appletGetOperationMode();
+		if (stus == AppletOperationMode_Handheld){isHandheld=true;}
+		if (stus == AppletOperationMode_Console){isHandheld=false;}
+
 		//Handle events on queue
 		while (SDL_PollEvent(&e))
 		{
@@ -226,43 +231,68 @@ try{
 					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
 					e.jbutton.button=-1;
-					if (NFAV.SP() && !gFAV){
+					if (BUSB.SP()) {callsearch();}
+					else if (FAVB.SP()) {callfavs();}
+					else if (AFLV.SP()) {callAflv();}
+					
+					else if (NFAV.SP() && !gFAV){
 						GOD.WorKey="0";GOD.MasKey=-1;
 						{//AGREGAR A FAVORITOS
 							addFavorite(BD["com"]["ActualLink"]);
 							gFAV = true;
+							FAV.TickerBomb();
 							GOD.TouchX = -1;
 							GOD.TouchY = -1;
 						}
 						break;
-					} else if (GOD.MasKey >=0){
-						if(GOD.MapT[GOD.WorKey].SP()){
-							e.jbutton.button=GOD.MasKey;
+					}
+					else if (GOD.MasKey >=0){
+						if (statenow != programationsliderstate){
+							if(GOD.MapT[GOD.WorKey].SP()){
+								e.jbutton.button=GOD.MasKey;
+							}
 						}
 						GOD.WorKey="0";GOD.MasKey=-1;
 					}
 					else if (USER.SP()) {
 						if (SelectUser()){
 							if (MountUserSave(acc)){
-								USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
-								UD = "{}"_json;
-								read_DB(UD,rootsave+"UserData.json");
-								if(statenow==favoritesstate){
-									getFavorite();
-									Frames=1;							
+								rootsave = "save:/";
+								if(isFileExist(rootdirectory+AccountID+"UserData.json")){
+									if(!isFileExist(rootsave+"UserData.json")){
+										if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+											fsdevCommitDevice("save");
+											remove((rootdirectory+AccountID+"UserData.json").c_str());
+											remove((rootdirectory+AccountID+"User.jpg").c_str());
+										}
+									}
 								}
+							}else {
+								rootsave = rootdirectory+AccountID;
+								GetUserImage();
+							}
+							USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
+							UD = "{}"_json;
+							read_DB(UD,rootsave+"UserData.json");
+							
+							if(statenow==chapterstate){
+								capBuffer(BD["com"]["ActualLink"]);
+								gFAV = isFavorite(BD["com"]["ActualLink"]);
+							}
+							if(statenow==favoritesstate){
+								getFavorite();
+								Frames=1;							
 							}
 						}
 					}
-					else if (B_A.SP() || T_T.SP() ) e.jbutton.button = GOD.BT_A;
+					else if (B_A.SP()) {e.jbutton.button = GOD.BT_A; B_A.TickerBomb();}
+					else if (T_T.SP() ) e.jbutton.button = GOD.BT_A;
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
 					else if (BACK.SP()) e.jbutton.button = GOD.BT_B;
 					else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
 					else if (B_Y.SP()) e.jbutton.button = GOD.BT_Y;
-					else if (FAVB.SP()) e.jbutton.button = GOD.BT_Y;
 					else if (B_L.SP()) e.jbutton.button = GOD.BT_L;
 					else if (B_R.SP()) e.jbutton.button = GOD.BT_R;
-					else if (BUSB.SP()) e.jbutton.button = GOD.BT_R;
 					else if (B_ZR.SP()) e.jbutton.button = GOD.BT_ZR;
 					else if (B_P.SP()) e.jbutton.button = GOD.BT_P;
 					else if (B_M.SP()) e.jbutton.button = GOD.BT_M;
@@ -271,7 +301,7 @@ try{
 					else if (B_UP.SP()) e.jbutton.button = GOD.BT_UP;
 					else if (B_DOWN.SP()) e.jbutton.button = GOD.BT_DOWN;
 					else if (T_D.SP()&&isDownloading) statenow = downloadstate;
-					else if (SCREEN.SP()){lcdoff=true; appletSetLcdBacklightOffEnabled(lcdoff); }
+					else if (SCREEN.SP()) e.jbutton.button = GOD.BT_ZR;
 					else if (CLEAR.SP()){
 						preview = false;
 						quit = true;
@@ -313,6 +343,12 @@ try{
 
 						switch (statenow)
 						{
+						case programationsliderstate:
+							if(selectelement==0){callsearch();}
+							if(selectelement==1){callfavs();}
+							if(selectelement==2){}
+							if(selectelement==5){callAflv();}
+							break;
 							case programationstate:
 							{
 								if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1)
@@ -350,6 +386,7 @@ try{
 								} else {
 									serverpront = false;
 									UD["chapter"][KeyName]["latest"] = latest;
+									latestcolor = latest;
 									
 									std::string item=BD["com"]["ActualLink"].get<std::string>();
 									int hsize = UD["history"].size();
@@ -363,6 +400,7 @@ try{
 								}
 							} else {
 								if (isConnected) serverpront = true;
+								T_N.TickerBomb();
 							}
 							break;
 						}
@@ -415,11 +453,11 @@ try{
 							if (e.jbutton.button == GOD.BT_ZL)
 								WebBrowserCall(urlc,true);
 							else 
-								WebBrowserCall("https://animeflv.net",true);
+								callAflv();
 						}
 					}
 					else if (e.jbutton.button == GOD.BT_ZR) {// (ZR) button down
-						if(isDownloading){
+						if(isDownloading && isHandheld){
 							lcdoff = !lcdoff;
 							appletSetLcdBacklightOffEnabled(lcdoff);
 						}
@@ -427,8 +465,12 @@ try{
 						switch (statenow)
 						{
 						case programationstate:
+							statenow=programationsliderstate;
 							std::cout  << BD << std::endl;
 							std::cout  << UD << std::endl;
+							break;
+						case programationsliderstate:
+							statenow=programationstate;
 							break;
 						case favoritesstate:
 							break;
@@ -447,31 +489,23 @@ try{
 								serverpront=false;
 								arrayservers=arrayserversbak;
 							} else {
-								switch (returnnow)
-								{
-								case toprogramation:
-									statenow = programationstate;
-									break;
-								case tosearch:
-									statenow = searchstate;
-									break;
-								case tofavorite:
-									statenow = favoritesstate;
-									break;
-								}
+								statenow=returnnow;
 							}
 							break;
 						case searchstate:
 							if (!reloadingsearch)
 							{
-								returnnow = toprogramation;
+								returnnow = programationstate;
 								statenow = programationstate;
 							}
 							break;
 
 						case favoritesstate:
-							returnnow = toprogramation;
+							returnnow = programationstate;
 							statenow = programationstate;
+							break;
+						case programationsliderstate:
+							statenow=programationstate;
 							break;
 						}
 					}
@@ -524,13 +558,19 @@ try{
 						switch (statenow)
 						{
 						case programationstate:
+							statenow=programationsliderstate;
+							selectelement = 1;
+							break;
+						/*
 							if (!reloading)
 							{
 								getFavorite();
-								returnnow = tofavorite;
+								returnnow = favoritesstate;
 								statenow = favoritesstate;
 								Frames=1;
 							}
+						
+						*/
 							break;
 						case downloadstate:
 							break;
@@ -538,6 +578,7 @@ try{
 						{//AGREGAR A FAVORITOS
 							addFavorite(BD["com"]["ActualLink"]);
 							gFAV = true;
+							FAV.TickerBomb();
 						}
 
 						break;
@@ -595,18 +636,7 @@ try{
 						break;
 						case programationstate:
 						case searchstate:
-							if (!reloadingsearch)
-							{
-								if (BD["searchtext"].empty()){BD["searchtext"]="";}
-								BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
-								if ((BD["searchtext"].get<std::string>()).length() > 0){
-									searchchapter = 0;
-									reloadingsearch = true;	 
-									statenow = searchstate;
-									returnnow = tosearch;
-									searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
-								}
-							}
+							callsearch();
 							break;
 
 						}
@@ -713,6 +743,9 @@ try{
 						case favoritesstate:
 							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
+						case programationsliderstate:
+							GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
+							break;
 						}
 					}
 					else if (e.jbutton.button == GOD.BT_DOWN || e.jbutton.button == GOD.BT_LS_DOWN) {// (down) button down
@@ -752,6 +785,9 @@ try{
 
 						case favoritesstate:
 							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							break;
+						case programationsliderstate:
+							GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
 							break;
 						}
 					}
@@ -861,31 +897,44 @@ try{
 					}
 					B_DOWN.render_T(280+XS, 630+YS,"");
 				}
-				if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula"){//draw caps Scroll
+				if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula"){//draw caps numbers Slider
 					VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
+					SDL_Color com = {};
 					if (latest-2 >= mincapit) {
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), textGray);
+						com=textGray;
+						if (latest-2 == latestcolor) com=textGrayGreen;
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), com);
 						gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
 					if (latest-1 >= mincapit) {
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), textGray);
+						com=textGray;
+						if (latest-1 == latestcolor) com=textGrayGreen;
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), com);
 						gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
 					
-					if (serverpront){
-						gTextTexture.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
-						gTextTexture.render(posxbase + 280+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
-					} else {
-						T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), { 255, 255, 255 });
-						T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
+					{
+						com=textWhite;
+						if (latest == latestcolor) com=textWhiteGreen;
+						if (serverpront){
+							T_N.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
+							T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 558+YS);
+						} else {
+							T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
+							T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
+						}
 					}
 
 					if (latest+1 <= maxcapit) {
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), textGray);
+						com=textGray;
+						if (latest+1 == latestcolor) com=textGrayGreen;
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), com);
 						gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
 					if (latest+2 <= maxcapit) {
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), textGray);
+						com=textGray;
+						if (latest+2 == latestcolor) com=textGrayGreen;
+						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), com);
 						gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
 
@@ -899,8 +948,8 @@ try{
 				} else {
 					VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
 					if (BD["com"]["nextdate"] == "Pelicula"){
-						T_T.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
-						T_T.render(posxbase + 282+XS-T_T.getWidth()/2, posybase + 558+YS);
+						T_N.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
+						T_N.render(posxbase + 282+XS-T_N.getWidth()/2, posybase + 558+YS);
 					} else {
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
 						gTextTexture.render(posxbase + 282+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
@@ -908,7 +957,6 @@ try{
 					
 				}
 			}
-
 
 			//Draw Footer Buttons
 			int dist = 1095,posdist = 160;
@@ -922,7 +970,7 @@ try{
 			}
 
 			if(gFAV){
-				FAV.render_T(1230, 70,"");
+				FAV.render(1230, 70);
 			} else {
 				NFAV.render_T(1230, 70,"");
 				B_Y.render_T(dist, 680,"Favorito");dist -= posdist;
@@ -940,11 +988,12 @@ try{
 				imagelocal = KeyOfLink(imagelocal);
 				imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 				if(!serverpront){CheckImgNet(imagelocal);B_L.render_T(dist, 680,"Precuela");dist -= posdist;}
-				GOD.Cover(imagelocal,20,457,"Precuela",120,GOD.BT_L);
+				GOD.Cover(imagelocal,10,457,"Precuela",120,GOD.BT_L);
 			}
 
 			break;
 			}
+			case programationsliderstate:
 			case programationstate:	{
 				if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1) {
 					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
@@ -954,10 +1003,23 @@ try{
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
-							FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
-							BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+							if (isHandheld && statenow!=programationsliderstate){
+								FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
+								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+							}
 						}
-						REC.render_T(5, 15,"");
+						double angle = 0.0;
+						static int Ticker=0;
+						if (isChained){
+							REC.TickerRotate(Ticker,0,360,2,isChained);
+							angle=Ticker;
+						} else if (Ticker > 0){
+							REC.TickerRotate(Ticker,-25,360,5,isChained);
+							angle=Ticker;
+						}else if (Ticker < 0){
+							Ticker=0;
+						}
+						REC.render(5, 15,NULL,angle);
 					} else {
 						GOD.ListClassic(selectchapter,BD["arrays"]["chapter"]);
 						if (preview)
@@ -992,15 +1054,62 @@ try{
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 						}
 					}
+					if (statenow==programationsliderstate){
+						
+						{
+							StatesList= {"Busqueda","Favoritos","Historial","Horario","Top Anime","AnimeFLV","ToDo..."};
 
+							int mwide = 60,XD=920,YD=120,W=1280-XD;
+							VOX.render_VOX({XD,61, 1280, 608}, 210, 210, 210, 215);
+							VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);//head line
+							VOX.render_VOX({XD,668, W, 1}, 255, 255, 255, 235);//bottom line
+							VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);//line left
+							gTextTexture.loadFromRenderedText(GOD.gFont5, "Menú Primario",textColor);
+							gTextTexture.render(XD+20, 65);
+							
+							int indexLsize = StatesList.size();
+							int Ymaxsize = indexLsize*mwide;
+							if(GOD.TouchX < 1280 && GOD.TouchY < Ymaxsize+YD && GOD.TouchY > YD && GOD.TouchX > XD+100){
+								int sel=(GOD.TouchY-YD) / mwide;
+								VOX.render_VOX({XD+80-10,YD+(sel*mwide)+5, W-100, mwide-5}, 0, 0, 255, 235);
+								if (sel >= 0 && sel < indexLsize){
+									selectelement = sel;
+								}
+							}
+							for (int x = 0; x < (int)StatesList.size(); x++) {
+								if(x == 0){BUSB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 1){FAVB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 5){AFLV.render(XD+10, YD + (x * mwide)+5);}
+
+								if (x == selectelement){
+									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);
+									VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-50, T_T.getHeight()-5}, 50, 50, 50, 200);
+									T_T.render(XD+80, YD + (x * mwide));
+								} else {
+									gTextTexture.loadFromRenderedText(GOD.gFont6, StatesList[x],textColor);
+									gTextTexture.render(XD+80, YD + (x * mwide));
+								}
+								if (x < (int)StatesList.size()-1){
+									VOX.render_VOX({XD+80,YD + (x * mwide)+mwide+2, W-130, 1}, 255, 255, 255, 235);
+								}
+							}
+						}
+
+						//Draw footer buttons
+						int dist = 1100,posdist = 170;
+						B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+						B_B.render_T(dist, 680,"Atrás");dist -= posdist;
+						break;
+					}
 					//Draw footer buttons
 					int dist = 1100,posdist = 170;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_R.render_T(dist, 680,"Buscar");dist -= posdist;
-					B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
-					B_Y.render_T(dist, 680,"Favoritos");dist -= posdist;
+					//B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
+					B_Y.render_T(dist, 680,"Menú");dist -= posdist;
 					if(isDownloading) {B_X.render_T(dist, 680,"Descargas");dist -= posdist-10;}
-					CLEAR.render_T(dist, 680,"Cache");dist -= posdist;
+					if (isHandheld){CLEAR.render_T(dist, 680,"Cache");dist -= posdist;}
+					
 				}
 				else
 				{
@@ -1008,6 +1117,7 @@ try{
 					if(imgNumbuffer>0){textpro+=" "+std::to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
 					GOD.PleaseWait(textpro,false);
 				}
+
 				break;
 			}
 			case searchstate:		{
@@ -1016,7 +1126,7 @@ try{
 					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
 					
 					int srchsize=BD["arrays"]["search"]["link"].size();
-					if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+					if(ongridS){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 					if (srchsize > 0){
 						//if (srchsize > 30) ongridS=false;
 						if (!ongridS) GOD.ListClassic(searchchapter,BD["arrays"]["search"]);
@@ -1025,6 +1135,9 @@ try{
 							if (ongridS){
 								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongridS,Frames);
 								BUS.render_T(5, 15,"");
+								if (isHandheld){
+									BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+								}
 							} else {
 								GOD.ListCover(searchchapter,BD["arrays"]["search"]);
 								B_UP.render_T(580, 5,"");
@@ -1041,6 +1154,8 @@ try{
 						int distan = gTextTexture.getWidth()+10;
 						gTextTexture.render(5, 1);
 						gTextTexture.loadFromRenderedText(GOD.gFont, BD["searchtext"], {0,0,0});
+						VOX.render_VOX({distan-2,1, gTextTexture.getWidth()+4, gTextTexture.getHeight()}, 210, 210, 210, 155);
+						//T_D.getWidth()+4, T_D.getHeight()
 						gTextTexture.render(distan, 1);
 					}else {
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
@@ -1112,9 +1227,9 @@ try{
 			}
 			case downloadstate:	{
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
-				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
-				VOX.render_VOX({16,65, 900, 222}, 210, 210, 210, 115);//Draw a rectagle to a nice view
-				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
+				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);//Head
+				VOX.render_VOX({16,65, 900, 162}, 210, 210, 210, 115);//Rectangle
+				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Footer
 				
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
 				gTextTexture.render(posxbase, posybase+15);
@@ -1123,55 +1238,59 @@ try{
 				VOX.render_VOX({17,65, gTextTexture.getWidth()+15, 45}, 210, 210, 210, 155);//Draw title back
 				gTextTexture.render(posxbase, posybase + 60);
 
-				gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace, {168,0,0});
-				gTextTexture.render(posxbase , posybase + 280);
 				if (serverenlace != "Error de descarga"){
 					gTextTexture.loadFromRenderedText(GOD.gFontcapit, std::to_string(porcendown) + "\%", textColor);
-					gTextTexture.render(posxbase + 40, posybase + 90);
+					gTextTexture.render(posxbase + 280, posybase + 90);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
-					gTextTexture.render(posxbase + 100, posybase + 220);
-					
+					gTextTexture.render(posxbase, posybase + 160);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
-					gTextTexture.render(posxbase, posybase + 260);
+					gTextTexture.render(posxbase, posybase + 200);
 
 					if (std::to_string(porcendown) == "100"&&!isDownloading) {
 						//Render red filled quad
-						VOX.render_VOX({ posxbase + 98, posybase + 400, 580, 50 }, 255, 255, 255, 255);
+						VOX.render_VOX({ posxbase + 198, posybase + 500, 580, 50 }, 255, 255, 255, 195);
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
-						gTextTexture.render(posxbase + 100, posybase + 400);
+						gTextTexture.render(posxbase + 200, posybase + 500);
 						if(lcdoff){lcdoff=false; appletSetLcdBacklightOffEnabled(lcdoff);}
 					 }else{
 						gTextTexture.loadFromRenderedText(GOD.digifont, "Velocidad: " +speedD+" M/S", textColor);
-						VOX.render_VOX({ posxbase + 120, posybase + 240, gTextTexture.getWidth()+15, 20 }, 255, 255, 255, 145);
-						gTextTexture.render(posxbase + 130, posybase + 240);
-						SCREEN.render(1180, 65);
-						B_ZR.render_T(550, 680,"Apagar Pantalla");
+						VOX.render_VOX({ posxbase, posybase + 180, gTextTexture.getWidth()+6, 20 }, 255, 255, 255, 145);
+						gTextTexture.render(posxbase + 2, posybase + 180);
+						if (isHandheld){
+							SCREEN.render(1180, 65);
+							B_ZR.render_T(550, 680,"Apagar Pantalla");
+						}
 					 }
 				} else {
 					porcendown=0;
 				}
 				
-				VOX.render_VOX({posxbase-5,posybase + 300 , 750, ((int)BD["arrays"]["downloads"]["log"].size() * 22)+53}, 200, 200, 200, 105);
-				gTextTexture.loadFromRenderedText(GOD.digifont, "Cola De Descarga::", textColor);
-				gTextTexture.render(posxbase, posybase+310);
+				gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace.substr(0,300), {168,0,0});
+				gTextTexture.render(posxbase , posybase + 220);
+				
+				static int tatic = 850;
+				VOX.render_VOX({posxbase-5,posybase + 240 , tatic, ((int)BD["arrays"]["downloads"]["log"].size() * 22)+33}, 200, 200, 200, 105);
+				gTextTexture.loadFromRenderedText(GOD.digifont, "Cola De Descarga :", textColor);
+				gTextTexture.render(posxbase, posybase+240);
 				for (u64 x = 0; x < BD["arrays"]["downloads"]["log"].size(); x++) {
 					std::string descarga = BD["arrays"]["downloads"]["log"][x];
-					NameOfLink(descarga);
+					//NameOfLink(descarga);
 					SDL_Color txtColor = textColor;//{ 50, 50, 50 };
 					
 					if(descarga.substr(0,3) == "100") txtColor = { 0, 100, 0 };
 					if(descarga.substr(0,3) == "Err") txtColor = { 150, 50, 50 };
-					if(descarga.substr(0,3) == ">>>") txtColor = { 0, 0, 0 };
+					if(descarga.substr(0,3) == ">>>") {txtColor = { 0, 0, 0 }; replace(descarga,">>>>",">>"+std::to_string(porcendown)+"\%");}
+					if(descarga.substr(0,3) == "htt") {txtColor = { 100, 100, 100}; NameOfLink(descarga);descarga="En Cola: "+descarga;}
 
 					gTextTexture.loadFromRenderedText(GOD.digifont, descarga, txtColor);
-					gTextTexture.render(posxbase, posybase+350 + ((x) * 22));
+					if (tatic < gTextTexture.getWidth()){tatic = gTextTexture.getWidth()+35;}
+					gTextTexture.render(posxbase, posybase+260 + ((x) * 22));
 					
 				}
 				
-				if(isDownloading)
-				B_X.render_T(800, 680,"Cancelar la descarga");
+				if(isDownloading) B_X.render_T(800, 680,"Cancelar la descarga");
 				B_B.render_T(1100, 680,"Volver");
 			break;
 			}
@@ -1187,7 +1306,7 @@ try{
 		//clock cicle 1s
 		int maxt=100;
 		static int net=maxt;
-		static int time2 = 0;
+		static unsigned long long time2 = 0;
 		if (onTimeC(1000,time2)){		
 			if (!HasConnection()) {
 				isConnected=false;
@@ -1209,7 +1328,7 @@ try{
 			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 1 );
 		}
 
-		if(programationstate != statenow){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
+		if(programationstate != statenow && isHandheld){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
 		B_P.render_T(160, 680,"Salir",quit);
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
@@ -1229,6 +1348,8 @@ try{
 	write_DB(BD,rootdirectory+"DataBase.json.bak");
 	quit=true;
 }
+	//Quit if loop break for no reason
+	quit=true;
 	cancelcurl=1;
 	//clear allocate
 	BD["com"] = "{}"_json;

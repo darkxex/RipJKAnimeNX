@@ -5,7 +5,6 @@
 #include <string>
 #include <cmath>
 #include <Vector>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
 #include <iostream>
@@ -97,9 +96,7 @@ vector<string> scrapElementAll(std::string content, std::string get,std::string 
 //std::cout << "Vector Size: " << std::to_string(res.size()) << std::endl;
 return res;
 }
-
-// for string delimiter
-vector<string> split (string s, string delimiter) {
+vector<string> split (string s, string delimiter) {// for string delimiter
     size_t pos_start = 0, pos_end, delim_len = delimiter.length();
     string token;
     vector<string> res;
@@ -114,7 +111,7 @@ vector<string> split (string s, string delimiter) {
     return res;
 }
 
-//Mixdrop link decode
+//Link decoders
 std::string MD_s(std::string code){
 	std::string decode="";
 	for (int i=1; i<5;i++){
@@ -223,8 +220,7 @@ std::string Fembed_Link(std::string Link) {
 	return codetemp;
 }
 
-bool onlinejkanimevideo(std::string onlineenlace,std::string server)
-{
+bool onlinejkanimevideo(std::string onlineenlace,std::string server){
 	std::string temp = onlineenlace;
 	NameOfLink(temp);
 	std::string text = "Cargando "+temp.substr(0,42)+"... desde "+server+" ...";
@@ -274,7 +270,6 @@ if (videourl.length() != 0)
 }
 return false;
 }
-
 bool linktodownoadjkanime(std::string urltodownload,std::string directorydownload) {
 	std::string videourl = "";
 	std::string content = "";
@@ -363,8 +358,7 @@ bool linktodownoadjkanime(std::string urltodownload,std::string directorydownloa
 	return false;
 }
 
-bool isFileExist(std::string file)
-{
+bool isFileExist(std::string file){
 	struct stat	st = { 0 };
 
 	if (stat(file.c_str(), &st) == -1) {
@@ -373,18 +367,14 @@ bool isFileExist(std::string file)
 
 	return (true);
 }
-
-void replace(std::string& subject, const std::string& search,
-	const std::string& replace) {
+void replace(std::string& subject, const std::string& search, const std::string& replace) {
 	size_t pos = 0;
 	while ((pos = subject.find(search, pos)) != std::string::npos) {
 		subject.replace(pos, search.length(), replace);
 		pos += replace.length();
 	}
 }
-
-void mayus(std::string &s)
-{
+void mayus(std::string &s){
 	bool cap = true;
 
 	for (unsigned int i = 0; i <= s.length(); i++)
@@ -400,14 +390,49 @@ void mayus(std::string &s)
 		}
 	}
 }
+void RemoveAccents(std::string& word){
+	//std::cout << word << std::endl;
+	replace(word, "á","a");
+	replace(word, "é","e");
+	replace(word, "í","i");
+	replace(word, "ó","o");
+	replace(word, "ú","u");
+	replace(word, "à","a");
+	replace(word, "è","e");
+	replace(word, "ì","i");
+	replace(word, "ò","o");
+	replace(word, "ù","u");
+	replace(word, "ñ","n");
+	
+	replace(word, "Á","A");
+	replace(word, "É","E");
+	replace(word, "Í","I");
+	replace(word, "Ó","O");
+	replace(word, "Ú","U");
+	replace(word, "À","A");
+	replace(word, "È","E");
+	replace(word, "Ì","I");
+	replace(word, "Ò","O");
+	replace(word, "Ù","U");
+	replace(word, "Ñ","N");
+	
+	replace(word, "&amp;","");
+	replace(word, "#8230;","");
+	replace(word, "”","");
+	replace(word, "“","");
+	replace(word, "\n","");
+	
+	replace(word, "¡","");
+	replace(word, "!","");
+	replace(word, "?","");
+	replace(word, "¿","");
 
-void touch(std::string route)
-{
+}
+void touch(std::string route){
 	std::ofstream outfile;
 	outfile.open(route, std::ios_base::app);
 	outfile.close();
 }
-
 bool copy_me(std::string origen, std::string destino) {
     if(isFileExist(origen))
 	{
@@ -462,8 +487,8 @@ bool write_DB(json base,std::string path){
 	std::cout << "Json: writhen... "<< path << std::endl;
 	return true;
 }
-void led_on(int inter)
-{
+
+void led_on(int inter){
     // Configure our supported input layout: a single player with standard controller styles
 
     Result rc=0;
@@ -593,70 +618,36 @@ void led_on(int inter)
         
 }
 
-bool onTimeC(int sec,int& time2)
-{
+bool onTimeC(unsigned long long sec,unsigned long long& time2){
     struct timeval time_now{};
     gettimeofday(&time_now, nullptr);
     time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
 	
-	int time1 = msecs_time;
+	unsigned long long time1 = msecs_time;
+//	if (time1<0){time1=-time1;}
 	//static int time2 = msecs_time;
-
 	if (time1 > time2+sec){
 		time2 = time1;
 		return true;
 	}
 	return false;
-/*
-    cout << "seconds since epoch: " << time_now.tv_sec << endl;
-    cout << "milliseconds since epoch: "  << msecs_time << endl << endl;
-
-
-
-	if (sec > 0) sec--;
-	std::time_t t = std::time(0);
-	int time1 = t;
-	static int time2 = t;
-	if (time1 > time2+sec){
-		time2 = time1;
-		return true;
-	}
-	return false;
-*/
-
 }
-void TikerColor(int& color,int min,int max)
-{
-	static bool reverse=false;
-		if (reverse){
-			color-=1;
-			if(color < min){
-				reverse=false;
-			}
-		} else {
-			color+=5;
-			if(color > max){
-				reverse=true;
-			}
-		}
-}
-void TikerName(int& color,int sec,int min,int max)
-{
+void TickerName(int& color,int sec,int min,int max){
 	static bool running=false;
 	static bool Start=false;
 	
-	static int time2 = 0;
+	static unsigned long long time2 = 0;
 	static int increment = 5;
 	if (color < 0){
 		color=0;
 		running=false;
 		Start=true;
 	}
-	
 	if(!running){
 		//delay
 		if (onTimeC(sec*increment,time2))
 		{
+		//cout << "<< "  << color << endl;
 			if (color > 0 || Start){
 				color=0;
 				increment=13;
@@ -664,19 +655,18 @@ void TikerName(int& color,int sec,int min,int max)
 			} else {
 				running=true;
 			}
-		//cout << "> "  << color << endl;
 		}
 	} else {
 		//running time
 		if (onTimeC(sec,time2))
 		{
+		//cout << ">> "  << color << endl;
 			color+=1;
 			if(color >= max){
 				color = max;
 				increment=8;
 				running=false;
 			}
-		//cout << "> "  << color << endl;
 		}
 	}
 
@@ -691,48 +681,11 @@ void TikerName(int& color,int sec,int min,int max)
 		} else {
 */			
 }
-void RemoveAccents(std::string& word){
-	//std::cout << word << std::endl;
-	replace(word, "á","a");
-	replace(word, "é","e");
-	replace(word, "í","i");
-	replace(word, "ó","o");
-	replace(word, "ú","u");
-	replace(word, "à","a");
-	replace(word, "è","e");
-	replace(word, "ì","i");
-	replace(word, "ò","o");
-	replace(word, "ù","u");
-	replace(word, "ñ","n");
-	
-	replace(word, "Á","A");
-	replace(word, "É","E");
-	replace(word, "Í","I");
-	replace(word, "Ó","O");
-	replace(word, "Ú","U");
-	replace(word, "À","A");
-	replace(word, "È","E");
-	replace(word, "Ì","I");
-	replace(word, "Ò","O");
-	replace(word, "Ù","U");
-	replace(word, "Ñ","N");
-	
-	replace(word, "&amp;","");
-	replace(word, "#8230;","");
-	replace(word, "”","");
-	replace(word, "“","");
-	replace(word, "\n","");
-	
-	replace(word, "¡","");
-	replace(word, "!","");
-	replace(word, "?","");
-	replace(word, "¿","");
-
-}
 
 void NameOfLink(std::string& word){
 	replace(word, "https://jkanime.net/", "");
-	replace(word, "/", " ");
+	word = word.substr(0, word.length() - 1);
+	replace(word, "/", " #");
 	replace(word, "-", " ");
 	mayus(word);
 }
