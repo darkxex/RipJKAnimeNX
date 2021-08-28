@@ -1016,6 +1016,11 @@ try{
 						}else if (Ticker < 0){
 							Ticker=0;
 						}
+						
+						if (porcentajebuffer > 0){
+							gTextTexture.loadFromRenderedText(GOD.digifontC, std::to_string(porcentajebufferAll - porcentajebuffer), {50,50,50});
+							gTextTexture.render(27 - (gTextTexture.getWidth()/2), 30);
+						}
 						REC.render(5, 15,NULL,angle);
 					} else {
 						GOD.ListClassic(selectchapter,BD["arrays"]["chapter"]);
@@ -1063,7 +1068,18 @@ try{
 							VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);//line left
 							gTextTexture.loadFromRenderedText(GOD.gFont5, "Menú Primario",textColor);
 							gTextTexture.render(XD+20, 65);
-							
+							if (imgNumbuffer > 0){
+								gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
+								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
+							}
+							if (porcentajebuffer > 0){
+								gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(porcentajebuffer)+"/"+std::to_string(porcentajebufferAll)+")", {0,100,0});
+								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15,  70);
+							}
+							if (porcentajebufferF > 0){
+								gTextTexture.loadFromRenderedText(GOD.gFont, "BúferFav: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
+								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
+							}
 							int indexLsize = StatesList.size();
 							int Ymaxsize = indexLsize*mwide;
 							if(GOD.TouchX < 1280 && GOD.TouchY < Ymaxsize+YD && GOD.TouchY > YD && GOD.TouchX > XD+100){

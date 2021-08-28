@@ -252,18 +252,14 @@ int refrescarpro(void* data){
 	if(reloading) {Frames=0;reloading = false;}
 
 	//'haschange' See if there is any new chap
-	std::cout << "# I am Here1" << std::endl;
 	bool haschange = true;
 	if (!BD["latestchapter"].empty()){
-	std::cout << "# I am Here2" << std::endl;
 		if (BD["latestchapter"] == ChapLink[0])
 		{
-	std::cout << "# I am Here3" << std::endl;
 			haschange = false;
 		}
 	}
 
-	std::cout << "# I am Here4" << std::endl;
 	//TimeStamp indicate if a chap sout be reloaded
 	if (haschange || BD["TimeStamp"].empty()){
 		//update TimeStamp
@@ -272,14 +268,25 @@ int refrescarpro(void* data){
 			BD["TimeStamp"] = std::to_string(t);
 			std::cout << "New TimeStamp: " << BD["TimeStamp"] << std::endl;
 			Frames=1;
+			
 			//merge vectors
-			ChapImag.insert( ChapImag.end(), BD["arrays"]["chapter"]["images"].begin(), BD["arrays"]["chapter"]["images"].end() );
-			ChapLink.insert( ChapLink.end(), BD["arrays"]["chapter"]["link"].begin(), BD["arrays"]["chapter"]["link"].end() );
-			ChapImag.erase(unique(ChapImag.begin(),ChapImag.end()),ChapImag.end());
-			ChapLink.erase(unique(ChapLink.begin(),ChapLink.end()),ChapLink.end());
+			if (!BD["arrays"]["chapter"]["images"].empty() && !BD["arrays"]["chapter"]["link"].empty())
+			{
+				std::vector<std::string> OChapLink=BD["arrays"]["chapter"]["link"];
+				std::vector<std::string> OChapImag=BD["arrays"]["chapter"]["images"];
 
-			BD["arrays"]["chapter"]["images"]=ChapImag;
+				ChapLink.erase(std::find(ChapLink.begin(), ChapLink.end(), OChapLink[0]),ChapLink.end());
+				ChapImag.erase(std::find(ChapImag.begin(), ChapImag.end(), OChapImag[0]),ChapImag.end());
+
+				ChapLink.insert(ChapLink.end(), OChapLink.begin(), OChapLink.end());
+				ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
+
+				if (ChapLink.size() > 61) {ChapLink.erase(ChapLink.begin()+60,ChapLink.end());}
+				if (ChapImag.size() > 61) {ChapImag.erase(ChapImag.begin()+60,ChapImag.end());}
+
+			}
 			BD["arrays"]["chapter"]["link"]=ChapLink;
+			BD["arrays"]["chapter"]["images"]=ChapImag;
 		}
 	}
 
