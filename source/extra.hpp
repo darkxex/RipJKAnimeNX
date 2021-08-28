@@ -37,7 +37,7 @@ LTexture gTextTexture, Farest, Heart;
 //Render Buttons
 LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
-LTexture BUS, BUSB, REC, BACK, USER, NFAV, FAV, FAVB, AFLV, NOP, CLEAR, SCREEN;
+LTexture BUS, BUSB, REC, BACK, USER, NFAV, FAV, FAVB, AFLV, NOP, HIS, HISB, CLEAR, SCREEN;
 //Text and BOXES
 LTexture VOX, T_T, T_N, T_D, T_R;
 
@@ -94,6 +94,10 @@ bool ongridS=true;
 bool ongridF=true;
 AccountUid uid;
 std::string AccountID="-.-";
+
+//
+bool isLoaded=false;
+
 //Threads
 SDL_Thread* prothread = NULL;
 SDL_Thread* searchthread = NULL;
@@ -127,6 +131,38 @@ int xdistance = 1010;
 int ydistance = 340;
 bool isConnected = true;
 
+//load images
+void LoadImages(){
+	//images that not change
+	B_A.loadFromFile("romfs:/buttons/A.png");
+	B_B.loadFromFile("romfs:/buttons/B.png");
+	B_Y.loadFromFile("romfs:/buttons/Y.png");
+	B_X.loadFromFile("romfs:/buttons/X.png");
+	B_L.loadFromFile("romfs:/buttons/L.png");
+	B_R.loadFromFile("romfs:/buttons/R.png");
+	B_M.loadFromFile("romfs:/buttons/MINUS.png");
+	B_P.loadFromFile("romfs:/buttons/PLUS.png");
+	B_ZR.loadFromFile("romfs:/buttons/ZR.png");
+	B_RIGHT.loadFromFile("romfs:/buttons/RIGHT.png");
+	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
+	B_UP.loadFromFile("romfs:/buttons/UP.png");
+	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
+	CLEAR.loadFromFile("romfs:/buttons/clear.png");
+	SCREEN.loadFromFile("romfs:/buttons/screen.png");
+	FAV.loadFromFile("romfs:/buttons/FAV.png");
+	NFAV.loadFromFile("romfs:/buttons/NFAV.png");
+	BUS.loadFromFile("romfs:/buttons/BUS.png");
+	NOP.loadFromFile("romfs:/nop.png");
+	NOP.loadFromFile("romfs:/nop.png");
+	REC.loadFromFileCustom("romfs:/buttons/REC.png",43,43);
+	HIS.loadFromFileCustom("romfs:/buttons/HIS.png",43,43);
+	HISB.loadFromFileCustom("romfs:/buttons/HIS.png",55, 55);
+	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
+	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
+	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",55, 55);
+	AFLV.loadFromFileCustom("romfs:/buttons/AF.png",55, 55);
+	isLoaded=true;
+}
 
 //call states
 void callsearch(){
@@ -144,7 +180,6 @@ void callsearch(){
 		}
 	}
 }
-
 void callfavs(){
 	GOD.WorKey="0";GOD.MasKey=-1;
 	if (!reloading)
@@ -155,9 +190,13 @@ void callfavs(){
 		Frames=1;
 	}
 }
-
 void callAflv(){
 	GOD.WorKey="0";GOD.MasKey=-1;
 	statenow=programationstate;
 	WebBrowserCall("https://animeflv.net",true);
 }
+void callmenuslide(){
+	statenow=programationsliderstate;
+	selectelement = 1;
+}
+

@@ -115,33 +115,7 @@ int main(int argc, char **argv)
 
 	gTextTexture.mark=false;
 	Farest.mark=false;
-
-	//images that not change
-	B_A.loadFromFile("romfs:/buttons/A.png");
-	B_B.loadFromFile("romfs:/buttons/B.png");
-	B_Y.loadFromFile("romfs:/buttons/Y.png");
-	B_X.loadFromFile("romfs:/buttons/X.png");
-	B_L.loadFromFile("romfs:/buttons/L.png");
-	B_R.loadFromFile("romfs:/buttons/R.png");
-	B_M.loadFromFile("romfs:/buttons/MINUS.png");
-	B_P.loadFromFile("romfs:/buttons/PLUS.png");
-	B_ZR.loadFromFile("romfs:/buttons/ZR.png");
-	B_RIGHT.loadFromFile("romfs:/buttons/RIGHT.png");
-	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
-	B_UP.loadFromFile("romfs:/buttons/UP.png");
-	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
-	CLEAR.loadFromFile("romfs:/buttons/clear.png");
-	SCREEN.loadFromFile("romfs:/buttons/screen.png");
-	FAV.loadFromFile("romfs:/buttons/FAV.png");
-	NFAV.loadFromFile("romfs:/buttons/NFAV.png");
-	REC.loadFromFile("romfs:/buttons/REC.png");
-	BUS.loadFromFile("romfs:/buttons/BUS.png");
-	NOP.loadFromFile("romfs:/nop.png");
-	NOP.loadFromFile("romfs:/nop.png");
-	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
-	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
-	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",55, 55);
-	AFLV.loadFromFileCustom("romfs:/buttons/AF.png",55, 55);
+	
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 
 	SDL_Color textColor = { 50, 50, 50 };
@@ -211,13 +185,26 @@ try{
 						{
 							GOD.fingermotion_UP = true;
 						}
+						
+						//left right
+						if(e.tfinger.dx * SCREEN_WIDTH > 30 )
+						{
+							GOD.fingermotion_RIGHT = true;
+						}
+						else if(e.tfinger.dx * SCREEN_WIDTH < -30 )
+						{
+							GOD.fingermotion_LEFT = true;
+						}
+
 					} else {
 						GOD.fingermotion_DOWN = false;
 						GOD.fingermotion_UP = false;
+						GOD.fingermotion_LEFT = false;
+						GOD.fingermotion_RIGHT = false;
+						GOD.TouchX = -1;
+						GOD.TouchY = -1;
 					}
 					GOD.fingermotion=true;
-					GOD.TouchX = -1;
-					GOD.TouchY = -1;
 				}
 				break;
 			case SDL_FINGERUP:
@@ -388,13 +375,13 @@ try{
 									UD["chapter"][KeyName]["latest"] = latest;
 									latestcolor = latest;
 									
-									std::string item=BD["com"]["ActualLink"].get<std::string>();
+									//std::string item=BD["com"]["ActualLink"].get<std::string>();
 									int hsize = UD["history"].size();
 									if (hsize > 56){UD["history"].erase(0);}//limit history
 									if (hsize > 0){
-										UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
+										UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), tempurl), UD["history"].end());
 									}
-									UD["history"].push_back(item);
+									UD["history"].push_back(tempurl);
 									write_DB(UD,rootsave+"UserData.json");
 
 								}
@@ -554,12 +541,13 @@ try{
 					}
 					else if (e.jbutton.button == GOD.BT_Y) {// (Y) button down
 
-
 						switch (statenow)
 						{
 						case programationstate:
-							statenow=programationsliderstate;
-							selectelement = 1;
+							callmenuslide();
+							break;
+						case programationsliderstate:
+							callfavs();
 							break;
 						/*
 							if (!reloading)
@@ -569,9 +557,8 @@ try{
 								statenow = favoritesstate;
 								Frames=1;
 							}
-						
-						*/
 							break;
+						*/
 						case downloadstate:
 							break;
 						case chapterstate:
@@ -816,6 +803,7 @@ try{
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
 			VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
 			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
+			GOD.HR=200;GOD.HG=200;GOD.HB=200;
 			std::string temptext = BD["com"]["ActualLink"];
 			NameOfLink(temptext);
 
@@ -1000,6 +988,15 @@ try{
 
 					if(ongrid){
 						USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
+						if (GOD.fingermotion_LEFT & (GOD.TouchX > 1100)){
+							GOD.fingermotion_LEFT = false;
+							callmenuslide();
+						}
+						if (GOD.fingermotion_RIGHT & (GOD.TouchX > 850)){
+							GOD.fingermotion_RIGHT = false;
+							statenow=programationstate;
+						}
+						GOD.HR=200;GOD.HG=200;GOD.HB=200;
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
@@ -1059,8 +1056,8 @@ try{
 						{
 							StatesList= {"Busqueda","Favoritos","Historial","Horario","Top Anime","AnimeFLV","ToDo..."};
 
-							int mwide = 60,XD=920,YD=120,W=1280-XD;
-							VOX.render_VOX({XD,61, 1280, 608}, 210, 210, 210, 215);
+							int mwide = 60,XD=940,YD=120,W=1280-XD;
+							VOX.render_VOX({XD,61, 1280, 608}, 220, 220, 220, 220);//draw area
 							VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);//head line
 							VOX.render_VOX({XD,668, W, 1}, 255, 255, 255, 235);//bottom line
 							VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);//line left
@@ -1079,11 +1076,12 @@ try{
 							for (int x = 0; x < (int)StatesList.size(); x++) {
 								if(x == 0){BUSB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 1){FAVB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 2){HISB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 5){AFLV.render(XD+10, YD + (x * mwide)+5);}
 
 								if (x == selectelement){
 									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);
-									VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-50, T_T.getHeight()-5}, 50, 50, 50, 200);
+									VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-100, T_T.getHeight()-5}, 50, 50, 50, 100);
 									T_T.render(XD+80, YD + (x * mwide));
 								} else {
 									gTextTexture.loadFromRenderedText(GOD.gFont6, StatesList[x],textColor);
@@ -1133,6 +1131,8 @@ try{
 						if (preview)
 						{
 							if (ongridS){
+								VOX.TickerColor(GOD.HG,210,255, 200);
+								GOD.HR=200;GOD.HB=200;
 								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongridS,Frames);
 								BUS.render_T(5, 15,"");
 								if (isHandheld){
@@ -1192,6 +1192,8 @@ try{
 					if (preview)
 					{
 						if (ongridF){
+							VOX.TickerColor(GOD.HR,210,255, 200);
+							GOD.HG=200;GOD.HB=200;
 							GOD.ListCover(favchapter,BD["arrays"]["favorites"],ongridF,Frames);
 							FAV.render_T(5, 15,"");
 						} else {
@@ -1329,12 +1331,15 @@ try{
 		}
 
 		if(programationstate != statenow && isHandheld){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
-		B_P.render_T(160, 680,"Salir",quit);
+		B_P.render_T(140, 680,"Salir",quit);
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 		
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
+		
+		if(!isLoaded){LoadImages();}
+
 		//Display the list
 		if (!quit&&!reloading&&!AppletMode&&Frames>2) {preview = true;}
 		

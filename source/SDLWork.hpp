@@ -16,7 +16,8 @@ public:
 	~LTexture();
 	//peer key funct
 	bool reverse=false;
-	void TickerColor(int& color,int min,int max);
+	unsigned long long time2=0;
+	void TickerColor(int& color,int min,int max,unsigned long long sec = 0);
 	void TickerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
 	void TickerBomb(int sizescale=0);
 	void TickerScale();
@@ -114,6 +115,9 @@ bool fingermotion_UP = false;
 bool fingermotion_DOWN = false;
 bool fingermotion_LEFT = false;
 bool fingermotion_RIGHT = false;
+
+int HR=200,HG=200,HB=200;
+
 int TouchX=-1;
 int TouchY=-1;
 int GenState=-1;

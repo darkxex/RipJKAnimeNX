@@ -272,6 +272,12 @@ int refrescarpro(void* data){
 			BD["TimeStamp"] = std::to_string(t);
 			std::cout << "New TimeStamp: " << BD["TimeStamp"] << std::endl;
 			Frames=1;
+			//merge vectors
+			ChapImag.insert( ChapImag.end(), BD["arrays"]["chapter"]["images"].begin(), BD["arrays"]["chapter"]["images"].end() );
+			ChapLink.insert( ChapLink.end(), BD["arrays"]["chapter"]["link"].begin(), BD["arrays"]["chapter"]["link"].end() );
+			ChapImag.erase(unique(ChapImag.begin(),ChapImag.end()),ChapImag.end());
+			ChapLink.erase(unique(ChapLink.begin(),ChapLink.end()),ChapLink.end());
+
 			BD["arrays"]["chapter"]["images"]=ChapImag;
 			BD["arrays"]["chapter"]["link"]=ChapLink;
 		}
