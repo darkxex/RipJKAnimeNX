@@ -84,6 +84,7 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 //Globally used font
 TTF_Font *B_O_F = NULL;
+TTF_Font *Arista = NULL;
 TTF_Font *gFont = NULL;
 TTF_Font *gFont2 = NULL;
 TTF_Font *gFont3 = NULL;
@@ -91,6 +92,7 @@ TTF_Font *gFont4 = NULL;
 TTF_Font *gFont5 = NULL;
 TTF_Font *gFont6 = NULL;
 TTF_Font* digifont = NULL;
+TTF_Font* digifont2 = NULL;
 TTF_Font* digifontC = NULL;
 TTF_Font *gFontcapit = NULL;
 Mix_Music* gMusic = NULL;

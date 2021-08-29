@@ -108,14 +108,17 @@ void SDLB::intA(){
 	}
 
 	B_O_F = TTF_OpenFont("romfs:/AF.ttf", 19);
-	//B_O_F = TTF_OpenFont("romfs:/lazy.ttf", 19);
-	gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
-	gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
-	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
-	gFont4 = TTF_OpenFont("romfs:/lazy2.ttf", 30);
-	gFont5 = TTF_OpenFont("romfs:/lazy2.ttf", 20);
-	gFont6 = TTF_OpenFont("romfs:/lazy2.ttf", 50);
-	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
+	digifont2 = TTF_OpenFont("romfs:/AF.ttf", 35);
+	Arista = TTF_OpenFont("romfs:/Arista.ttf", 27);
+	
+	//B_O_F = TTF_OpenFont("romfs:/Comic.ttf", 19);
+	gFont = TTF_OpenFont("romfs:/Comic.ttf", 16);
+	gFont2 = TTF_OpenFont("romfs:/Arista.ttf", 150);
+	gFont3 = TTF_OpenFont("romfs:/Arista.ttf", 40);
+	gFont4 = TTF_OpenFont("romfs:/Arista.ttf", 30);
+	gFont5 = TTF_OpenFont("romfs:/Arista.ttf", 20);
+	gFont6 = TTF_OpenFont("romfs:/Arista.ttf", 50);
+	gFontcapit = TTF_OpenFont("romfs:/Arista.ttf", 100);
 	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
 	digifontC = TTF_OpenFont("romfs:/digifont.otf", 9);
 

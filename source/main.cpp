@@ -894,7 +894,7 @@ try{
 						gTextTexture.render(posxbase + 855, posybase + 598);
 					}
 					gTextTexture.loadFromRenderedText(GOD.gFont, BD["com"]["nextdate"], { 255,255,255 });
-					gTextTexture.render(posxbase + 1055, posybase + 615);
+					gTextTexture.render(posxbase + 1040, posybase + 615);
 				}
 			}
 
@@ -932,38 +932,38 @@ try{
 					if (latest-2 >= mincapit) {
 						com=textGray;
 						if (latest-2 == latestcolor) com=textGrayGreen;
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), com);
-						gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest-2), com);
+						gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 					}
 					if (latest-1 >= mincapit) {
 						com=textGray;
 						if (latest-1 == latestcolor) com=textGrayGreen;
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), com);
-						gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest-1), com);
+						gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 					}
 					{
 						com=textBlue;
 						if (latest == latestcolor) com=textWhiteGreen;
 						if (serverpront){
-							T_N.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
-							T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 558+YS);
+							T_N.loadFromRenderedText(GOD.digifont2, std::to_string(latest), com);
+							T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 565+YS);
 						} else {
-							T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
-							T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
+							T_T.loadFromRenderedText(GOD.digifont2, std::to_string(latest), com);
+							T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 565+YS);
 						}
 					}
 
 					if (latest+1 <= maxcapit) {
 						com=textGray;
 						if (latest+1 == latestcolor) com=textGrayGreen;
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), com);
-						gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest+1), com);
+						gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 					}
 					if (latest+2 <= maxcapit) {
 						com=textGray;
 						if (latest+2 == latestcolor) com=textGrayGreen;
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), com);
-						gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest+2), com);
+						gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 					}
 
 					if (maxcapit >= 10 && !serverpront){
