@@ -37,7 +37,16 @@ LTexture gTextTexture, Farest, Heart;
 //Render Buttons
 LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
-LTexture BUS, BUSB, REC, BACK, USER, NFAV, FAV, FAVB, AFLV, NOP, HIS, HISB, CLEAR, SCREEN;
+LTexture SCREEN,
+BUS, BUSB,
+TOP, TOPB,
+DOW, DOWB,
+HOR, HORB,
+NFAV, FAV, FAVB,
+REC, BACK, USER,
+HIS, HISB,
+AFLV, NOP,
+CLEAR;
 //Text and BOXES
 LTexture VOX, T_T, T_N, T_D, T_R;
 
@@ -156,6 +165,13 @@ void LoadImages(){
 	NOP.loadFromFile("romfs:/nop.png");
 	REC.loadFromFileCustom("romfs:/buttons/REC.png",43,43);
 	HIS.loadFromFileCustom("romfs:/buttons/HIS.png",43,43);
+	TOP.loadFromFileCustom("romfs:/buttons/TOP.png",43,43);
+	DOW.loadFromFileCustom("romfs:/buttons/DOW.png",43,43);
+	HOR.loadFromFileCustom("romfs:/buttons/HOR.png",43,43);
+
+	TOPB.loadFromFileCustom("romfs:/buttons/TOP.png",55, 55);
+	DOWB.loadFromFileCustom("romfs:/buttons/DOW.png",55, 55);
+	HORB.loadFromFileCustom("romfs:/buttons/HOR.png",55, 55);
 	
 	HISB.loadFromFileCustom("romfs:/buttons/HIS.png",55, 55);
 	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);

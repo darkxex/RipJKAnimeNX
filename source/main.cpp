@@ -1120,10 +1120,10 @@ try{
 								if(x == 0){BUSB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 1){FAVB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 2){HISB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 3){HISB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 4){HISB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 3){HORB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 4){TOPB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 5){AFLV.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 6){AFLV.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 6){DOWB.render(XD+10, YD + (x * mwide)+5);}
 
 								if (x == selectelement){
 									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);
