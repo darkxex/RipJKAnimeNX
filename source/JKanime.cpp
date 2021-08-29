@@ -313,9 +313,10 @@ int refrescarpro(void* data){
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
 	vec=scrapElementAll(content,"https://jkanime.net/");
-	sort(vec.begin(),vec.end());
+	//sort(vec.begin(),vec.end());
 	vec.erase(unique(vec.begin(),vec.end()),vec.end());
 	BD["arrays"]["Top"]["link"]=vec;
+	CheckImgVector(vec,imgNumbuffer);
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	//load Horario
@@ -323,9 +324,10 @@ int refrescarpro(void* data){
 	content=gethtml("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	vec=scrapElementAll(content,"https://jkanime.net/");
-	sort(vec.begin(),vec.end());
+	//sort(vec.begin(),vec.end());
 	vec.erase(unique(vec.begin(),vec.end()),vec.end());
 	BD["arrays"]["HourGlass"]["link"]=vec;
+	CheckImgVector(vec,imgNumbuffer);
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
 	//load main
@@ -384,26 +386,26 @@ int MKcapitBuffer(std::vector<std::string> LinkList,int& part, int& ofall) {
 int MKfavimgfix(bool images){
 	if(quit) return 0;
 	bool hasanychange=false;
-	if(BD["arrays"]["favorites"]["images"].empty() || BD["arrays"]["favorites"]["link"].empty()){
+	if(UD["favoritos"].empty()){
 		printf("# Get fav list\n");
 		getFavorite();
 		printf("# Goted fav list\n");
 	}
-	porcentajebufferFF = BD["arrays"]["favorites"]["link"].size();
+	porcentajebufferFF = UD["favoritos"].size();
 	if (porcentajebufferFF <= 0)  return 0;
 	
 	if (images) {
-		CheckImgVector(BD["arrays"]["favorites"]["images"],porcentajebufferF);
+		CheckImgVector(UD["favoritos"],porcentajebufferF);
 		porcentajebufferFF=0;
 	} else {
 		for (int y=0; y < porcentajebufferFF && !quit; y++)
 		{
-			std::string name=BD["arrays"]["favorites"]["link"][y];
+			std::string name=UD["favoritos"][y];
 			replace(name, "https://jkanime.net/", "");
 			replace(name, "/", "");
 			porcentajebufferF=y+1;
 			if (BD["DataBase"][name]["TimeStamp"].empty() || BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]){
-				std::string lingrt=BD["arrays"]["favorites"]["link"][y];
+				std::string lingrt=UD["favoritos"][y];
 				replace(lingrt,"\"","");
 				std::string a = gethtml(lingrt);
 				PushDirBuffer(a,name);
@@ -599,24 +601,7 @@ void addFavorite(std::string text) {
 	}
 }
 void getFavorite() {
-	if(!BD["arrays"]["favorites"].empty()){
-		BD["arrays"]["favorites"]["link"].clear();
-		BD["arrays"]["favorites"]["images"].clear();
-	}
-	if (!UD["favoritos"].empty()){
-		for (int x=0; x < (int)UD["favoritos"].size(); x++){
-			std::string str = UD["favoritos"][x];
-			replace(str,"\"","");
-			if (str.find("jkanime"))
-			{
-				BD["arrays"]["favorites"]["link"].push_back(str);
-				replace(str, "https://jkanime.net/", "");
-				replace(str, "/", ".jpg");
-				str = "https://cdn.jkanime.net/assets/images/animes/image/"+str;
-				BD["arrays"]["favorites"]["images"].push_back(str);				
-			}
-		}
-	} else {
+	if (UD["favoritos"].empty()){
 		if (isFileExist(rootdirectory+"favoritos.txt")) {
 			std::string temp;
 			std::ifstream file(rootdirectory+"favoritos.txt");
@@ -626,12 +611,7 @@ void getFavorite() {
 				replace(str,"\"","");
 				if (str.find("jkanime"))
 				{
-					BD["arrays"]["favorites"]["link"].push_back(str);
-					UD["favoritos"].push_back(str);
-					replace(strtmp, "https://jkanime.net/", "");
-					replace(strtmp, "/", ".jpg");
-					strtmp = "https://cdn.jkanime.net/assets/images/animes/image/"+strtmp;
-					BD["arrays"]["favorites"]["images"].push_back(strtmp);				
+					UD["favoritos"].push_back(str);			
 				}
 			}
 			file.close();

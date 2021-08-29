@@ -120,8 +120,9 @@ int main(int argc, char **argv)
 
 	SDL_Color textColor = { 50, 50, 50 };
 	SDL_Color textWhite = { 255, 255, 255 };
-	SDL_Color textGray = { 200, 200, 200 };
-	SDL_Color textGrayGreen = { 100, 200, 100 };
+	SDL_Color textBlue = { 100, 100, 255 };
+	SDL_Color textGray = { 130, 130, 130 };
+	SDL_Color textGrayGreen = { 90, 170, 90 };
 	SDL_Color textWhiteGreen = { 80, 255, 80 };
 
 	int posxbase = 20;
@@ -241,37 +242,7 @@ try{
 						}
 						GOD.WorKey="0";GOD.MasKey=-1;
 					}
-					else if (USER.SP()) {
-						if (SelectUser()){
-							if (MountUserSave(acc)){
-								rootsave = "save:/";
-								if(isFileExist(rootdirectory+AccountID+"UserData.json")){
-									if(!isFileExist(rootsave+"UserData.json")){
-										if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
-											fsdevCommitDevice("save");
-											remove((rootdirectory+AccountID+"UserData.json").c_str());
-											remove((rootdirectory+AccountID+"User.jpg").c_str());
-										}
-									}
-								}
-							}else {
-								rootsave = rootdirectory+AccountID;
-								GetUserImage();
-							}
-							USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
-							UD = "{}"_json;
-							read_DB(UD,rootsave+"UserData.json");
-							
-							if(statenow==chapterstate){
-								capBuffer(BD["com"]["ActualLink"]);
-								gFAV = isFavorite(BD["com"]["ActualLink"]);
-							}
-							if(statenow==favoritesstate){
-								getFavorite();
-								Frames=1;							
-							}
-						}
-					}
+					else if (USER.SP()) {PlayerGet(acc);}
 					else if (B_A.SP()) {e.jbutton.button = GOD.BT_A; B_A.TickerBomb();}
 					else if (T_T.SP() ) e.jbutton.button = GOD.BT_A;
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
@@ -334,6 +305,8 @@ try{
 							if(selectelement==0){callsearch();}
 							if(selectelement==1){callfavs();}
 							if(selectelement==2){callhistory();}
+							if(selectelement==3){callhourglass();}
+							if(selectelement==4){calltop();}
 							if(selectelement==5){callAflv();}
 							if(selectelement==6){if(isDownloading){statenow = downloadstate;}}
 							break;
@@ -357,6 +330,24 @@ try{
 
 							}
 							break;
+							case hourglass:
+							{
+								if (BD["arrays"]["HourGlass"]["link"].size()>0)
+								{
+									capBuffer(BD["arrays"]["HourGlass"]["link"][hourchapter]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								}
+							}
+							break;
+							case topstate:
+							{
+								if (BD["arrays"]["Top"]["link"].size()>0)
+								{
+									capBuffer(BD["arrays"]["Top"]["link"][topchapter]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								}
+							}
+							break;
 							case historystate:
 							{
 								if (UD["history"].size()>0)
@@ -370,8 +361,8 @@ try{
 
 							case favoritesstate:
 							{
-								if ((int)BD["arrays"]["favorites"]["link"].size() >= 1 ){
-									capBuffer(BD["arrays"]["favorites"]["link"][favchapter]);
+								if ((int)UD["favoritos"].size() >= 1 ){
+									capBuffer(UD["favoritos"][favchapter]);
 									gFAV = true;
 								}
 							}
@@ -499,6 +490,9 @@ try{
 								statenow = programationstate;
 							}
 							break;
+							
+						case topstate:
+						case hourglass:
 						case historystate:
 						case favoritesstate:
 						case programationsliderstate:
@@ -544,8 +538,6 @@ try{
 						case favoritesstate:							
 							delFavorite(favchapter);
 							if (favchapter > 0) favchapter--;
-							getFavorite();
-							statenow = favoritesstate;
 						break;
 
 						}
@@ -667,11 +659,17 @@ try{
 								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
 							break;
+						case topstate:
+							GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case hourglass:
+							GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+							break;
 						case historystate:
 							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
 							break;
 						case favoritesstate:
-							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
 							break;
 						}
 					}
@@ -702,11 +700,17 @@ try{
 								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
 							break;
+						case topstate:
+							GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case hourglass:
+							GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+							break;
 						case historystate:
 							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
 							break;
 						case favoritesstate:
-							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
 							break;
 						}
 					}
@@ -744,11 +748,17 @@ try{
 							}
 							break;
 
+						case topstate:
+							GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case hourglass:
+							GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+							break;
 						case historystate:
 							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
 							break;
 						case favoritesstate:
-							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
 							break;
 						case programationsliderstate:
 							GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
@@ -790,11 +800,17 @@ try{
 							}
 							break;
 
+						case topstate:
+							GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case hourglass:
+							GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+							break;
 						case historystate:
 							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
 							break;
 						case favoritesstate:
-							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
 							break;
 						case programationsliderstate:
 							GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
@@ -925,9 +941,8 @@ try{
 						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), com);
 						gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 					}
-					
 					{
-						com=textWhite;
+						com=textBlue;
 						if (latest == latestcolor) com=textWhiteGreen;
 						if (serverpront){
 							T_N.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
@@ -1084,7 +1099,7 @@ try{
 					if (statenow==programationsliderstate){
 						
 						{
-							StatesList= {"Busqueda","Favoritos","History","Horario","Top Anime","AnimeFLV"};
+							StatesList= {"Búsqueda","Favoritos","Historial","Horario","Top Anime","AnimeFLV"};
 							if(isDownloading){StatesList.push_back("Descargas");}
 
 							int mwide = 60,XD=940,YD=120,W=1280-XD;
@@ -1226,20 +1241,22 @@ try{
 				break;
 			}
 			case favoritesstate:	{
+				json VecF;
+				VecF["link"]=UD["favoritos"];
 				if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
-				int favsize=BD["arrays"]["favorites"]["link"].size();
+				int favsize=UD["favoritos"].size();
 				if (favsize > 0){
 					//if (favsize > 30) ongridF=false;
-					if (!ongridF) GOD.ListClassic(favchapter,BD["arrays"]["favorites"]);
+					if (!ongridF) GOD.ListClassic(favchapter,VecF);
 					if (preview)
 					{
 						if (ongridF){
 							VOX.TickerColor(GOD.HR,210,255, 200);
 							GOD.HG=200;GOD.HB=200;
-							GOD.ListCover(favchapter,BD["arrays"]["favorites"],ongridF,Frames);
+							GOD.ListCover(favchapter,VecF,ongridF,Frames);
 							FAV.render_T(5, 15,"");
 						} else {
-							GOD.ListCover(favchapter,BD["arrays"]["favorites"]);
+							GOD.ListCover(favchapter, VecF);
 							B_UP.render_T(580, 5,"");
 							B_DOWN.render_T(580, 630,"");
 						}
@@ -1263,7 +1280,7 @@ try{
 					int dist = 1100,posdist = 180;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_B.render_T(dist, 680,"Volver");dist -= posdist;
-					if ((int)BD["arrays"]["favorites"]["link"].size() >= 1){
+					if ((int)UD["favoritos"].size() >= 1){
 						B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
 					}else NOP.render_T(230, 355,"");
 				}
@@ -1271,28 +1288,22 @@ try{
 			}
 			case historystate: {
 				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
-				//reverse vector
-				json histf;
-				histf["link"]=UD["history"];
-				/*
-				std::cout << "-- " << histf << std::endl;
-				std::reverse(histf["link"].begin(), histf["link"].end());
-				std::cout << "-- " << histf << std::endl;
-				*/
+				json VecF;
+				VecF["link"]=UD["history"];
 				
-				int histsize=histf["link"].size();
+				int histsize=VecF["link"].size();
 				if (histsize > 0){
 					//if (favsize > 30) ongridF=false;
-					if (!ongrid) GOD.ListClassic(histchapter,histf);
+					if (!ongrid) GOD.ListClassic(histchapter,VecF);
 					if (preview)
 					{
 						if (ongrid){
 							VOX.TickerColor(GOD.HG,100,200, 200);
 							GOD.HR=200;GOD.HB=200;
-							GOD.ListCover(histchapter,histf,ongrid,Frames);
+							GOD.ListCover(histchapter,VecF,ongrid,Frames);
 							HIS.render_T(5, 15,"");
 						} else {
-							GOD.ListCover(histchapter,histf);
+							GOD.ListCover(histchapter,VecF);
 							B_UP.render_T(580, 5,"");
 							B_DOWN.render_T(580, 630,"");
 						}
@@ -1301,6 +1312,78 @@ try{
 				
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.gFont, "history", {100,0,0});
+				if(ongrid){
+					gTextTexture.render(5, 1);
+				}else {
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
+				}
+
+				{//Draw footer buttons
+					int dist = 1100,posdist = 180;
+					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+					B_B.render_T(dist, 680,"Volver");dist -= posdist;
+				}
+			break;
+			}
+			case topstate: {
+				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+				int histsize=BD["arrays"]["Top"]["link"].size();
+				if (histsize > 0){
+					//if (favsize > 30) ongridF=false;
+					if (!ongrid) GOD.ListClassic(topchapter,BD["arrays"]["Top"]);
+					if (preview)
+					{
+						if (ongrid){
+							VOX.TickerColor(GOD.HR,100,200, 200);
+							GOD.HG=200;GOD.HB=200;
+							GOD.ListCover(topchapter,BD["arrays"]["Top"],ongrid,Frames);
+							TOP.render_T(5, 15,"");
+						} else {
+							GOD.ListCover(topchapter,BD["arrays"]["Top"]);
+							B_UP.render_T(580, 5,"");
+							B_DOWN.render_T(580, 630,"");
+						}
+					}
+				} else NOP.render_T(230, 355,"");
+				
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Top Anime", {100,0,0});
+				if(ongrid){
+					gTextTexture.render(5, 1);
+				}else {
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
+				}
+
+				{//Draw footer buttons
+					int dist = 1100,posdist = 180;
+					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+					B_B.render_T(dist, 680,"Volver");dist -= posdist;
+				}
+			break;
+			}
+			case hourglass: {
+				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+				int histsize=BD["arrays"]["HourGlass"]["link"].size();
+				if (histsize > 0){
+					//if (favsize > 30) ongridF=false;
+					if (!ongrid) GOD.ListClassic(hourchapter,BD["arrays"]["HourGlass"]);
+					if (preview)
+					{
+						if (ongrid){
+							VOX.TickerColor(GOD.HB,100,200, 200);
+							GOD.HR=200;GOD.HG=200;
+							GOD.ListCover(hourchapter,BD["arrays"]["HourGlass"],ongrid,Frames);
+							HOR.render_T(5, 15,"");
+						} else {
+							GOD.ListCover(hourchapter,BD["arrays"]["HourGlass"]);
+							B_UP.render_T(580, 5,"");
+							B_DOWN.render_T(580, 630,"");
+						}
+					}
+				} else NOP.render_T(230, 355,"");
+				
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "En Emisión", {100,0,0});
 				if(ongrid){
 					gTextTexture.render(5, 1);
 				}else {

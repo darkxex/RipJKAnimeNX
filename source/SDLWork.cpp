@@ -107,8 +107,8 @@ void SDLB::intA(){
 		}
 	}
 
-	//B_O_F = TTF_OpenFont("romfs:/AF.ttf", 19);
-	B_O_F = TTF_OpenFont("romfs:/lazy.ttf", 19);
+	B_O_F = TTF_OpenFont("romfs:/AF.ttf", 19);
+	//B_O_F = TTF_OpenFont("romfs:/lazy.ttf", 19);
 	gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
 	gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
 	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);

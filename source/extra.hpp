@@ -92,6 +92,10 @@ bool serverpront = false;
 int selectelement = 0;
 //history
 int histchapter=0;
+//top
+int topchapter=0;
+//Hour 
+int hourchapter=0;
 
 //my vars
 bool isHandheld=true;
@@ -180,8 +184,40 @@ void LoadImages(){
 	AFLV.loadFromFileCustom("romfs:/buttons/AF.png",55, 55);
 	isLoaded=true;
 }
+void PlayerGet(FsFileSystem& acc){
+	if (SelectUser()){
+		if (MountUserSave(acc)){
+			rootsave = "save:/";
+			if(isFileExist(rootdirectory+AccountID+"UserData.json")){
+				if(!isFileExist(rootsave+"UserData.json")){
+					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+						fsdevCommitDevice("save");
+						remove((rootdirectory+AccountID+"UserData.json").c_str());
+						remove((rootdirectory+AccountID+"User.jpg").c_str());
+					}
+				}
+			}
+		} else {
+			rootsave = rootdirectory+AccountID;
+			GetUserImage();
+		}
+		USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
+		UD = "{}"_json;
+		read_DB(UD,rootsave+"UserData.json");
+		
+		if(statenow==chapterstate){
+			capBuffer(BD["com"]["ActualLink"]);
+			gFAV = isFavorite(BD["com"]["ActualLink"]);
+		}
+		Frames=1;
+	}
+}
 
 //call states
+void callmenuslide(){
+	statenow=programationsliderstate;
+	selectelement = 1;
+}
 void callsearch(){
 	GOD.WorKey="0";GOD.MasKey=-1;
 	if (!reloadingsearch)
@@ -220,8 +256,15 @@ void callhistory(){
 		Frames=1;
 	}
 }
-void callmenuslide(){
-	statenow=programationsliderstate;
-	selectelement = 1;
+void calltop(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	statenow = topstate;
+	returnnow = topstate;
+	Frames=1;
 }
-
+void callhourglass(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	statenow = hourglass;
+	returnnow = hourglass;
+	Frames=1;
+}
