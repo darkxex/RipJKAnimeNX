@@ -67,8 +67,8 @@ int main(int argc, char **argv)
 	BD["com"] = "{}"_json;
 	if(!BD["USER"].empty()){
 		UD=BD["USER"];
-		BD.erase("USER");
 	}
+	BD.erase("USER");
 	read_DB(UD,rootsave+"UserData.json");
 	
 	GOD.intA();//init the SDL
@@ -221,7 +221,7 @@ try{
 					if (BUSB.SP()) {callsearch();}
 					else if (FAVB.SP()) {callfavs();}
 					else if (AFLV.SP()) {callAflv();}
-					
+					else if (HISB.SP()) {callhistory();}
 					else if (NFAV.SP() && !gFAV){
 						GOD.WorKey="0";GOD.MasKey=-1;
 						{//AGREGAR A FAVORITOS
@@ -333,8 +333,9 @@ try{
 						case programationsliderstate:
 							if(selectelement==0){callsearch();}
 							if(selectelement==1){callfavs();}
-							if(selectelement==2){}
+							if(selectelement==2){callhistory();}
 							if(selectelement==5){callAflv();}
+							if(selectelement==6){if(isDownloading){statenow = downloadstate;}}
 							break;
 							case programationstate:
 							{
@@ -351,6 +352,16 @@ try{
 								if (!reloadingsearch && BD["arrays"]["search"]["link"].size()>=1)
 								{
 									capBuffer(BD["arrays"]["search"]["link"][searchchapter]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								}
+
+							}
+							break;
+							case historystate:
+							{
+								if (UD["history"].size()>0)
+								{
+									capBuffer(UD["history"][histchapter]);
 									gFAV = isFavorite(BD["com"]["ActualLink"]);
 								}
 
@@ -375,13 +386,15 @@ try{
 									UD["chapter"][KeyName]["latest"] = latest;
 									latestcolor = latest;
 									
-									//std::string item=BD["com"]["ActualLink"].get<std::string>();
+									std::string item=BD["com"]["ActualLink"].get<std::string>();
 									int hsize = UD["history"].size();
-									if (hsize > 56){UD["history"].erase(0);}//limit history
+									if (hsize > 29){UD["history"].erase(UD["history"].end());}//limit history
 									if (hsize > 0){
-										UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), tempurl), UD["history"].end());
+										UD["history"] = eraseVec(UD["history"],item);
+										//UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
 									}
-									UD["history"].push_back(tempurl);
+									UD["history"].insert(UD["history"].begin(),tempurl);
+									//UD["history"].push_back(tempurl);
 									write_DB(UD,rootsave+"UserData.json");
 
 								}
@@ -486,13 +499,11 @@ try{
 								statenow = programationstate;
 							}
 							break;
-
+						case historystate:
 						case favoritesstate:
+						case programationsliderstate:
 							returnnow = programationstate;
 							statenow = programationstate;
-							break;
-						case programationsliderstate:
-							statenow=programationstate;
 							break;
 						}
 					}
@@ -656,6 +667,9 @@ try{
 								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
 							break;
+						case historystate:
+							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+							break;
 						case favoritesstate:
 							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
@@ -687,6 +701,9 @@ try{
 							{
 								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
+							break;
+						case historystate:
+							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
 							break;
 						case favoritesstate:
 							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
@@ -727,6 +744,9 @@ try{
 							}
 							break;
 
+						case historystate:
+							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+							break;
 						case favoritesstate:
 							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
@@ -770,6 +790,9 @@ try{
 							}
 							break;
 
+						case historystate:
+							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+							break;
 						case favoritesstate:
 							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
 							break;
@@ -794,6 +817,9 @@ try{
 		//wallpaper
 		Farest.render((0), (0));
 		
+		//Draw footer
+		VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
+		
 		//render states
 		switch (statenow)
 		{
@@ -802,7 +828,6 @@ try{
 			USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
 			VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
-			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 			GOD.HR=200;GOD.HG=200;GOD.HB=200;
 			std::string temptext = BD["com"]["ActualLink"];
 			NameOfLink(temptext);
@@ -984,7 +1009,6 @@ try{
 			case programationsliderstate:
 			case programationstate:	{
 				if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1) {
-					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 
 					if(ongrid){
 						USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
@@ -1002,7 +1026,8 @@ try{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
 							if (isHandheld && statenow!=programationsliderstate){
 								FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
-								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+								HISB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - HISB.getWidth() - 70, 1);
 							}
 						}
 						double angle = 0.0;
@@ -1059,7 +1084,8 @@ try{
 					if (statenow==programationsliderstate){
 						
 						{
-							StatesList= {"Busqueda","Favoritos","Historial","Horario","Top Anime","AnimeFLV","ToDo..."};
+							StatesList= {"Busqueda","Favoritos","History","Horario","Top Anime","AnimeFLV"};
+							if(isDownloading){StatesList.push_back("Descargas");}
 
 							int mwide = 60,XD=940,YD=120,W=1280-XD;
 							VOX.render_VOX({XD,61, 1280, 608}, 220, 220, 220, 220);//draw area
@@ -1089,11 +1115,15 @@ try{
 									selectelement = sel;
 								}
 							}
-							for (int x = 0; x < (int)StatesList.size(); x++) {
+
+							for (int x = 0; x < indexLsize; x++) {
 								if(x == 0){BUSB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 1){FAVB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 2){HISB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 3){HISB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 4){HISB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 5){AFLV.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 6){AFLV.render(XD+10, YD + (x * mwide)+5);}
 
 								if (x == selectelement){
 									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);
@@ -1103,7 +1133,8 @@ try{
 									gTextTexture.loadFromRenderedText(GOD.gFont6, StatesList[x],textColor);
 									gTextTexture.render(XD+80, YD + (x * mwide));
 								}
-								if (x < (int)StatesList.size()-1){
+
+								if (x < indexLsize-1){
 									VOX.render_VOX({XD+80,YD + (x * mwide)+mwide+2, W-130, 1}, 255, 255, 255, 235);
 								}
 							}
@@ -1135,10 +1166,7 @@ try{
 				break;
 			}
 			case searchstate:		{
-				if (!reloadingsearch) {
-					//Draw footer
-					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
-					
+				if (!reloadingsearch) {					
 					int srchsize=BD["arrays"]["search"]["link"].size();
 					if(ongridS){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 					if (srchsize > 0){
@@ -1198,8 +1226,6 @@ try{
 				break;
 			}
 			case favoritesstate:	{
-				//Draw footer
-				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
 				if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int favsize=BD["arrays"]["favorites"]["link"].size();
 				if (favsize > 0){
@@ -1243,11 +1269,55 @@ try{
 				}
 			break;
 			}
+			case historystate: {
+				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+				//reverse vector
+				json histf;
+				histf["link"]=UD["history"];
+				/*
+				std::cout << "-- " << histf << std::endl;
+				std::reverse(histf["link"].begin(), histf["link"].end());
+				std::cout << "-- " << histf << std::endl;
+				*/
+				
+				int histsize=histf["link"].size();
+				if (histsize > 0){
+					//if (favsize > 30) ongridF=false;
+					if (!ongrid) GOD.ListClassic(histchapter,histf);
+					if (preview)
+					{
+						if (ongrid){
+							VOX.TickerColor(GOD.HG,100,200, 200);
+							GOD.HR=200;GOD.HB=200;
+							GOD.ListCover(histchapter,histf,ongrid,Frames);
+							HIS.render_T(5, 15,"");
+						} else {
+							GOD.ListCover(histchapter,histf);
+							B_UP.render_T(580, 5,"");
+							B_DOWN.render_T(580, 630,"");
+						}
+					}
+				} else NOP.render_T(230, 355,"");
+				
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "history", {100,0,0});
+				if(ongrid){
+					gTextTexture.render(5, 1);
+				}else {
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
+				}
+
+				{//Draw footer buttons
+					int dist = 1100,posdist = 180;
+					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+					B_B.render_T(dist, 680,"Volver");dist -= posdist;
+				}
+			break;
+			}
 			case downloadstate:	{
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);//Head
 				VOX.render_VOX({16,65, 900, 162}, 210, 210, 210, 115);//Rectangle
-				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Footer
 				
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
 				gTextTexture.render(posxbase, posybase+15);

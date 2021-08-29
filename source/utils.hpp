@@ -16,6 +16,7 @@ bool copy_me(std::string origen, std::string destino);
 bool read_DB(json& base,std::string path);
 bool write_DB(json base,std::string path);
 void led_on(int inter);
+std::vector<std::string> eraseVec(std::vector<std::string> array,std::string patther);
 bool onTimeC(unsigned long long sec,unsigned long long& time2);
 void TickerName(int& color,int sec,int min,int max);
 void RemoveAccents(std::string& word);

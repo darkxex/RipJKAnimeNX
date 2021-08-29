@@ -561,6 +561,7 @@ int capBuffer (std::string Tlink) {
 			mincapit = BD["DataBase"][name]["mincapit"];
 			//check For latest cap seend
 			if (UD["chapter"][name].empty()||UD["chapter"][name]["latest"].empty()){
+				UD["chapter"].erase(name);
 				//get position to the latest cap if in emision
 				if (BD["com"]["enemision"] == "true"){
 					latest = BD["DataBase"][name]["maxcapit"];//is in emision

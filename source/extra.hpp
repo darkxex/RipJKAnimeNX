@@ -81,7 +81,8 @@ int selectserver = 0;
 bool serverpront = false;
 //slider
 int selectelement = 0;
-
+//history
+int histchapter=0;
 
 //my vars
 bool isHandheld=true;
@@ -153,9 +154,9 @@ void LoadImages(){
 	NFAV.loadFromFile("romfs:/buttons/NFAV.png");
 	BUS.loadFromFile("romfs:/buttons/BUS.png");
 	NOP.loadFromFile("romfs:/nop.png");
-	NOP.loadFromFile("romfs:/nop.png");
 	REC.loadFromFileCustom("romfs:/buttons/REC.png",43,43);
 	HIS.loadFromFileCustom("romfs:/buttons/HIS.png",43,43);
+	
 	HISB.loadFromFileCustom("romfs:/buttons/HIS.png",55, 55);
 	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
 	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
@@ -194,6 +195,14 @@ void callAflv(){
 	GOD.WorKey="0";GOD.MasKey=-1;
 	statenow=programationstate;
 	WebBrowserCall("https://animeflv.net",true);
+}
+void callhistory(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	if (UD["history"].size()>0){
+		statenow = historystate;
+		returnnow = historystate;
+		Frames=1;
+	}
 }
 void callmenuslide(){
 	statenow=programationsliderstate;
