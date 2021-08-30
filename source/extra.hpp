@@ -37,7 +37,16 @@ LTexture gTextTexture, Farest, Heart;
 //Render Buttons
 LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
-LTexture BUS, BUSB, REC, BACK, USER, NFAV, FAV, FAVB, AFLV, NOP, CLEAR, SCREEN;
+LTexture SCREEN,
+BUS, BUSB,
+TOP, TOPB,
+DOW, DOWB,
+HOR, HORB,
+NFAV, FAV, FAVB,
+REC, BACK, USER,
+HIS, HISB,
+AFLV, NOP,
+CLEAR;
 //Text and BOXES
 LTexture VOX, T_T, T_N, T_D, T_R;
 
@@ -81,7 +90,12 @@ int selectserver = 0;
 bool serverpront = false;
 //slider
 int selectelement = 0;
-
+//history
+int histchapter=0;
+//top
+int topchapter=0;
+//Hour 
+int hourchapter=0;
 
 //my vars
 bool isHandheld=true;
@@ -94,6 +108,10 @@ bool ongridS=true;
 bool ongridF=true;
 AccountUid uid;
 std::string AccountID="-.-";
+
+//
+bool isLoaded=false;
+
 //Threads
 SDL_Thread* prothread = NULL;
 SDL_Thread* searchthread = NULL;
@@ -127,8 +145,81 @@ int xdistance = 1010;
 int ydistance = 340;
 bool isConnected = true;
 
+//load images
+void LoadImages(){
+	//images that not change
+	B_A.loadFromFile("romfs:/buttons/A.png");
+	B_B.loadFromFile("romfs:/buttons/B.png");
+	B_Y.loadFromFile("romfs:/buttons/Y.png");
+	B_X.loadFromFile("romfs:/buttons/X.png");
+	B_L.loadFromFile("romfs:/buttons/L.png");
+	B_R.loadFromFile("romfs:/buttons/R.png");
+	B_M.loadFromFile("romfs:/buttons/MINUS.png");
+	B_P.loadFromFile("romfs:/buttons/PLUS.png");
+	B_ZR.loadFromFile("romfs:/buttons/ZR.png");
+	B_RIGHT.loadFromFile("romfs:/buttons/RIGHT.png");
+	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
+	B_UP.loadFromFile("romfs:/buttons/UP.png");
+	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
+	CLEAR.loadFromFile("romfs:/buttons/clear.png");
+	SCREEN.loadFromFile("romfs:/buttons/screen.png");
+	NOP.loadFromFile("romfs:/nop.png");
+	
+	FAV.loadFromFileCustom("romfs:/buttons/FAV.png",43,43);
+	NFAV.loadFromFileCustom("romfs:/buttons/NFAV.png",43,43);
+	BUS.loadFromFileCustom("romfs:/buttons/BUS.png",43,43);
+	
+	REC.loadFromFileCustom("romfs:/buttons/REC.png",43,43);
+	HIS.loadFromFileCustom("romfs:/buttons/HIS.png",43,43);
+	TOP.loadFromFileCustom("romfs:/buttons/TOP.png",43,43);
+	DOW.loadFromFileCustom("romfs:/buttons/DOW.png",43,43);
+	HOR.loadFromFileCustom("romfs:/buttons/HOR.png",43,43);
+
+	TOPB.loadFromFileCustom("romfs:/buttons/TOP.png",55, 55);
+	DOWB.loadFromFileCustom("romfs:/buttons/DOW.png",55, 55);
+	HORB.loadFromFileCustom("romfs:/buttons/HOR.png",55, 55);
+	
+	HISB.loadFromFileCustom("romfs:/buttons/HIS.png",55, 55);
+	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
+	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
+	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",55, 55);
+	AFLV.loadFromFileCustom("romfs:/buttons/AF.png",55, 55);
+	isLoaded=true;
+}
+void PlayerGet(FsFileSystem& acc){
+	if (SelectUser()){
+		if (MountUserSave(acc)){
+			rootsave = "save:/";
+			if(isFileExist(rootdirectory+AccountID+"UserData.json")){
+				if(!isFileExist(rootsave+"UserData.json")){
+					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+						fsdevCommitDevice("save");
+						remove((rootdirectory+AccountID+"UserData.json").c_str());
+						remove((rootdirectory+AccountID+"User.jpg").c_str());
+					}
+				}
+			}
+		} else {
+			rootsave = rootdirectory+AccountID;
+			GetUserImage();
+		}
+		USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
+		UD = "{}"_json;
+		read_DB(UD,rootsave+"UserData.json");
+		
+		if(statenow==chapterstate){
+			capBuffer(BD["com"]["ActualLink"]);
+			gFAV = isFavorite(BD["com"]["ActualLink"]);
+		}
+		Frames=1;
+	}
+}
 
 //call states
+void callmenuslide(){
+	statenow=programationsliderstate;
+	selectelement = 2;
+}
 void callsearch(){
 	GOD.WorKey="0";GOD.MasKey=-1;
 	if (!reloadingsearch)
@@ -144,7 +235,6 @@ void callsearch(){
 		}
 	}
 }
-
 void callfavs(){
 	GOD.WorKey="0";GOD.MasKey=-1;
 	if (!reloading)
@@ -155,9 +245,28 @@ void callfavs(){
 		Frames=1;
 	}
 }
-
 void callAflv(){
 	GOD.WorKey="0";GOD.MasKey=-1;
 	statenow=programationstate;
 	WebBrowserCall("https://animeflv.net",true);
+}
+void callhistory(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	if (UD["history"].size()>0){
+		statenow = historystate;
+		returnnow = historystate;
+		Frames=1;
+	}
+}
+void calltop(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	statenow = topstate;
+	returnnow = topstate;
+	Frames=1;
+}
+void callhourglass(){
+	GOD.WorKey="0";GOD.MasKey=-1;
+	statenow = hourglass;
+	returnnow = hourglass;
+	Frames=1;
 }

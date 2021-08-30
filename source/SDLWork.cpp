@@ -22,10 +22,11 @@ extern LTexture Farest;
 extern LTexture VOX;
 extern LTexture T_T;
 extern LTexture Heart;
+extern int Frames;
 
 extern std::string rootdirectory;
 
-
+//Grafics and logic
 void SDLB::intA(){
 	//Start up SDL and create window
 	//Initialize SDL
@@ -108,13 +109,17 @@ void SDLB::intA(){
 	}
 
 	B_O_F = TTF_OpenFont("romfs:/AF.ttf", 19);
-	gFont = TTF_OpenFont("romfs:/lazy.ttf", 16);
-	gFont2 = TTF_OpenFont("romfs:/lazy2.ttf", 150);
-	gFont3 = TTF_OpenFont("romfs:/lazy2.ttf", 40);
-	gFont4 = TTF_OpenFont("romfs:/lazy2.ttf", 30);
-	gFont5 = TTF_OpenFont("romfs:/lazy2.ttf", 20);
-	gFont6 = TTF_OpenFont("romfs:/lazy2.ttf", 50);
-	gFontcapit = TTF_OpenFont("romfs:/lazy2.ttf", 100);
+	digifont2 = TTF_OpenFont("romfs:/AF.ttf", 35);
+	Arista = TTF_OpenFont("romfs:/Arista.ttf", 27);
+	
+	//B_O_F = TTF_OpenFont("romfs:/Comic.ttf", 19);
+	gFont = TTF_OpenFont("romfs:/Comic.ttf", 16);
+	gFont2 = TTF_OpenFont("romfs:/Arista.ttf", 150);
+	gFont3 = TTF_OpenFont("romfs:/Arista.ttf", 40);
+	gFont4 = TTF_OpenFont("romfs:/Arista.ttf", 30);
+	gFont5 = TTF_OpenFont("romfs:/Arista.ttf", 20);
+	gFont6 = TTF_OpenFont("romfs:/Arista.ttf", 50);
+	gFontcapit = TTF_OpenFont("romfs:/Arista.ttf", 100);
 	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
 	digifontC = TTF_OpenFont("romfs:/digifont.otf", 9);
 
@@ -168,33 +173,36 @@ void SDLB::PleaseWait(std::string text,bool render){
 void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,bool selected){
 //render images and map to memory for fast display
 	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
-	std::string KeyText=Text+"-"+std::to_string(WS);
-	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
-
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
 		KeyImage+="-"+std::to_string(WS);
 		path = "romfs:/nop.png";
 	}
+	
 	int sizeportraitx = 300;
 	int sizeportraity =424;
-	//make the math
 
 	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-	
 	if ( MapT.find(KeyImage) == MapT.end()) {
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
-	} else if (MapT[KeyImage].getHeight() < HS){
+	} else if (MapT[KeyImage].getHeight() < 10){
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 	}
-		
+
+	//make the math
 	static int blue=255;
 	if(selected){
 		MapT[KeyImage].TickerColor(blue,150,250);
+		WS=120;
+		HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
+		MapT[KeyImage].offW=WS;
+		MapT[KeyImage].offH=HS;
 	} else blue=0;
 
+	std::string KeyText=Text+"-"+std::to_string(WS);
+	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
+
 	if (Text.length()){
-		//text
 		if ( MapT.find(KeyText) == MapT.end() ) {
 			std::string numhe=scrapElement(Text, "#");
 			if (numhe.length() > 0){
@@ -205,11 +213,11 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 			}
 
 			int kinsize =11;
-			if (WS < 115){kinsize =7;Text=Text.substr(0,20);}//
+			if(!selected) {if (WS < 115){kinsize =7;Text=Text.substr(0,20);} }//
 			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
-		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+10}, 0, 0, blue, 200);
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+8}, 0, 0, blue, 200);
 		MapT[KeyText].render(X + 2, Y + 4+MapT[KeyImage].getHeight());
 	} else {
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, blue, 200);
@@ -221,9 +229,12 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
 	if(MapT[KeyImage].SP()){WorKey=KeyImage;MasKey=key;}
-		
+	if(selected){
+		MapT[KeyImage].offW=0;
+		MapT[KeyImage].offH=0;
+	}
 }
-void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select){
+void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render){
 //render images and map to memory for fast display
 	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
 	std::string KeyText=Text+"-"+std::to_string(WS);
@@ -239,15 +250,12 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	//make the math
 
 	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-
 	if ( MapT.find(KeyImage) == MapT.end()) {
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 	} else if (MapT[KeyImage].getHeight() < HS){
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 	}
-
 	if (Text.length()){
-		//text
 		if ( MapT.find(KeyText) == MapT.end() ) {
 			std::string numhe=scrapElement(Text, "#");
 			if (numhe.length() > 0){
@@ -261,8 +269,11 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
-		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+6}, 0, 0, 0, 200);
-		MapT[KeyText].render(X + 2, Y + 8+MapT[KeyImage].getHeight());
+	}
+	if (!render){return;}
+	if (Text.length()){
+		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , WS + 6, HS + 6 + MapT[KeyText].getHeight()+7}, 0, 0, 0, 200);
+		MapT[KeyText].render(X + 2, Y + 5+MapT[KeyImage].getHeight());
 	} else {
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3 , X + 6, Y + 6}, 0, 0, 0, 200);
 	}
@@ -342,7 +353,8 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		preval=selectindex;
 		//normal boxes
 		VOX.render_VOX({0,0, 1280, 670} ,170, 170, 170, 100);
-		VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
+		//std::cout << HR << "-" << HG << "-" << HB << std::endl;
+		VOX.render_VOX({0,0, 1280, 60} ,HR, HG, HB, 130);
 		
 		//Calculate Offset of Grid
 		if(JlinksSize > 30){
@@ -366,7 +378,16 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			JlinksSize=vec.size();
 		}
 	}
-
+/*
+	//reframe
+	static int mateof = outof;
+	if (outof != mateof){
+		mateof=outof;
+		if (Frames > 30){
+			Frames=19;
+		}
+	}
+*/
 	for (int x = 0; x < JlinksSize; x++) {
 		//This controll the image order and logic
 		std::string Link=vec[x];
@@ -410,10 +431,9 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		
 		//set the offset position of images
 		static int MainOffSet=1,offset1=1,offset2=1,offset3=1;
-		int nosel=113,issel=120;
+		int nosel=113,issel=113;
 		if (ongrid)
 		{
-			if(x >= 30) break;
 			//Grid Animation
 			if (limit>0){
 				std::string KeyImage=imagelocal.substr(25)+"-"+std::to_string(nosel);
@@ -428,8 +448,11 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				gTextTexture.render(50, 9);
 				if(!Jlinks["date"].empty()){
 					//draw Title
-					gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x+outof], { 0, 0, 0 });
-					gTextTexture.render(50, 37);
+					int datesize = Jlinks["date"].size()-1;
+					if (x+outof < datesize){
+						gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x+outof], { 0, 0, 0 });
+						gTextTexture.render(50, 37);
+					}
 				}
 			}
 
@@ -453,7 +476,9 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,issel,BT_A,true);
 			} else {
 				selectindex+=outof;
-				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,nosel,x+outof,selectindex);
+				//if(x >= 30) break;
+				//if(x < 30) break;
+				Cover_idx(imagelocal,10 +  (MainOffSet * 127),HO,TEXT,nosel,x+outof,selectindex,(x < 30));
 				selectindex-=outof;
 
 			}
@@ -608,12 +633,10 @@ void SDLB::ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool on
 	int BarPos  = Bar*Select; //approximate Position
 	
 	//Draw the ScrollBar
-	VOX.render_VOX({X+1,Y+BarPos+1, W,BarSize} ,50, 50, 50, 240);
+	VOX.render_VOX({X-1,64, W+2, 604}, 50, 50, 50, 255);//draw area
+//	VOX.render_VOX({X+1,Y+BarPos+1, W,BarSize} ,50, 50, 50, 240);
 	VOX.render_VOX({X,Y+BarPos, W, BarSize} ,255, 255, 255, 240);
 }
-
-
-
 void SDLB::deint(){
 	//Clear Texture Map
 	MapT.clear();
@@ -646,8 +669,8 @@ void SDLB::deint(){
 
 }
 
-LTexture::LTexture()
-{
+//Textures manager
+LTexture::LTexture(){
 	//Initialize
 	mTexture = NULL;
 	mWidth = 0;
@@ -657,32 +680,30 @@ LTexture::LTexture()
 	SelIns = -1;
 	mark=true;
 }
-
-LTexture::~LTexture()
-{
+LTexture::~LTexture(){
 	//Deallocate
 	free();
 }
-void LTexture::TickerColor(int& color,int min,int max)
-{
-	int fcolor=color;
-	if (reverse){
-		fcolor-=1;
-		if(fcolor < min){
-			fcolor=min;
-			reverse=false;
+void LTexture::TickerColor(int& color,int min,int max,unsigned long long sec){
+	if (onTimeC(sec,time2) || sec==0){
+		int fcolor=color;
+		if (reverse){
+			fcolor-=1;
+			if(fcolor < min){
+				fcolor=min;
+				reverse=false;
+			}
+		} else {
+			fcolor+=5;
+			if(fcolor > max){
+				fcolor=max;
+				reverse=true;
+			}
 		}
-	} else {
-		fcolor+=5;
-		if(fcolor > max){
-			fcolor=max;
-			reverse=true;
-		}
+		color=fcolor;
 	}
-	color=fcolor;
 }
-void LTexture::TickerRotate(int& angle,int min,int max, int addangle,bool clock)
-{
+void LTexture::TickerRotate(int& angle,int min,int max, int addangle,bool clock){
 	int fangle=angle;
 	if(clock){
 		fangle+=addangle;
@@ -713,8 +734,7 @@ void LTexture::TickerScale(){
 		offboom=offboom_min;
 	}
 }
-bool LTexture::loadFromFile(std::string path)
-{
+bool LTexture::loadFromFile(std::string path){
 	//Get rid of preexisting texture
 	free();
 
@@ -753,8 +773,7 @@ bool LTexture::loadFromFile(std::string path)
 	mTexture = newTexture;
 	return mTexture != NULL;
 }
-bool LTexture::loadFromFileCustom(std::string path, int h, int w)
-{
+bool LTexture::loadFromFileCustom(std::string path, int h, int w){
 	//Get rid of preexisting texture
 	free();
 
@@ -794,8 +813,7 @@ bool LTexture::loadFromFileCustom(std::string path, int h, int w)
 	mTexture = newTexture;
 	return mTexture != NULL;
 }
-bool LTexture::loadFromRenderedText(TTF_Font *fuente, std::string textureText, SDL_Color textColor)
-{
+bool LTexture::loadFromRenderedText(TTF_Font *fuente, std::string textureText, SDL_Color textColor){
 	//Get rid of preexisting texture
 	free();
 
@@ -828,8 +846,7 @@ bool LTexture::loadFromRenderedText(TTF_Font *fuente, std::string textureText, S
 	//Return success
 	return mTexture != NULL;
 }
-bool LTexture::loadFromRenderedTextWrap(TTF_Font *fuente, std::string textureText, SDL_Color textColor, Uint32 size)
-{
+bool LTexture::loadFromRenderedTextWrap(TTF_Font *fuente, std::string textureText, SDL_Color textColor, Uint32 size){
 	//Get rid of preexisting texture
 	free();
 
@@ -862,8 +879,7 @@ bool LTexture::loadFromRenderedTextWrap(TTF_Font *fuente, std::string textureTex
 	//Return success
 	return mTexture != NULL;
 }
-void LTexture::free()
-{
+void LTexture::free(){
 	//Free texture if it exists
 	if (mTexture != NULL)
 	{
@@ -876,29 +892,29 @@ void LTexture::free()
 		SelIns = -1; 
 	}
 }
-void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue)
-{
+void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue){
 	//Modulate texture rgb
 	SDL_SetTextureColorMod(mTexture, red, green, blue);
 }
-void LTexture::setBlendMode(SDL_BlendMode blending)
-{
+void LTexture::setBlendMode(SDL_BlendMode blending){
 	//Set blending function
 	SDL_SetTextureBlendMode(mTexture, blending);
 }
-void LTexture::setAlpha(Uint8 alpha)
-{
+void LTexture::setAlpha(Uint8 alpha){
 	//Modulate texture alpha
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
-void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
-{
+void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip){
 	//texture boom
 	TickerScale();
 	int offtikx2=offtik*2;
 	
 	//Set rendering space and render to screen
-	SDL_Rect renderQuad = { x-offtik, y-offtik, mWidth+offtikx2, mHeight+offtikx2 };
+
+	int TextureW=offW > 0 ? offW : mWidth;
+	int TextureH=offH > 0 ? offH : mHeight;
+	
+	SDL_Rect renderQuad = { x-offtik, y-offtik, TextureW+offtikx2, TextureH+offtikx2};
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	//Set clip rendering dimensions
 	if (clip != NULL)
@@ -914,9 +930,7 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 	//tactil stuff
 	mX = x;mY = y;	SelIns = GOD.GenState;
 }
-
-void LTexture::render_T(int x, int y, std::string text, bool presed)
-{
+void LTexture::render_T(int x, int y, std::string text, bool presed){
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
@@ -950,9 +964,7 @@ void LTexture::render_T(int x, int y, std::string text, bool presed)
 	//tactil stuff
 	mX = x;mY = y;	SelIns = GOD.GenState;
 }
-
-bool LTexture::render_AH(int x, int y, int w, int h, bool type)
-{
+bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 		//tactil stuff
 		mX = x;mY = y;	SelIns = GOD.GenState;
 		static bool anend = false;
@@ -1024,18 +1036,14 @@ bool LTexture::render_AH(int x, int y, int w, int h, bool type)
 
 return false;
 }
-
-void LTexture::render_VOX(SDL_Rect Form ,int R, int G, int B, int A)
-{
+void LTexture::render_VOX(SDL_Rect Form ,int R, int G, int B, int A){
 	//Set rendering space and render to screen
 	SDL_SetRenderDrawColor(GOD.gRenderer, R, G, B, A);
 	SDL_RenderFillRect(GOD.gRenderer, &Form);
 	//tactil stuff
 	mX = Form.x; mY = Form.y;	SelIns = GOD.GenState;
 }
-
-bool LTexture::SP()
-{
+bool LTexture::SP(){
 	//return on negative touch
 	if (GOD.TouchX <= 0||GOD.TouchY <= 0||mWidth <= 0||mHeight <= 0) return false;
 	if (SelIns != GOD.GenState) return false;
@@ -1049,8 +1057,7 @@ bool LTexture::SP()
 return false;
 }
 //is press relesed
-bool LTexture::SPr()
-{
+bool LTexture::SPr(){
 	static bool isRe = false;
 	if (SP()){
 		if (!isRe) isRe = true;
@@ -1060,24 +1067,16 @@ bool LTexture::SPr()
 	}
 return false;
 }
-
-int LTexture::getWidth()
-{
-	return mWidth;
+int LTexture::getWidth(){
+	return offW > 0 ? offW : mWidth;
 }
-
-int LTexture::getHeight()
-{
-	return mHeight;
+int LTexture::getHeight(){
+	return offH > 0 ? offH : mHeight;
 }
-
-int LTexture::getX()
-{
+int LTexture::getX(){
 	return mX;
 }
-
-int LTexture::getY()
-{
+int LTexture::getY(){
 	return mY;
 }
 

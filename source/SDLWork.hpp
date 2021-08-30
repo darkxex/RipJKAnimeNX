@@ -16,7 +16,8 @@ public:
 	~LTexture();
 	//peer key funct
 	bool reverse=false;
-	void TickerColor(int& color,int min,int max);
+	unsigned long long time2=0;
+	void TickerColor(int& color,int min,int max,unsigned long long sec = 0);
 	void TickerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
 	void TickerBomb(int sizescale=0);
 	void TickerScale();
@@ -62,13 +63,13 @@ public:
 	int offboom=0;
 	//default boom size
 	int offboom_min=0, offboom_size=11;
+	//W H overwrite
+	int offW=0, offH=0;
 	
 private:
 	//The actual hardware texture
 	SDL_Texture* mTexture;
 
-	//W H overwrite
-	int offW=0, offH=0;
 
 	//Image dimensions
 	int mWidth, mHeight, mX, mY, SelIns;
@@ -83,6 +84,7 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 //Globally used font
 TTF_Font *B_O_F = NULL;
+TTF_Font *Arista = NULL;
 TTF_Font *gFont = NULL;
 TTF_Font *gFont2 = NULL;
 TTF_Font *gFont3 = NULL;
@@ -90,6 +92,7 @@ TTF_Font *gFont4 = NULL;
 TTF_Font *gFont5 = NULL;
 TTF_Font *gFont6 = NULL;
 TTF_Font* digifont = NULL;
+TTF_Font* digifont2 = NULL;
 TTF_Font* digifontC = NULL;
 TTF_Font *gFontcapit = NULL;
 Mix_Music* gMusic = NULL;
@@ -114,6 +117,9 @@ bool fingermotion_UP = false;
 bool fingermotion_DOWN = false;
 bool fingermotion_LEFT = false;
 bool fingermotion_RIGHT = false;
+
+int HR=200,HG=200,HB=200;
+
 int TouchX=-1;
 int TouchY=-1;
 int GenState=-1;
@@ -125,7 +131,7 @@ void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int 
 void PleaseWait(std::string text,bool render = true);
 void ListCover(int& selectindex,json Jlinks, bool ongrid=false,int limit=0);
 void ListClassic(int& selectindex,json Jlinks);
-void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select);
+void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render);
 void HandleList(int& selectchapter, int allsize, int key,bool ongrid);
 void ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool ongrid);
 void deint();

@@ -67,8 +67,8 @@ int main(int argc, char **argv)
 	BD["com"] = "{}"_json;
 	if(!BD["USER"].empty()){
 		UD=BD["USER"];
-		BD.erase("USER");
 	}
+	BD.erase("USER");
 	read_DB(UD,rootsave+"UserData.json");
 	
 	GOD.intA();//init the SDL
@@ -115,39 +115,14 @@ int main(int argc, char **argv)
 
 	gTextTexture.mark=false;
 	Farest.mark=false;
-
-	//images that not change
-	B_A.loadFromFile("romfs:/buttons/A.png");
-	B_B.loadFromFile("romfs:/buttons/B.png");
-	B_Y.loadFromFile("romfs:/buttons/Y.png");
-	B_X.loadFromFile("romfs:/buttons/X.png");
-	B_L.loadFromFile("romfs:/buttons/L.png");
-	B_R.loadFromFile("romfs:/buttons/R.png");
-	B_M.loadFromFile("romfs:/buttons/MINUS.png");
-	B_P.loadFromFile("romfs:/buttons/PLUS.png");
-	B_ZR.loadFromFile("romfs:/buttons/ZR.png");
-	B_RIGHT.loadFromFile("romfs:/buttons/RIGHT.png");
-	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
-	B_UP.loadFromFile("romfs:/buttons/UP.png");
-	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
-	CLEAR.loadFromFile("romfs:/buttons/clear.png");
-	SCREEN.loadFromFile("romfs:/buttons/screen.png");
-	FAV.loadFromFile("romfs:/buttons/FAV.png");
-	NFAV.loadFromFile("romfs:/buttons/NFAV.png");
-	REC.loadFromFile("romfs:/buttons/REC.png");
-	BUS.loadFromFile("romfs:/buttons/BUS.png");
-	NOP.loadFromFile("romfs:/nop.png");
-	NOP.loadFromFile("romfs:/nop.png");
-	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
-	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
-	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",55, 55);
-	AFLV.loadFromFileCustom("romfs:/buttons/AF.png",55, 55);
+	
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 
 	SDL_Color textColor = { 50, 50, 50 };
 	SDL_Color textWhite = { 255, 255, 255 };
-	SDL_Color textGray = { 200, 200, 200 };
-	SDL_Color textGrayGreen = { 100, 200, 100 };
+	SDL_Color textBlue = { 100, 100, 255 };
+	SDL_Color textGray = { 130, 130, 130 };
+	SDL_Color textGrayGreen = { 90, 170, 90 };
 	SDL_Color textWhiteGreen = { 80, 255, 80 };
 
 	int posxbase = 20;
@@ -211,13 +186,26 @@ try{
 						{
 							GOD.fingermotion_UP = true;
 						}
+						
+						//left right
+						if(e.tfinger.dx * SCREEN_WIDTH > 30 )
+						{
+							GOD.fingermotion_RIGHT = true;
+						}
+						else if(e.tfinger.dx * SCREEN_WIDTH < -30 )
+						{
+							GOD.fingermotion_LEFT = true;
+						}
+
 					} else {
 						GOD.fingermotion_DOWN = false;
 						GOD.fingermotion_UP = false;
+						GOD.fingermotion_LEFT = false;
+						GOD.fingermotion_RIGHT = false;
+						GOD.TouchX = -1;
+						GOD.TouchY = -1;
 					}
 					GOD.fingermotion=true;
-					GOD.TouchX = -1;
-					GOD.TouchY = -1;
 				}
 				break;
 			case SDL_FINGERUP:
@@ -234,7 +222,7 @@ try{
 					if (BUSB.SP()) {callsearch();}
 					else if (FAVB.SP()) {callfavs();}
 					else if (AFLV.SP()) {callAflv();}
-					
+					else if (HISB.SP()) {callhistory();}
 					else if (NFAV.SP() && !gFAV){
 						GOD.WorKey="0";GOD.MasKey=-1;
 						{//AGREGAR A FAVORITOS
@@ -254,37 +242,7 @@ try{
 						}
 						GOD.WorKey="0";GOD.MasKey=-1;
 					}
-					else if (USER.SP()) {
-						if (SelectUser()){
-							if (MountUserSave(acc)){
-								rootsave = "save:/";
-								if(isFileExist(rootdirectory+AccountID+"UserData.json")){
-									if(!isFileExist(rootsave+"UserData.json")){
-										if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
-											fsdevCommitDevice("save");
-											remove((rootdirectory+AccountID+"UserData.json").c_str());
-											remove((rootdirectory+AccountID+"User.jpg").c_str());
-										}
-									}
-								}
-							}else {
-								rootsave = rootdirectory+AccountID;
-								GetUserImage();
-							}
-							USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
-							UD = "{}"_json;
-							read_DB(UD,rootsave+"UserData.json");
-							
-							if(statenow==chapterstate){
-								capBuffer(BD["com"]["ActualLink"]);
-								gFAV = isFavorite(BD["com"]["ActualLink"]);
-							}
-							if(statenow==favoritesstate){
-								getFavorite();
-								Frames=1;							
-							}
-						}
-					}
+					else if (USER.SP()) {PlayerGet(acc);}
 					else if (B_A.SP()) {e.jbutton.button = GOD.BT_A; B_A.TickerBomb();}
 					else if (T_T.SP() ) e.jbutton.button = GOD.BT_A;
 					else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
@@ -305,12 +263,10 @@ try{
 					else if (CLEAR.SP()){
 						preview = false;
 						quit = true;
-						GOD.PleaseWait("Borrando cache");
-						BD["DataBase"] = "{}"_json;
-						BD["arrays"]["chapter"] = "{}"_json;
-						BD["latestchapter"] = "";
-						fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 						cancelcurl = 1;
+						GOD.PleaseWait("Borrando cache");
+						BD = "{}"_json;
+						fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 						statenow=99;
 						break;
 					}
@@ -345,9 +301,12 @@ try{
 						{
 						case programationsliderstate:
 							if(selectelement==0){callsearch();}
-							if(selectelement==1){callfavs();}
-							if(selectelement==2){}
+							if(selectelement==1){callhistory();}
+							if(selectelement==2){callfavs();}
+							if(selectelement==3){callhourglass();}
+							if(selectelement==4){calltop();}
 							if(selectelement==5){callAflv();}
+							if(selectelement==6){if(isDownloading){statenow = downloadstate;}}
 							break;
 							case programationstate:
 							{
@@ -369,11 +328,39 @@ try{
 
 							}
 							break;
+							case hourglass:
+							{
+								if (BD["arrays"]["HourGlass"]["link"].size()>0)
+								{
+									capBuffer(BD["arrays"]["HourGlass"]["link"][hourchapter]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								}
+							}
+							break;
+							case topstate:
+							{
+								if (BD["arrays"]["Top"]["link"].size()>0)
+								{
+									capBuffer(BD["arrays"]["Top"]["link"][topchapter]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								}
+							}
+							break;
+							case historystate:
+							{
+								if (UD["history"].size()>0)
+								{
+									capBuffer(UD["history"][histchapter]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								}
+
+							}
+							break;
 
 							case favoritesstate:
 							{
-								if ((int)BD["arrays"]["favorites"]["link"].size() >= 1 ){
-									capBuffer(BD["arrays"]["favorites"]["link"][favchapter]);
+								if ((int)UD["favoritos"].size() >= 1 ){
+									capBuffer(UD["favoritos"][favchapter]);
 									gFAV = true;
 								}
 							}
@@ -390,11 +377,13 @@ try{
 									
 									std::string item=BD["com"]["ActualLink"].get<std::string>();
 									int hsize = UD["history"].size();
-									if (hsize > 56){UD["history"].erase(0);}//limit history
+									if (hsize > 29){UD["history"].erase(UD["history"].end());}//limit history
 									if (hsize > 0){
-										UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
+										UD["history"] = eraseVec(UD["history"],item);
+										//UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
 									}
-									UD["history"].push_back(item);
+									UD["history"].insert(UD["history"].begin(),tempurl);
+									//UD["history"].push_back(tempurl);
 									write_DB(UD,rootsave+"UserData.json");
 
 								}
@@ -499,13 +488,14 @@ try{
 								statenow = programationstate;
 							}
 							break;
-
+							
+						case topstate:
+						case hourglass:
+						case historystate:
 						case favoritesstate:
+						case programationsliderstate:
 							returnnow = programationstate;
 							statenow = programationstate;
-							break;
-						case programationsliderstate:
-							statenow=programationstate;
 							break;
 						}
 					}
@@ -546,20 +536,19 @@ try{
 						case favoritesstate:							
 							delFavorite(favchapter);
 							if (favchapter > 0) favchapter--;
-							getFavorite();
-							statenow = favoritesstate;
 						break;
 
 						}
 					}
 					else if (e.jbutton.button == GOD.BT_Y) {// (Y) button down
 
-
 						switch (statenow)
 						{
 						case programationstate:
-							statenow=programationsliderstate;
-							selectelement = 1;
+							callmenuslide();
+							break;
+						case programationsliderstate:
+							callfavs();
 							break;
 						/*
 							if (!reloading)
@@ -569,9 +558,8 @@ try{
 								statenow = favoritesstate;
 								Frames=1;
 							}
-						
-						*/
 							break;
+						*/
 						case downloadstate:
 							break;
 						case chapterstate:
@@ -669,8 +657,17 @@ try{
 								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
 							break;
+						case topstate:
+							GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case hourglass:
+							GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case historystate:
+							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+							break;
 						case favoritesstate:
-							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
 							break;
 						}
 					}
@@ -701,8 +698,17 @@ try{
 								GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
 							}
 							break;
+						case topstate:
+							GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case hourglass:
+							GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case historystate:
+							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+							break;
 						case favoritesstate:
-							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
 							break;
 						}
 					}
@@ -740,8 +746,17 @@ try{
 							}
 							break;
 
+						case topstate:
+							GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case hourglass:
+							GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case historystate:
+							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+							break;
 						case favoritesstate:
-							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
 							break;
 						case programationsliderstate:
 							GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
@@ -783,8 +798,17 @@ try{
 							}
 							break;
 
+						case topstate:
+							GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case hourglass:
+							GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+							break;
+						case historystate:
+							GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+							break;
 						case favoritesstate:
-							GOD.HandleList(favchapter, BD["arrays"]["favorites"]["link"].size(), e.jbutton.button, ongridF);
+							GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
 							break;
 						case programationsliderstate:
 							GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
@@ -807,6 +831,9 @@ try{
 		//wallpaper
 		Farest.render((0), (0));
 		
+		//Draw footer
+		VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
+		
 		//render states
 		switch (statenow)
 		{
@@ -815,7 +842,7 @@ try{
 			USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
 			VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);
-			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
+			GOD.HR=200;GOD.HG=200;GOD.HB=200;
 			std::string temptext = BD["com"]["ActualLink"];
 			NameOfLink(temptext);
 
@@ -865,7 +892,7 @@ try{
 						gTextTexture.render(posxbase + 855, posybase + 598);
 					}
 					gTextTexture.loadFromRenderedText(GOD.gFont, BD["com"]["nextdate"], { 255,255,255 });
-					gTextTexture.render(posxbase + 1055, posybase + 615);
+					gTextTexture.render(posxbase + 1040, posybase + 615);
 				}
 			}
 
@@ -903,39 +930,38 @@ try{
 					if (latest-2 >= mincapit) {
 						com=textGray;
 						if (latest-2 == latestcolor) com=textGrayGreen;
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-2), com);
-						gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest-2), com);
+						gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 					}
 					if (latest-1 >= mincapit) {
 						com=textGray;
 						if (latest-1 == latestcolor) com=textGrayGreen;
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest-1), com);
-						gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest-1), com);
+						gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 					}
-					
 					{
-						com=textWhite;
+						com=textBlue;
 						if (latest == latestcolor) com=textWhiteGreen;
 						if (serverpront){
-							T_N.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
-							T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 558+YS);
+							T_N.loadFromRenderedText(GOD.digifont2, std::to_string(latest), com);
+							T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 565+YS);
 						} else {
-							T_T.loadFromRenderedText(GOD.gFont3, std::to_string(latest), com);
-							T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 558+YS);
+							T_T.loadFromRenderedText(GOD.digifont2, std::to_string(latest), com);
+							T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 565+YS);
 						}
 					}
 
 					if (latest+1 <= maxcapit) {
 						com=textGray;
 						if (latest+1 == latestcolor) com=textGrayGreen;
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+1), com);
-						gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest+1), com);
+						gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 					}
 					if (latest+2 <= maxcapit) {
 						com=textGray;
 						if (latest+2 == latestcolor) com=textGrayGreen;
-						gTextTexture.loadFromRenderedText(GOD.gFont3,  std::to_string(latest+2), com);
-						gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
+						gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest+2), com);
+						gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 					}
 
 					if (maxcapit >= 10 && !serverpront){
@@ -970,9 +996,9 @@ try{
 			}
 
 			if(gFAV){
-				FAV.render(1230, 70);
+				FAV.render(1225, 70);
 			} else {
-				NFAV.render_T(1230, 70,"");
+				NFAV.render_T(1225, 70,"");
 				B_Y.render_T(dist, 680,"Favorito");dist -= posdist;
 			}
 			
@@ -996,16 +1022,25 @@ try{
 			case programationsliderstate:
 			case programationstate:	{
 				if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1) {
-					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Draw a rectagle to a nice view
 
 					if(ongrid){
 						USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
+						if (GOD.fingermotion_LEFT & (GOD.TouchX > 1100)){
+							GOD.fingermotion_LEFT = false;
+							callmenuslide();
+						}
+						if (GOD.fingermotion_RIGHT & (GOD.TouchX > 850)){
+							GOD.fingermotion_RIGHT = false;
+							statenow=programationstate;
+						}
+						GOD.HR=200;GOD.HG=200;GOD.HB=200;
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
 							if (isHandheld && statenow!=programationsliderstate){
 								FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
-								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+								HISB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
+								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - HISB.getWidth() - 70, 1);
 							}
 						}
 						double angle = 0.0;
@@ -1018,6 +1053,11 @@ try{
 							angle=Ticker;
 						}else if (Ticker < 0){
 							Ticker=0;
+						}
+						
+						if (porcentajebuffer > 0){
+							gTextTexture.loadFromRenderedText(GOD.digifontC, std::to_string(porcentajebufferAll - porcentajebuffer), {50,50,50});
+							gTextTexture.render(27 - (gTextTexture.getWidth()/2), 30);
 						}
 						REC.render(5, 15,NULL,angle);
 					} else {
@@ -1057,16 +1097,28 @@ try{
 					if (statenow==programationsliderstate){
 						
 						{
-							StatesList= {"Busqueda","Favoritos","Historial","Horario","Top Anime","AnimeFLV","ToDo..."};
+							StatesList= {"Búsqueda","Historial","Favoritos","Horario","Top Anime","AnimeFLV"};
+							if(isDownloading){StatesList.push_back("Descargas");}
 
-							int mwide = 60,XD=920,YD=120,W=1280-XD;
-							VOX.render_VOX({XD,61, 1280, 608}, 210, 210, 210, 215);
+							int mwide = 60,XD=940,YD=120,W=1280-XD;
+							VOX.render_VOX({XD,61, 1280, 608}, 160, 160, 160, 220);//draw area
 							VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);//head line
 							VOX.render_VOX({XD,668, W, 1}, 255, 255, 255, 235);//bottom line
 							VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);//line left
 							gTextTexture.loadFromRenderedText(GOD.gFont5, "Menú Primario",textColor);
 							gTextTexture.render(XD+20, 65);
-							
+							if (imgNumbuffer > 0){
+								gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
+								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
+							}
+							if (porcentajebuffer > 0){
+								gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(porcentajebuffer)+"/"+std::to_string(porcentajebufferAll)+")", {0,100,0});
+								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15,  70);
+							}
+							if (porcentajebufferF > 0){
+								gTextTexture.loadFromRenderedText(GOD.gFont, "BúferFav: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
+								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
+							}
 							int indexLsize = StatesList.size();
 							int Ymaxsize = indexLsize*mwide;
 							if(GOD.TouchX < 1280 && GOD.TouchY < Ymaxsize+YD && GOD.TouchY > YD && GOD.TouchX > XD+100){
@@ -1076,20 +1128,26 @@ try{
 									selectelement = sel;
 								}
 							}
-							for (int x = 0; x < (int)StatesList.size(); x++) {
+
+							for (int x = 0; x < indexLsize; x++) {
 								if(x == 0){BUSB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 1){FAVB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 1){HISB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 2){FAVB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 3){HORB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 4){TOPB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 5){AFLV.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 6){DOWB.render(XD+10, YD + (x * mwide)+5);}
 
 								if (x == selectelement){
 									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);
-									VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-50, T_T.getHeight()-5}, 50, 50, 50, 200);
+									VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-100, T_T.getHeight()-5}, 50, 50, 50, 100);
 									T_T.render(XD+80, YD + (x * mwide));
 								} else {
 									gTextTexture.loadFromRenderedText(GOD.gFont6, StatesList[x],textColor);
 									gTextTexture.render(XD+80, YD + (x * mwide));
 								}
-								if (x < (int)StatesList.size()-1){
+
+								if (x < indexLsize-1){
 									VOX.render_VOX({XD+80,YD + (x * mwide)+mwide+2, W-130, 1}, 255, 255, 255, 235);
 								}
 							}
@@ -1121,10 +1179,7 @@ try{
 				break;
 			}
 			case searchstate:		{
-				if (!reloadingsearch) {
-					//Draw footer
-					VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
-					
+				if (!reloadingsearch) {					
 					int srchsize=BD["arrays"]["search"]["link"].size();
 					if(ongridS){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 					if (srchsize > 0){
@@ -1133,6 +1188,8 @@ try{
 						if (preview)
 						{
 							if (ongridS){
+								VOX.TickerColor(GOD.HG,210,255, 200);
+								GOD.HR=200;GOD.HB=200;
 								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongridS,Frames);
 								BUS.render_T(5, 15,"");
 								if (isHandheld){
@@ -1182,20 +1239,22 @@ try{
 				break;
 			}
 			case favoritesstate:	{
-				//Draw footer
-				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
+				json VecF;
+				VecF["link"]=UD["favoritos"];
 				if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
-				int favsize=BD["arrays"]["favorites"]["link"].size();
+				int favsize=UD["favoritos"].size();
 				if (favsize > 0){
 					//if (favsize > 30) ongridF=false;
-					if (!ongridF) GOD.ListClassic(favchapter,BD["arrays"]["favorites"]);
+					if (!ongridF) GOD.ListClassic(favchapter,VecF);
 					if (preview)
 					{
 						if (ongridF){
-							GOD.ListCover(favchapter,BD["arrays"]["favorites"],ongridF,Frames);
+							VOX.TickerColor(GOD.HR,210,255, 200);
+							GOD.HG=200;GOD.HB=200;
+							GOD.ListCover(favchapter,VecF,ongridF,Frames);
 							FAV.render_T(5, 15,"");
 						} else {
-							GOD.ListCover(favchapter,BD["arrays"]["favorites"]);
+							GOD.ListCover(favchapter, VecF);
 							B_UP.render_T(580, 5,"");
 							B_DOWN.render_T(580, 630,"");
 						}
@@ -1219,9 +1278,120 @@ try{
 					int dist = 1100,posdist = 180;
 					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
 					B_B.render_T(dist, 680,"Volver");dist -= posdist;
-					if ((int)BD["arrays"]["favorites"]["link"].size() >= 1){
+					if ((int)UD["favoritos"].size() >= 1){
 						B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1));dist -= posdist;
 					}else NOP.render_T(230, 355,"");
+				}
+			break;
+			}
+			case historystate: {
+				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+				json VecF;
+				VecF["link"]=UD["history"];
+				
+				int histsize=VecF["link"].size();
+				if (histsize > 0){
+					//if (favsize > 30) ongridF=false;
+					if (!ongrid) GOD.ListClassic(histchapter,VecF);
+					if (preview)
+					{
+						if (ongrid){
+							VOX.TickerColor(GOD.HG,100,200, 200);
+							GOD.HR=200;GOD.HB=200;
+							GOD.ListCover(histchapter,VecF,ongrid,Frames);
+							HIS.render_T(5, 15,"");
+						} else {
+							GOD.ListCover(histchapter,VecF);
+							B_UP.render_T(580, 5,"");
+							B_DOWN.render_T(580, 630,"");
+						}
+					}
+				} else NOP.render_T(230, 355,"");
+				
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "history", {100,0,0});
+				if(ongrid){
+					gTextTexture.render(5, 1);
+				}else {
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
+				}
+
+				{//Draw footer buttons
+					int dist = 1100,posdist = 180;
+					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+					B_B.render_T(dist, 680,"Volver");dist -= posdist;
+				}
+			break;
+			}
+			case topstate: {
+				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+				int histsize=BD["arrays"]["Top"]["link"].size();
+				if (histsize > 0){
+					//if (favsize > 30) ongridF=false;
+					if (!ongrid) GOD.ListClassic(topchapter,BD["arrays"]["Top"]);
+					if (preview)
+					{
+						if (ongrid){
+							VOX.TickerColor(GOD.HR,100,200, 200);
+							GOD.HG=200;GOD.HB=200;
+							GOD.ListCover(topchapter,BD["arrays"]["Top"],ongrid,Frames);
+							TOP.render_T(5, 15,"");
+						} else {
+							GOD.ListCover(topchapter,BD["arrays"]["Top"]);
+							B_UP.render_T(580, 5,"");
+							B_DOWN.render_T(580, 630,"");
+						}
+					}
+				} else NOP.render_T(230, 355,"");
+				
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Top Anime", {100,0,0});
+				if(ongrid){
+					gTextTexture.render(5, 1);
+				}else {
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
+				}
+
+				{//Draw footer buttons
+					int dist = 1100,posdist = 180;
+					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+					B_B.render_T(dist, 680,"Volver");dist -= posdist;
+				}
+			break;
+			}
+			case hourglass: {
+				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+				int histsize=BD["arrays"]["HourGlass"]["link"].size();
+				if (histsize > 0){
+					//if (favsize > 30) ongridF=false;
+					if (!ongrid) GOD.ListClassic(hourchapter,BD["arrays"]["HourGlass"]);
+					if (preview)
+					{
+						if (ongrid){
+							VOX.TickerColor(GOD.HB,100,200, 200);
+							GOD.HR=200;GOD.HG=200;
+							GOD.ListCover(hourchapter,BD["arrays"]["HourGlass"],ongrid,Frames);
+							HOR.render_T(5, 15,"");
+						} else {
+							GOD.ListCover(hourchapter,BD["arrays"]["HourGlass"]);
+							B_UP.render_T(580, 5,"");
+							B_DOWN.render_T(580, 630,"");
+						}
+					}
+				} else NOP.render_T(230, 355,"");
+				
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "En Emisión", {100,0,0});
+				if(ongrid){
+					gTextTexture.render(5, 1);
+				}else {
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
+				}
+
+				{//Draw footer buttons
+					int dist = 1100,posdist = 180;
+					B_A.render_T(dist, 680,"Aceptar");dist -= posdist;
+					B_B.render_T(dist, 680,"Volver");dist -= posdist;
 				}
 			break;
 			}
@@ -1229,7 +1399,6 @@ try{
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);//Head
 				VOX.render_VOX({16,65, 900, 162}, 210, 210, 210, 115);//Rectangle
-				VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);//Footer
 				
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
 				gTextTexture.render(posxbase, posybase+15);
@@ -1329,12 +1498,15 @@ try{
 		}
 
 		if(programationstate != statenow && isHandheld){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
-		B_P.render_T(160, 680,"Salir",quit);
+		B_P.render_T(140, 680,"Salir",quit);
 		B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 		SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 		
 		//Update screen
 		SDL_RenderPresent(GOD.gRenderer);
+		
+		if(!isLoaded){LoadImages();}
+
 		//Display the list
 		if (!quit&&!reloading&&!AppletMode&&Frames>2) {preview = true;}
 		

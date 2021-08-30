@@ -236,7 +236,12 @@ void CheckImgVector(std::vector<std::string> List,int& index){
 		std::string tempima = List[x];
 		replace(tempima,"\"","");
 		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
-		CheckImgNet(rootdirectory+"DATA/"+tempima);
+		replace(tempima,"https://jkanime.net/", "");
+		replace(tempima,".jpg", "/");
+		int v2 = tempima.find("/");
+		if (v2 > 0){tempima = tempima.substr(0, v2);}
+		//std::cout << "img:" << tempima << std::endl;
+		CheckImgNet(rootdirectory+"DATA/"+tempima+".jpg");
 	}
 	index=0;
 }

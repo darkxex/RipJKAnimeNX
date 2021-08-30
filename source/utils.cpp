@@ -618,6 +618,16 @@ void led_on(int inter){
         
 }
 
+std::vector<std::string> eraseVec(std::vector<std::string> array,std::string patther){
+	std::vector<std::string> array2={};
+	for (int x=0; x < (int)array.size(); x++){
+		std::string a=array[x];
+		if (patther != a.substr(0,patther.length())){
+			array2.push_back(a);
+		}
+	}
+	return array2;
+}
 bool onTimeC(unsigned long long sec,unsigned long long& time2){
     struct timeval time_now{};
     gettimeofday(&time_now, nullptr);
@@ -682,6 +692,12 @@ void TickerName(int& color,int sec,int min,int max){
 */			
 }
 
+bool isset(json data){
+	if (data.empty()){
+		return false;
+	}
+	return true;
+}
 void NameOfLink(std::string& word){
 	replace(word, "https://jkanime.net/", "");
 	word = word.substr(0, word.length() - 1);
@@ -695,4 +711,11 @@ std::string KeyOfLink(std::string word){
 	replace(word, "https://jkanime.net/", "");
 	replace(word, "/", "");
 	return word;
+}
+template <typename Map, typename F>
+void map_erase_if(Map& m, F pred)
+{
+    for (typename Map::iterator i = m.begin();
+         (i = std::find_if(i, m.end(), pred)) != m.end();
+         m.erase(i++));
 }
