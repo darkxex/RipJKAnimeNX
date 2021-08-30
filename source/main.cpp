@@ -1,21 +1,17 @@
-
-
-#include "JKanime.hpp"
-
-//use the nand of the switch
+#include <string>
 #ifdef USENAND
-std::string rootdirectory = "user:/RipJKAnime_NX/";
-std::string rootsave = "save:/";
-std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
+	//use the nand of the switch
+	std::string rootdirectory = "user:/RipJKAnime_NX/";
+	std::string rootsave = "save:/";
+	std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
 #else
-std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
-std::string rootsave = rootdirectory;
-
+	std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
+	std::string rootsave = rootdirectory;
 #endif
-
+#include "JKanime.hpp"
+#include "extra.hpp"
 
 //make some includes to clean a little the main
-#include "extra.hpp"
 std::string urlc = "https://myrincon.duckdns.org";
 
 //MAIN INT
@@ -62,7 +58,7 @@ int main(int argc, char **argv)
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
 	}
 
-	// read a JSON file
+	//Read a JSON file
 	read_DB(BD,rootdirectory+"DataBase.json");
 	BD["com"] = "{}"_json;
 	if(!BD["USER"].empty()){
@@ -115,7 +111,6 @@ int main(int argc, char **argv)
 
 	gTextTexture.mark=false;
 	Farest.mark=false;
-	
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 
 	SDL_Color textColor = { 50, 50, 50 };
@@ -161,17 +156,13 @@ try{
 				quit = true;
 				std::cout << "Saliendo" << std::endl;
 			}
-			//#include "keyboard.h"
-
 			GOD.GenState = statenow;
 			switch (e.type) {
 			case SDL_FINGERDOWN:
-			GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
-			GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-			if (!GOD.fingerdown){
-				GOD.fingerdown = true;
-			}
-			break;
+				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+				if (!GOD.fingerdown){GOD.fingerdown = true;}
+				break;
 			case SDL_FINGERMOTION:
 				if(e.tfinger.dy * SCREEN_HEIGHT > 30 || e.tfinger.dy * SCREEN_HEIGHT < -30 || e.tfinger.dx * SCREEN_WIDTH > 30 || e.tfinger.dx * SCREEN_WIDTH < -30){
 				SDL_Log("motion %f \n",e.tfinger.dy * SCREEN_HEIGHT);
@@ -817,7 +808,6 @@ try{
 					}
 				}
 				break;
-
 			default:
 				break;
 			}
@@ -837,7 +827,7 @@ try{
 		//render states
 		switch (statenow)
 		{
-			case chapterstate:		{
+			case chapterstate:		     {
 			//Draw a background to a nice view
 			USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
@@ -1020,7 +1010,7 @@ try{
 			break;
 			}
 			case programationsliderstate:
-			case programationstate:	{
+			case programationstate:	     {
 				if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1) {
 
 					if(ongrid){
@@ -1178,7 +1168,7 @@ try{
 
 				break;
 			}
-			case searchstate:		{
+			case searchstate:		     {
 				if (!reloadingsearch) {					
 					int srchsize=BD["arrays"]["search"]["link"].size();
 					if(ongridS){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
@@ -1238,7 +1228,7 @@ try{
 				}
 				break;
 			}
-			case favoritesstate:	{
+			case favoritesstate:	     {
 				json VecF;
 				VecF["link"]=UD["favoritos"];
 				if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
@@ -1284,7 +1274,7 @@ try{
 				}
 			break;
 			}
-			case historystate: {
+			case historystate:           {
 				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				json VecF;
 				VecF["link"]=UD["history"];
@@ -1323,7 +1313,7 @@ try{
 				}
 			break;
 			}
-			case topstate: {
+			case topstate:               {
 				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int histsize=BD["arrays"]["Top"]["link"].size();
 				if (histsize > 0){
@@ -1359,7 +1349,7 @@ try{
 				}
 			break;
 			}
-			case hourglass: {
+			case hourglass:              {
 				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int histsize=BD["arrays"]["HourGlass"]["link"].size();
 				if (histsize > 0){
@@ -1395,7 +1385,7 @@ try{
 				}
 			break;
 			}
-			case downloadstate:	{
+			case downloadstate:	         {
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);//Head
 				VOX.render_VOX({16,65, 900, 162}, 210, 210, 210, 115);//Rectangle
@@ -1464,6 +1454,7 @@ try{
 			break;
 			}
 		}
+
 		//global render
 		if(isDownloading&& downloadstate != statenow){
 			T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,42)+"... ("+std::to_string(porcendown)+"\%)", {50,50,50});
@@ -1476,7 +1467,7 @@ try{
 		int maxt=100;
 		static int net=maxt;
 		static unsigned long long time2 = 0;
-		if (onTimeC(1000,time2)){		
+		if (onTimeC(1000,time2)){
 			if (!HasConnection()) {
 				isConnected=false;
 				if (net <= 0){quit=true;} else {net--;}
@@ -1493,8 +1484,8 @@ try{
 		}
 		if (!isConnected){
 			gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet, Cerrando: "+std::to_string(net), {255,0,0});
-			VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,0, gTextTexture.getWidth()+4, gTextTexture.getHeight()+2}, 0, 0, 0, 180);
-			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 1 );
+			VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,671-gTextTexture.getHeight()-2, gTextTexture.getWidth()+4, gTextTexture.getHeight()+2}, 0, 0, 0, 180);
+			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 671-gTextTexture.getHeight()-1 );
 		}
 
 		if(programationstate != statenow && isHandheld){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
