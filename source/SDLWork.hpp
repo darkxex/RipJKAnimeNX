@@ -63,13 +63,13 @@ public:
 	int offboom=0;
 	//default boom size
 	int offboom_min=0, offboom_size=11;
+	//W H overwrite
+	int offW=0, offH=0;
 	
 private:
 	//The actual hardware texture
 	SDL_Texture* mTexture;
 
-	//W H overwrite
-	int offW=0, offH=0;
 
 	//Image dimensions
 	int mWidth, mHeight, mX, mY, SelIns;
@@ -131,7 +131,7 @@ void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int 
 void PleaseWait(std::string text,bool render = true);
 void ListCover(int& selectindex,json Jlinks, bool ongrid=false,int limit=0);
 void ListClassic(int& selectindex,json Jlinks);
-void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select);
+void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render);
 void HandleList(int& selectchapter, int allsize, int key,bool ongrid);
 void ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool ongrid);
 void deint();

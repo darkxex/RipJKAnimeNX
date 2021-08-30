@@ -263,12 +263,10 @@ try{
 					else if (CLEAR.SP()){
 						preview = false;
 						quit = true;
-						GOD.PleaseWait("Borrando cache");
-						BD["DataBase"] = "{}"_json;
-						BD["arrays"]["chapter"] = "{}"_json;
-						BD["latestchapter"] = "";
-						fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 						cancelcurl = 1;
+						GOD.PleaseWait("Borrando cache");
+						BD = "{}"_json;
+						fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 						statenow=99;
 						break;
 					}
@@ -303,8 +301,8 @@ try{
 						{
 						case programationsliderstate:
 							if(selectelement==0){callsearch();}
-							if(selectelement==1){callfavs();}
-							if(selectelement==2){callhistory();}
+							if(selectelement==1){callhistory();}
+							if(selectelement==2){callfavs();}
 							if(selectelement==3){callhourglass();}
 							if(selectelement==4){calltop();}
 							if(selectelement==5){callAflv();}
@@ -998,9 +996,9 @@ try{
 			}
 
 			if(gFAV){
-				FAV.render(1230, 70);
+				FAV.render(1225, 70);
 			} else {
-				NFAV.render_T(1230, 70,"");
+				NFAV.render_T(1225, 70,"");
 				B_Y.render_T(dist, 680,"Favorito");dist -= posdist;
 			}
 			
@@ -1099,11 +1097,11 @@ try{
 					if (statenow==programationsliderstate){
 						
 						{
-							StatesList= {"Búsqueda","Favoritos","Historial","Horario","Top Anime","AnimeFLV"};
+							StatesList= {"Búsqueda","Historial","Favoritos","Horario","Top Anime","AnimeFLV"};
 							if(isDownloading){StatesList.push_back("Descargas");}
 
 							int mwide = 60,XD=940,YD=120,W=1280-XD;
-							VOX.render_VOX({XD,61, 1280, 608}, 220, 220, 220, 220);//draw area
+							VOX.render_VOX({XD,61, 1280, 608}, 160, 160, 160, 220);//draw area
 							VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);//head line
 							VOX.render_VOX({XD,668, W, 1}, 255, 255, 255, 235);//bottom line
 							VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);//line left
@@ -1133,8 +1131,8 @@ try{
 
 							for (int x = 0; x < indexLsize; x++) {
 								if(x == 0){BUSB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 1){FAVB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 2){HISB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 1){HISB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 2){FAVB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 3){HORB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 4){TOPB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 5){AFLV.render(XD+10, YD + (x * mwide)+5);}

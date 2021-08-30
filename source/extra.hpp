@@ -163,10 +163,12 @@ void LoadImages(){
 	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
 	CLEAR.loadFromFile("romfs:/buttons/clear.png");
 	SCREEN.loadFromFile("romfs:/buttons/screen.png");
-	FAV.loadFromFile("romfs:/buttons/FAV.png");
-	NFAV.loadFromFile("romfs:/buttons/NFAV.png");
-	BUS.loadFromFile("romfs:/buttons/BUS.png");
 	NOP.loadFromFile("romfs:/nop.png");
+	
+	FAV.loadFromFileCustom("romfs:/buttons/FAV.png",43,43);
+	NFAV.loadFromFileCustom("romfs:/buttons/NFAV.png",43,43);
+	BUS.loadFromFileCustom("romfs:/buttons/BUS.png",43,43);
+	
 	REC.loadFromFileCustom("romfs:/buttons/REC.png",43,43);
 	HIS.loadFromFileCustom("romfs:/buttons/HIS.png",43,43);
 	TOP.loadFromFileCustom("romfs:/buttons/TOP.png",43,43);
@@ -216,7 +218,7 @@ void PlayerGet(FsFileSystem& acc){
 //call states
 void callmenuslide(){
 	statenow=programationsliderstate;
-	selectelement = 1;
+	selectelement = 2;
 }
 void callsearch(){
 	GOD.WorKey="0";GOD.MasKey=-1;

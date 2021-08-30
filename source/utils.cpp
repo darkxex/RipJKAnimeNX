@@ -692,6 +692,12 @@ void TickerName(int& color,int sec,int min,int max){
 */			
 }
 
+bool isset(json data){
+	if (data.empty()){
+		return false;
+	}
+	return true;
+}
 void NameOfLink(std::string& word){
 	replace(word, "https://jkanime.net/", "");
 	word = word.substr(0, word.length() - 1);
@@ -705,4 +711,11 @@ std::string KeyOfLink(std::string word){
 	replace(word, "https://jkanime.net/", "");
 	replace(word, "/", "");
 	return word;
+}
+template <typename Map, typename F>
+void map_erase_if(Map& m, F pred)
+{
+    for (typename Map::iterator i = m.begin();
+         (i = std::find_if(i, m.end(), pred)) != m.end();
+         m.erase(i++));
 }

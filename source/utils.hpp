@@ -20,5 +20,6 @@ std::vector<std::string> eraseVec(std::vector<std::string> array,std::string pat
 bool onTimeC(unsigned long long sec,unsigned long long& time2);
 void TickerName(int& color,int sec,int min,int max);
 void RemoveAccents(std::string& word);
+bool isset(json data);
 void NameOfLink(std::string& word);
 std::string KeyOfLink(std::string word);

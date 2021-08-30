@@ -293,6 +293,27 @@ int refrescarpro(void* data){
 	//Download All not existing images of Favorites
 	MKfavimgfix(true);
 
+	//load Top
+	std::vector<std::string> TOPC={};
+	std::cout << "# Get Top" << std::endl;
+	content=gethtml("https://jkanime.net/top/");
+	replace(content,"https://jkanime.net/top/","");
+	replace(content,"https://jkanime.net///","");
+	TOPC=scrapElementAll(content,"https://jkanime.net/");
+	TOPC.erase(unique(TOPC.begin(),TOPC.end()),TOPC.end());
+	BD["arrays"]["Top"]["link"]=TOPC;
+	CheckImgVector(TOPC,imgNumbuffer);
+
+	//load Horario
+	std::vector<std::string> HORC={};
+	std::cout << "# Get HourGlass" << std::endl;
+	content=gethtml("https://jkanime.net/horario/");
+	replace(content,"https://jkanime.net/horario/","");
+	HORC=scrapElementAll(content,"https://jkanime.net/");
+	HORC.erase(unique(HORC.begin(),HORC.end()),HORC.end());
+	BD["arrays"]["HourGlass"]["link"]=HORC;
+	CheckImgVector(HORC,imgNumbuffer);
+
 	//Load to cache all Programation Chaps
 	if (haschange) {
 		MKcapitBuffer(BD["arrays"]["chapter"]["link"], porcentajebuffer, porcentajebufferAll);
@@ -304,32 +325,16 @@ int refrescarpro(void* data){
 	//Load to cache all Favorites Chaps
 	MKfavimgfix(false);
 
+	//Cache Top
+	std::cout << "# Cache Top" << std::endl;
+	MKcapitBuffer(TOPC, porcentajebuffer, porcentajebufferAll);
+
+	//Cache Horario
+	std::cout << "# Get Horario" << std::endl;
+	MKcapitBuffer(HORC, porcentajebuffer, porcentajebufferAll);
+
 	//extra vector
 	std::vector<std::string> vec={};
-
-	//load Top
-	std::cout << "# Get Top" << std::endl;
-	content=gethtml("https://jkanime.net/top/");
-	replace(content,"https://jkanime.net/top/","");
-	replace(content,"https://jkanime.net///","");
-	vec=scrapElementAll(content,"https://jkanime.net/");
-	//sort(vec.begin(),vec.end());
-	vec.erase(unique(vec.begin(),vec.end()),vec.end());
-	BD["arrays"]["Top"]["link"]=vec;
-	CheckImgVector(vec,imgNumbuffer);
-	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
-
-	//load Horario
-	std::cout << "# Get HourGlass" << std::endl;
-	content=gethtml("https://jkanime.net/horario/");
-	replace(content,"https://jkanime.net/horario/","");
-	vec=scrapElementAll(content,"https://jkanime.net/");
-	//sort(vec.begin(),vec.end());
-	vec.erase(unique(vec.begin(),vec.end()),vec.end());
-	BD["arrays"]["HourGlass"]["link"]=vec;
-	CheckImgVector(vec,imgNumbuffer);
-	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
-
 	//load main
 	std::cout << "# Get Main" << std::endl;
 	content = gethtml("https://jkanime.net");
