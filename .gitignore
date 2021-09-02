@@ -19,3 +19,4 @@ target/
 *.cmd
 *.pfs0
 *.nacp
+source/Debug.h

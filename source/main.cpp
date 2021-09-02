@@ -1,13 +1,9 @@
 #include <string>
-#ifdef USENAND
-	//use the nand of the switch
-	std::string rootdirectory = "user:/RipJKAnime_NX/";
-	std::string rootsave = "save:/";
-	std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
-#else
-	std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
-	std::string rootsave = rootdirectory;
-#endif
+//use the nand of the switch
+std::string rootdirectory = "user:/RipJKAnime_NX/";
+std::string rootsave = "save:/";
+std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
+
 #include "JKanime.hpp"
 #include "extra.hpp"
 
@@ -22,37 +18,36 @@ int main(int argc, char **argv)
 	nxlinkStdio();
 	printf("Nxlink server Conected\n");
 	AppletMode=GetAppletMode();
-	#ifdef USENAND
-		//Mount user
-		FsFileSystem data;
-		fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
-		fsdevMountDevice("user", data);
+	//Mount user
+	FsFileSystem data;
+	fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
+	fsdevMountDevice("user", data);
 		
-		//Mount Save Data
-		FsFileSystem acc;
-		if (MountUserSave(acc)){
-			if(isFileExist(rootdirectory+AccountID+"UserData.json")){
-				if(!isFileExist(rootsave+"UserData.json")){
-					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
-						fsdevCommitDevice("save");
-						remove((rootdirectory+AccountID+"UserData.json").c_str());
-						remove((rootdirectory+AccountID+"User.jpg").c_str());
-					}
+	//Mount Save Data
+	FsFileSystem acc;
+	if (MountUserSave(acc)){
+		if(isFileExist(rootdirectory+AccountID+"UserData.json")){
+			if(!isFileExist(rootsave+"UserData.json")){
+				if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+					fsdevCommitDevice("save");
+					remove((rootdirectory+AccountID+"UserData.json").c_str());
+					remove((rootdirectory+AccountID+"User.jpg").c_str());
 				}
 			}
-			if(isFileExist(rootdirectory+"UserData.json")){
-				if(!isFileExist(rootsave+"UserData.json")){
-					if (copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json")){
-						fsdevCommitDevice("save");
-						remove((rootdirectory+"UserData.json").c_str());
-					}
+		}
+		if(isFileExist(rootdirectory+"UserData.json")){
+			if(!isFileExist(rootsave+"UserData.json")){
+				if (copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json")){
+					fsdevCommitDevice("save");
+					remove((rootdirectory+"UserData.json").c_str());
 				}
 			}
-		} else {
-			rootsave = rootdirectory+AccountID;
-			GetUserImage();
-		}	
-	#endif
+		}
+	} else {
+		rootsave = rootdirectory+AccountID;
+		GetUserImage();
+	}	
+
 	struct stat st = { 0 };
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
@@ -69,33 +64,28 @@ int main(int argc, char **argv)
 	
 	GOD.intA();//init the SDL
 
-	#ifdef USENAND
-		if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
-			mkdir(rootdirectory.c_str(), 0777);
-			mkdir((rootdirectory+"DATA").c_str(), 0777);
-			if (stat((oldroot+"DATA").c_str(), &st) != -1){
-				GOD.PleaseWait("Copiando Archivos Importantes Espere...",true);
-				copy_me(oldroot+"favoritos.txt",rootdirectory+"favoritos.txt");
-				
-				GOD.PleaseWait("Copiando Archivos Importantes Espere.",true);
-				copy_me(oldroot+"texture.png",rootdirectory+"texture.png");
-				GOD.PleaseWait("Copiando Archivos Importantes Espere..",true);
-				copy_me(oldroot+"heart.png",rootdirectory+"heart.png");
-				GOD.PleaseWait("Copiando Archivos Importantes Espere....",true);
-				copy_me(oldroot+"wada.ogg",rootdirectory+"wada.ogg");
-				GOD.PleaseWait("Copiando Archivos Importantes Espere......",true);
-				//set custom music 
-				if (isFileExist(rootdirectory+"wada.ogg")){
-					GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
-				}
-				//if (!isFileExist("RipJKAnime_NX.nro"))//detect the nro path
-				fsdevDeleteDirectoryRecursively(oldroot.c_str());
+	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
+		mkdir(rootdirectory.c_str(), 0777);
+		mkdir((rootdirectory+"DATA").c_str(), 0777);
+		if (stat((oldroot+"DATA").c_str(), &st) != -1){
+			GOD.PleaseWait("Copiando Archivos Importantes Espere...",true);
+			copy_me(oldroot+"favoritos.txt",rootdirectory+"favoritos.txt");
+			
+			GOD.PleaseWait("Copiando Archivos Importantes Espere.",true);
+			copy_me(oldroot+"texture.png",rootdirectory+"texture.png");
+			GOD.PleaseWait("Copiando Archivos Importantes Espere..",true);
+			copy_me(oldroot+"heart.png",rootdirectory+"heart.png");
+			GOD.PleaseWait("Copiando Archivos Importantes Espere....",true);
+			copy_me(oldroot+"wada.ogg",rootdirectory+"wada.ogg");
+			GOD.PleaseWait("Copiando Archivos Importantes Espere......",true);
+			//set custom music 
+			if (isFileExist(rootdirectory+"wada.ogg")){
+				GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 			}
+			//if (!isFileExist("RipJKAnime_NX.nro"))//detect the nro path
+			fsdevDeleteDirectoryRecursively(oldroot.c_str());
 		}
-	#else
-	mkdir(rootdirectory.c_str(), 0777);
-	mkdir((rootdirectory+"DATA").c_str(), 0777);
-	#endif
+	}
 
 	if (isFileExist(rootdirectory+"texture.png")){
 		Farest.loadFromFile(rootdirectory+"texture.png");
@@ -1062,11 +1052,7 @@ try{
 
 					//Draw Header
 					std::string VERCAT =  VERSION;
-					std::string TYPEA =  "sdmc";
-					#ifdef USENAND
-						TYPEA =  "emmc";
-					#endif
-					gTextTexture.loadFromRenderedText(GOD.digifontC, (TYPEA+" (Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.digifontC, ("(Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 3, 672);
 					
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Recientes", {100,0,0});
@@ -1087,7 +1073,7 @@ try{
 					if (statenow==programationsliderstate){
 						
 						{
-							StatesList= {"Búsqueda","Historial","Favoritos","Horario","Top Anime","AnimeFLV"};
+							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","AnimeFLV"};
 							if(isDownloading){StatesList.push_back("Descargas");}
 
 							int mwide = 60,XD=940,YD=120,W=1280-XD;
@@ -1467,6 +1453,7 @@ try{
 		int maxt=100;
 		static int net=maxt;
 		static unsigned long long time2 = 0;
+		static unsigned long long time3 = 0;
 		if (onTimeC(1000,time2)){
 			if (!HasConnection()) {
 				isConnected=false;
@@ -1503,6 +1490,17 @@ try{
 		
 		if (Frames>1000)Frames=0;
 		if (Frames>0)Frames++;
+		//Update tik
+		if (onTimeC(300000,time3)){
+			std::cout << "Try to Reload Animes" << std::endl;
+			if (!HasConnection()) {
+				if(!isChained){
+					std::cout << "Reloading Animes" << std::endl;
+					//Set main Thread get images and descriptions
+					prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
+				}
+			}
+		}
 	}
 } catch(...){
 	printf("Error Catched\n");
@@ -1565,7 +1563,7 @@ try{
 	hidsysExit();
 	socketExit();
 	romfsExit();
-#ifdef USENAND
+
 	//unmount and commit
 	fsdevCommitDevice("save");
 	fsdevUnmountDevice("save");
@@ -1574,7 +1572,7 @@ try{
 	fsdevCommitDevice("user");
 	fsdevUnmountDevice("user");
 	fsFsClose(&data);
-#endif
+
 	accountExit();
 	//if (!isConnected) appletRequestToSleep();
 	return 0;

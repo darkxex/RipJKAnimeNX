@@ -8,10 +8,20 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
+#include "utils.hpp"
 #include "applet.hpp"
 #include "SDLWork.hpp"
-#include "utils.hpp"
-
+ /// Console Product Models
+ typedef enum {
+     SetSysProductModel_Invalid = 0, ///< Invalid Model
+     SetSysProductModel_Nx      = 1, ///< Erista Model
+     SetSysProductModel_Copper  = 2, ///< Erista "Simulation" Model
+     SetSysProductModel_Iowa    = 3, ///< Mariko Model
+     SetSysProductModel_Hoag    = 4, ///< Mariko Lite Model
+     SetSysProductModel_Calcio  = 5, ///< Mariko "Simulation" Model
+     SetSysProductModel_Aula    = 6, ///< Mariko Pro Model(?)
+ } SetSysProductModel;
+ 
 extern AccountUid uid;
 extern std::string AccountID;
 extern u32 __nx_applet_exit_mode;
@@ -33,9 +43,7 @@ std::cout << "No Existe:" << path << std::endl;
 return false;
 }
 
-   
-std::string FormatHex128(AccountUid Number)
-{
+std::string FormatHex128(AccountUid Number){
     auto ptr = reinterpret_cast<u8*>(Number.uid);
     std::stringstream strm;
     strm << std::hex << std::uppercase;
@@ -102,11 +110,7 @@ bool GetUserImage(){
 			res = accountProfileLoadImage(&prof, icon, iconsize, &tmpsz);
 			if(res == 0)
 			{
-	#ifdef USENAND
 			    FILE *f = fopen((rootsave+"User.jpg").c_str(), "wb");
-	#else
-			    FILE *f = fopen("sdmc:/switch/RipJKAnime_NX/User.jpg", "wb");
-	#endif
 			    if(f)
 			    {
 					fwrite(icon, 1, iconsize, f);
@@ -160,6 +164,115 @@ AccountUid LaunchPlayerSelect() {
 	return out_id;
 }
 
+json DInfo(){
+	json info;
+	setInitialize();
+	setsysInitialize();
+	splInitialize();
+	Result ret = 0;
+	
+	//DeviceID
+	u64 id = 0;
+	splGetConfig(SplConfigItem_DeviceId, &id);
+	char DeviceID[0x9F];
+	sprintf(DeviceID, "%lX",id);
+	info["DeviceID"]=std::string(DeviceID);
+
+	//Get Device Firmware Vercion
+	SetSysFirmwareVersion ver;
+    if (R_FAILED(ret = setsysGetFirmwareVersion(&ver))) {
+        printf("setsysGetFirmwareVersion() failed: 0x%x.\n\n", ret);
+    } else {
+		info["Firmware"]=std::string(ver.display_version);
+	}
+	
+	//Device NickName
+	SetSysDeviceNickName nick;
+    if (R_FAILED(ret = setGetDeviceNickname(&nick))) {
+        printf("setGetDeviceNickname() failed: 0x%x.\n\n", ret);
+    } else {
+		info["nickname"]=std::string(nick.nickname);
+	}
+
+	//Public Serial Number
+	SetSysSerialNumber serialNX;
+    if (R_FAILED(ret = setsysGetSerialNumber(&serialNX))) {
+        printf("setsysGetSerialNumber() failed: 0x%x.\n\n", ret);
+    } else {
+		if(strlen(serialNX.number) == 0) {
+			//info["Incognito"]="true";
+			sprintf(serialNX.number, "XAW00000000000");
+		} else {
+			if (serialNX.number != "XAW00000000000" && serialNX.number != "XAW00000000001"){
+				//info["Blank_prod"]="true";
+			}
+			//info["Incognito"]="false";
+		}
+		info["Serial"]=std::string(serialNX.number);
+	}
+	
+	//Model of switch board
+	s32 modelo;
+    if (R_FAILED(ret = setsysGetProductModel(&modelo))) {
+        printf("setsysGetProductModel() failed: 0x%x.\n\n", ret);
+    } else {
+		string a="Invalid Model";
+		switch(modelo){
+			case SetSysProductModel_Nx:
+				a="Erista Model.";
+				break;
+			case SetSysProductModel_Copper:
+				a="Erista Simulation Model.";
+				break;
+			case SetSysProductModel_Iowa:
+				a="Mariko Model.";
+				break;
+			case SetSysProductModel_Hoag:
+				a="Mariko Lite Model.";
+				break;
+			case SetSysProductModel_Calcio:
+				a="Mariko Simulation Model.";
+				break;
+			case SetSysProductModel_Aula:
+				a="Mariko Pro Model(?) ";
+				break;
+		}
+		info["Model"]=a;
+	}
+	
+	//Region of console
+	SetRegion region;
+    if (R_FAILED(ret = setGetRegionCode(&region))) {
+        printf("setGetRegionCode() failed: 0x%x.\n\n", ret);
+    } else {
+		string a="Wut?";
+		switch(region){
+			case SetRegion_JPN:
+				a="Japan.";
+				break;
+			case SetRegion_USA:
+				a="The Americas.";
+				break;
+			case SetRegion_EUR:
+				a="Europe.";
+				break;
+			case SetRegion_AUS:
+				a="Australia/New Zealand.";
+				break;
+			case SetRegion_HTK :
+				a="Hong Kong/Taiwan/Korea.";
+				break;
+			case SetRegion_CHN:
+				a="China.";
+				break;			
+		}
+		info["Region"]=a;
+	}
+	
+	setsysExit();
+	std::cout << std::setw(4) << info << std::endl;
+    return info;
+}
 
 bool ChainManager(bool Chain,bool AndChaing){
 	if (Chain){
@@ -179,8 +292,6 @@ bool ChainManager(bool Chain,bool AndChaing){
 			return true;
 		} else return false;
 	}
-
-	
 }
 
 SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
@@ -191,7 +302,6 @@ SwkbdTextCheckResult Keyboard_ValidateText(char *string, size_t size) {
 
 	return SwkbdTextCheckResult_OK;
 }
-
 std::string KeyboardCall (std::string hint, std::string text){
 	Result ret = 0;
 	SwkbdConfig swkbd;
@@ -223,7 +333,6 @@ std::string KeyboardCall (std::string hint, std::string text){
 	strcpy(buf, input_string);
 	return std::string(buf);
 }
-
 
 Result WebBrowserCall(std::string url,bool nag){
 	Result rc = 0;	

@@ -39,6 +39,7 @@ extern bool isChained;
 extern std::string serverenlace;
 extern std::string DownTitle;
 extern std::string KeyName;
+extern std::string AccountID;
 
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, hourglass, topstate, programationsliderstate};
 extern int statenow;
@@ -67,7 +68,11 @@ int refrescarpro(void* data){
 		if (AppletMode) quit=true;
 		if(quit) return 0;
 	}
-	
+
+	#ifdef ISDEBUG
+	#include "Debug.h"
+	#endif
+
 	if(!reloading){
 		//Download All not existing images
 		CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);

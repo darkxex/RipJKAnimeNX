@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 1
-VERSION_MICRO := 8
+VERSION_MICRO := 9
 
 APP_TITLE	:=	RipJKAnime NX
 APP_AUTHOR	:=	AngelXex
@@ -65,8 +65,8 @@ CFLAGS	:=	-g -O3 -ffunction-sections \
 
 CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 -DTITLE='"$(APP_TITLE)"' -DVERSION='"$(APP_VERSION)"'
 
-ifneq ($(strip $(USENAND)),)
-CFLAGS	+= -DUSENAND
+ifneq ($(strip $(ISDEBUG)),)
+CFLAGS	+= -DISDEBUG
 endif
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -fexceptions
