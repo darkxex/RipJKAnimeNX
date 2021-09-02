@@ -1,21 +1,13 @@
-
-
-#include "JKanime.hpp"
-
+#include <string>
 //use the nand of the switch
-#ifdef USENAND
 std::string rootdirectory = "user:/RipJKAnime_NX/";
 std::string rootsave = "save:/";
 std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
-#else
-std::string rootdirectory = "sdmc:/switch/RipJKAnime_NX/";
-std::string rootsave = rootdirectory;
 
-#endif
-
+#include "JKanime.hpp"
+#include "extra.hpp"
 
 //make some includes to clean a little the main
-#include "extra.hpp"
 std::string urlc = "https://myrincon.duckdns.org";
 
 //MAIN INT
@@ -26,43 +18,42 @@ int main(int argc, char **argv)
 	nxlinkStdio();
 	printf("Nxlink server Conected\n");
 	AppletMode=GetAppletMode();
-	#ifdef USENAND
-		//Mount user
-		FsFileSystem data;
-		fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
-		fsdevMountDevice("user", data);
+	//Mount user
+	FsFileSystem data;
+	fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
+	fsdevMountDevice("user", data);
 		
-		//Mount Save Data
-		FsFileSystem acc;
-		if (MountUserSave(acc)){
-			if(isFileExist(rootdirectory+AccountID+"UserData.json")){
-				if(!isFileExist(rootsave+"UserData.json")){
-					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
-						fsdevCommitDevice("save");
-						remove((rootdirectory+AccountID+"UserData.json").c_str());
-						remove((rootdirectory+AccountID+"User.jpg").c_str());
-					}
+	//Mount Save Data
+	FsFileSystem acc;
+	if (MountUserSave(acc)){
+		if(isFileExist(rootdirectory+AccountID+"UserData.json")){
+			if(!isFileExist(rootsave+"UserData.json")){
+				if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+					fsdevCommitDevice("save");
+					remove((rootdirectory+AccountID+"UserData.json").c_str());
+					remove((rootdirectory+AccountID+"User.jpg").c_str());
 				}
 			}
-			if(isFileExist(rootdirectory+"UserData.json")){
-				if(!isFileExist(rootsave+"UserData.json")){
-					if (copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json")){
-						fsdevCommitDevice("save");
-						remove((rootdirectory+"UserData.json").c_str());
-					}
+		}
+		if(isFileExist(rootdirectory+"UserData.json")){
+			if(!isFileExist(rootsave+"UserData.json")){
+				if (copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json")){
+					fsdevCommitDevice("save");
+					remove((rootdirectory+"UserData.json").c_str());
 				}
 			}
-		} else {
-			rootsave = rootdirectory+AccountID;
-			GetUserImage();
-		}	
-	#endif
+		}
+	} else {
+		rootsave = rootdirectory+AccountID;
+		GetUserImage();
+	}	
+
 	struct stat st = { 0 };
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
 		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
 	}
 
-	// read a JSON file
+	//Read a JSON file
 	read_DB(BD,rootdirectory+"DataBase.json");
 	BD["com"] = "{}"_json;
 	if(!BD["USER"].empty()){
@@ -73,33 +64,28 @@ int main(int argc, char **argv)
 	
 	GOD.intA();//init the SDL
 
-	#ifdef USENAND
-		if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
-			mkdir(rootdirectory.c_str(), 0777);
-			mkdir((rootdirectory+"DATA").c_str(), 0777);
-			if (stat((oldroot+"DATA").c_str(), &st) != -1){
-				GOD.PleaseWait("Copiando Archivos Importantes Espere...",true);
-				copy_me(oldroot+"favoritos.txt",rootdirectory+"favoritos.txt");
-				
-				GOD.PleaseWait("Copiando Archivos Importantes Espere.",true);
-				copy_me(oldroot+"texture.png",rootdirectory+"texture.png");
-				GOD.PleaseWait("Copiando Archivos Importantes Espere..",true);
-				copy_me(oldroot+"heart.png",rootdirectory+"heart.png");
-				GOD.PleaseWait("Copiando Archivos Importantes Espere....",true);
-				copy_me(oldroot+"wada.ogg",rootdirectory+"wada.ogg");
-				GOD.PleaseWait("Copiando Archivos Importantes Espere......",true);
-				//set custom music 
-				if (isFileExist(rootdirectory+"wada.ogg")){
-					GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
-				}
-				//if (!isFileExist("RipJKAnime_NX.nro"))//detect the nro path
-				fsdevDeleteDirectoryRecursively(oldroot.c_str());
+	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
+		mkdir(rootdirectory.c_str(), 0777);
+		mkdir((rootdirectory+"DATA").c_str(), 0777);
+		if (stat((oldroot+"DATA").c_str(), &st) != -1){
+			GOD.PleaseWait("Copiando Archivos Importantes Espere...",true);
+			copy_me(oldroot+"favoritos.txt",rootdirectory+"favoritos.txt");
+			
+			GOD.PleaseWait("Copiando Archivos Importantes Espere.",true);
+			copy_me(oldroot+"texture.png",rootdirectory+"texture.png");
+			GOD.PleaseWait("Copiando Archivos Importantes Espere..",true);
+			copy_me(oldroot+"heart.png",rootdirectory+"heart.png");
+			GOD.PleaseWait("Copiando Archivos Importantes Espere....",true);
+			copy_me(oldroot+"wada.ogg",rootdirectory+"wada.ogg");
+			GOD.PleaseWait("Copiando Archivos Importantes Espere......",true);
+			//set custom music 
+			if (isFileExist(rootdirectory+"wada.ogg")){
+				GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 			}
+			//if (!isFileExist("RipJKAnime_NX.nro"))//detect the nro path
+			fsdevDeleteDirectoryRecursively(oldroot.c_str());
 		}
-	#else
-	mkdir(rootdirectory.c_str(), 0777);
-	mkdir((rootdirectory+"DATA").c_str(), 0777);
-	#endif
+	}
 
 	if (isFileExist(rootdirectory+"texture.png")){
 		Farest.loadFromFile(rootdirectory+"texture.png");
@@ -115,7 +101,6 @@ int main(int argc, char **argv)
 
 	gTextTexture.mark=false;
 	Farest.mark=false;
-	
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 
 	SDL_Color textColor = { 50, 50, 50 };
@@ -161,17 +146,13 @@ try{
 				quit = true;
 				std::cout << "Saliendo" << std::endl;
 			}
-			//#include "keyboard.h"
-
 			GOD.GenState = statenow;
 			switch (e.type) {
 			case SDL_FINGERDOWN:
-			GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
-			GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-			if (!GOD.fingerdown){
-				GOD.fingerdown = true;
-			}
-			break;
+				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+				if (!GOD.fingerdown){GOD.fingerdown = true;}
+				break;
 			case SDL_FINGERMOTION:
 				if(e.tfinger.dy * SCREEN_HEIGHT > 30 || e.tfinger.dy * SCREEN_HEIGHT < -30 || e.tfinger.dx * SCREEN_WIDTH > 30 || e.tfinger.dx * SCREEN_WIDTH < -30){
 				SDL_Log("motion %f \n",e.tfinger.dy * SCREEN_HEIGHT);
@@ -817,7 +798,6 @@ try{
 					}
 				}
 				break;
-
 			default:
 				break;
 			}
@@ -837,7 +817,7 @@ try{
 		//render states
 		switch (statenow)
 		{
-			case chapterstate:		{
+			case chapterstate:		     {
 			//Draw a background to a nice view
 			USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 			VOX.render_VOX({0,0, SCREEN_WIDTH, 670} ,170, 170, 170, 100);
@@ -1020,7 +1000,7 @@ try{
 			break;
 			}
 			case programationsliderstate:
-			case programationstate:	{
+			case programationstate:	     {
 				if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1) {
 
 					if(ongrid){
@@ -1072,11 +1052,7 @@ try{
 
 					//Draw Header
 					std::string VERCAT =  VERSION;
-					std::string TYPEA =  "sdmc";
-					#ifdef USENAND
-						TYPEA =  "emmc";
-					#endif
-					gTextTexture.loadFromRenderedText(GOD.digifontC, (TYPEA+" (Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.digifontC, ("(Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 3, 672);
 					
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Recientes", {100,0,0});
@@ -1097,7 +1073,7 @@ try{
 					if (statenow==programationsliderstate){
 						
 						{
-							StatesList= {"Búsqueda","Historial","Favoritos","Horario","Top Anime","AnimeFLV"};
+							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","AnimeFLV"};
 							if(isDownloading){StatesList.push_back("Descargas");}
 
 							int mwide = 60,XD=940,YD=120,W=1280-XD;
@@ -1178,7 +1154,7 @@ try{
 
 				break;
 			}
-			case searchstate:		{
+			case searchstate:		     {
 				if (!reloadingsearch) {					
 					int srchsize=BD["arrays"]["search"]["link"].size();
 					if(ongridS){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
@@ -1238,7 +1214,7 @@ try{
 				}
 				break;
 			}
-			case favoritesstate:	{
+			case favoritesstate:	     {
 				json VecF;
 				VecF["link"]=UD["favoritos"];
 				if(ongridF){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
@@ -1284,7 +1260,7 @@ try{
 				}
 			break;
 			}
-			case historystate: {
+			case historystate:           {
 				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				json VecF;
 				VecF["link"]=UD["history"];
@@ -1323,7 +1299,7 @@ try{
 				}
 			break;
 			}
-			case topstate: {
+			case topstate:               {
 				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int histsize=BD["arrays"]["Top"]["link"].size();
 				if (histsize > 0){
@@ -1359,7 +1335,7 @@ try{
 				}
 			break;
 			}
-			case hourglass: {
+			case hourglass:              {
 				if(ongrid){USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int histsize=BD["arrays"]["HourGlass"]["link"].size();
 				if (histsize > 0){
@@ -1395,7 +1371,7 @@ try{
 				}
 			break;
 			}
-			case downloadstate:	{
+			case downloadstate:	         {
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 				VOX.render_VOX({0,0, 1280, 60} ,200, 200, 200, 130);//Head
 				VOX.render_VOX({16,65, 900, 162}, 210, 210, 210, 115);//Rectangle
@@ -1464,6 +1440,7 @@ try{
 			break;
 			}
 		}
+
 		//global render
 		if(isDownloading&& downloadstate != statenow){
 			T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,42)+"... ("+std::to_string(porcendown)+"\%)", {50,50,50});
@@ -1476,7 +1453,8 @@ try{
 		int maxt=100;
 		static int net=maxt;
 		static unsigned long long time2 = 0;
-		if (onTimeC(1000,time2)){		
+		static unsigned long long time3 = 0;
+		if (onTimeC(1000,time2)){
 			if (!HasConnection()) {
 				isConnected=false;
 				if (net <= 0){quit=true;} else {net--;}
@@ -1493,8 +1471,8 @@ try{
 		}
 		if (!isConnected){
 			gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet, Cerrando: "+std::to_string(net), {255,0,0});
-			VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,0, gTextTexture.getWidth()+4, gTextTexture.getHeight()+2}, 0, 0, 0, 180);
-			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 1 );
+			VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,671-gTextTexture.getHeight(), gTextTexture.getWidth()+4, gTextTexture.getHeight()}, 0, 0, 0, 180);
+			gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 671-gTextTexture.getHeight() );
 		}
 
 		if(programationstate != statenow && isHandheld){BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
@@ -1512,6 +1490,17 @@ try{
 		
 		if (Frames>1000)Frames=0;
 		if (Frames>0)Frames++;
+		//Update tik
+		if (onTimeC(300000,time3)){
+			std::cout << "Try to Reload Animes" << std::endl;
+			if (!HasConnection()) {
+				if(!isChained){
+					std::cout << "Reloading Animes" << std::endl;
+					//Set main Thread get images and descriptions
+					prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
+				}
+			}
+		}
 	}
 } catch(...){
 	printf("Error Catched\n");
@@ -1574,7 +1563,7 @@ try{
 	hidsysExit();
 	socketExit();
 	romfsExit();
-#ifdef USENAND
+
 	//unmount and commit
 	fsdevCommitDevice("save");
 	fsdevUnmountDevice("save");
@@ -1583,7 +1572,7 @@ try{
 	fsdevCommitDevice("user");
 	fsdevUnmountDevice("user");
 	fsFsClose(&data);
-#endif
+
 	accountExit();
 	//if (!isConnected) appletRequestToSleep();
 	return 0;

@@ -478,11 +478,11 @@ bool write_DB(json base,std::string path){
 	std::ofstream otf(path);
 	otf << std::setw(4) << base << std::endl;
 	otf.close();
-#ifdef USENAND
+
 	//commit
 	fsdevCommitDevice("save");
 	fsdevCommitDevice("user");
-#endif
+
 	appletEndBlockingHomeButton();
 	std::cout << "Json: writhen... "<< path << std::endl;
 	return true;
