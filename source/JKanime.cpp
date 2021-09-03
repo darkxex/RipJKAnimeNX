@@ -53,6 +53,7 @@ int MKhourBuffer();
 
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
+try{
 	isChained=true;
 	ChainManager(true,true);
 
@@ -138,7 +139,10 @@ int refrescarpro(void* data){
 		}
 	}
 	//download history
+	std::cout << "# download history" << std::endl;
 	CheckImgVector(UD["history"],imgNumbuffer);
+	std::cout << "# download history OK" << std::endl;
+	
 	//Top, Hour to Database
 	MKtopBuffer();
 	MKhourBuffer();
@@ -177,12 +181,17 @@ int refrescarpro(void* data){
 	BD["arrays"]["Main"]["link"]=vec;
 	MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
 
+} catch(...){
+	printf("Thread Chain Error Catched\n");
+	std::cout << UD << std::endl;
+}
 	std::cout << "# End Thread Chain" << std::endl;
 	isChained=false;
 	ChainManager(false,!isDownloading&&!isChained);
 	//exit after load the cache if are in applet mode
 	if (AppletMode) quit=true;
 	return 0;
+	
 }
 int MKcapitBuffer(std::vector<std::string> LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
@@ -274,12 +283,39 @@ int MKtopBuffer(){
 }
 int MKhourBuffer(){
 	//load Horario
-	std::vector<std::string> HORC={};
 	std::cout << "# Get HourGlass" << std::endl;
 	std::string content=gethtml("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
-	HORC=scrapElementAll(content,"https://jkanime.net/");
-	HORC.erase(unique(HORC.begin(),HORC.end()),HORC.end());
+	std::vector<std::string> STP={};
+	STP=split(content,"<div class='box semana'>");
+	
+	BD["arrays"]["HourGlass"]["Lunes"]=scrapElementAll(STP[1],"https://jkanime.net/","/Lunes");
+	BD["arrays"]["HourGlass"]["Martes"]=scrapElementAll(STP[2],"https://jkanime.net/","/Martes");
+	BD["arrays"]["HourGlass"]["Miercoles"]=scrapElementAll(STP[3],"https://jkanime.net/","/Miercoles");
+	BD["arrays"]["HourGlass"]["Jueves"]=scrapElementAll(STP[4],"https://jkanime.net/","/Jueves");
+	BD["arrays"]["HourGlass"]["Viernes"]=scrapElementAll(STP[5],"https://jkanime.net/","/Viernes");
+	BD["arrays"]["HourGlass"]["Sabado"]=scrapElementAll(STP[6],"https://jkanime.net/","/Sabado");
+	BD["arrays"]["HourGlass"]["Domingo"]=scrapElementAll(STP[7],"https://jkanime.net/","/Domingo");
+
+	std::vector<std::string> MPO={};
+	std::vector<std::string> HORC={};
+
+	MPO=scrapElementAll(STP[1],"https://jkanime.net/","\"","/Lunes");
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=scrapElementAll(STP[2],"https://jkanime.net/","\"","/Martes");
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=scrapElementAll(STP[3],"https://jkanime.net/","\"","/Miercoles");
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=scrapElementAll(STP[4],"https://jkanime.net/","\"","/Jueves");
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=scrapElementAll(STP[5],"https://jkanime.net/","\"","/Viernes");
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=scrapElementAll(STP[6],"https://jkanime.net/","\"","/Sabado");
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=scrapElementAll(STP[7],"https://jkanime.net/","\"","/Domingo");
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+
+	//HORC.erase(unique(HORC.begin(),HORC.end()),HORC.end());
 	BD["arrays"]["HourGlass"]["link"]=HORC;
 	CheckImgVector(HORC,imgNumbuffer);
 	if ((int)HORC.size() > 0){write_DB(BD,rootdirectory+"DataBase.json");}

@@ -171,6 +171,10 @@ json DInfo(){
 	splInitialize();
 	Result ret = 0;
 	
+	//App Ver
+	std::string VERCAT =  VERSION;
+	info["App"]=VERCAT;
+	
 	//DeviceID
 	u64 id = 0;
 	splGetConfig(SplConfigItem_DeviceId, &id);
@@ -203,7 +207,7 @@ json DInfo(){
 			//info["Incognito"]="true";
 			sprintf(serialNX.number, "XAW00000000000");
 		} else {
-			if (serialNX.number != "XAW00000000000" && serialNX.number != "XAW00000000001"){
+			if (string(serialNX.number) != "XAW00000000000" && string(serialNX.number) != "XAW00000000001"){
 				//info["Blank_prod"]="true";
 			}
 			//info["Incognito"]="false";

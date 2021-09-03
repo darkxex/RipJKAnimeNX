@@ -15,6 +15,7 @@
 #include "utils.hpp"
 #include <ctime>
 
+
 extern int porcendown;
 extern int sizeestimated;
 extern int cancelcurl;
@@ -221,12 +222,15 @@ return allok;
 
 bool HasConnection()
 {
-    u32 strg = 0;
-	nifmInitialize(NifmServiceType_User);
-    nifmGetInternetConnectionStatus(NULL, &strg, NULL);
-	return (strg > 0);
+		NifmInternetConnectionType connectionType;
+		NifmInternetConnectionStatus connectionStatus;
+		u32 strg = 0;
+		nifmInitialize(NifmServiceType_System);
+		nifmGetInternetConnectionStatus(&connectionType, &strg, &connectionStatus);
+		if (connectionStatus == NifmInternetConnectionStatus_Connected) return true;
+		return (strg > 0);
 }
-void CheckImgVector(std::vector<std::string> List,int& index){
+void CheckImgVector(json List,int& index){
 	index=0;
 	int listsize=List.size();
 	if (listsize <= 0) {return;}

@@ -55,7 +55,7 @@ std::string scrapElement(std::string content, std::string get,std::string delim)
 	}
 return Element;
 }
-vector<string> scrapElementAll(std::string content, std::string get,std::string delim){
+vector<string> scrapElementAll(std::string content, std::string get,std::string delim,std::string addend){
 	vector<string> res;
 	std::string Element = "";
 	if(content.length() <= 0)
@@ -86,7 +86,8 @@ vector<string> scrapElementAll(std::string content, std::string get,std::string 
 			replace(Element, "<span>", "");
 			replace(Element, " ", "");
 			
-			res.push_back (Element);
+			
+			res.push_back (Element+addend);
 		} else {
 			if (res.size() == 0)
 				res.push_back ("");
