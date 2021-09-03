@@ -221,10 +221,13 @@ return allok;
 
 bool HasConnection()
 {
-    u32 strg = 0;
-	nifmInitialize(NifmServiceType_User);
-    nifmGetInternetConnectionStatus(NULL, &strg, NULL);
-	return (strg > 0);
+		NifmInternetConnectionType connectionType;
+		NifmInternetConnectionStatus connectionStatus;
+		u32 strg = 0;
+		nifmInitialize(NifmServiceType_System);
+		nifmGetInternetConnectionStatus(&connectionType, &strg, &connectionStatus);
+		if (connectionStatus == NifmInternetConnectionStatus_Connected) return true;
+		return (strg > 0);
 }
 void CheckImgVector(std::vector<std::string> List,int& index){
 	index=0;
