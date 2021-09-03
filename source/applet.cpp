@@ -203,7 +203,7 @@ json DInfo(){
 			//info["Incognito"]="true";
 			sprintf(serialNX.number, "XAW00000000000");
 		} else {
-			if (serialNX.number != "XAW00000000000" && serialNX.number != "XAW00000000001"){
+			if (string(serialNX.number) != "XAW00000000000" && string(serialNX.number) != "XAW00000000001"){
 				//info["Blank_prod"]="true";
 			}
 			//info["Incognito"]="false";
