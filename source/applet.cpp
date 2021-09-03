@@ -171,6 +171,10 @@ json DInfo(){
 	splInitialize();
 	Result ret = 0;
 	
+	//App Ver
+	std::string VERCAT =  VERSION;
+	info["App"]=VERCAT;
+	
 	//DeviceID
 	u64 id = 0;
 	splGetConfig(SplConfigItem_DeviceId, &id);
