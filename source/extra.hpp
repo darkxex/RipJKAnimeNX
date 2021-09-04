@@ -17,7 +17,7 @@
 #include <string>
 #include <cmath>
 #include <iostream>
-#include<ctime>
+#include <ctime>
 #include <iomanip>
 #include <math.h>
 #include <Vector>
@@ -38,21 +38,21 @@ LTexture gTextTexture, Farest, Heart;
 LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
 LTexture SCREEN,
-BUS, BUSB,
-TOP, TOPB,
-DOW, DOWB,
-HOR, HORB,
-NFAV, FAV, FAVB,
-REC, BACK, USER,
-HIS, HISB,
-AFLV, NOP,
-CLEAR;
+         BUS, BUSB,
+         TOP, TOPB,
+         DOW, DOWB,
+         HOR, HORB,
+         NFAV, FAV, FAVB,
+         REC, BACK, USER,
+         HIS, HISB,
+         AFLV, NOP,
+         CLEAR;
 //Text and BOXES
 LTexture VOX, T_T, T_N, T_D, T_R;
 
 //main SLD funct (Grafics On Display == GOD)
 SDLB GOD;
-	
+
 //Gui Vars
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, hourglass, topstate, programationsliderstate};
 int statenow = programationstate;
@@ -94,7 +94,7 @@ int selectelement = 0;
 int histchapter=0;
 //top
 int topchapter=0;
-//Hour 
+//Hour
 int hourchapter=0;
 
 //my vars
@@ -122,11 +122,11 @@ std::string KeyName;
 int Frames=1;
 
 std::vector<std::string> arrayservers= {
-"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
+	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
 };
 
 std::vector<std::string> arrayserversbak= {
-"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
+	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
 };
 
 std::vector<std::string> StatesList= {};
@@ -164,11 +164,11 @@ void LoadImages(){
 	CLEAR.loadFromFile("romfs:/buttons/clear.png");
 	SCREEN.loadFromFile("romfs:/buttons/screen.png");
 	NOP.loadFromFile("romfs:/nop.png");
-	
+
 	FAV.loadFromFileCustom("romfs:/buttons/FAV.png",43,43);
 	NFAV.loadFromFileCustom("romfs:/buttons/NFAV.png",43,43);
 	BUS.loadFromFileCustom("romfs:/buttons/BUS.png",43,43);
-	
+
 	REC.loadFromFileCustom("romfs:/buttons/REC.png",43,43);
 	HIS.loadFromFileCustom("romfs:/buttons/HIS.png",43,43);
 	TOP.loadFromFileCustom("romfs:/buttons/TOP.png",43,43);
@@ -178,7 +178,7 @@ void LoadImages(){
 	TOPB.loadFromFileCustom("romfs:/buttons/TOP.png",55, 55);
 	DOWB.loadFromFileCustom("romfs:/buttons/DOW.png",55, 55);
 	HORB.loadFromFileCustom("romfs:/buttons/HOR.png",55, 55);
-	
+
 	HISB.loadFromFileCustom("romfs:/buttons/HIS.png",55, 55);
 	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
 	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
@@ -187,12 +187,12 @@ void LoadImages(){
 	isLoaded=true;
 }
 void PlayerGet(FsFileSystem& acc){
-	if (SelectUser()){
-		if (MountUserSave(acc)){
+	if (SelectUser()) {
+		if (MountUserSave(acc)) {
 			rootsave = "save:/";
-			if(isFileExist(rootdirectory+AccountID+"UserData.json")){
-				if(!isFileExist(rootsave+"UserData.json")){
-					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")){
+			if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
+				if(!isFileExist(rootsave+"UserData.json")) {
+					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
 						fsdevCommitDevice("save");
 						remove((rootdirectory+AccountID+"UserData.json").c_str());
 						remove((rootdirectory+AccountID+"User.jpg").c_str());
@@ -206,8 +206,8 @@ void PlayerGet(FsFileSystem& acc){
 		USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 		UD = "{}"_json;
 		read_DB(UD,rootsave+"UserData.json");
-		
-		if(statenow==chapterstate){
+
+		if(statenow==chapterstate) {
 			capBuffer(BD["com"]["ActualLink"]);
 			gFAV = isFavorite(BD["com"]["ActualLink"]);
 		}
@@ -221,14 +221,14 @@ void callmenuslide(){
 	selectelement = 2;
 }
 void callsearch(){
-	GOD.WorKey="0";GOD.MasKey=-1;
+	GOD.WorKey="0"; GOD.MasKey=-1;
 	if (!reloadingsearch)
 	{
-		if (BD["searchtext"].empty()){BD["searchtext"]="";}
+		if (BD["searchtext"].empty()) {BD["searchtext"]="";}
 		BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
-		if ((BD["searchtext"].get<std::string>()).length() > 0){
+		if ((BD["searchtext"].get<std::string>()).length() > 0) {
 			searchchapter = 0;
-			reloadingsearch = true;	 
+			reloadingsearch = true;
 			statenow = searchstate;
 			returnnow = searchstate;
 			searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
@@ -236,7 +236,7 @@ void callsearch(){
 	}
 }
 void callfavs(){
-	GOD.WorKey="0";GOD.MasKey=-1;
+	GOD.WorKey="0"; GOD.MasKey=-1;
 	if (!reloading)
 	{
 		getFavorite();
@@ -246,26 +246,26 @@ void callfavs(){
 	}
 }
 void callAflv(){
-	GOD.WorKey="0";GOD.MasKey=-1;
+	GOD.WorKey="0"; GOD.MasKey=-1;
 	statenow=programationstate;
 	WebBrowserCall("https://animeflv.net",true);
 }
 void callhistory(){
-	GOD.WorKey="0";GOD.MasKey=-1;
-	if (UD["history"].size()>0){
+	GOD.WorKey="0"; GOD.MasKey=-1;
+	if (UD["history"].size()>0) {
 		statenow = historystate;
 		returnnow = historystate;
 		Frames=1;
 	}
 }
 void calltop(){
-	GOD.WorKey="0";GOD.MasKey=-1;
+	GOD.WorKey="0"; GOD.MasKey=-1;
 	statenow = topstate;
 	returnnow = topstate;
 	Frames=1;
 }
 void callhourglass(){
-	GOD.WorKey="0";GOD.MasKey=-1;
+	GOD.WorKey="0"; GOD.MasKey=-1;
 	statenow = hourglass;
 	returnnow = hourglass;
 	Frames=1;

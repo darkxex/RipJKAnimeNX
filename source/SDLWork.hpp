@@ -9,70 +9,70 @@ using json = nlohmann::json;
 class LTexture
 {
 public:
-	//Initializes variables
-	LTexture();
+//Initializes variables
+LTexture();
 
-	//Deallocates memory
-	~LTexture();
-	//peer key funct
-	bool reverse=false;
-	unsigned long long time2=0;
-	void TickerColor(int& color,int min,int max,unsigned long long sec = 0);
-	void TickerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
-	void TickerBomb(int sizescale=0);
-	void TickerScale();
-	
-	//Loads image at specified path
-	bool loadFromFile(std::string path);
-	bool loadFromFileCustom(std::string path, int h, int w);
-	//Creates image from font string
-	bool loadFromRenderedText(TTF_Font *fuente, std::string textureText, SDL_Color textColor);
-	//Creates image from font string
-	bool loadFromRenderedTextWrap(TTF_Font *fuente, std::string textureText, SDL_Color textColor, Uint32 size);
-	//Deallocates texture
-	void free();
+//Deallocates memory
+~LTexture();
+//peer key funct
+bool reverse=false;
+unsigned long long time2=0;
+void TickerColor(int& color,int min,int max,unsigned long long sec = 0);
+void TickerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
+void TickerBomb(int sizescale=0);
+void TickerScale();
 
-	//Set color modulation
-	void setColor(Uint8 red, Uint8 green, Uint8 blue);
+//Loads image at specified path
+bool loadFromFile(std::string path);
+bool loadFromFileCustom(std::string path, int h, int w);
+//Creates image from font string
+bool loadFromRenderedText(TTF_Font *fuente, std::string textureText, SDL_Color textColor);
+//Creates image from font string
+bool loadFromRenderedTextWrap(TTF_Font *fuente, std::string textureText, SDL_Color textColor, Uint32 size);
+//Deallocates texture
+void free();
 
-	//Set blending
-	void setBlendMode(SDL_BlendMode blending);
+//Set color modulation
+void setColor(Uint8 red, Uint8 green, Uint8 blue);
 
-	//Set alpha modulation
-	void setAlpha(Uint8 alpha);
+//Set blending
+void setBlendMode(SDL_BlendMode blending);
 
-	//Renders texture at given point
-	void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void render_T(int x, int y, std::string text="", bool presed=false);
-	bool render_AH(int x, int y, int w, int h, bool type);
-	void render_VOX(SDL_Rect Form ,int R, int G, int B, int A);
-	//get touch
-	bool SP();
-	bool SPr();
-	//Gets image dimensions
-	int getWidth();
-	int getHeight();
-	int getX();
-	int getY();
-	bool mark;
-	
-	//texture Scale
-	int offtik=0;
-	
-	//texture boom
-	int offboom=0;
-	//default boom size
-	int offboom_min=0, offboom_size=11;
-	//W H overwrite
-	int offW=0, offH=0;
-	
+//Set alpha modulation
+void setAlpha(Uint8 alpha);
+
+//Renders texture at given point
+void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+void render_T(int x, int y, std::string text="", bool presed=false);
+bool render_AH(int x, int y, int w, int h, bool type);
+void render_VOX(SDL_Rect Form,int R, int G, int B, int A);
+//get touch
+bool SP();
+bool SPr();
+//Gets image dimensions
+int getWidth();
+int getHeight();
+int getX();
+int getY();
+bool mark;
+
+//texture Scale
+int offtik=0;
+
+//texture boom
+int offboom=0;
+//default boom size
+int offboom_min=0, offboom_size=11;
+//W H overwrite
+int offW=0, offH=0;
+
 private:
-	//The actual hardware texture
-	SDL_Texture* mTexture;
+//The actual hardware texture
+SDL_Texture* mTexture;
 
 
-	//Image dimensions
-	int mWidth, mHeight, mX, mY, SelIns;
+//Image dimensions
+int mWidth, mHeight, mX, mY, SelIns;
 };
 
 
