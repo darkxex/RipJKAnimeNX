@@ -3,7 +3,6 @@
 #include "utils.hpp"
 #include "JKanime.hpp"
 #include "SDLWork.hpp"
-
 extern json BD;
 extern json UD;
 extern int mincapit;
@@ -14,6 +13,8 @@ extern std::string rootdirectory;
 extern std::string rootsave;
 extern SDL_Thread* capithread;
 extern bool gFAV;
+extern int porcentajebufferS;
+extern int porcentajebufferAllS;
 
 extern LTexture gTextTexture;
 extern LTexture Farest;
@@ -48,15 +49,19 @@ extern int returnnow;
 extern bool reloadingsearch;
 extern int Frames;
 
+//Private Functions
 int MKtopBuffer();
 int MKhourBuffer();
+int MKcapitBuffer(json LinkList,int& part, int& ofall);
+int MKfavimgfix(bool images);
+void PushDirBuffer(std::string a,std::string name);
+int capit(void* data);
 
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
 	try{
 		isChained=true;
 		ChainManager(true,true);
-
 		//Wait for connection
 		if (BD["arrays"]["chapter"]["link"].empty()) {
 			//hide the list for rebuild
@@ -193,11 +198,12 @@ int refrescarpro(void* data){
 	return 0;
 
 }
-int MKcapitBuffer(std::vector<std::string> LinkList,int& part, int& ofall) {
+int MKcapitBuffer(json LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
 	std::string a = "";
 	part=0;
 	ofall=LinkList.size();
+	if (ofall <= 0){return false;}
 	for (int x = 0; x < ofall&& !quit; x++)
 	{
 		if(hasmchap) part = x+1;
@@ -324,6 +330,7 @@ int MKhourBuffer(){
 //END THREAD CHAIN
 
 int downloadjkanimevideo(void* data) {//Download THREAD
+	try{
 	ChainManager(true,true);
 	for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size(); x++) {
 		if (x==0) {led_on(1);}
@@ -350,6 +357,10 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 		}
 	}
 	if(cancelcurl==0) led_on(3); else led_on(0);
+	} catch(...) {
+		printf("Thread Download Error Catched\n");
+		std::cout << BD["arrays"]["downloads"] << std::endl;
+	}
 	cancelcurl = 0;
 	isDownloading=false;
 	statenow = downloadstate;
@@ -357,6 +368,7 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 	return 0;
 }
 int searchjk(void* data) {//Search Thread
+	try{
 	BD["com"]["porcentajereload"] = 0;
 	BD["com"]["porcentajereloadAll"]=0;
 	BD["arrays"]["search"]["link"].clear();
@@ -421,8 +433,12 @@ int searchjk(void* data) {//Search Thread
 		statenow = programationstate;
 		returnnow = programationstate;
 	}
+	} catch(...) {
+		printf("Thread Search Error Catched\n");
+		std::cout << BD["arrays"]["search"] << std::endl;
+	}
 	reloadingsearch = false;
-	MKcapitBuffer(BD["arrays"]["search"]["link"], porcentajebuffer, porcentajebufferAll);
+	MKcapitBuffer(BD["arrays"]["search"]["link"], porcentajebufferS, porcentajebufferAllS);
 	return 0;
 }
 int capit(void* data) {//Get chap thread

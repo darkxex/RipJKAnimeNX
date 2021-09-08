@@ -24,6 +24,9 @@ typedef enum {
 
 extern AccountUid uid;
 extern std::string AccountID;
+extern std::string rootdirectory;
+extern std::string rootsave;
+
 extern u32 __nx_applet_exit_mode;
 extern std::string urlc;
 extern bool quit;
@@ -59,7 +62,7 @@ bool initUser(){
 		printf("User Init OK\n");
 		return GetUserID();
 	} else {
-		printf("failed to init User\n");
+		printf("Failied to init User\n");
 		return false;
 	}
 }
@@ -80,20 +83,29 @@ bool GetUserID(){
 		printf("Gotted user uid: %s\n",AccountID.c_str());
 		return true;
 	}
-	printf("failed to get user ID\n");
+	printf("Failied to get user ID\n");
 	return false;
 }
 bool MountUserSave(FsFileSystem& acc){
 	fsdevCommitDevice("save");
 	fsdevUnmountDevice("save");
 	fsFsClose(&acc);
-
-	if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
-		fsdevMountDevice("save", acc);
-		GetUserImage();
-		return true;
+	if(accountUidIsValid(&uid))
+	{
+		if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
+			fsdevMountDevice("save", acc);
+			rootsave = "save:/";
+			GetUserImage();
+			return true;
+		} else {
+			rootsave = rootdirectory+AccountID;
+			GetUserImage();
+			printf("Failied to Mount User Save\n");
+			return false;
+		}
+	} else {
+		printf("Invalid User UID\n");
 	}
-	printf("failed to Mount User Save\n");
 	return false;
 }
 bool GetUserImage(){
@@ -117,28 +129,29 @@ bool GetUserImage(){
 					printf("Saved user image: %s\n",(rootsave+"User.jpg").c_str());
 					fclose(f);
 				} else {
-					printf("failed to open output file image\n");
+					printf("Failied to open output file image\n");
 				}
 			}
 			delete[] icon;
 		} else
-			printf("failed user image size\n");
+			printf("Failied user image size\n");
 
 		accountProfileClose(&prof);
 		return true;
 	}
-	printf("failed user image\n");
+	printf("Failied user image\n");
 	return false;
 }
 bool GetAppletMode(){
+	apmInitialize();
 	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
 	{
 		return true;
 	}
-	__nx_applet_exit_mode = 1;
 	initUser();
+	__nx_applet_exit_mode = 1;
 	return false;
 }
 AccountUid LaunchPlayerSelect() {
@@ -185,7 +198,7 @@ json DInfo(){
 	//Get Device Firmware Vercion
 	SetSysFirmwareVersion ver;
 	if (R_FAILED(ret = setsysGetFirmwareVersion(&ver))) {
-		printf("setsysGetFirmwareVersion() failed: 0x%x.\n\n", ret);
+		printf("setsysGetFirmwareVersion() Failied: 0x%x.\n\n", ret);
 	} else {
 		info["Firmware"]=std::string(ver.display_version);
 	}
@@ -193,7 +206,7 @@ json DInfo(){
 	//Device NickName
 	SetSysDeviceNickName nick;
 	if (R_FAILED(ret = setGetDeviceNickname(&nick))) {
-		printf("setGetDeviceNickname() failed: 0x%x.\n\n", ret);
+		printf("setGetDeviceNickname() Failied: 0x%x.\n\n", ret);
 	} else {
 		info["nickname"]=std::string(nick.nickname);
 	}
@@ -201,7 +214,7 @@ json DInfo(){
 	//Public Serial Number
 	SetSysSerialNumber serialNX;
 	if (R_FAILED(ret = setsysGetSerialNumber(&serialNX))) {
-		printf("setsysGetSerialNumber() failed: 0x%x.\n\n", ret);
+		printf("setsysGetSerialNumber() Failied: 0x%x.\n\n", ret);
 	} else {
 		if(strlen(serialNX.number) == 0) {
 			//info["Incognito"]="true";
@@ -218,7 +231,7 @@ json DInfo(){
 	//Model of switch board
 	s32 modelo;
 	if (R_FAILED(ret = setsysGetProductModel(&modelo))) {
-		printf("setsysGetProductModel() failed: 0x%x.\n\n", ret);
+		printf("setsysGetProductModel() Failied: 0x%x.\n\n", ret);
 	} else {
 		string a="Invalid Model";
 		switch(modelo) {
@@ -247,7 +260,7 @@ json DInfo(){
 	//Region of console
 	SetRegion region;
 	if (R_FAILED(ret = setGetRegionCode(&region))) {
-		printf("setGetRegionCode() failed: 0x%x.\n\n", ret);
+		printf("setGetRegionCode() Failied: 0x%x.\n\n", ret);
 	} else {
 		string a="Wut?";
 		switch(region) {
@@ -281,6 +294,7 @@ json DInfo(){
 bool ChainManager(bool Chain,bool AndChaing){
 	if (Chain) {
 		if (AndChaing) {
+			appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
 			appletSetAutoSleepDisabled(true);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
@@ -289,6 +303,8 @@ bool ChainManager(bool Chain,bool AndChaing){
 		} else return false;
 	} else {
 		if (AndChaing) {
+			appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
+			appletCancelCpuBoostMode();
 			appletSetAutoSleepDisabled(false);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);

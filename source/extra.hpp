@@ -72,6 +72,7 @@ int porcentajebuffer = 0;
 int porcentajebufferAll = 0;
 int porcentajebufferF =0;
 int porcentajebufferFF =0;
+int porcentajebufferS=0, porcentajebufferAllS=0;
 std::string serverenlace = "...";
 std::string DownTitle="...";
 
@@ -199,9 +200,6 @@ void PlayerGet(FsFileSystem& acc){
 					}
 				}
 			}
-		} else {
-			rootsave = rootdirectory+AccountID;
-			GetUserImage();
 		}
 		USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 		UD = "{}"_json;

@@ -18,6 +18,7 @@ int main(int argc, char **argv)
 	nxlinkStdio();
 	printf("Nxlink server Conected\n");
 	AppletMode=GetAppletMode();
+	ChainManager(true,true);
 	//Mount user
 	FsFileSystem data;
 	fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
@@ -25,7 +26,7 @@ int main(int argc, char **argv)
 
 	//Mount Save Data
 	FsFileSystem acc;
-	if (MountUserSave(acc)) {
+	if (MountUserSave(acc) & !AppletMode) {
 		if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
 			if(!isFileExist(rootsave+"UserData.json")) {
 				if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
@@ -43,9 +44,6 @@ int main(int argc, char **argv)
 				}
 			}
 		}
-	} else {
-		rootsave = rootdirectory+AccountID;
-		GetUserImage();
 	}
 
 	struct stat st = { 0 };
@@ -1178,8 +1176,7 @@ int main(int argc, char **argv)
 							}
 						}
 					}else {
-						NOP.render_T(230, 355,"?");
-						BD["searchtext"]="";
+						NOP.render_T(230, 355,BD["searchtext"]);
 					}
 					//Draw Header
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Resultados de Búsqueda:", {100,0,0});

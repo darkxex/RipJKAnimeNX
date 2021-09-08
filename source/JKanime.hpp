@@ -20,20 +20,10 @@
 #include <fstream>
 #include <thread>
 
-void callimage(int pos,std::vector<std::string> imageV);
-
-int downloadjkanimevideo(void* data);
-
 int refrescarpro(void* data);
-int MKcapitBuffer(std::vector<std::string> LinkList,int& part, int& ofall);
-int MKfavimgfix(bool images);
-
+int downloadjkanimevideo(void* data);
 int searchjk(void* data);
-
-void PushDirBuffer(std::string a,std::string name);
-int capit(void* data);
 int capBuffer (std::string Tlink);
-
 void addFavorite(std::string text);
 void getFavorite();
 bool isFavorite(std::string fav);
