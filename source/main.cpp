@@ -1489,7 +1489,6 @@ int main(int argc, char **argv)
 			if (Frames>0) Frames++;
 			//Update tik
 			if (onTimeC(300000,time3)) {
-				std::cout << "Try to Reload Animes" << std::endl;
 				if (!HasConnection()) {
 					if(!isChained) {
 						std::cout << "Reloading Animes" << std::endl;
@@ -1519,7 +1518,8 @@ int main(int argc, char **argv)
 	if (AppletMode) {
 		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
 	}
-
+	//end net before anything
+	socketExit();
 	if (NULL == capithread) {printf("capithread Not in use: %s\n", SDL_GetError());} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
 	if (NULL == downloadthread) {printf("downloadthread Not in use: %s\n", SDL_GetError());} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
 	if (NULL == prothread) {printf("prothread Not in use: %s\n", SDL_GetError());}else {printf("prothread in use: %s\n", SDL_GetError()); SDL_WaitThread(prothread, NULL);}
