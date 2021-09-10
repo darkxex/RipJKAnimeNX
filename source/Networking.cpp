@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <chrono>
 #include <thread>
-#include <math.h> 
+#include <math.h>
 #include <cstring>
 #include <sys/stat.h>
 #include "Networking.hpp"
@@ -26,30 +26,30 @@ extern bool quit;
 //Write file in mem to increase download speed on 3 or 5 times
 struct MemoryStruct
 {
-  char *memory;
-  size_t size;
-  int mode;
+	char *memory;
+	size_t size;
+	int mode;
 };
 
 static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, void *userdata)
 {
-  size_t realsize = size * nmemb;
-  struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
+	size_t realsize = size * nmemb;
+	struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
 
-  char *ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
+	char *ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
 
-  if (ptr == NULL)
-  {
-      printf("Failed to realloc mem");
-      return 0;
-  }
- 
-  mem->memory = ptr;
-  memcpy(&(mem->memory[mem->size]), contents, realsize);
-  mem->size += realsize;
-  mem->memory[mem->size] = 0;
- 
-  return realsize;
+	if (ptr == NULL)
+	{
+		printf("Failed to realloc mem");
+		return 0;
+	}
+
+	mem->memory = ptr;
+	memcpy(&(mem->memory[mem->size]), contents, realsize);
+	mem->size += realsize;
+	mem->memory[mem->size] = 0;
+
+	return realsize;
 }
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -63,7 +63,7 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 }
 
 int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
-	double TotalToUpload, double NowUploaded)
+                  double TotalToUpload, double NowUploaded)
 {
 
 	// ensure that the file to be downloaded is not empty
@@ -137,31 +137,31 @@ std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
 		curl_easy_setopt(curl, CURLOPT_URL, enlace.c_str());
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
 		curl_easy_setopt(curl, CURLOPT_REFERER, enlace.c_str());
-		if (POSTFIEL.length()){
+		if (POSTFIEL.length()) {
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
 		}
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 		if(redirect)
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 		else
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Buffer);
 		res = curl_easy_perform(curl);
 		if(redirect&&CURLE_OK == res)
-        {
+		{
 			CURLcode curl_res;
 			char *url = "";
 			curl_res = curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
 			if((CURLE_OK == curl_res) && url)
-             {
+			{
 				printf("CURLINFO_EFFECTIVE_URL: %s\n", url);
 				Buffer = std::string(url);
 			}
-        }
+		}
 		curl_easy_cleanup(curl);
-		if (res != CURLE_OK){printf("\n%s\n",curl_easy_strerror(res));}
+		if (res != CURLE_OK) {printf("\n%s\n",curl_easy_strerror(res));}
 	}
 	//std::cout << "Buffer:  " << Buffer << std::endl;
 	return Buffer;
@@ -169,17 +169,17 @@ std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
 
 bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 {
-	if(!HasConnection()){return false;}
+	if(!HasConnection()) {return false;}
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 	curl = curl_easy_init();
 	bool allok=false;
 	if (curl) {
-	struct MemoryStruct chunk;
-	FILE *fp = fopen(directorydown.c_str(), "wb");;
-		if(fp){
-            chunk.memory = (char*)malloc(1);
-            chunk.size = 0;
+		struct MemoryStruct chunk;
+		FILE *fp = fopen(directorydown.c_str(), "wb");;
+		if(fp) {
+			chunk.memory = (char*)malloc(1);
+			chunk.size = 0;
 			curl_easy_setopt(curl, CURLOPT_URL, enlace.c_str());
 			curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -187,19 +187,19 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
-				// Install the callback function
-			if (progress){
+			// Install the callback function
+			if (progress) {
 				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
 			} else {
 				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
 			}
-			
+
 			res = curl_easy_perform(curl);
-			if ((res == CURLE_OK)){
+			if ((res == CURLE_OK)) {
 				int thism = directorydown.find(".mp4");
 				printf("#size:%ld found:%ld %d in:%s\n",chunk.size,directorydown.find(".mp4"),thism,directorydown.c_str());
-				if (chunk.size < 1000000  && thism != -1){
+				if (chunk.size < 1000000  && thism != -1) {
 					printf("####size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
 					allok=false;//
 				} else {
@@ -214,21 +214,21 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 			curl_easy_cleanup(curl);
 			free(chunk.memory);
 		}
-	fclose(fp);
-	if (!allok){remove(directorydown.c_str());}
+		fclose(fp);
+		if (!allok) {remove(directorydown.c_str());}
 	}
-return allok;
+	return allok;
 }
 
 bool HasConnection()
 {
-		NifmInternetConnectionType connectionType;
-		NifmInternetConnectionStatus connectionStatus;
-		u32 strg = 0;
-		nifmInitialize(NifmServiceType_System);
-		nifmGetInternetConnectionStatus(&connectionType, &strg, &connectionStatus);
-		if (connectionStatus == NifmInternetConnectionStatus_Connected) return true;
-		return (strg > 0);
+	NifmInternetConnectionType connectionType;
+	NifmInternetConnectionStatus connectionStatus;
+	u32 strg = 0;
+	nifmInitialize(NifmServiceType_System);
+	nifmGetInternetConnectionStatus(&connectionType, &strg, &connectionStatus);
+	if (connectionStatus == NifmInternetConnectionStatus_Connected) return true;
+	return (strg > 0);
 }
 void CheckImgVector(json List,int& index){
 	index=0;
@@ -243,7 +243,7 @@ void CheckImgVector(json List,int& index){
 		replace(tempima,"https://jkanime.net/", "");
 		replace(tempima,".jpg", "/");
 		int v2 = tempima.find("/");
-		if (v2 > 0){tempima = tempima.substr(0, v2);}
+		if (v2 > 0) {tempima = tempima.substr(0, v2);}
 		//std::cout << "img:" << tempima << std::endl;
 		CheckImgNet(rootdirectory+"DATA/"+tempima+".jpg");
 	}
@@ -253,11 +253,11 @@ bool CheckImgNet(std::string image,std::string url){
 	replace(image,"\"","");
 	if (!isFileExist(image.c_str())) {
 		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
-		if(url.length() > 0){
+		if(url.length() > 0) {
 			tmp = url;
 		}
 		printf("# Missing %s Downloading\n",image.c_str());
 		return downloadfile(tmp,image,false);
 	}
-return true;
+	return true;
 }
