@@ -1519,7 +1519,7 @@ int main(int argc, char **argv)
 		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
 	}
 	//end net before anything
-	socketExit();
+	nifmExit();
 	if (NULL == capithread) {printf("capithread Not in use: %s\n", SDL_GetError());} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
 	if (NULL == downloadthread) {printf("downloadthread Not in use: %s\n", SDL_GetError());} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
 	if (NULL == prothread) {printf("prothread Not in use: %s\n", SDL_GetError());}else {printf("prothread in use: %s\n", SDL_GetError()); SDL_WaitThread(prothread, NULL);}
@@ -1560,6 +1560,7 @@ int main(int argc, char **argv)
 	hidsysExit();
 	socketExit();
 	romfsExit();
+	socketExit();
 
 	//unmount and commit
 	fsdevCommitDevice("save");
