@@ -11,16 +11,6 @@
 #include "utils.hpp"
 #include "applet.hpp"
 #include "SDLWork.hpp"
-/// Console Product Models
-typedef enum {
-	SetSysProductModel_Invalid = 0, ///< Invalid Model
-	SetSysProductModel_Nx      = 1,///< Erista Model
-	SetSysProductModel_Copper  = 2,///< Erista "Simulation" Model
-	SetSysProductModel_Iowa    = 3,///< Mariko Model
-	SetSysProductModel_Hoag    = 4,///< Mariko Lite Model
-	SetSysProductModel_Calcio  = 5,///< Mariko "Simulation" Model
-	SetSysProductModel_Aula    = 6,///< Mariko Pro Model(?)
-} SetSysProductModel;
 
 extern AccountUid uid;
 extern std::string AccountID;
@@ -32,6 +22,7 @@ extern std::string urlc;
 extern bool quit;
 extern int cancelcurl;
 extern std::string rootsave;
+extern SDLB GOD;
 
 bool LoadNRO(std::string path){
 	if(isFileExist(path)) {
@@ -185,8 +176,7 @@ json DInfo(){
 	Result ret = 0;
 
 	//App Ver
-	std::string VERCAT =  VERSION;
-	info["App"]=VERCAT;
+	info["App"]=GOD.AppVer;
 
 	//DeviceID
 	u64 id = 0;
@@ -229,12 +219,15 @@ json DInfo(){
 	}
 
 	//Model of switch board
-	s32 modelo;
+	SetSysProductModel modelo;
 	if (R_FAILED(ret = setsysGetProductModel(&modelo))) {
 		printf("setsysGetProductModel() Failied: 0x%x.\n\n", ret);
 	} else {
-		string a="Invalid Model";
+		string a="Unknow Model";
 		switch(modelo) {
+		case SetSysProductModel_Invalid:
+			a="Invalid Model.";
+			break;
 		case SetSysProductModel_Nx:
 			a="Erista Model.";
 			break;

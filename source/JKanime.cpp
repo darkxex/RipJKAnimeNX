@@ -21,7 +21,7 @@ extern LTexture Farest;
 extern LTexture Heart;
 extern int sizeportraity;
 extern int sizeportraitx;
-
+extern bool isConnected;
 //img
 extern bool reloading;
 extern bool preview;
@@ -48,26 +48,35 @@ extern int returnnow;
 
 extern bool reloadingsearch;
 extern int Frames;
+enum UnixT {U_day=86400, U_week=604800};
+u32 voidd =0;
 
 //Private Functions
-int MKtopBuffer();
-int MKhourBuffer();
-int MKcapitBuffer(json LinkList,int& part, int& ofall);
-int MKfavimgfix(bool images);
-void PushDirBuffer(std::string a,std::string name);
+bool DataMaker(json LinkList,int& part, int& ofall);
+int MkTOP();
+int MkHOR();
+int MkDIR();
+void DataUpdate(std::string a,std::string name);
 int capit(void* data);
+int TimeNow(){
+	std::time_t t = std::time(0);
+	return t;
+}
 
 //BEGUING THREAD CHAIN
 int refrescarpro(void* data){
+	int steep=0;
 	try{
+		
 		isChained=true;
 		ChainManager(true,true);
-		//Wait for connection
+		steep++;//Wait for connection
 		if (BD["arrays"]["chapter"]["link"].empty()) {
 			//hide the list for rebuild
 			reloading = true;
 			preview = false;
 		}
+		steep++;
 		while (!HasConnection()) {
 			if (AppletMode) preview = false;
 			SDL_Delay(3000);
@@ -75,51 +84,52 @@ int refrescarpro(void* data){
 			if(quit) return 0;
 		}
 
-	#ifdef ISDEBUG
-	#include "Debug.h"
-	#endif
+		#ifdef ISDEBUG
+		steep++;
+		#include "Debug.h"
+		#endif
 
+		steep++;
 		if(!reloading) {
 			//Download All not existing images
 			CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
 		}
 
-		//Get main page
+		steep++;//Get main page
 		std::string content = gethtml("https://jkanime.net");
 
-		//Get Programation list, Links and Images
+		steep++;//Get Programation list, Links and Images
 		int temp0=0,temp1=0;
 		temp0=content.find("Programación");
 		temp1=content.find("TOP ANIMES",temp0);
 		content = content.substr(temp0,temp1-temp0);
 
-		//rebuild list
+		steep++;//rebuild list
 		std::vector<std::string> ChapLink=scrapElementAll(content, "https://jkanime.net/");
 		std::vector<std::string> ChapImag=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/");
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(content, "<span>","</span>");
 
-		//Download All not existing images
+		steep++;//Download All not existing images
+		std::cout << "# IMG Recent" << std::endl;
 		CheckImgVector(ChapImag,imgNumbuffer);
-		std::cout << "# End Image Download" << std::endl;
 
-		//Display List
-		if(reloading) {Frames=0; reloading = false;}
-
-		//'haschange' See if there is any new chap
+		steep++;//'haschange' See if there is any new chap
 		bool haschange = true;
 		if (!BD["latestchapter"].empty()) {
-			if (BD["latestchapter"] == ChapLink[0])
+			if (BD["latestchapter"] == ChapLink[0] && !reloading)
 			{
 				haschange = false;
 			}
 		}
+		
+		steep++;//Display List
+		if(reloading) {Frames=0; reloading = false;}
 
-		//TimeStamp indicate if a chap sout be reloaded
+		steep++;//TimeStamp indicate if a chap sout be reloaded
 		if (haschange || BD["TimeStamp"].empty()) {
 			//update TimeStamp
-			if (BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].empty()) {
-				std::time_t t = std::time(0);
-				BD["TimeStamp"] = std::to_string(t);
+			if (BD["arrays"]["chapter"]["link"].empty() || BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].empty()) {
+				BD["TimeStamp"] = std::to_string(TimeNow());
 				std::cout << "New TimeStamp: " << BD["TimeStamp"] << std::endl;
 				Frames=1;
 
@@ -143,52 +153,66 @@ int refrescarpro(void* data){
 				BD["arrays"]["chapter"]["images"]=ChapImag;
 			}
 		}
-		//download history
-		std::cout << "# download history" << std::endl;
+		steep++;//Get history
+		std::cout << "# IMG history" << std::endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
-		std::cout << "# download history OK" << std::endl;
 
-		//Top, Hour to Database
-		MKtopBuffer();
-		MKhourBuffer();
+		steep++;//Top, Hour to Database
+		MkTOP();
+		MkHOR();
 
-		//Download All not existing images of Favorites
-		MKfavimgfix(true);
+		steep++;//Download All not existing images of Favorites
+		if(UD["favoritos"].empty()) {
+			std::cout << "# Get fav list" << std::endl;
+			getFavorite();
+			std::cout << "# Goted fav list" << std::endl;
+		}
+		std::cout << "# IMG fav" << std::endl;
+		CheckImgVector(UD["favoritos"],porcentajebufferF);
+		
+		std::cout << "# End Image Download" << std::endl;
 
-		//Load to cache all Programation Chaps
+
+		steep++;//Load to cache all Programation Chaps
+		std::cout << "# Cache Recent" << std::endl;
 		if (haschange) {
-			MKcapitBuffer(BD["arrays"]["chapter"]["link"], porcentajebuffer, porcentajebufferAll);
+			std::cout << "# Cache Recent, haschange" << std::endl;
+			DataMaker(BD["arrays"]["chapter"]["link"], porcentajebuffer, porcentajebufferAll);
 			if(!quit) {
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
 		}
 
-		//Load to cache all Favorites Chaps
-		MKfavimgfix(false);
+		steep++;//Load to cache all Favorites Chaps
+		std::cout << "# Cache favs" << std::endl;
+		DataMaker(UD["favoritos"], porcentajebuffer, porcentajebufferAll);
 
-		//Cache Top
+		steep++;//Cache Top
 		std::cout << "# Cache Top" << std::endl;
-		MKcapitBuffer(BD["arrays"]["Top"]["link"], porcentajebuffer, porcentajebufferAll);
+		DataMaker(BD["arrays"]["Top"]["link"], porcentajebuffer, porcentajebufferAll);
 
-		//Cache Horario
-		std::cout << "# Get Horario" << std::endl;
-		MKcapitBuffer(BD["arrays"]["HourGlass"]["link"], porcentajebuffer, porcentajebufferAll);
+		steep++;//Cache Horario
+		std::cout << "# Cache Horario" << std::endl;
+		DataMaker(BD["arrays"]["HourGlass"]["link"], porcentajebuffer, porcentajebufferAll);
 
-		//extra vector
+/*
+		steep++;//extra vector
 		std::vector<std::string> vec={};
 		//load main
-		std::cout << "# Get Main" << std::endl;
+		std::cout << "# Cache Main" << std::endl;
 		content = gethtml("https://jkanime.net");
 		replace(content, "\"https://jkanime.net/\"", "");
 		vec=scrapElementAll(content, "https://jkanime.net/");
 		sort( vec.begin(),vec.end());
 		vec.erase(unique(vec.begin(),vec.end()),vec.end());
 		BD["arrays"]["Main"]["link"]=vec;
-		MKcapitBuffer(vec, porcentajebuffer, porcentajebufferAll);
-
+		DataMaker(vec, porcentajebuffer, porcentajebufferAll);
+*/
+		steep++;//Load Directory
+		MkDIR();
 	} catch(...) {
-		printf("Thread Chain Error Catched\n");
-		std::cout << UD << std::endl;
+		printf("Thread Chain Error Catched, Steep#%d\n",steep);
+		//std::cout << UD << std::endl;
 	}
 	std::cout << "# End Thread Chain" << std::endl;
 	isChained=false;
@@ -198,16 +222,17 @@ int refrescarpro(void* data){
 	return 0;
 
 }
-int MKcapitBuffer(json LinkList,int& part, int& ofall) {
+bool DataMaker(json LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
 	std::string a = "";
+	int seg=0;
 	part=0;
 	ofall=LinkList.size();
 	if (ofall <= 0){return false;}
 	for (int x = 0; x < ofall&& !quit; x++)
 	{
 		if(hasmchap) part = x+1;
-		while (!HasConnection()) {SDL_Delay(2000); if(quit) return 0; }
+		if (!isConnected) while (!HasConnection()) {SDL_Delay(2000); if(quit) return false; }
 		std::string link = LinkList[x];
 		int trace = link.find("/", 20);
 		link = link.substr(0, trace + 1);
@@ -219,8 +244,14 @@ int MKcapitBuffer(json LinkList,int& part, int& ofall) {
 			if (BD["DataBase"][name]["enemision"]=="true" || BD["DataBase"][name]["TimeStamp"].empty()) {
 				part = x+1;
 				a = gethtml(link);
-				PushDirBuffer(a,name);
+				DataUpdate(a,name);
 				hasmchap=true;
+				if (seg >= 20){
+					//write json
+					write_DB(BD,rootdirectory+"DataBase.json");
+					seg=0;
+				}
+				seg++;
 			} else {
 				//BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
 			}
@@ -228,52 +259,14 @@ int MKcapitBuffer(json LinkList,int& part, int& ofall) {
 	}
 	part=0;
 	ofall=0;
-	if(quit) return 0;
+	if(quit) return false;
 	if(hasmchap) {
-		//write json
-		write_DB(BD,rootdirectory+"DataBase.json");
+		write_DB(BD,rootdirectory+"DataBase.json");//write json
 	}
 	return true;
 }
-int MKfavimgfix(bool images){
-	if(quit) return 0;
-	bool hasanychange=false;
-	if(UD["favoritos"].empty()) {
-		printf("# Get fav list\n");
-		getFavorite();
-		printf("# Goted fav list\n");
-	}
-	porcentajebufferFF = UD["favoritos"].size();
-	if (porcentajebufferFF <= 0) return 0;
 
-	if (images) {
-		CheckImgVector(UD["favoritos"],porcentajebufferF);
-		porcentajebufferFF=0;
-	} else {
-		for (int y=0; y < porcentajebufferFF && !quit; y++)
-		{
-			std::string name=UD["favoritos"][y];
-			replace(name, "https://jkanime.net/", "");
-			replace(name, "/", "");
-			porcentajebufferF=y+1;
-			if (BD["DataBase"][name]["TimeStamp"].empty() || BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]) {
-				std::string lingrt=UD["favoritos"][y];
-				replace(lingrt,"\"","");
-				std::string a = gethtml(lingrt);
-				PushDirBuffer(a,name);
-				hasanychange=true;
-			}
-		}
-		porcentajebufferF=0;
-		porcentajebufferFF=0;
-		printf("# End fav Download\n");
-		if (hasanychange) {//write json
-			write_DB(BD,rootdirectory+"DataBase.json");
-		}
-	}
-	return 0;
-}
-int MKtopBuffer(){
+int MkTOP(){
 	//load Top
 	std::vector<std::string> TOPC={};
 	std::cout << "# Get Top" << std::endl;
@@ -283,11 +276,13 @@ int MKtopBuffer(){
 	TOPC=scrapElementAll(content,"https://jkanime.net/");
 	TOPC.erase(unique(TOPC.begin(),TOPC.end()),TOPC.end());
 	BD["arrays"]["Top"]["link"]=TOPC;
+	
+	std::cout << "# IMG Top" << std::endl;
 	CheckImgVector(TOPC,imgNumbuffer);
 	if ((int)TOPC.size() > 0) {write_DB(BD,rootdirectory+"DataBase.json");}
 	return 0;
 }
-int MKhourBuffer(){
+int MkHOR(){
 	//load Horario
 	std::cout << "# Get HourGlass" << std::endl;
 	std::string content=gethtml("https://jkanime.net/horario/");
@@ -295,36 +290,89 @@ int MKhourBuffer(){
 	std::vector<std::string> STP={};
 	STP=split(content,"<div class='box semana'>");
 
-	BD["arrays"]["HourGlass"]["Lunes"]=scrapElementAll(STP[1],"https://jkanime.net/","/Lunes");
-	BD["arrays"]["HourGlass"]["Martes"]=scrapElementAll(STP[2],"https://jkanime.net/","/Martes");
-	BD["arrays"]["HourGlass"]["Miercoles"]=scrapElementAll(STP[3],"https://jkanime.net/","/Miercoles");
-	BD["arrays"]["HourGlass"]["Jueves"]=scrapElementAll(STP[4],"https://jkanime.net/","/Jueves");
-	BD["arrays"]["HourGlass"]["Viernes"]=scrapElementAll(STP[5],"https://jkanime.net/","/Viernes");
-	BD["arrays"]["HourGlass"]["Sabado"]=scrapElementAll(STP[6],"https://jkanime.net/","/Sabado");
-	BD["arrays"]["HourGlass"]["Domingo"]=scrapElementAll(STP[7],"https://jkanime.net/","/Domingo");
+	BD["arrays"]["HourGlass"]["Lunes"]=(std::vector<std::string>)scrapElementAll(STP[1],"https://jkanime.net/","Lunes");
+	BD["arrays"]["HourGlass"]["Martes"]=(std::vector<std::string>)scrapElementAll(STP[2],"https://jkanime.net/","Martes");
+	BD["arrays"]["HourGlass"]["Miercoles"]=(std::vector<std::string>)scrapElementAll(STP[3],"https://jkanime.net/","Miercoles");
+	BD["arrays"]["HourGlass"]["Jueves"]=(std::vector<std::string>)scrapElementAll(STP[4],"https://jkanime.net/","Jueves");
+	BD["arrays"]["HourGlass"]["Viernes"]=(std::vector<std::string>)scrapElementAll(STP[5],"https://jkanime.net/","Viernes");
+	BD["arrays"]["HourGlass"]["Sabado"]=(std::vector<std::string>)scrapElementAll(STP[6],"https://jkanime.net/","Sabado");
+	BD["arrays"]["HourGlass"]["Domingo"]=(std::vector<std::string>)scrapElementAll(STP[7],"https://jkanime.net/","Domingo");
 
 	std::vector<std::string> MPO={};
 	std::vector<std::string> HORC={};
 
-	MPO=scrapElementAll(STP[1],"https://jkanime.net/","\"","/Lunes");
+	MPO=scrapElementAll(STP[1],"https://jkanime.net/","\"","Lunes");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
-	MPO=scrapElementAll(STP[2],"https://jkanime.net/","\"","/Martes");
+	MPO=scrapElementAll(STP[2],"https://jkanime.net/","\"","Martes");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
-	MPO=scrapElementAll(STP[3],"https://jkanime.net/","\"","/Miercoles");
+	MPO=scrapElementAll(STP[3],"https://jkanime.net/","\"","Miercoles");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
-	MPO=scrapElementAll(STP[4],"https://jkanime.net/","\"","/Jueves");
+	MPO=scrapElementAll(STP[4],"https://jkanime.net/","\"","Jueves");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
-	MPO=scrapElementAll(STP[5],"https://jkanime.net/","\"","/Viernes");
+	MPO=scrapElementAll(STP[5],"https://jkanime.net/","\"","Viernes");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
 	MPO=scrapElementAll(STP[6],"https://jkanime.net/","\"","/Sabado");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
-	MPO=scrapElementAll(STP[7],"https://jkanime.net/","\"","/Domingo");
+	MPO=scrapElementAll(STP[7],"https://jkanime.net/","\"","Domingo");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
 
 	//HORC.erase(unique(HORC.begin(),HORC.end()),HORC.end());
 	BD["arrays"]["HourGlass"]["link"]=HORC;
+	std::cout << "# IMG HourGlass" << std::endl;
 	CheckImgVector(HORC,imgNumbuffer);
 	if ((int)HORC.size() > 0) {write_DB(BD,rootdirectory+"DataBase.json");}
+	return 0;
+}
+int MkDIR(){
+	//make directory
+	if (BD["arrays"]["Directory"]["TimeStamp"].empty()){BD["arrays"]["Directory"]["TimeStamp"]=0;}
+	if (BD["arrays"]["Directory"]["InTime"].empty()){BD["arrays"]["Directory"]["InTime"]=0;}
+	if (BD["arrays"]["Directory"]["page"].empty()){BD["arrays"]["Directory"]["page"]=1;}
+	if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_week){
+		std::cout << "# Get Directory" << std::endl;
+		std::vector<std::string> DIR={};
+		std::vector<std::string> TDIR={};
+
+		while (!quit) {
+			std::string content=gethtml("https://jkanime.net/directorio/"+std::to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
+			replace(content,"https://jkanime.net/directorio/","");
+			replace(content,"https://jkanime.net///","");
+			TDIR=scrapElementAll(content,"https://jkanime.net/");
+			
+
+			if (TDIR.size() > voidd){
+				DIR.insert(DIR.end(), TDIR.begin(), TDIR.end());
+			} else 
+				break;//just in case
+			
+			std::string scrap = scrapElement(content, "Resultados Siguientes");
+			//std::cout << scrap << "  # " << std::to_string(BD["arrays"]["Directory"]["page"]) << std::endl;
+			if (scrap.length() > 0) {
+				//some code here soon
+			} else {
+				break;
+			}
+			BD["arrays"]["Directory"]["page"]=BD["arrays"]["Directory"]["page"].get<int>()+1;
+		}
+		if(quit) return false;
+		BD["arrays"]["Directory"]["pageT"]=BD["arrays"]["Directory"]["page"];
+		BD["arrays"]["Directory"]["page"]=1;
+		DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());
+		BD["arrays"]["Directory"]["TimeStamp"]=TimeNow();
+		BD["arrays"]["Directory"]["link"]=DIR;
+		//std::cout << BD["arrays"]["Directory"] << std::endl;
+		BD["arrays"]["Directory"]["InTime"]=0;
+		write_DB(BD,rootdirectory+"DataBase.json");
+	}
+	if(quit) return false;
+	//Build All Data Base
+	if (BD["arrays"]["Directory"]["InTime"].get<int>() == 0){
+		std::cout << "# Cache Directory" << std::endl;
+		if (DataMaker(BD["arrays"]["Directory"]["link"], porcentajebuffer, porcentajebufferAll)){
+			BD["arrays"]["Directory"]["InTime"]=1;
+			write_DB(BD,rootdirectory+"DataBase.json");
+		}
+	}
 	return 0;
 }
 //END THREAD CHAIN
@@ -384,7 +432,7 @@ int searchjk(void* data) {//Search Thread
 		std::cout << texts << std::endl;
 		std::string content = "";
 		int page = 1;
-		while (true) {
+		while (!quit) {
 			std::string tempCont=gethtml("https://jkanime.net/buscar/" + texts + "/"+std::to_string(page)+"/");
 			content += tempCont;
 			std::string scrap = scrapElement(tempCont, "Resultados Siguientes");
@@ -438,7 +486,7 @@ int searchjk(void* data) {//Search Thread
 		std::cout << BD["arrays"]["search"] << std::endl;
 	}
 	reloadingsearch = false;
-	MKcapitBuffer(BD["arrays"]["search"]["link"], porcentajebufferS, porcentajebufferAllS);
+	DataMaker(BD["arrays"]["search"]["link"], porcentajebufferS, porcentajebufferAllS);
 	return 0;
 }
 int capit(void* data) {//Get chap thread
@@ -449,7 +497,7 @@ int capit(void* data) {//Get chap thread
 	std::string name = bb;
 	replace(name, "https://jkanime.net/", ""); replace(name, "/", "");
 
-	PushDirBuffer(a,name);
+	DataUpdate(a,name);
 	try{
 		//std::cout << BD << std::endl;
 		BD["com"]["sinopsis"] = BD["DataBase"][name]["sinopsis"];
@@ -540,7 +588,7 @@ int capBuffer (std::string Tlink) {//anime manager
 	CheckImgNet(image);
 	return 0;
 }
-void PushDirBuffer(std::string a,std::string name) {//Get info off chapter
+void DataUpdate(std::string a,std::string name) {//Get info off chapter
 	if(quit) return;
 
 	//Sinopsis

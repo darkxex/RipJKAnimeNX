@@ -37,7 +37,6 @@ static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, v
 	struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
 
 	char *ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
-
 	if (ptr == NULL)
 	{
 		printf("Failed to realloc mem");
@@ -116,6 +115,7 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 	printf("]\r");
 	fflush(stdout);
 	// if you don't return 0, the transfer will be aborted - see the documentation
+	if(quit) return 1;
 	if (cancelcurl == 1)
 	{
 		return 1;
@@ -123,6 +123,14 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 
 	return 0;
 
+}
+
+int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,
+                  double TotalToUpload, double NowUploaded)
+{
+	if (cancelcurl == 1)
+		return 1;
+	return 0;
 }
 
 std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
@@ -142,6 +150,9 @@ std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
 		}
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+		curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func_str);
+		
 		if(redirect)
 			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 		else
@@ -192,7 +203,8 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
 			} else {
-				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func_str);
 			}
 
 			res = curl_easy_perform(curl);
