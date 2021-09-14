@@ -19,6 +19,8 @@ int main(int argc, char **argv)
 	printf("Nxlink server Conected\n");
 	AppletMode=GetAppletMode();
 	ChainManager(true,true);
+	isConnected=HasConnection();
+
 	//Mount user
 	FsFileSystem data;
 	fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
@@ -1049,8 +1051,7 @@ int main(int argc, char **argv)
 					}
 
 					//Draw Header
-					std::string VERCAT =  VERSION;
-					gTextTexture.loadFromRenderedText(GOD.digifontC, ("(Ver "+VERCAT+") #KASTXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.digifontC, ("(Ver "+GOD.AppVer+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 3, 672);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Recientes", {100,0,0});
@@ -1068,6 +1069,7 @@ int main(int argc, char **argv)
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 						}
 					}
+				}
 					if (statenow==programationsliderstate) {
 
 						{
@@ -1142,7 +1144,6 @@ int main(int argc, char **argv)
 					if(isDownloading) {B_X.render_T(dist, 680,"Descargas"); dist -= posdist-10;}
 					if (isHandheld) {CLEAR.render_T(dist, 680,"Cache"); dist -= posdist;}
 
-				}
 				else
 				{
 					std::string textpro="Cargando programación";
