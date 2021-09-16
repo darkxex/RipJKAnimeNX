@@ -242,7 +242,8 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 				DataUpdate(link);
 				hasmchap=true;
 				if (sep >= 101){
-					write_DB(BD,"sdmc:/DataBase.json");
+					//write_DB(BD,"sdmc:/DataBase.json");
+					write_DB(BD,rootdirectory+"DataBase.json");
 					sep=0;
 				}
 				sep++;
