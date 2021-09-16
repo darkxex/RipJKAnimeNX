@@ -28,6 +28,7 @@ extern std::string rootdirectory;
 
 //Grafics and logic
 void SDLB::intA(){
+	AppVer=VERSION;
 	//Start up SDL and create window
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)

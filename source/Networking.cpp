@@ -135,7 +135,6 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,
 
 std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
 {
-
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 	std::string Buffer;
@@ -150,9 +149,7 @@ std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
 		}
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-		curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func_str);
-		
+
 		if(redirect)
 			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 		else

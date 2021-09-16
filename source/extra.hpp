@@ -114,10 +114,10 @@ std::string AccountID="-.-";
 bool isLoaded=false;
 
 //Threads
-SDL_Thread* prothread = NULL;
 SDL_Thread* searchthread = NULL;
 SDL_Thread* downloadthread = NULL;
 SDL_Thread* capithread = NULL;
+SDL_Thread* Loaderthread = NULL;
 bool quit=false;
 std::string KeyName;
 int Frames=1;

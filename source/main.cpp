@@ -54,7 +54,11 @@ int main(int argc, char **argv)
 	}
 
 	//Read a JSON file
-	read_DB(BD,rootdirectory+"DataBase.json");
+	if(!read_DB(BD,rootdirectory+"DataBase.json"))
+	{
+		read_DB(BD,"romfs:/DataBase.json");
+	}
+
 	BD["com"] = "{}"_json;
 	if(!BD["USER"].empty()) {
 		UD=BD["USER"];
@@ -126,7 +130,7 @@ int main(int argc, char **argv)
 
 	try{
 		//Set main Thread get images and descriptions
-		prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
+		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 
 		//While application is running
 		while (!quit&&appletMainLoop())
@@ -1069,6 +1073,10 @@ int main(int argc, char **argv)
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 						}
 					}
+				} else {
+					std::string textpro="Cargando programación";
+					if(imgNumbuffer>0) {textpro+=" "+std::to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
+					GOD.PleaseWait(textpro,false);
 				}
 					if (statenow==programationsliderstate) {
 
@@ -1144,12 +1152,6 @@ int main(int argc, char **argv)
 					if(isDownloading) {B_X.render_T(dist, 680,"Descargas"); dist -= posdist-10;}
 					if (isHandheld) {CLEAR.render_T(dist, 680,"Cache"); dist -= posdist;}
 
-				else
-				{
-					std::string textpro="Cargando programación";
-					if(imgNumbuffer>0) {textpro+=" "+std::to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
-					GOD.PleaseWait(textpro,false);
-				}
 
 				break;
 			}
@@ -1494,7 +1496,7 @@ int main(int argc, char **argv)
 					if(!isChained) {
 						std::cout << "Reloading Animes" << std::endl;
 						//Set main Thread get images and descriptions
-						prothread = SDL_CreateThread(refrescarpro, "prothread", (void*)NULL);
+						Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 					}
 				}
 			}
@@ -1519,12 +1521,10 @@ int main(int argc, char **argv)
 	if (AppletMode) {
 		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
 	}
-	//end net before anything
-	nifmExit();
-	if (NULL == capithread) {printf("capithread Not in use: %s\n", SDL_GetError());} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
-	if (NULL == downloadthread) {printf("downloadthread Not in use: %s\n", SDL_GetError());} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
-	if (NULL == prothread) {printf("prothread Not in use: %s\n", SDL_GetError());}else {printf("prothread in use: %s\n", SDL_GetError()); SDL_WaitThread(prothread, NULL);}
-	if (NULL == searchthread) {printf("searchthread Not in use: %s\n", SDL_GetError());} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
+	if (NULL == capithread) {printf("capithread Not in use");} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
+	if (NULL == downloadthread) {printf("downloadthread Not in use");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
+	if (NULL == searchthread) {printf("searchthread Not in use");} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
+	if (NULL == Loaderthread) {printf("Loaderthread Not in use");}else {printf("Loaderthread in use: %s\n", SDL_GetError()); SDL_WaitThread(Loaderthread, NULL);}
 
 
 
@@ -1533,6 +1533,8 @@ int main(int argc, char **argv)
 	Farest.free();
 	Heart.free();
 
+	//end net before anything
+	nifmExit();
 	B_A.free();
 	B_B.free();
 	B_Y.free();

@@ -20,7 +20,7 @@
 #include <fstream>
 #include <thread>
 
-int refrescarpro(void* data);
+int AnimeLoader(void* data);
 int downloadjkanimevideo(void* data);
 int searchjk(void* data);
 int capBuffer (std::string Tlink);
