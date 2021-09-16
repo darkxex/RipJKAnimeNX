@@ -475,16 +475,28 @@ bool read_DB(json& base,std::string path){
 	return false;
 }
 bool write_DB(json base,std::string path){
-	appletBeginBlockingHomeButton (0);
-	std::ofstream otf(path);
-	otf << std::setw(4) << base << std::endl;
-	otf.close();
+	std::string pathtemp = path+".tmp";
+	std::string pathback = path+".bck";
+	std::string type = path.substr(0,4);
+	std::stringstream strm;
+	try{
+		strm << std::setw(4) << base;
+//		strm << base;
+		std::string A = strm.str();
 
-	//commit
-	fsdevCommitDevice("save");
-	fsdevCommitDevice("user");
+		std::ofstream otf(pathtemp);
+		otf << A;
+		otf.close();
+		remove(path.c_str());
+		rename(pathtemp.c_str(),path.c_str());
 
-	appletEndBlockingHomeButton();
+		//commit
+		if (type == "save") fsdevCommitDevice("save");
+		if (type == "user") fsdevCommitDevice("user");
+	} catch(...) {
+		std::cout << "Json: write Error... "<< path << std::endl; 
+		return false;
+	}
 	std::cout << "Json: writhen... "<< path << std::endl;
 	return true;
 }
@@ -708,9 +720,12 @@ void NameOfLink(std::string& word){
 }
 std::string KeyOfLink(std::string word){
 	int v2 = word.find("/", 20);
-	word = word.substr(0, v2 + 1);
-	replace(word, "https://jkanime.net/", "");
-	replace(word, "/", "");
+	if (v2){
+		word = word.substr(0, v2 + 1);
+		replace(word, "https://jkanime.net/", "");
+		replace(word, "/", "");
+		replace(word, " ", "");
+	}
 	return word;
 }
 template <typename Map, typename F>

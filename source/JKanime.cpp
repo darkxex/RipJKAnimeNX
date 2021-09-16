@@ -56,7 +56,8 @@ bool DataMaker(json LinkList,int& part, int& ofall);
 int MkTOP();
 int MkHOR();
 int MkDIR();
-void DataUpdate(std::string a,std::string name);
+//void DataUpdate(std::string a,std::string name);
+void DataUpdate(std::string Link);
 int capit(void* data);
 int TimeNow(){
 	std::time_t t = std::time(0);
@@ -64,10 +65,9 @@ int TimeNow(){
 }
 
 //BEGUING THREAD CHAIN
-int refrescarpro(void* data){
+int AnimeLoader(void* data){
 	int steep=0;
 	try{
-		
 		isChained=true;
 		ChainManager(true,true);
 		steep++;//Wait for connection
@@ -121,10 +121,9 @@ int refrescarpro(void* data){
 				haschange = false;
 			}
 		}
-		
 		steep++;//Display List
 		if(reloading) {Frames=0; reloading = false;}
-
+		
 		steep++;//TimeStamp indicate if a chap sout be reloaded
 		if (haschange || BD["TimeStamp"].empty()) {
 			//update TimeStamp
@@ -153,7 +152,8 @@ int refrescarpro(void* data){
 				BD["arrays"]["chapter"]["images"]=ChapImag;
 			}
 		}
-		steep++;//Get history
+
+ 		steep++;//Get history
 		std::cout << "# IMG history" << std::endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
 
@@ -177,8 +177,7 @@ int refrescarpro(void* data){
 		std::cout << "# Cache Recent" << std::endl;
 		if (haschange) {
 			std::cout << "# Cache Recent, haschange" << std::endl;
-			DataMaker(BD["arrays"]["chapter"]["link"], porcentajebuffer, porcentajebufferAll);
-			if(!quit) {
+			if(DataMaker(BD["arrays"]["chapter"]["link"], porcentajebuffer, porcentajebufferAll)) {
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
 		}
@@ -212,8 +211,10 @@ int refrescarpro(void* data){
 		MkDIR();
 	} catch(...) {
 		printf("Thread Chain Error Catched, Steep#%d\n",steep);
+		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//std::cout << UD << std::endl;
 	}
+	write_DB(BD,rootdirectory+"DataBase.json");
 	std::cout << "# End Thread Chain" << std::endl;
 	isChained=false;
 	ChainManager(false,!isDownloading&&!isChained);
@@ -225,8 +226,8 @@ int refrescarpro(void* data){
 bool DataMaker(json LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
 	std::string a = "";
-	int seg=0;
 	part=0;
+	int sep=0;
 	ofall=LinkList.size();
 	if (ofall <= 0){return false;}
 	for (int x = 0; x < ofall&& !quit; x++)
@@ -234,24 +235,17 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 		if(hasmchap) part = x+1;
 		if (!isConnected) while (!HasConnection()) {SDL_Delay(2000); if(quit) return false; }
 		std::string link = LinkList[x];
-		int trace = link.find("/", 20);
-		link = link.substr(0, trace + 1);
-		std::string name = link;
-		replace(name, "https://jkanime.net/", "");
-		replace(name, "/", "");
-
+		std::string name = KeyOfLink(link);
 		if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"] ) {
-			if (BD["DataBase"][name]["enemision"]=="true" || BD["DataBase"][name]["TimeStamp"].empty()) {
+			if (BD["DataBase"][name]["TimeStamp"].empty() || BD["DataBase"][name]["enemision"]=="true") {
 				part = x+1;
-				a = gethtml(link);
-				DataUpdate(a,name);
+				DataUpdate(link);
 				hasmchap=true;
-				if (seg >= 20){
-					//write json
-					write_DB(BD,rootdirectory+"DataBase.json");
-					seg=0;
+				if (sep >= 101){
+					write_DB(BD,"sdmc:/DataBase.json");
+					sep=0;
 				}
-				seg++;
+				sep++;
 			} else {
 				//BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
 			}
@@ -265,7 +259,6 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 	}
 	return true;
 }
-
 int MkTOP(){
 	//load Top
 	std::vector<std::string> TOPC={};
@@ -279,7 +272,6 @@ int MkTOP(){
 	
 	std::cout << "# IMG Top" << std::endl;
 	CheckImgVector(TOPC,imgNumbuffer);
-	if ((int)TOPC.size() > 0) {write_DB(BD,rootdirectory+"DataBase.json");}
 	return 0;
 }
 int MkHOR(){
@@ -320,7 +312,6 @@ int MkHOR(){
 	BD["arrays"]["HourGlass"]["link"]=HORC;
 	std::cout << "# IMG HourGlass" << std::endl;
 	CheckImgVector(HORC,imgNumbuffer);
-	if ((int)HORC.size() > 0) {write_DB(BD,rootdirectory+"DataBase.json");}
 	return 0;
 }
 int MkDIR(){
@@ -366,11 +357,18 @@ int MkDIR(){
 	}
 	if(quit) return false;
 	//Build All Data Base
-	if (BD["arrays"]["Directory"]["InTime"].get<int>() == 0){
+	if (BD["arrays"]["Directory"]["InTime"].get<int>() == 0)
+	{
 		std::cout << "# Cache Directory" << std::endl;
-		if (DataMaker(BD["arrays"]["Directory"]["link"], porcentajebuffer, porcentajebufferAll)){
-			BD["arrays"]["Directory"]["InTime"]=1;
-			write_DB(BD,rootdirectory+"DataBase.json");
+		try{
+			if (DataMaker(BD["arrays"]["Directory"]["link"], porcentajebuffer, porcentajebufferAll)){
+				BD["arrays"]["Directory"]["InTime"]=1;
+				write_DB(BD,rootdirectory+"DataBase.json");
+			}
+		} catch(...) {
+			printf("Thread Chain Error Catched,Dir Error\n");
+			//write_DB(BD,rootdirectory+"DataBase.json");
+			return 0;
 		}
 	}
 	return 0;
@@ -491,13 +489,9 @@ int searchjk(void* data) {//Search Thread
 }
 int capit(void* data) {//Get chap thread
 	if (!HasConnection()) return 0;
-	std::string bb = BD["com"]["ActualLink"];
-	std::string a = "";
-	a = gethtml(bb);
-	std::string name = bb;
-	replace(name, "https://jkanime.net/", ""); replace(name, "/", "");
-
-	DataUpdate(a,name);
+	std::string link = BD["com"]["ActualLink"];
+	std::string name = KeyOfLink(link);
+	DataUpdate(link);
 	try{
 		//std::cout << BD << std::endl;
 		BD["com"]["sinopsis"] = BD["DataBase"][name]["sinopsis"];
@@ -520,7 +514,6 @@ int capit(void* data) {//Get chap thread
 	}
 	return 0;
 }
-
 int capBuffer (std::string Tlink) {//anime manager
 	int v2 = Tlink.find("/", 20);
 	Tlink = Tlink.substr(0, v2 + 1);
@@ -588,51 +581,54 @@ int capBuffer (std::string Tlink) {//anime manager
 	CheckImgNet(image);
 	return 0;
 }
-void DataUpdate(std::string a,std::string name) {//Get info off chapter
+void DataUpdate(std::string Link) {//Get info off chapter
 	if(quit) return;
-
+	std::string name = KeyOfLink(Link);
+	std::string a = gethtml("https://jkanime.net/"+name+"/");
+	if(quit) return;
+	json AnimeINF;//BD["DataBase"][name]
 	//Sinopsis
 	std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 	replace(terese, "<p rel=\"sinopsis\">", ""); replace(terese, "<br/>", ""); replace(terese, "&quot;", "");
-	BD["DataBase"][name]["sinopsis"] = terese.substr(0,810);
-	//std::cout << BD["DataBase"][name]["sinopsis"] << std::endl;
+	//AnimeINF["sinopsis"] = terese.substr(0,800);
+	AnimeINF["sinopsis"] = terese;
 
 	//get image
 	terese = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
-	BD["DataBase"][name]["Image"] = terese;
+	AnimeINF["Image"] = terese;
 
 	//Anime info
 	terese = scrapElement(a, "<span>Tipo:","</li");
 	replace(terese, "<span>Tipo:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	BD["DataBase"][name]["Tipo"] = terese;
+	AnimeINF["Tipo"] = terese;
 
 	terese = scrapElement(a, "Idiomas:","</li");
 	replace(terese, "Idiomas:", ""); replace(terese, "  ", " "); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	BD["DataBase"][name]["Idiomas"] = terese;
+	AnimeINF["Idiomas"] = terese;
 
 	terese = scrapElement(a, "Episodios:","</li");
 	replace(terese, "Episodios:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	BD["DataBase"][name]["Episodios"] = terese;
+	AnimeINF["Episodios"] = terese;
 
 	terese = scrapElement(a, "Duracion:","</li");
 	replace(terese, "Duracion:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	BD["DataBase"][name]["Duracion"] = terese;
+	AnimeINF["Duracion"] = terese;
 
 	terese = scrapElement(a, "Emitido:","</li");
 	replace(terese, "Emitido:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	BD["DataBase"][name]["Emitido"] = terese;
+	AnimeINF["Emitido"] = terese;
 
 	int bal1=0;
 	bal1=a.find("Secuela");
 	if (bal1 > 1) {
 		terese = scrapElement(a.substr(bal1), "https://jkanime.net/","");
-		BD["DataBase"][name]["Secuela"] = terese;
+		AnimeINF["Secuela"] = terese;
 	}
 
 	bal1=a.find("Precuela");
 	if (bal1 > 1) {
 		terese = scrapElement(a.substr(bal1), "https://jkanime.net/","");
-		BD["DataBase"][name]["Precuela"] = terese;
+		AnimeINF["Precuela"] = terese;
 	}
 
 	//es una peli ?
@@ -651,7 +647,7 @@ void DataUpdate(std::string a,std::string name) {//Get info off chapter
 			RemoveAccents(terese);
 		}
 	}
-	BD["DataBase"][name]["nextdate"] = terese;
+	AnimeINF["nextdate"] = terese;
 
 	//Generos
 	int indx1 = 1, indx2, indx3;
@@ -668,11 +664,11 @@ void DataUpdate(std::string a,std::string name) {//Get info off chapter
 	RemoveAccents(terese);
 
 	if (terese.length() == 0) terese +="-.-";
-	BD["DataBase"][name]["generos"] = terese;
+	AnimeINF["generos"] = terese;
 
 	//Esta en emision?
 	if ((int)a.find("En emision") != -1)
-	{BD["DataBase"][name]["enemision"] = "true";} else {BD["DataBase"][name]["enemision"] = "false";}
+	{AnimeINF["enemision"] = "true";} else {AnimeINF["enemision"] = "false";}
 
 	int val0, val1, val2, val3;
 	val0 = a.rfind("href=\"#pag");
@@ -686,9 +682,9 @@ void DataUpdate(std::string a,std::string name) {//Get info off chapter
 		val3 = urlx.find(" - ") + 3;
 		urlx = urlx.substr(val3);
 
-		BD["DataBase"][name]["maxcapit"] = atoi(urlx.c_str());
+		AnimeINF["maxcapit"] = atoi(urlx.c_str());
 	} else {
-		BD["DataBase"][name]["maxcapit"] = 1;
+		AnimeINF["maxcapit"] = 1;
 	}
 
 	//empieza por 0?
@@ -703,14 +699,24 @@ void DataUpdate(std::string a,std::string name) {//Get info off chapter
 
 	int tempzero = zerocontainer2.find("\"0\"");
 	if (tempzero != -1) {
-		BD["DataBase"][name]["maxcapit"] = BD["DataBase"][name]["maxcapit"].get<int>() - 1;
-		BD["DataBase"][name]["mincapit"] = 0;
+		AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
+		AnimeINF["mincapit"] = 0;
 	}
 	else {
-		BD["DataBase"][name]["mincapit"] = 1;
+		AnimeINF["mincapit"] = 1;
 	}
-	BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
-	std::cout << "Bufered: " << name << std::endl;
+	AnimeINF["TimeStamp"] = BD["TimeStamp"];
+		std::stringstream strm;
+	try{
+//		strm << std::setw(4) << base;
+		strm << AnimeINF;
+		//write to DB
+		BD["DataBase"][name]=AnimeINF;
+		std::cout << "Saved: " << name << std::endl;
+	} catch(...) {
+		std::cout << "Anime Problemático: "<< name << std::endl;
+		std::cout << strm.str() << std::endl;
+	}
 }
 
 //Favorito

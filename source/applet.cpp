@@ -297,7 +297,8 @@ bool ChainManager(bool Chain,bool AndChaing){
 	} else {
 		if (AndChaing) {
 			appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
-			appletCancelCpuBoostMode();
+			//appletSetMediaPlaybackState(true);
+			//appletSetMediaPlaybackState(false);
 			appletSetAutoSleepDisabled(false);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);
