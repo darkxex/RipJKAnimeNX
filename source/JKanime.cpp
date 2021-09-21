@@ -214,7 +214,7 @@ int AnimeLoader(void* data){
 		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//std::cout << UD << std::endl;
 	}
-	write_DB(BD,rootdirectory+"DataBase.json");
+	if(quit) write_DB(BD,rootdirectory+"DataBase.json");
 	std::cout << "# End Thread Chain" << std::endl;
 	isChained=false;
 	ChainManager(false,!isDownloading&&!isChained);
@@ -467,6 +467,7 @@ int searchjk(void* data) {//Search Thread
 			if (gsearchpreview.length() > 90) {
 				gsearchpreview=gsearchpreview.substr(0,90)+"...";
 			}
+			replace(gsearchpreview, "&quot;", "");
 			BD["arrays"]["search"]["date"].push_back(gsearchpreview);
 			val1++;
 		}
@@ -587,56 +588,65 @@ void DataUpdate(std::string Link) {//Get info off chapter
 	std::string name = KeyOfLink(Link);
 	std::string a = gethtml("https://jkanime.net/"+name+"/");
 	if(quit) return;
-	json AnimeINF;//BD["DataBase"][name]
-	//Sinopsis
-	std::string terese = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
-	replace(terese, "<p rel=\"sinopsis\">", ""); replace(terese, "<br/>", ""); replace(terese, "&quot;", "");
-	//AnimeINF["sinopsis"] = terese.substr(0,800);
-	AnimeINF["sinopsis"] = terese;
+	json AnimeINF=BD["DataBase"][name];//
+	std::string TMP="";
+	if (AnimeINF["sinopsis"].empty()){
+		//Sinopsis
+		TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
+		replace(TMP, "<p rel=\"sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
+		//AnimeINF["sinopsis"] = TMP.substr(0,800);
+		AnimeINF["sinopsis"] = TMP;
+	}
+	if (AnimeINF[""].empty()){
+		//get image
+		TMP = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
+		AnimeINF["Image"] = TMP;
+	}
 
-	//get image
-	terese = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
-	AnimeINF["Image"] = terese;
+	if (AnimeINF["Tipo"].empty()){
+		//Anime info
+		TMP = scrapElement(a, "<span>Tipo:","</li");
+		replace(TMP, "<span>Tipo:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
+		AnimeINF["Tipo"] = TMP;
+	}
 
-	//Anime info
-	terese = scrapElement(a, "<span>Tipo:","</li");
-	replace(terese, "<span>Tipo:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	AnimeINF["Tipo"] = terese;
+	if (AnimeINF["Idiomas"].empty()){
+		TMP = scrapElement(a, "Idiomas:","</li");
+		replace(TMP, "Idiomas:", ""); replace(TMP, "  ", " "); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
+		AnimeINF["Idiomas"] = TMP;
+	}
 
-	terese = scrapElement(a, "Idiomas:","</li");
-	replace(terese, "Idiomas:", ""); replace(terese, "  ", " "); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	AnimeINF["Idiomas"] = terese;
+	TMP = scrapElement(a, "Episodios:","</li");
+	replace(TMP, "Episodios:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
+	AnimeINF["Episodios"] = TMP;
 
-	terese = scrapElement(a, "Episodios:","</li");
-	replace(terese, "Episodios:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	AnimeINF["Episodios"] = terese;
+	TMP = scrapElement(a, "Duracion:","</li");
+	replace(TMP, "Duracion:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
+	AnimeINF["Duracion"] = TMP;
 
-	terese = scrapElement(a, "Duracion:","</li");
-	replace(terese, "Duracion:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	AnimeINF["Duracion"] = terese;
-
-	terese = scrapElement(a, "Emitido:","</li");
-	replace(terese, "Emitido:", ""); replace(terese, "</span> ", ""); replace(terese, "</span>", "");
-	AnimeINF["Emitido"] = terese;
+	TMP = scrapElement(a, "Emitido:","</li");
+	replace(TMP, "Emitido:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
+	AnimeINF["Emitido"] = TMP;
 
 	int bal1=0;
 	bal1=a.find("Secuela");
 	if (bal1 > 1) {
-		terese = scrapElement(a.substr(bal1), "https://jkanime.net/","");
-		AnimeINF["Secuela"] = terese;
+		TMP = scrapElement(a.substr(bal1), "https://jkanime.net/","");
+		AnimeINF["Secuela"] = TMP;
 	}
 
 	bal1=a.find("Precuela");
 	if (bal1 > 1) {
-		terese = scrapElement(a.substr(bal1), "https://jkanime.net/","");
-		AnimeINF["Precuela"] = terese;
+		TMP = scrapElement(a.substr(bal1), "https://jkanime.net/","");
+		AnimeINF["Precuela"] = TMP;
 	}
 
-	//es una peli ?
-	terese = "...";
+	//find next date
+	TMP = "...";
 	if ((int)a.find("<span>Tipo:</span> Pelicula</li>") != -1)
 	{
-		terese="Pelicula";
+		//es una peli ?
+		TMP="Pelicula";
 	} else {
 		//find next date
 		int re1 =0, re2=0;
@@ -644,33 +654,36 @@ void DataUpdate(std::string Link) {//Get info off chapter
 		if(re1 > 1) {
 			re1 += 25;
 			re2 = a.find("<i class", re1);
-			terese = "."+a.substr(re1, re2 - re1);
-			RemoveAccents(terese);
+			TMP = "."+a.substr(re1, re2 - re1);
+			RemoveAccents(TMP);
 		}
 	}
-	AnimeINF["nextdate"] = terese;
+	AnimeINF["nextdate"] = TMP;
 
-	//Generos
-	int indx1 = 1, indx2, indx3;
-	indx1 = a.find("<span>Genero:</span>", indx1);
-	terese="";
-	while (indx1 != -1) {
-		indx1 = a.find("https://jkanime.net/genero", indx1);
-		if (indx1 == -1) { break; }
-		indx2 = a.find(">",indx1);
-		indx3 = a.find("</a>", indx1);
-		terese += a.substr(indx2+1, indx3 - indx2-1)+", ";
-		indx1 = indx3;
+	if (AnimeINF["generos"].empty()){
+		//Generos
+		int indx1 = 1, indx2, indx3;
+		indx1 = a.find("<span>Genero:</span>", indx1);
+		TMP="";
+		while (indx1 != -1) {
+			indx1 = a.find("https://jkanime.net/genero", indx1);
+			if (indx1 == -1) { break; }
+			indx2 = a.find(">",indx1);
+			indx3 = a.find("</a>", indx1);
+			TMP += a.substr(indx2+1, indx3 - indx2-1)+", ";
+			indx1 = indx3;
+		}
+		RemoveAccents(TMP);
+
+		if (TMP.length() == 0) TMP +="-.-";
+		AnimeINF["generos"] = TMP;
 	}
-	RemoveAccents(terese);
-
-	if (terese.length() == 0) terese +="-.-";
-	AnimeINF["generos"] = terese;
 
 	//Esta en emision?
 	if ((int)a.find("En emision") != -1)
 	{AnimeINF["enemision"] = "true";} else {AnimeINF["enemision"] = "false";}
 
+	//Get Caps number
 	int val0, val1, val2, val3;
 	val0 = a.rfind("href=\"#pag");
 	if (val0 != -1) {
@@ -688,24 +701,29 @@ void DataUpdate(std::string Link) {//Get info off chapter
 		AnimeINF["maxcapit"] = 1;
 	}
 
-	//empieza por 0?
-	int zero1, zero2;
-	std::string zerocontainer = "";
-	std::string zerocontainer2 = "";
-	zero1 = a.rfind("ajax/pagination_episodes/");
-	zero2 = a.find("'", zero1);
-	zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
-	//std::cout << zerocontainer << std::endl;
-	zerocontainer2 = gethtml(zerocontainer);
+	if (AnimeINF["mincapit"].empty()){
+		//empieza por 0?
+		int zero1, zero2;
+		std::string zerocontainer = "";
+		std::string zerocontainer2 = "";
+		zero1 = a.rfind("ajax/pagination_episodes/");
+		zero2 = a.find("'", zero1);
+		zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
+		//std::cout << zerocontainer << std::endl;
+		zerocontainer2 = gethtml(zerocontainer);
 
-	int tempzero = zerocontainer2.find("\"0\"");
-	if (tempzero != -1) {
-		AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
-		AnimeINF["mincapit"] = 0;
+		int tempzero = zerocontainer2.find("\"0\"");
+		if (tempzero != -1) {
+			AnimeINF["mincapit"] = 0;
+		}
+		else {
+			AnimeINF["mincapit"] = 1;
+		}
 	}
-	else {
-		AnimeINF["mincapit"] = 1;
-	}
+	if(AnimeINF["mincapit"].get<int>()==0)
+	AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
+	
+	
 	AnimeINF["TimeStamp"] = BD["TimeStamp"];
 		std::stringstream strm;
 	try{

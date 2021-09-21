@@ -250,7 +250,7 @@ int main(int argc, char **argv)
 								quit = true;
 								cancelcurl = 1;
 								GOD.PleaseWait("Borrando cache");
-								BD = "{}"_json;
+								read_DB(BD,"romfs:/DataBase.json");
 								fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 								statenow=99;
 								break;
@@ -908,7 +908,7 @@ int main(int argc, char **argv)
 						}
 						B_DOWN.render_T(280+XS, 630+YS,"");
 					}
-					if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula") {//draw caps numbers Slider
+					if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula" && mincapit != maxcapit) {//draw caps numbers Slider
 						VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
 						SDL_Color com = {};
 						if (latest-2 >= mincapit) {
@@ -957,7 +957,7 @@ int main(int argc, char **argv)
 						B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),latest == maxcapit);
 					} else {
 						VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
-						if (BD["com"]["nextdate"] == "Pelicula") {
+						if (BD["com"]["nextdate"] == "Pelicula" || mincapit == maxcapit) {
 							T_N.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
 							T_N.render(posxbase + 282+XS-T_N.getWidth()/2, posybase + 558+YS);
 						} else {
