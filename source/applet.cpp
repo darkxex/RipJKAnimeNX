@@ -135,7 +135,6 @@ bool GetUserImage(){
 }
 bool GetAppletMode(){
 	apmInitialize();
-	appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
 	{
