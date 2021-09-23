@@ -307,7 +307,8 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 	int JlinksSize=vec.size();
 	static int statte = GenState;
 	if (statte != GenState) {statte = GenState; outof=0;}
-
+	if(JlinksSize < 30) {outof=0;}
+		
 	JlinksSize=vec.size();
 	if(ongrid) {
 		if(JlinksSize > 30) {
@@ -931,7 +932,8 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 	//tactil stuff
 	mX = x; mY = y;  SelIns = GOD.GenState;
 }
-void LTexture::render_T(int x, int y, std::string text, bool presed){
+int LTexture::render_T(int x, int y, std::string text, bool presed){
+	int TMPW = 0;
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
@@ -944,7 +946,6 @@ void LTexture::render_T(int x, int y, std::string text, bool presed){
 
 	//Render to screen
 	SDL_RenderCopy(GOD.gRenderer, mTexture, NULL, &renderQuad);
-
 	if (text.length()) {
 		SDL_Surface* textSurface = TTF_RenderText_Blended(GOD.B_O_F, text.c_str(), { 50, 50, 50 });
 		if (textSurface == NULL)
@@ -953,6 +954,7 @@ void LTexture::render_T(int x, int y, std::string text, bool presed){
 		}
 		else
 		{
+			TMPW=textSurface->w;
 			SDL_Rect TextRect = {x+mWidth+3, y+(mHeight/2)-(textSurface->h/2), textSurface->w, textSurface->h};
 			//Create texture from surface pixels
 			SDL_Texture* TextureT = SDL_CreateTextureFromSurface(GOD.gRenderer, textSurface);
@@ -964,6 +966,7 @@ void LTexture::render_T(int x, int y, std::string text, bool presed){
 	}
 	//tactil stuff
 	mX = x; mY = y;  SelIns = GOD.GenState;
+	return mWidth + TMPW;
 }
 bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 	//tactil stuff

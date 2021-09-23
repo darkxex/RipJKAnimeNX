@@ -29,6 +29,8 @@
 #include "SDLWork.hpp"
 #include "applet.hpp"
 #include "utils.hpp"
+#include "Link.hpp"
+
 //////////////////////////////////aquí empieza el pc.
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;
@@ -129,6 +131,9 @@ std::vector<std::string> arrayservers= {
 std::vector<std::string> arrayserversbak= {
 	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
 };
+
+std::vector<std::string> Wday = {"Todos","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"};
+int WdayG=0;
 
 std::vector<std::string> StatesList= {};
 json BD;

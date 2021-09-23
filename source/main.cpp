@@ -353,6 +353,10 @@ int main(int argc, char **argv)
 							case chapterstate:
 								if(serverpront) {
 									std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(latest) + "/";
+										std::string temp = tempurl;
+										NameOfLink(temp);
+										std::string text = "Cargando "+temp.substr(0,42)+"... desde "+arrayservers[selectserver]+" ...";
+										GOD.PleaseWait(text);
 									if(!onlinejkanimevideo(tempurl,arrayservers[selectserver])) {
 										arrayservers.erase(arrayservers.begin()+selectserver);
 									} else {
@@ -362,7 +366,7 @@ int main(int argc, char **argv)
 
 										std::string item=BD["com"]["ActualLink"].get<std::string>();
 										int hsize = UD["history"].size();
-										if (hsize > 29) {UD["history"].erase(UD["history"].end());}//limit history
+										if (hsize > 49) {UD["history"].erase(UD["history"].end());}//limit history
 										if (hsize > 0) {
 											UD["history"] = eraseVec(UD["history"],item);
 											//UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
@@ -429,6 +433,13 @@ int main(int argc, char **argv)
 								else
 									callAflv();
 							}
+							if (statenow == hourglass){
+								if (WdayG > 0){
+									WdayG--;
+									BD["arrays"]["HourGlass"]["link"] = BD["arrays"]["HourGlass"][Wday[WdayG]];
+								}
+							}
+							
 						}
 						else if (e.jbutton.button == GOD.BT_ZR) {// (ZR) button down
 							if(isDownloading && isHandheld) {
@@ -613,6 +624,13 @@ int main(int argc, char **argv)
 								break;
 
 							}
+							if (statenow == hourglass){
+								if (WdayG < 7){
+									WdayG++;
+									BD["arrays"]["HourGlass"]["link"] = BD["arrays"]["HourGlass"][Wday[WdayG]];
+								}
+							}
+
 
 						}
 						else if (e.jbutton.button == GOD.BT_LEFT || e.jbutton.button == GOD.BT_LS_LEFT) {// (left) button down
@@ -1337,6 +1355,7 @@ int main(int argc, char **argv)
 			}
 			case hourglass:              {
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+
 				int histsize=BD["arrays"]["HourGlass"]["link"].size();
 				if (histsize > 0) {
 					//if (favsize > 30) ongridF=false;
@@ -1368,6 +1387,9 @@ int main(int argc, char **argv)
 					int dist = 1100,posdist = 180;
 					B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
 					B_B.render_T(dist, 680,"Volver"); dist -= posdist;
+					
+					dist = B_L.render_T(550,680," "+Wday[WdayG]+" ");
+					B_R.render_T(550+dist,680);
 				}
 				break;
 			}

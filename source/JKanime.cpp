@@ -3,6 +3,7 @@
 #include "utils.hpp"
 #include "JKanime.hpp"
 #include "SDLWork.hpp"
+#include "Link.hpp"
 extern json BD;
 extern json UD;
 extern int mincapit;
@@ -56,7 +57,6 @@ bool DataMaker(json LinkList,int& part, int& ofall);
 int MkTOP();
 int MkHOR();
 int MkDIR();
-//void DataUpdate(std::string a,std::string name);
 void DataUpdate(std::string Link);
 int capit(void* data);
 int TimeNow(){
@@ -281,15 +281,15 @@ int MkHOR(){
 	std::string content=gethtml("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	std::vector<std::string> STP={};
-	STP=split(content,"<div class='box semana'>");
 
-	BD["arrays"]["HourGlass"]["Lunes"]=(std::vector<std::string>)scrapElementAll(STP[1],"https://jkanime.net/","Lunes");
-	BD["arrays"]["HourGlass"]["Martes"]=(std::vector<std::string>)scrapElementAll(STP[2],"https://jkanime.net/","Martes");
-	BD["arrays"]["HourGlass"]["Miercoles"]=(std::vector<std::string>)scrapElementAll(STP[3],"https://jkanime.net/","Miercoles");
-	BD["arrays"]["HourGlass"]["Jueves"]=(std::vector<std::string>)scrapElementAll(STP[4],"https://jkanime.net/","Jueves");
-	BD["arrays"]["HourGlass"]["Viernes"]=(std::vector<std::string>)scrapElementAll(STP[5],"https://jkanime.net/","Viernes");
-	BD["arrays"]["HourGlass"]["Sabado"]=(std::vector<std::string>)scrapElementAll(STP[6],"https://jkanime.net/","Sabado");
-	BD["arrays"]["HourGlass"]["Domingo"]=(std::vector<std::string>)scrapElementAll(STP[7],"https://jkanime.net/","Domingo");
+	STP=split(content,"<div class='box semana'>");
+	BD["arrays"]["HourGlass"]["Lunes"]=scrapElementAll(STP[1],"https://jkanime.net/","\"","Lunes");
+	BD["arrays"]["HourGlass"]["Martes"]=scrapElementAll(STP[2],"https://jkanime.net/","\"","Martes");
+	BD["arrays"]["HourGlass"]["Miercoles"]=scrapElementAll(STP[3],"https://jkanime.net/","\"","Miercoles");
+	BD["arrays"]["HourGlass"]["Jueves"]=scrapElementAll(STP[4],"https://jkanime.net/","\"","Jueves");
+	BD["arrays"]["HourGlass"]["Viernes"]=scrapElementAll(STP[5],"https://jkanime.net/","\"","Viernes");
+	BD["arrays"]["HourGlass"]["Sabado"]=scrapElementAll(STP[6],"https://jkanime.net/","\"","Sabado");
+	BD["arrays"]["HourGlass"]["Domingo"]=scrapElementAll(STP[7],"https://jkanime.net/","\"","Domingo");
 
 	std::vector<std::string> MPO={};
 	std::vector<std::string> HORC={};
@@ -311,6 +311,7 @@ int MkHOR(){
 
 	//HORC.erase(unique(HORC.begin(),HORC.end()),HORC.end());
 	BD["arrays"]["HourGlass"]["link"]=HORC;
+	BD["arrays"]["HourGlass"]["Todos"]=HORC;
 	std::cout << "# IMG HourGlass" << std::endl;
 	CheckImgVector(HORC,imgNumbuffer);
 	return 0;
