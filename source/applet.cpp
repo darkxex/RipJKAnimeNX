@@ -11,6 +11,7 @@
 #include "utils.hpp"
 #include "applet.hpp"
 #include "SDLWork.hpp"
+#include "NSP/sdInstall.hpp"
 
 extern AccountUid uid;
 extern std::string AccountID;
@@ -35,6 +36,10 @@ bool LoadNRO(std::string path){
 	}
 	std::cout << "No Existe:" << path << std::endl;
 	return false;
+}
+bool InstallNSP(std::string nsp){
+	std::vector<std::filesystem::path> ourTitleList={std::filesystem::path(nsp)}; 
+	return nspInstStuff::installNspFromFile(ourTitleList, 1);
 }
 
 std::string FormatHex128(AccountUid Number){
@@ -134,10 +139,12 @@ bool GetUserImage(){
 	return false;
 }
 bool GetAppletMode(){
+	//nxlinkStdio();
 	apmInitialize();
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
 	{
+		InstallNSP("romfs:/RipJKForwader[05B9DB505ABBE000][v0].nsp");
 		return true;
 	}
 	initUser();
