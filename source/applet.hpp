@@ -6,6 +6,7 @@
 using namespace std;
 using json = nlohmann::json;
 bool LoadNRO(std::string path);
+bool InstallNSP(std::string nsp);
 bool GetAppletMode();
 AccountUid LaunchPlayerSelect();
 bool SelectUser();

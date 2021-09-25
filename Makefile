@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 2
-VERSION_MICRO := 5
+VERSION_MICRO := 6
 
 APP_TITLE	:=	RipJKAnime NX
 APP_AUTHOR	:=	AngelXex
@@ -41,7 +41,7 @@ APP_VERSION	:=	${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}
 TARGET		:=	$(subst $e ,_,$(notdir $(APP_TITLE)))
 OUTDIR		:=	out
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	source source/NSP source/NSP/data source/NSP/extra source/NSP/install source/NSP/nx source/NSP/nx/ipc
 DATA		:=	data
 INCLUDES	:=	include source 
 EXEFS_SRC	:=	RipJKForwader/exefs_src
@@ -68,7 +68,7 @@ CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 -DTITLE='"$(APP_TITLE)"' -DVER
 ifneq ($(strip $(ISDEBUG)),)
 CFLAGS	+= -DISDEBUG
 endif
-
+#-DNXLINK_DEBUG
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -fexceptions
 
 ASFLAGS	:=	-g $(ARCH)
