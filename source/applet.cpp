@@ -40,7 +40,7 @@ bool LoadNRO(std::string path){
 }
 bool InstallNSP(std::string nsp){
 	std::vector<std::filesystem::path> ourTitleList={std::filesystem::path(nsp)}; 
-	return nspInstStuff::installNspFromFile(ourTitleList, 1);
+	return nspInstStuff::installNspFromFile(ourTitleList, 0);
 }
 
 std::string FormatHex128(AccountUid Number){
@@ -155,7 +155,7 @@ bool GetAppletMode(){
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
 	{
-		InstallNSP("romfs:/RipJKForwader[05B9DB505ABBE000][v0].nsp");
+		InstallNSP("romfs:/05B9DB505ABBE000.nsp");
 		return true;
 	}
 #ifdef ISDEBUG

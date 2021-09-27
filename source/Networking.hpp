@@ -13,4 +13,4 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress = 
 void CheckImgVector(json List,int& index);
 bool CheckImgNet(std::string image,std::string url="");
 bool HasConnection();
-bool CheckUpdates();
+bool CheckUpdates(bool force=false);

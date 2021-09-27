@@ -265,13 +265,29 @@ bool CheckImgNet(std::string image,std::string url){
 	}
 	return true;
 }
-bool CheckUpdates(){
+bool CheckUpdates(bool force){
 	try{
 		string Ver =  DInfo()["App"];
-		string repo = "StarDustCFW/RipJKNX";
-		//string repo = "darkxex/RipJKNX";//original repo
-		
-		std::string APIJ = gethtml("https://api.github.com/repos/"+repo+"/releases");
+		//Get Config file
+		json config;
+		if (!read_DB(config,rootdirectory+"config.json")){
+			if (!read_DB(config,"romfs:/config.json")){
+				std::cout  << "- Fail Config" <<std::endl;
+				return false;
+			}
+			if (config["AutoUpdate"].empty()){
+				std::cout  << "- Config empty " <<std::endl;
+				return false;
+			}
+		}
+		//Get AutoUpdate state use 0 to disable
+		if (config["AutoUpdate"].get<int>() != 1){
+			std::cout  << "- AutoUpdate Disabled" <<std::endl;
+			return false;
+		}
+		string reurl="https://api.github.com/repos/"+config["author"].get<string>()+"/"+config["repo"].get<string>()+"/releases";
+
+		std::string APIJ = gethtml(reurl);
 		if(json::accept(APIJ))
 		{
 			//Parse and use the JSON data
@@ -283,18 +299,18 @@ bool CheckUpdates(){
 				string New = base[0]["tag_name"];
 
 				//Check for new updates
-				if (Ver != New){
+				if (Ver != New || force){
 					//get assets
 					json asset = base[0]["assets"];
 					if (asset.size() <= 0){
-							std::cout  << " NO assets " <<std::endl;
+							std::cout  << "- NO assets " <<std::endl;
 							return false;
 					}
 
 					//check if URl is ok
 					string Nurl= asset[0]["browser_download_url"];
 					if (Nurl.find(".nsp") == string::npos) {
-						std::cout  << " NO " << Nurl <<std::endl;
+						std::cout  << "- NO " << Nurl <<std::endl;
 						for (u64 i=0; i<asset.size(); i++ ){
 							Nurl= asset[i]["browser_download_url"];
 							if (Nurl.find(".nsp") != string::npos) {
@@ -302,12 +318,12 @@ bool CheckUpdates(){
 							}
 						}
 						if (Nurl.find(".nsp") == string::npos) {
-							std::cout  << "# NO " << Nurl <<std::endl;
+							std::cout  << "- NO, bad " << Nurl <<std::endl;
 							return false;
 
 						}
 					}
-					std::cout  << " OK " << Nurl <<std::endl;
+					std::cout  << "- OK " << Nurl <<std::endl;
 					
 					
 					
@@ -329,3 +345,13 @@ bool CheckUpdates(){
 	} catch(...) {std::cout << "# Update Error catch" << std::endl;}
 	return false;
 }
+
+/*
+Spected
+{
+	"AutoUpdate": 1,
+	"author":"??"
+	"repo": "??"
+}
+On romfs or on the root dir of the app
+*/

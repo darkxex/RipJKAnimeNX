@@ -85,7 +85,7 @@ int AnimeLoader(void* data){
 		}
 		
 		
-		if (!AppletMode) CheckUpdates();
+		CheckUpdates(AppletMode);
 		steep++;
 		if(!reloading) {
 			//Download All not existing images

@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 2
-VERSION_MICRO := 7
+VERSION_MICRO := 9
 
 APP_TITLE	:=	RipJKAnime NX
 APP_AUTHOR	:=	AngelXex
@@ -168,6 +168,7 @@ endif
 all: $(BUILD)
 
 $(BUILD):
+	@echo '{"V":"$(APP_VERSION)"}'>romfs/NOR
 	@[ -d $@ ] || mkdir -p $@
 	@[ -d $(CURDIR)/$(OUTDIR) ] || mkdir -p $(CURDIR)/$(OUTDIR)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
