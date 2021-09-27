@@ -155,7 +155,7 @@ bool GetAppletMode(){
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
 	{
-		InstallNSP("romfs:/RipJKForwader[05B9DB505ABBE000][v0].nsp");
+		InstallNSP("romfs:/05B9DB505ABBE000.nsp");
 		return true;
 	}
 #ifdef ISDEBUG

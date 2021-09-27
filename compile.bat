@@ -7,9 +7,9 @@ del "out\*.nsp"
 make -j20
 set a=%errorlevel%
 echo ------------------------------------------
-if not exist romfs\RipJKForwader[05B9DB505ABBE000][v0].nsp (
+if not exist romfs\05B9DB505ABBE000.nsp (
 make -C RipJKForwader -j20
-copy "RipJKForwader\Output\RipJKForwader[05B9DB505ABBE000][v0].nsp" "romfs\RipJKForwader[05B9DB505ABBE000][v0].nsp"
+copy "RipJKForwader\Output\RipJKAnime[05B9DB505ABBE000][v0].nsp" "romfs\05B9DB505ABBE000.nsp"
 )
 
 if %a% equ 0 color 0a
