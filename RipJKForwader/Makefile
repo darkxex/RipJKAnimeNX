@@ -38,9 +38,9 @@ INCLUDES	:=	Include
 EXEFS_SRC	:=	exefs_src
 # ROMFS	:=	romfs
 
-APP_TITLE := RipJKForwader
+APP_TITLE := RipJKAnime
 APP_AUTHOR := AngelXex
-APP_VERSION := 0.2 (forwarder)
+APP_VERSION := (forwarder)
 APP_TITLEID := 05B9DB505ABBE000
 
 #---------------------------------------------------------------------------------
