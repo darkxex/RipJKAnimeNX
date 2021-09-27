@@ -83,12 +83,9 @@ int AnimeLoader(void* data){
 			if (AppletMode) quit=true;
 			if(quit) return 0;
 		}
-
-		#ifdef ISDEBUG
-		steep++;
-		#include "Debug.h"
-		#endif
-
+		
+		
+		if (!AppletMode) CheckUpdates();
 		steep++;
 		if(!reloading) {
 			//Download All not existing images
@@ -130,7 +127,6 @@ int AnimeLoader(void* data){
 			if (BD["arrays"]["chapter"]["link"].empty() || BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].empty()) {
 				BD["TimeStamp"] = std::to_string(TimeNow());
 				std::cout << "New TimeStamp: " << BD["TimeStamp"] << std::endl;
-				Frames=1;
 
 				//merge vectors
 				if (!BD["arrays"]["chapter"]["images"].empty() && !BD["arrays"]["chapter"]["link"].empty())
@@ -148,6 +144,7 @@ int AnimeLoader(void* data){
 					if (ChapImag.size() > 61) {ChapImag.erase(ChapImag.begin()+60,ChapImag.end());}
 
 				}
+				Frames=1;
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 				BD["arrays"]["chapter"]["images"]=ChapImag;
 			}

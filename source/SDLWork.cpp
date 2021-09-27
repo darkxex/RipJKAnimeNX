@@ -91,7 +91,7 @@ void SDLB::intA(){
 				if (isFileExist(rootdirectory+"wada.ogg")) {
 					gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
 				} else {
-					gMusic = Mix_LoadMUS("romfs:/wada.ogg");
+					gMusic = Mix_LoadMUS("romfs:/audio/wada.ogg");
 				}
 
 				if (gMusic == NULL)
@@ -109,20 +109,20 @@ void SDLB::intA(){
 		}
 	}
 
-	B_O_F = TTF_OpenFont("romfs:/AF.ttf", 19);
-	digifont2 = TTF_OpenFont("romfs:/AF.ttf", 35);
-	Arista = TTF_OpenFont("romfs:/Arista.ttf", 27);
+	B_O_F = TTF_OpenFont("romfs:/fonts/AF.ttf", 19);
+	digifont2 = TTF_OpenFont("romfs:/fonts/AF.ttf", 35);
+	Arista = TTF_OpenFont("romfs:/fonts/Arista.ttf", 27);
 
-	//B_O_F = TTF_OpenFont("romfs:/Comic.ttf", 19);
-	gFont = TTF_OpenFont("romfs:/Comic.ttf", 16);
-	gFont2 = TTF_OpenFont("romfs:/Arista.ttf", 150);
-	gFont3 = TTF_OpenFont("romfs:/Arista.ttf", 40);
-	gFont4 = TTF_OpenFont("romfs:/Arista.ttf", 30);
-	gFont5 = TTF_OpenFont("romfs:/Arista.ttf", 20);
-	gFont6 = TTF_OpenFont("romfs:/Arista.ttf", 50);
-	gFontcapit = TTF_OpenFont("romfs:/Arista.ttf", 100);
-	digifont = TTF_OpenFont("romfs:/digifont.otf", 16);
-	digifontC = TTF_OpenFont("romfs:/digifont.otf", 9);
+	//B_O_F = TTF_OpenFont("romfs:/fonts/Comic.ttf", 19);
+	gFont = TTF_OpenFont("romfs:/fonts/Comic.ttf", 16);
+	gFont2 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 150);
+	gFont3 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 40);
+	gFont4 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 30);
+	gFont5 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 20);
+	gFont6 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 50);
+	gFontcapit = TTF_OpenFont("romfs:/fonts/Arista.ttf", 100);
+	digifont = TTF_OpenFont("romfs:/fonts/digifont.otf", 16);
+	digifontC = TTF_OpenFont("romfs:/fonts/digifont.otf", 9);
 
 }
 void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
@@ -139,7 +139,7 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
 		KeyImage+="-"+std::to_string(W)+"x"+std::to_string(H);
-		path = "romfs:/nop.png";
+		path = "romfs:/img/nop.png";
 	}
 
 	if ( MapT.find(KeyImage) == MapT.end()) {
@@ -177,7 +177,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
 		KeyImage+="-"+std::to_string(WS);
-		path = "romfs:/nop.png";
+		path = "romfs:/img/nop.png";
 	}
 
 	int sizeportraitx = 300;
@@ -209,13 +209,13 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 			if (numhe.length() > 0) {
 				replace(Text, numhe, "");
 				replace(numhe, " #", ""); replace(numhe, "#", "");
-				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", 11);
+				TTF_Font* customFont = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
 				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
 			}
 
 			int kinsize =11;
 			if(!selected) {if (WS < 115) {kinsize =7; Text=Text.substr(0,20);} }//
-			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
+			TTF_Font* customFont = TTF_OpenFont("romfs:/fonts/digifont.otf", kinsize);
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3, WS + 6, HS + 6 + MapT[KeyText].getHeight()+8}, 0, 0, blue, 200);
@@ -244,7 +244,7 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	if (!isFileExist(path)) {
 		KeyImage="SuperPro.jpg";
 		KeyImage+="-"+std::to_string(WS);
-		path = "romfs:/SuperPro.jpg";
+		path = "romfs:/img/SuperPro.jpg";
 	}
 	int sizeportraitx = 300;
 	int sizeportraity =424;
@@ -262,12 +262,12 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 			if (numhe.length() > 0) {
 				replace(Text, numhe, "");
 				replace(numhe, " #", ""); replace(numhe, "#", "");
-				TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", 11);
+				TTF_Font* customFont = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
 				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
 			}
 			int kinsize =11;
 			if (WS < 115) {kinsize =10; Text=Text.substr(0,16);}//
-			TTF_Font* customFont = TTF_OpenFont("romfs:/digifont.otf", kinsize);
+			TTF_Font* customFont = TTF_OpenFont("romfs:/fonts/digifont.otf", kinsize);
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
 	}

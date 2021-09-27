@@ -11,6 +11,7 @@
 #include "utils.hpp"
 #include "applet.hpp"
 #include "SDLWork.hpp"
+#include "Networking.hpp"
 #include "NSP/sdInstall.hpp"
 
 extern AccountUid uid;
@@ -48,6 +49,16 @@ std::string FormatHex128(AccountUid Number){
 	strm << std::hex << std::uppercase;
 	for(u32 i = 0; i < 16; i++) strm << (u32)ptr[i];
 	return strm.str();
+}
+
+std::string string_to_hex(const std::string& in) {
+    std::stringstream ss;
+
+    ss << std::hex << std::setfill('0');
+    for (size_t i = 0; in.length() > i; ++i) {
+        ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
+    }
+    return ss.str(); 
 }
 
 bool initUser(){
@@ -147,6 +158,9 @@ bool GetAppletMode(){
 		InstallNSP("romfs:/RipJKForwader[05B9DB505ABBE000][v0].nsp");
 		return true;
 	}
+#ifdef ISDEBUG
+	#include "Debug.h"
+#endif
 	initUser();
 	__nx_applet_exit_mode = 1;
 	return false;
@@ -175,118 +189,120 @@ AccountUid LaunchPlayerSelect() {
 }
 
 json DInfo(){
-	json info;
-	setInitialize();
-	setsysInitialize();
-	splInitialize();
-	Result ret = 0;
+	static json info;
+	if (info["App"].empty()){
+		setInitialize();
+		setsysInitialize();
+		splInitialize();
+		Result ret = 0;
 
-	//App Ver
-	info["App"]=GOD.AppVer;
+		//App Ver
+		info["App"]=GOD.AppVer;
 
-	//DeviceID
-	u64 id = 0;
-	splGetConfig(SplConfigItem_DeviceId, &id);
-	char DeviceID[0x9F];
-	sprintf(DeviceID, "%lX",id);
-	info["DeviceID"]=std::string(DeviceID);
+		//DeviceID
+		u64 id = 0;
+		splGetConfig(SplConfigItem_DeviceId, &id);
+		char DeviceID[0x9F];
+		sprintf(DeviceID, "%lX",id);
+		info["DeviceID"]=std::string(DeviceID);
 
-	//Get Device Firmware Vercion
-	SetSysFirmwareVersion ver;
-	if (R_FAILED(ret = setsysGetFirmwareVersion(&ver))) {
-		printf("setsysGetFirmwareVersion() Failied: 0x%x.\n\n", ret);
-	} else {
-		info["Firmware"]=std::string(ver.display_version);
-	}
-
-	//Device NickName
-	SetSysDeviceNickName nick;
-	if (R_FAILED(ret = setGetDeviceNickname(&nick))) {
-		printf("setGetDeviceNickname() Failied: 0x%x.\n\n", ret);
-	} else {
-		info["nickname"]=std::string(nick.nickname);
-	}
-
-	//Public Serial Number
-	SetSysSerialNumber serialNX;
-	if (R_FAILED(ret = setsysGetSerialNumber(&serialNX))) {
-		printf("setsysGetSerialNumber() Failied: 0x%x.\n\n", ret);
-	} else {
-		if(strlen(serialNX.number) == 0) {
-			//info["Incognito"]="true";
-			sprintf(serialNX.number, "XAW00000000000");
+		//Get Device Firmware Vercion
+		SetSysFirmwareVersion ver;
+		if (R_FAILED(ret = setsysGetFirmwareVersion(&ver))) {
+			printf("setsysGetFirmwareVersion() Failied: 0x%x.\n\n", ret);
 		} else {
-			if (string(serialNX.number) != "XAW00000000000" && string(serialNX.number) != "XAW00000000001") {
-				//info["Blank_prod"]="true";
+			info["Firmware"]=std::string(ver.display_version);
+		}
+
+		//Device NickName
+		SetSysDeviceNickName nick;
+		if (R_FAILED(ret = setGetDeviceNickname(&nick))) {
+			printf("setGetDeviceNickname() Failied: 0x%x.\n\n", ret);
+		} else {
+			info["nickname"]=std::string(nick.nickname);
+		}
+
+		//Public Serial Number
+		SetSysSerialNumber serialNX;
+		if (R_FAILED(ret = setsysGetSerialNumber(&serialNX))) {
+			printf("setsysGetSerialNumber() Failied: 0x%x.\n\n", ret);
+		} else {
+			if(strlen(serialNX.number) == 0) {
+				//info["Incognito"]="true";
+				sprintf(serialNX.number, "XAW00000000000");
+			} else {
+				if (string(serialNX.number) != "XAW00000000000" && string(serialNX.number) != "XAW00000000001") {
+					//info["Blank_prod"]="true";
+				}
+				//info["Incognito"]="false";
 			}
-			//info["Incognito"]="false";
+			info["Serial"]=std::string(serialNX.number);
 		}
-		info["Serial"]=std::string(serialNX.number);
-	}
 
-	//Model of switch board
-	SetSysProductModel modelo;
-	if (R_FAILED(ret = setsysGetProductModel(&modelo))) {
-		printf("setsysGetProductModel() Failied: 0x%x.\n\n", ret);
-	} else {
-		string a="Unknow Model";
-		switch(modelo) {
-		case SetSysProductModel_Invalid:
-			a="Invalid Model.";
-			break;
-		case SetSysProductModel_Nx:
-			a="Erista Model.";
-			break;
-		case SetSysProductModel_Copper:
-			a="Erista Simulation Model.";
-			break;
-		case SetSysProductModel_Iowa:
-			a="Mariko Model.";
-			break;
-		case SetSysProductModel_Hoag:
-			a="Mariko Lite Model.";
-			break;
-		case SetSysProductModel_Calcio:
-			a="Mariko Simulation Model.";
-			break;
-		case SetSysProductModel_Aula:
-			a="Mariko Pro Model(?) ";
-			break;
+		//Model of switch board
+		SetSysProductModel modelo;
+		if (R_FAILED(ret = setsysGetProductModel(&modelo))) {
+			printf("setsysGetProductModel() Failied: 0x%x.\n\n", ret);
+		} else {
+			string a="Unknow Model";
+			switch(modelo) {
+			case SetSysProductModel_Invalid:
+				a="Invalid Model.";
+				break;
+			case SetSysProductModel_Nx:
+				a="Erista Model.";
+				break;
+			case SetSysProductModel_Copper:
+				a="Erista Simulation Model.";
+				break;
+			case SetSysProductModel_Iowa:
+				a="Mariko Model.";
+				break;
+			case SetSysProductModel_Hoag:
+				a="Mariko Lite Model.";
+				break;
+			case SetSysProductModel_Calcio:
+				a="Mariko Simulation Model.";
+				break;
+			case SetSysProductModel_Aula:
+				a="Mariko Pro Model(?) ";
+				break;
+			}
+			info["Model"]=a;
 		}
-		info["Model"]=a;
-	}
 
-	//Region of console
-	SetRegion region;
-	if (R_FAILED(ret = setGetRegionCode(&region))) {
-		printf("setGetRegionCode() Failied: 0x%x.\n\n", ret);
-	} else {
-		string a="Wut?";
-		switch(region) {
-		case SetRegion_JPN:
-			a="Japan.";
-			break;
-		case SetRegion_USA:
-			a="The Americas.";
-			break;
-		case SetRegion_EUR:
-			a="Europe.";
-			break;
-		case SetRegion_AUS:
-			a="Australia/New Zealand.";
-			break;
-		case SetRegion_HTK:
-			a="Hong Kong/Taiwan/Korea.";
-			break;
-		case SetRegion_CHN:
-			a="China.";
-			break;
+		//Region of console
+		SetRegion region;
+		if (R_FAILED(ret = setGetRegionCode(&region))) {
+			printf("setGetRegionCode() Failied: 0x%x.\n\n", ret);
+		} else {
+			string a="Wut?";
+			switch(region) {
+			case SetRegion_JPN:
+				a="Japan.";
+				break;
+			case SetRegion_USA:
+				a="The Americas.";
+				break;
+			case SetRegion_EUR:
+				a="Europe.";
+				break;
+			case SetRegion_AUS:
+				a="Australia/New Zealand.";
+				break;
+			case SetRegion_HTK:
+				a="Hong Kong/Taiwan/Korea.";
+				break;
+			case SetRegion_CHN:
+				a="China.";
+				break;
+			}
+			info["Region"]=a;
 		}
-		info["Region"]=a;
-	}
 
-	setsysExit();
-	std::cout << std::setw(4) << info << std::endl;
+		setsysExit();
+		std::cout << std::setw(4) << info << std::endl;
+	}
 	return info;
 }
 

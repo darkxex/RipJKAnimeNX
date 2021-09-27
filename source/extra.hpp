@@ -169,7 +169,7 @@ void LoadImages(){
 	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
 	CLEAR.loadFromFile("romfs:/buttons/clear.png");
 	SCREEN.loadFromFile("romfs:/buttons/screen.png");
-	NOP.loadFromFile("romfs:/nop.png");
+	NOP.loadFromFile("romfs:/img/nop.png");
 
 	FAV.loadFromFileCustom("romfs:/buttons/FAV.png",43,43);
 	NFAV.loadFromFileCustom("romfs:/buttons/NFAV.png",43,43);

@@ -14,7 +14,7 @@
 #include "Networking.hpp"
 #include "utils.hpp"
 #include <ctime>
-
+#include "applet.hpp"
 
 extern int porcendown;
 extern int sizeestimated;
@@ -133,8 +133,7 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,
 	return 0;
 }
 
-std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
-{
+std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect){
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 	std::string Buffer;
@@ -174,9 +173,7 @@ std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect)
 	//std::cout << "Buffer:  " << Buffer << std::endl;
 	return Buffer;
 }
-
-bool downloadfile(std::string enlace, std::string directorydown,bool progress)
-{
+bool downloadfile(std::string enlace, std::string directorydown,bool progress){
 	if(!HasConnection()) {return false;}
 	CURL *curl;
 	CURLcode res = CURLE_OK;
@@ -228,9 +225,7 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress)
 	}
 	return allok;
 }
-
-bool HasConnection()
-{
+bool HasConnection(){
 	NifmInternetConnectionType connectionType;
 	NifmInternetConnectionStatus connectionStatus;
 	u32 strg = 0;
@@ -269,4 +264,68 @@ bool CheckImgNet(std::string image,std::string url){
 		return downloadfile(tmp,image,false);
 	}
 	return true;
+}
+bool CheckUpdates(){
+	try{
+		string Ver =  DInfo()["App"];
+		string repo = "StarDustCFW/RipJKNX";
+		//string repo = "darkxex/RipJKNX";//original repo
+		
+		std::string APIJ = gethtml("https://api.github.com/repos/"+repo+"/releases");
+		if(json::accept(APIJ))
+		{
+			//Parse and use the JSON data
+			json base = json::parse(APIJ);
+			//main vars
+			if (!base[0]["tag_name"].empty()){
+				
+				//New ver
+				string New = base[0]["tag_name"];
+
+				//Check for new updates
+				if (Ver != New){
+					//get assets
+					json asset = base[0]["assets"];
+					if (asset.size() <= 0){
+							std::cout  << " NO assets " <<std::endl;
+							return false;
+					}
+
+					//check if URl is ok
+					string Nurl= asset[0]["browser_download_url"];
+					if (Nurl.find(".nsp") == string::npos) {
+						std::cout  << " NO " << Nurl <<std::endl;
+						for (u64 i=0; i<asset.size(); i++ ){
+							Nurl= asset[i]["browser_download_url"];
+							if (Nurl.find(".nsp") != string::npos) {
+								break;
+							}
+						}
+						if (Nurl.find(".nsp") == string::npos) {
+							std::cout  << "# NO " << Nurl <<std::endl;
+							return false;
+
+						}
+					}
+					std::cout  << " OK " << Nurl <<std::endl;
+					
+					
+					
+					std::cout << Ver << " -> " << New <<std::endl;
+					string fileU=rootdirectory+"update.nsp";
+					//Download New Update
+					if (downloadfile(Nurl, fileU,false))
+					{
+						std::cout << Ver << " --> " << New <<std::endl;
+						//Install New Update nsp
+						if (InstallNSP(fileU)){
+							std::cout << Ver << " ---> " << New <<std::endl;
+							return true;
+						}
+					}
+				}
+			}
+		}
+	} catch(...) {std::cout << "# Update Error catch" << std::endl;}
+	return false;
 }
