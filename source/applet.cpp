@@ -40,7 +40,7 @@ bool LoadNRO(std::string path){
 }
 bool InstallNSP(std::string nsp){
 	std::vector<std::filesystem::path> ourTitleList={std::filesystem::path(nsp)}; 
-	return nspInstStuff::installNspFromFile(ourTitleList, 1);
+	return nspInstStuff::installNspFromFile(ourTitleList, 0);
 }
 
 std::string FormatHex128(AccountUid Number){
