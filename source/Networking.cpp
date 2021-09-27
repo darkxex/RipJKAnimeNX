@@ -265,7 +265,7 @@ bool CheckImgNet(std::string image,std::string url){
 	}
 	return true;
 }
-bool CheckUpdates(){
+bool CheckUpdates(bool force){
 	try{
 		string Ver =  DInfo()["App"];
 		string repo = "StarDustCFW/RipJKNX";
@@ -283,7 +283,7 @@ bool CheckUpdates(){
 				string New = base[0]["tag_name"];
 
 				//Check for new updates
-				if (Ver != New){
+				if (Ver != New || force){
 					//get assets
 					json asset = base[0]["assets"];
 					if (asset.size() <= 0){
