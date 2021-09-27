@@ -94,13 +94,13 @@ int main(int argc, char **argv)
 	if (isFileExist(rootdirectory+"texture.png")) {
 		Farest.loadFromFile(rootdirectory+"texture.png");
 	} else {
-		Farest.loadFromFile("romfs:/texture.png");
+		Farest.loadFromFile("romfs:/img/texture.png");
 	}
 
 	if (isFileExist(rootdirectory+"heart.png")) {
 		Heart.loadFromFile(rootdirectory+"heart.png");
 	} else {
-		Heart.loadFromFile("romfs:/heart.png");
+		Heart.loadFromFile("romfs:/img/heart.png");
 	}
 
 	gTextTexture.mark=false;
@@ -1543,10 +1543,10 @@ int main(int argc, char **argv)
 	if (AppletMode) {
 		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
 	}
-	if (NULL == capithread) {printf("capithread Not in use");} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
-	if (NULL == downloadthread) {printf("downloadthread Not in use");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
-	if (NULL == searchthread) {printf("searchthread Not in use");} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
-	if (NULL == Loaderthread) {printf("Loaderthread Not in use");}else {printf("Loaderthread in use: %s\n", SDL_GetError()); SDL_WaitThread(Loaderthread, NULL);}
+	if (NULL == capithread) {printf("capithread Not in use\n");} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
+	if (NULL == downloadthread) {printf("downloadthread Not in use\n");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
+	if (NULL == searchthread) {printf("searchthread Not in use\n");} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
+	if (NULL == Loaderthread) {printf("Loaderthread Not in use\n");}else {printf("Loaderthread in use: %s\n", SDL_GetError()); SDL_WaitThread(Loaderthread, NULL);}
 
 
 
