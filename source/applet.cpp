@@ -192,9 +192,13 @@ AccountUid LaunchPlayerSelect() {
 json DInfo(){
 	static json info;
 	if (info["App"].empty()){
+		//INIT
 		setInitialize();
 		setsysInitialize();
 		splInitialize();
+		pminfoInitialize();
+		pmdmntInitialize();
+
 		Result ret = 0;
 
 		//App Ver
@@ -214,10 +218,7 @@ json DInfo(){
 		}
 
 		//Running APP
-		pminfoInitialize();
-		pmdmntInitialize();
-		u64 m_pid = 0;
-		u64 m_tid = 0;
+		u64 m_pid = 0,m_tid = 0;
 		pmdmntGetApplicationProcessId(&m_pid);
 		pminfoGetProgramId(&m_tid, m_pid);
 		char TID[0x9F];

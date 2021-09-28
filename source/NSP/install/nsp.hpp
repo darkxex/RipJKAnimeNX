@@ -21,14 +21,17 @@ SOFTWARE.
 */
 
 #pragma once
+#include <switch.h>
+#include <string>
+#include "NSP/install/install.hpp"
 
 #include <functional>
 #include <vector>
 
 #include <switch/types.h>
 #include "NSP/install/pfs0.hpp"
+
 #include "NSP/nx/ncm.hpp"
-#include <switch/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/errno.h>
@@ -64,4 +67,29 @@ namespace tin::install::nsp
 
             virtual const char* GetFileEntryName(const PFS0FileEntry* fileEntry);
     };
+    class SDMCNSP : public NSP
+    {
+    public:
+        SDMCNSP(std::string path);
+        ~SDMCNSP();
+
+        virtual void StreamToPlaceholder(std::shared_ptr<nx::ncm::ContentStorage>& contentStorage, NcmContentId ncaId) override;
+        virtual void BufferData(void* buf, off_t offset, size_t size) override;
+    private:
+        FILE* m_nspFile;
+    };
+    class NSPInstall : public Install
+    {
+        private:
+            const std::shared_ptr<NSP> m_NSP;
+
+        protected:
+            std::vector<std::tuple<nx::ncm::ContentMeta, NcmContentInfo>> ReadCNMT() override;
+            void InstallNCA(const NcmContentId& ncaId) override;
+            void InstallTicketCert() override;
+
+        public:
+            NSPInstall(NcmStorageId destStorageId, bool ignoreReqFirmVersion, const std::shared_ptr<NSP>& remoteNSP);
+    };
+
 }

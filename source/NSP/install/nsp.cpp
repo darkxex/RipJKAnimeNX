@@ -27,6 +27,15 @@ SOFTWARE.
 #include "NSP/extra/title_util.hpp"
 #include "NSP/extra/error.hpp"
 #include "NSP/extra/debug.h"
+#include "NSP/nx/nca_writer.h"
+
+#include "NSP/install/nca.hpp"
+#include "NSP/nx/fs.hpp"
+#include "NSP/nx/ncm.hpp"
+#include "NSP/extra/crypto.hpp"
+#include "NSP/extra/file_util.hpp"
+#include "NSP/nx/ipc/es.h"
+
 
 namespace tin::install::nsp
 {
@@ -140,4 +149,198 @@ namespace tin::install::nsp
 
         return m_headerBytes.size();
     }
+
+	{//SDMC class	
+		SDMCNSP::SDMCNSP(std::string path)
+		{
+			m_nspFile = fopen((path).c_str(), "rb");
+			if (!m_nspFile)
+				THROW_FORMAT("can't open file at %s\n", path.c_str());
+		}
+
+		SDMCNSP::~SDMCNSP()
+		{
+			fclose(m_nspFile);
+		}
+
+		void SDMCNSP::StreamToPlaceholder(std::shared_ptr<nx::ncm::ContentStorage>& contentStorage, NcmContentId ncaId)
+		{
+			const PFS0FileEntry* fileEntry = this->GetFileEntryByNcaId(ncaId);
+			std::string ncaFileName = this->GetFileEntryName(fileEntry);
+
+			LOG_DEBUG("Retrieving %s\n", ncaFileName.c_str());
+			size_t ncaSize = fileEntry->fileSize;
+
+			NcaWriter writer(ncaId, contentStorage);
+
+			float progress;
+
+			u64 fileStart = GetDataOffset() + fileEntry->dataOffset;
+			u64 fileOff = 0;
+			size_t readSize = 0x400000; // 4MB buff
+			auto readBuffer = std::make_unique<u8[]>(readSize);
+
+			try
+			{
+			   // inst::ui::instPage::setInstInfoText("inst.info_page.top_info0"_lang + ncaFileName + "...");
+				//inst::ui::instPage::setInstBarPerc(0);
+				while (fileOff < ncaSize)
+				{
+					progress = (float) fileOff / (float) ncaSize;
+
+					if (fileOff % (0x400000 * 3) == 0) {
+						LOG_DEBUG("> Progress: %lu/%lu MB (%d%s)\r", (fileOff / 1000000), (ncaSize / 1000000), (int)(progress * 100.0), "%");
+					   // inst::ui::instPage::setInstBarPerc((double)(progress * 100.0));
+					}
+
+					if (fileOff + readSize >= ncaSize) readSize = ncaSize - fileOff;
+
+					this->BufferData(readBuffer.get(), fileOff + fileStart, readSize);
+					writer.write(readBuffer.get(), readSize);
+
+					fileOff += readSize;
+				}
+				//inst::ui::instPage::setInstBarPerc(100);
+			}
+			catch (std::exception& e)
+			{
+				LOG_DEBUG("something went wrong: %s\n", e.what());
+			}
+
+			writer.close();
+		}
+
+		void SDMCNSP::BufferData(void* buf, off_t offset, size_t size)
+		{
+			fseeko(m_nspFile, offset, SEEK_SET);
+			fread(buf, 1, size, m_nspFile);
+		}		
+	}
+	{//class NSPInstal
+		NSPInstall::NSPInstall(NcmStorageId destStorageId, bool ignoreReqFirmVersion, const std::shared_ptr<NSP>& remoteNSP) :
+			Install(destStorageId, ignoreReqFirmVersion), m_NSP(remoteNSP)
+		{
+			m_NSP->RetrieveHeader();
+		}
+
+		std::vector<std::tuple<nx::ncm::ContentMeta, NcmContentInfo>> NSPInstall::ReadCNMT()
+		{
+			std::vector<std::tuple<nx::ncm::ContentMeta, NcmContentInfo>> CNMTList;
+
+			for (const PFS0FileEntry* fileEntry : m_NSP->GetFileEntriesByExtension("cnmt.nca")) {
+				std::string cnmtNcaName(m_NSP->GetFileEntryName(fileEntry));
+				NcmContentId cnmtContentId = tin::util::GetNcaIdFromString(cnmtNcaName);
+				size_t cnmtNcaSize = fileEntry->fileSize;
+
+				nx::ncm::ContentStorage contentStorage(m_destStorageId);
+
+				LOG_DEBUG("CNMT Name: %s\n", cnmtNcaName.c_str());
+
+				// We install the cnmt nca early to read from it later
+				this->InstallNCA(cnmtContentId);
+				std::string cnmtNCAFullPath = contentStorage.GetPath(cnmtContentId);
+
+				NcmContentInfo cnmtContentInfo;
+				cnmtContentInfo.content_id = cnmtContentId;
+				*(u64*)&cnmtContentInfo.size = cnmtNcaSize & 0xFFFFFFFFFFFF;
+				cnmtContentInfo.content_type = NcmContentType_Meta;
+
+				CNMTList.push_back( { tin::util::GetContentMetaFromNCA(cnmtNCAFullPath), cnmtContentInfo } );
+			}
+
+			return CNMTList;
+		}
+
+		void NSPInstall::InstallNCA(const NcmContentId& ncaId)
+		{
+			const PFS0FileEntry* fileEntry = m_NSP->GetFileEntryByNcaId(ncaId);
+			std::string ncaFileName = m_NSP->GetFileEntryName(fileEntry);
+
+			#ifdef NXLINK_DEBUG
+			size_t ncaSize = fileEntry->fileSize;
+			LOG_DEBUG("Installing %s to storage Id %u\n", ncaFileName.c_str(), m_destStorageId);
+			#endif
+
+			std::shared_ptr<nx::ncm::ContentStorage> contentStorage(new nx::ncm::ContentStorage(m_destStorageId));
+
+			// Attempt to delete any leftover placeholders
+			try {
+				contentStorage->DeletePlaceholder(*(NcmPlaceHolderId*)&ncaId);
+			}
+			catch (...) {}
+
+			LOG_DEBUG("Size: 0x%lx\n", ncaSize);
+	/*
+			if (false && !m_declinedValidation)
+			{
+				tin::install::NcaHeader* header = new NcaHeader;
+				m_NSP->BufferData(header, m_NSP->GetDataOffset() + fileEntry->dataOffset, sizeof(tin::install::NcaHeader));
+
+				Crypto::AesXtr crypto(Crypto::Keys().headerKey, false);
+				crypto.decrypt(header, header, sizeof(tin::install::NcaHeader), 0, 0x200);
+
+				if (header->magic != MAGIC_NCA3)
+					THROW_FORMAT("Invalid NCA magic");
+
+				if (!Crypto::rsa2048PssVerify(&header->magic, 0x200, header->fixed_key_sig, Crypto::NCAHeaderSignature))
+				{
+					m_declinedValidation = true;
+				}
+				delete header;
+			}
+	*/
+			m_NSP->StreamToPlaceholder(contentStorage, ncaId);
+
+			LOG_DEBUG("Registering placeholder...\n");
+
+			try
+			{
+				contentStorage->Register(*(NcmPlaceHolderId*)&ncaId, ncaId);
+			}
+			catch (...)
+			{
+				LOG_DEBUG(("Failed to register " + ncaFileName + ". It may already exist.\n").c_str());
+			}
+
+			try
+			{
+				contentStorage->DeletePlaceholder(*(NcmPlaceHolderId*)&ncaId);
+			}
+			catch (...) {}
+		}
+
+		void NSPInstall::InstallTicketCert()
+		{
+			// Read the tik files and put it into a buffer
+			std::vector<const PFS0FileEntry*> tikFileEntries = m_NSP->GetFileEntriesByExtension("tik");
+			std::vector<const PFS0FileEntry*> certFileEntries = m_NSP->GetFileEntriesByExtension("cert");
+
+			for (size_t i = 0; i < tikFileEntries.size(); i++)
+			{
+				if (tikFileEntries[i] == nullptr) {
+					LOG_DEBUG("Remote tik file is missing.\n");
+					THROW_FORMAT("Remote tik file is not present!");
+				}
+
+				u64 tikSize = tikFileEntries[i]->fileSize;
+				auto tikBuf = std::make_unique<u8[]>(tikSize);
+				LOG_DEBUG("> Reading tik\n");
+				m_NSP->BufferData(tikBuf.get(), m_NSP->GetDataOffset() + tikFileEntries[i]->dataOffset, tikSize);
+
+				if (certFileEntries[i] == nullptr)
+				{
+					LOG_DEBUG("Remote cert file is missing.\n");
+					THROW_FORMAT("Remote cert file is not present!");
+				}
+
+				u64 certSize = certFileEntries[i]->fileSize;
+				auto certBuf = std::make_unique<u8[]>(certSize);
+				LOG_DEBUG("> Reading cert\n");
+				m_NSP->BufferData(certBuf.get(), m_NSP->GetDataOffset() + certFileEntries[i]->dataOffset, certSize);
+
+				// Finally, let's actually import the ticket
+				ASSERT_OK(esImportTicket(tikBuf.get(), tikSize, certBuf.get(), certSize), "Failed to import ticket");
+			}
+		}
+	}
 }

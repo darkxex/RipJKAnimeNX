@@ -27,8 +27,7 @@ SOFTWARE.
 #include <thread>
 #include <memory>
 #include "NSP/sdInstall.hpp"
-#include "NSP/install/install_nsp.hpp"
-#include "NSP/install/sdmc_nsp.hpp"
+#include "NSP/install/nsp.hpp"
 #include "NSP/nx/fs.hpp"
 #include "NSP/extra/error.hpp"
 #include "NSP/extra/debug.h"
