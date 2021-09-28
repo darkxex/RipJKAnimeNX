@@ -31,8 +31,8 @@ include $(DEVKITPRO)/libnx/switch_rules
 #     - <libnx folder>/default_icon.jpg
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
-VERSION_MINOR := 2
-VERSION_MICRO := 9
+VERSION_MINOR := 3
+VERSION_MICRO := 0
 
 APP_TITLE	:=	RipJKAnime NX
 APP_AUTHOR	:=	AngelXex
@@ -64,10 +64,11 @@ CFLAGS	:=	-g -O3 -ffunction-sections \
 			`freetype-config --cflags` \
 			`sdl2-config --cflags`
 
-CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 -DTITLE='"$(APP_TITLE)"' -DVERSION='"$(APP_VERSION)"'
+CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 
+#CFLAGS	+=	-DTITLE='"$(APP_TITLE)"' -DVERSION='"$(APP_VERSION)"'
 
 ifneq ($(strip $(ISDEBUG)),)
-CFLAGS	+= -DISDEBUG -DNXLINK_DEBUG
+CFLAGS	+= -DISDEBUG
 endif
 #
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -fexceptions

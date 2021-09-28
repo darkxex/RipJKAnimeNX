@@ -78,7 +78,6 @@ int mWidth, mHeight, mX, mY, SelIns;
 
 class SDLB {
 public:
-std::string AppVer=VERSION;
 void intA();
 std::map<std::string,LTexture> MapT {};
 SDL_Renderer* gRenderer = NULL;
