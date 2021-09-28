@@ -28,9 +28,6 @@ extern std::string rootdirectory;
 
 //Grafics and logic
 void SDLB::intA(){
-	json base;
-	read_DB(base,"romfs:/NOR");
-	AppVer=base["V"];
 	//Start up SDL and create window
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
@@ -251,13 +248,20 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	int sizeportraitx = 300;
 	int sizeportraity =424;
 	//make the math
-
-	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-	if ( MapT.find(KeyImage) == MapT.end()) {
-		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
-	} else if (MapT[KeyImage].getHeight() < HS) {
+	bool needload = false;
+	
+	if ( MapT.find(KeyImage) == MapT.end() || (MapT[KeyImage].getHeight() < 10)) {
+		needload = true;
+	}
+	
+	static int HS=0;
+	if (needload){
+		HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
 		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
 	}
+
+	if (!render) {return;}
+	
 	if (Text.length()) {
 		if ( MapT.find(KeyText) == MapT.end() ) {
 			std::string numhe=scrapElement(Text, "#");
@@ -273,7 +277,6 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
 	}
-	if (!render) {return;}
 	if (Text.length()) {
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3, WS + 6, HS + 6 + MapT[KeyText].getHeight()+7}, 0, 0, 0, 200);
 		MapT[KeyText].render(X + 2, Y + 5+MapT[KeyImage].getHeight());
@@ -306,7 +309,8 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 }
 void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 	std::vector<std::string> vec = Jlinks["link"];
-	int JlinksSize=vec.size();
+	int AbsoluteSize=vec.size();
+	int JlinksSize=AbsoluteSize;
 	static int statte = GenState;
 	if (statte != GenState) {statte = GenState; outof=0;}
 	if(JlinksSize < 30) {outof=0;}
@@ -476,6 +480,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				HO = 470;
 				offset3++;
 			}
+			if ((AbsoluteSize < Frames)&&(x > 30)) break;
 			if (x == selectindex) {
 				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,issel,BT_A,true);
 			} else {

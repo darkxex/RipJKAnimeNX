@@ -197,7 +197,9 @@ json DInfo(){
 		Result ret = 0;
 
 		//App Ver
-		info["App"]=GOD.AppVer;
+		json base;
+		read_DB(base,"romfs:/NOR");
+		info["App"]=base["V"];
 
 		//DeviceID
 		u64 id = 0;
