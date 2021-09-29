@@ -169,7 +169,7 @@ endif
 all: $(BUILD)
 
 $(BUILD):
-	@echo '{"V":"$(APP_VERSION)"}'>romfs/NOR
+	@echo '{"V":"$(APP_VERSION)"}'>romfs/V
 	@[ -d $@ ] || mkdir -p $@
 	@[ -d $(CURDIR)/$(OUTDIR) ] || mkdir -p $(CURDIR)/$(OUTDIR)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile

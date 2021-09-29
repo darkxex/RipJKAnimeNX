@@ -203,7 +203,7 @@ json DInfo(){
 
 		//App Ver
 		json base;
-		read_DB(base,"romfs:/NOR");
+		read_DB(base,"romfs:/V");
 		info["App"]=base["V"];
 
 		//DeviceID
