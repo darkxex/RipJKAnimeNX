@@ -150,7 +150,7 @@ namespace tin::install::nsp
         return m_headerBytes.size();
     }
 
-	//SDMC class	
+	{//SDMC class	
 		SDMCNSP::SDMCNSP(std::string path)
 		{
 			m_nspFile = fopen((path).c_str(), "rb");
@@ -215,8 +215,8 @@ namespace tin::install::nsp
 			fseeko(m_nspFile, offset, SEEK_SET);
 			fread(buf, 1, size, m_nspFile);
 		}		
-	
-	//class NSPInstal
+	}
+	{//class NSPInstal
 		NSPInstall::NSPInstall(NcmStorageId destStorageId, bool ignoreReqFirmVersion, const std::shared_ptr<NSP>& remoteNSP) :
 			Install(destStorageId, ignoreReqFirmVersion), m_NSP(remoteNSP)
 		{
@@ -342,5 +342,5 @@ namespace tin::install::nsp
 				ASSERT_OK(esImportTicket(tikBuf.get(), tikSize, certBuf.get(), certSize), "Failed to import ticket");
 			}
 		}
-	
+	}
 }
