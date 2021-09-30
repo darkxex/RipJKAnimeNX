@@ -12,7 +12,7 @@
 #include "applet.hpp"
 #include "SDLWork.hpp"
 #include "Networking.hpp"
-#include "sdInstall.hpp"
+#include "nspmini.hpp"
 
 extern AccountUid uid;
 extern std::string AccountID;
