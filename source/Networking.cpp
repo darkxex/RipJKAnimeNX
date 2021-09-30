@@ -203,9 +203,8 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress){
 
 			res = curl_easy_perform(curl);
 			if ((res == CURLE_OK)) {
-				int thism = directorydown.find(".mp4");
-				printf("#size:%ld found:%ld %d in:%s\n",chunk.size,directorydown.find(".mp4"),thism,directorydown.c_str());
-				if (chunk.size < 1000000  && thism != -1) {
+				printf("#size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
+				if (chunk.size < 1000000  && directorydown.find(".mp4") != string::npos) {
 					printf("####size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
 					allok=false;//
 				} else {
@@ -327,17 +326,36 @@ bool CheckUpdates(bool force){
 					
 					
 					
-					std::cout << Ver << " -> " << New <<std::endl;
 					string fileU=rootdirectory+"update.nsp";
-					//Download New Update
-					if (downloadfile(Nurl, fileU,false))
-					{
-						std::cout << Ver << " --> " << New <<std::endl;
-						//Install New Update nsp
-						if (InstallNSP(fileU)){
-							std::cout << Ver << " ---> " << New <<std::endl;
-							return true;
+					
+					//Have the update?
+					json UP;
+					bool needDown = true;
+					if (read_DB(UP,fileU+".json")){
+						if(UP["update"] == New){
+							needDown = false;
 						}
+					}
+					std::cout << Ver << " -> " << New <<std::endl;
+					
+					if (needDown){
+					//Download New Update
+						if (!downloadfile(Nurl, fileU,false))
+						{
+							std::cout << "Download error" << New <<std::endl; 
+							return false;
+						} else {
+							//Store update data
+							UP["update"]=New;
+							write_DB(UP,fileU+".json");
+							std::cout << Ver << " --> " << New <<std::endl;
+						}
+					}
+						
+					//Install New Update nsp
+					if (InstallNSP(fileU)){
+						std::cout << Ver << " ---> " << New <<std::endl;
+						return true;
 					}
 				}
 			}

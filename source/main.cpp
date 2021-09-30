@@ -1057,8 +1057,8 @@ int main(int argc, char **argv)
 							Ticker=0;
 						}
 
-						if (porcentajebuffer > 0) {
-							gTextTexture.loadFromRenderedText(GOD.digifontC, std::to_string(porcentajebufferAll - porcentajebuffer), {50,50,50});
+						if (part > 0) {
+							gTextTexture.loadFromRenderedText(GOD.digifontC, std::to_string(ofall - part), {50,50,50});
 							gTextTexture.render(27 - (gTextTexture.getWidth()/2), 30);
 						}
 						REC.render(5, 15,NULL,angle);
@@ -1073,7 +1073,7 @@ int main(int argc, char **argv)
 					}
 
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.digifontC, ("(Ver "+GOD.AppVer+") #KASTXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.digifontC, ("(Ver "+DInfo()["App"].get<string>()+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 3, 672);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Recientes", {100,0,0});
@@ -1086,8 +1086,8 @@ int main(int argc, char **argv)
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 							//Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
 						}
-						if (porcentajebuffer > 0) {
-							gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(porcentajebuffer)+"/"+std::to_string(porcentajebufferAll)+")", {0,100,0});
+						if (part > 0) {
+							gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(part)+"/"+std::to_string(ofall)+")", {0,100,0});
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 						}
 					}
@@ -1113,8 +1113,8 @@ int main(int argc, char **argv)
 								gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
 								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
 							}
-							if (porcentajebuffer > 0) {
-								gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(porcentajebuffer)+"/"+std::to_string(porcentajebufferAll)+")", {0,100,0});
+							if (part > 0) {
+								gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(part)+"/"+std::to_string(ofall)+")", {0,100,0});
 								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15,  70);
 							}
 							if (porcentajebufferF > 0) {

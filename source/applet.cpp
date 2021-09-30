@@ -12,7 +12,7 @@
 #include "applet.hpp"
 #include "SDLWork.hpp"
 #include "Networking.hpp"
-#include "NSP/sdInstall.hpp"
+#include "nspmini.hpp"
 
 extern AccountUid uid;
 extern std::string AccountID;
@@ -39,8 +39,8 @@ bool LoadNRO(std::string path){
 	return false;
 }
 bool InstallNSP(std::string nsp){
-	std::vector<std::filesystem::path> ourTitleList={std::filesystem::path(nsp)}; 
-	return nspInstStuff::installNspFromFile(ourTitleList, 0);
+	std::cout << "Install: " << nsp << std::endl;
+	return mini::InstallSD(nsp);
 }
 
 std::string FormatHex128(AccountUid Number){
@@ -191,20 +191,39 @@ AccountUid LaunchPlayerSelect() {
 json DInfo(){
 	static json info;
 	if (info["App"].empty()){
+		//INIT
 		setInitialize();
 		setsysInitialize();
 		splInitialize();
+		pminfoInitialize();
+		pmdmntInitialize();
+
 		Result ret = 0;
 
 		//App Ver
-		info["App"]=GOD.AppVer;
+		json base;
+		read_DB(base,"romfs:/V");
+		info["App"]=base["V"];
 
 		//DeviceID
 		u64 id = 0;
-		splGetConfig(SplConfigItem_DeviceId, &id);
-		char DeviceID[0x9F];
-		sprintf(DeviceID, "%lX",id);
-		info["DeviceID"]=std::string(DeviceID);
+		if (R_FAILED(ret = splGetConfig(SplConfigItem_DeviceId, &id))) {
+			printf("splGetConfig(SplConfigItem_DeviceId,) Failied: 0x%x.\n\n", ret);
+		} else {
+			char DeviceID[0x9F];
+			sprintf(DeviceID, "%lX",id);
+			info["DeviceID"]=std::string(DeviceID);
+
+		}
+
+		//Running APP
+		u64 m_pid = 0,m_tid = 0;
+		pmdmntGetApplicationProcessId(&m_pid);
+		pminfoGetProgramId(&m_tid, m_pid);
+		char TID[0x9F];
+		sprintf(TID, "%016lX",m_tid);
+		info["TID"]=std::string(TID);
+		info["PID"]=m_pid;
 
 		//Get Device Firmware Vercion
 		SetSysFirmwareVersion ver;
@@ -247,22 +266,22 @@ json DInfo(){
 			string a="Unknow Model";
 			switch(modelo) {
 			case SetSysProductModel_Invalid:
-				a="Invalid Model.";
+				a="Invalid Model";
 				break;
 			case SetSysProductModel_Nx:
-				a="Erista Model.";
+				a="Erista Model";
 				break;
 			case SetSysProductModel_Copper:
-				a="Erista Simulation Model.";
+				a="Erista Simulation Model";
 				break;
 			case SetSysProductModel_Iowa:
-				a="Mariko Model.";
+				a="Mariko Model";
 				break;
 			case SetSysProductModel_Hoag:
-				a="Mariko Lite Model.";
+				a="Mariko Lite Model";
 				break;
 			case SetSysProductModel_Calcio:
-				a="Mariko Simulation Model.";
+				a="Mariko Simulation Model";
 				break;
 			case SetSysProductModel_Aula:
 				a="Mariko Pro Model(?) ";
@@ -279,22 +298,22 @@ json DInfo(){
 			string a="Wut?";
 			switch(region) {
 			case SetRegion_JPN:
-				a="Japan.";
+				a="Japan";
 				break;
 			case SetRegion_USA:
-				a="The Americas.";
+				a="The Americas";
 				break;
 			case SetRegion_EUR:
-				a="Europe.";
+				a="Europe";
 				break;
 			case SetRegion_AUS:
-				a="Australia/New Zealand.";
+				a="Australia/New Zealand";
 				break;
 			case SetRegion_HTK:
-				a="Hong Kong/Taiwan/Korea.";
+				a="Hong Kong/Taiwan/Korea";
 				break;
 			case SetRegion_CHN:
-				a="China.";
+				a="China";
 				break;
 			}
 			info["Region"]=a;
@@ -319,8 +338,7 @@ bool ChainManager(bool Chain,bool AndChaing){
 	} else {
 		if (AndChaing) {
 			appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
-			//appletSetMediaPlaybackState(true);
-			//appletSetMediaPlaybackState(false);
+			appletCancelCpuBoostMode();
 			appletSetAutoSleepDisabled(false);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);
