@@ -1,3 +1,3 @@
-[submodule "mininsp"]
-	path = mininsp
-	url = https://github.com/StarDustCFW/mininsp
+[submodule "nspmini"]
+	path = nspmini
+	url = https://github.com/StarDustCFW/nspmini
