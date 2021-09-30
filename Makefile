@@ -169,7 +169,6 @@ endif
 all: $(BUILD)
 
 $(BUILD):
-	@$(MAKE) -C $(CURDIR)/nspmini/
 	@echo '{"V":"$(APP_VERSION)"}'>romfs/V
 	@[ -d $@ ] || mkdir -p $@
 	@[ -d $(CURDIR)/$(OUTDIR) ] || mkdir -p $(CURDIR)/$(OUTDIR)
@@ -178,8 +177,9 @@ ifneq ($(EXPORTNSP),)
 	@[ -d $(CURDIR)/$(OUTDIR)/control ] || mkdir -p $(CURDIR)/$(OUTDIR)/control
 	@cp $(OUTPUT).nacp $(CURDIR)/$(OUTDIR)/control/control.nacp
 	@cp $(CURDIR)/Icon.jpg $(CURDIR)/$(OUTDIR)/control/icon_AmericanEnglish.dat
-	@$(CURDIR)/RipJKForwader/BuildTools/hacbrewpack.exe -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/build --nspdir $(CURDIR)/build
+	@$(CURDIR)/RipJKForwader/BuildTools/hacbrewpack.exe -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/build/backup --nspdir $(CURDIR)/build
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
+	@rm -rf $(CURDIR)/build/backup
 	@mv $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp"
 endif
 
