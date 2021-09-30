@@ -12,7 +12,7 @@
 #include "applet.hpp"
 #include "SDLWork.hpp"
 #include "Networking.hpp"
-#include "NSP/sdInstall.hpp"
+#include "sdInstall.hpp"
 
 extern AccountUid uid;
 extern std::string AccountID;
@@ -40,8 +40,7 @@ bool LoadNRO(std::string path){
 }
 bool InstallNSP(std::string nsp){
 	std::cout << "Install: " << nsp << std::endl;
-	std::vector<std::filesystem::path> ourTitleList={std::filesystem::path(nsp)}; 
-	return nspInstStuff::installNspFromFile(ourTitleList, 0);
+	return mini::InstallSD(nsp);
 }
 
 std::string FormatHex128(AccountUid Number){

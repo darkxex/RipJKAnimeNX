@@ -1,0 +1,3 @@
+[submodule "mininsp"]
+	path = mininsp
+	url = https://github.com/StarDustCFW/mininsp
