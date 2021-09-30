@@ -44,7 +44,7 @@ BUILD		:=	build
 SOURCES		:=	source
 #source/NSP source/NSP/data source/NSP/extra source/NSP/install source/NSP/nx source/NSP/nx/ipc
 DATA		:=	data
-INCLUDES	:=	include source 
+INCLUDES	:=	include source nspmini/include
 EXEFS_SRC	:=	RipJKForwader/exefs_src
 ROMFS		:=	romfs
 ICON        :=  Icon.jpg
@@ -76,12 +76,12 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -fexceptions
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-no-as-needed,-Map,$(notdir $*.map)
 
-LIBS	:=	-lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -lwebp -ljpeg `sdl2-config --libs` `freetype-config --libs` -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lz -lnx `$(PREFIX)pkg-config --libs sdl2 SDL2_mixer SDL2_image SDL2_ttf` \
+LIBS	:=	-lnsp -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -lwebp -ljpeg `sdl2-config --libs` `freetype-config --libs` -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lz -lnx  `$(PREFIX)pkg-config --libs sdl2 SDL2_mixer SDL2_image SDL2_ttf` \
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX)
+LIBDIRS	:= $(PORTLIBS) $(LIBNX) $(CURDIR)/nspmini
 
 
 #---------------------------------------------------------------------------------
@@ -169,6 +169,7 @@ endif
 all: $(BUILD)
 
 $(BUILD):
+	@$(MAKE) -C $(CURDIR)/nspmini/
 	@echo '{"V":"$(APP_VERSION)"}'>romfs/V
 	@[ -d $@ ] || mkdir -p $@
 	@[ -d $(CURDIR)/$(OUTDIR) ] || mkdir -p $(CURDIR)/$(OUTDIR)

@@ -1,0 +1,2 @@
+# Use 
+INCLUDES	+=	nspmini/include
