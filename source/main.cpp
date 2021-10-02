@@ -131,7 +131,9 @@ int main(int argc, char **argv)
 	try{
 		//Set main Thread get images and descriptions
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
-
+		
+		//Handle forced exit
+		if (!AppletMode) appletLockExit(); 
 		//While application is running
 		while (!quit&&appletMainLoop())
 		{
@@ -1498,7 +1500,7 @@ int main(int argc, char **argv)
 			}
 
 			if(programationstate != statenow && isHandheld) {BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
-			B_P.render_T(140, 680,"Salir",quit);
+			//B_P.render_T(140, 680,"Salir",quit);
 			B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 			SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 
@@ -1597,6 +1599,7 @@ int main(int argc, char **argv)
 	fsFsClose(&data);
 
 	accountExit();
+	appletUnlockExit ();
 	//if (!isConnected) appletRequestToSleep();
 	return 0;
 }
