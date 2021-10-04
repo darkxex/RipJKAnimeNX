@@ -2,6 +2,11 @@
 rem comenta esto para desactivar el uso de la nand como root
 set USENAND=true
 title RipJKAnime_NX
+if not exist include\nlohmann\json.hpp (
+	mkdir include\nlohmann
+	wget https://github.com/nlohmann/json/blob/develop/single_include/nlohmann/json.hpp -O include/nlohmann/json.hpp
+)
+pause
 make -j20 -C nspmini
 make -j20 NSP
 set a=%errorlevel%
