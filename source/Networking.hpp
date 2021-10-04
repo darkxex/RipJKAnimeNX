@@ -1,7 +1,7 @@
 #include <switch.h>
 #include <curl/curl.h>
 #include <string>
-#include <Vector>
+#include <vector>
 #include "nlohmann/json.hpp"
 #include <iomanip>
 #include <sys/types.h>
