@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string>
 #include <cmath>
-#include <Vector>
+#include <vector>
 #include <sys/stat.h>
 #include <fstream>
 #include <iostream>
