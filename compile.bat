@@ -1,6 +1,5 @@
 @echo off
 rem comenta esto para desactivar el uso de la nand como root
-set USENAND=true
 title RipJKAnime_NX
 
 make -j20 -C nspmini
