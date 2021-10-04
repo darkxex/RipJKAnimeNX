@@ -15,6 +15,7 @@ jobs:
         git submodule update --init --recursive
         
     - name: Make app
+      continue-on-error: true
       run: |
         make -j$(nproc) -C nspmini
         make -j$(nproc)
