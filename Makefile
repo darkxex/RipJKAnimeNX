@@ -91,8 +91,9 @@ LIBDIRS	:= $(PORTLIBS) $(LIBNX) $(CURDIR)/nspmini
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 #---------------------------------------------------------------------------------
 
-#export SOURCES	+=	$(foreach dir,$(SOURCES),$(sort $(dir $(wildcard $(dir)/*/ ))))
-export SOURCES	+=	$(foreach dir,$(SOURCES)/,$(sort $(dir $(wildcard $(dir)/*/ $(dir)/*/*/ $(dir)/*/*/*/))))
+#Get SOURCE Subdirs
+#SOURCES	:=	$(foreach dir,$(SOURCES),$(shell find $(dir) -maxdepth 10 -type d))
+#$(error $(SOURCES))
 
 export OUTPUT	:=	$(CURDIR)/$(OUTDIR)/$(TARGET)
 export TOPDIR	:=	$(CURDIR)
@@ -134,6 +135,12 @@ export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 export BUILD_EXEFS_SRC := $(TOPDIR)/$(EXEFS_SRC)
 
+ifeq ($(OS),Windows_NT)
+	FILENAME := hacbrewpack.exe
+else
+	FILENAME := hacbrewpack
+endif
+
 ifeq ($(strip $(ICON)),)
 	icons := $(wildcard *.jpg)
 	ifneq (,$(findstring $(TARGET).jpg,$(icons)))
@@ -163,7 +170,7 @@ ifneq ($(ROMFS),)
 	export NROFLAGS += --romfsdir=$(CURDIR)/$(ROMFS)
 endif
 
-.PHONY: $(BUILD) clean all
+.PHONY: $(BUILD) clean all NSP
 
 #---------------------------------------------------------------------------------
 all: $(BUILD)
@@ -173,15 +180,16 @@ $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@[ -d $(CURDIR)/$(OUTDIR) ] || mkdir -p $(CURDIR)/$(OUTDIR)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-ifneq ($(EXPORTNSP),)
+	
+#---------------------------------------------------------------------------------
+NSP: $(BUILD)
 	@[ -d $(CURDIR)/$(OUTDIR)/control ] || mkdir -p $(CURDIR)/$(OUTDIR)/control
 	@cp $(OUTPUT).nacp $(CURDIR)/$(OUTDIR)/control/control.nacp
 	@cp $(CURDIR)/Icon.jpg $(CURDIR)/$(OUTDIR)/control/icon_AmericanEnglish.dat
-	@$(CURDIR)/RipJKForwader/BuildTools/hacbrewpack.exe -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/build/backup --nspdir $(CURDIR)/build
+	@$(CURDIR)/RipJKForwader/BuildTools/$(FILENAME) -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/build/backup --nspdir $(CURDIR)/build
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/build/backup
 	@mv $(CURDIR)/build/$(APP_TITLEID).nsp "$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp"
-endif
 
 #---------------------------------------------------------------------------------
 clean:
