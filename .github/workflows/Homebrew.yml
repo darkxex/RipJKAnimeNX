@@ -20,7 +20,7 @@ jobs:
         make -j$(nproc) -C nspmini
         make -j$(nproc)
         sudo chmod 0755 RipJKForwader/BuildTools/hacbrewpack
-        make -j$(nproc) NSP
+        sudo make -j$(nproc) NSP
         
     - uses: actions/upload-artifact@master
       with:
