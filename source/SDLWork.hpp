@@ -16,7 +16,7 @@ LTexture();
 ~LTexture();
 //peer key funct
 bool reverse=false;
-unsigned long long time2=0;
+u64 time2=0;
 void TickerColor(int& color,int min,int max,unsigned long long sec = 0);
 void TickerRotate(int& angle,int min,int max, int addangle=5,bool clock=true);
 void TickerBomb(int sizescale=0);
@@ -137,7 +137,11 @@ void ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool ongrid);
 void deint();
 };
 
-
+extern SDLB GOD;
+extern LTexture Farest;
+extern LTexture VOX;
+extern LTexture T_T;
+extern LTexture Heart;
 
 
 

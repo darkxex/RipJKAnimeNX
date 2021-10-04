@@ -20,15 +20,12 @@
 #include "Link.hpp"
 #include "SDLWork.hpp"
 
-extern string serverenlace;
-extern int cancelcurl;
-
-//Link decoders
-//Private
-string MD_s(string code){
+//Private Link decoders
+string MD_s(string Link){
+	if (Link.length() < 7) return "";
 	string decode="";
 	for (int i=1; i<5; i++) {
-		decode = code;
+		decode = Link;
 		cout << "----------------------------------------- "+to_string(i) << endl;
 		cout << decode << endl;
 		string tempmedia = gethtml(decode);
@@ -73,6 +70,7 @@ string MD_s(string code){
 	return decode;
 }
 string Nozomi_Link(string Link){
+	if (Link.length() < 7) return "";
 	string codetemp;
 	//Get FirstKey
 	string FirstKey = gethtml(Link);
@@ -112,26 +110,34 @@ string Nozomi_Link(string Link){
 	return ThirdKey;
 }
 string Fembed_Link(string Link) {
+	if (Link.length() < 7) return "";
 	string codetemp = "";
-	if (Link.length() > 0) {
-		replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
-		//cout << "enlace: " << Link << endl;
+	replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
+	//cout << "enlace: " << Link << endl;
 
-		//POST to api
-		string videojson = gethtml(Link, "0");
-		//cout << "Json720key: " << videojson << endl;
+	//POST to api
+	string videojson = gethtml(Link, "0");
+	//cout << "Json720key: " << videojson << endl;
 
-		//decode json
-		json data;
-		if(json::accept(videojson))
-		{
-			data = json::parse(videojson);
-			if (!data["data"][1]["file"].empty())
-				codetemp = data["data"][1]["file"];
-		}
+	//decode json
+	json data;
+	if(json::accept(videojson))
+	{
+		data = json::parse(videojson);
+		if (!data["data"][1]["file"].empty())
+			codetemp = data["data"][1]["file"];
 	}
 	return codetemp;
 }
+
+//servers
+std::vector<std::string> arrayservers= {
+	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
+};
+
+std::vector<std::string> arrayserversbak= {
+	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
+};
 
 
 bool onlinejkanimevideo(string onlineenlace,string server){

@@ -52,8 +52,6 @@ LTexture SCREEN,
 //Text and BOXES
 LTexture VOX, T_T, T_N, T_D, T_R;
 
-//main SLD funct (Grafics On Display == GOD)
-SDLB GOD;
 
 //Gui Vars
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, hourglass, topstate, programationsliderstate};
@@ -124,14 +122,6 @@ bool quit=false;
 std::string KeyName;
 int Frames=1;
 
-std::vector<std::string> arrayservers= {
-	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
-};
-
-std::vector<std::string> arrayserversbak= {
-	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
-};
-
 std::vector<std::string> Wday = {"Todos","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"};
 int WdayG=0;
 
@@ -162,13 +152,18 @@ void LoadImages(){
 	B_R.loadFromFile("romfs:/buttons/R.png");
 	B_M.loadFromFile("romfs:/buttons/MINUS.png");
 	B_P.loadFromFile("romfs:/buttons/PLUS.png");
+	
+	//GOD.MapT[""].loadFromFileCustom("", 38,38)
+	GOD.MapT["EXIT"].loadFromFileCustom("romfs:/buttons/EXIT.png", 38,38);
+	GOD.MapT["MUSIC"].loadFromFileCustom("romfs:/buttons/MUSIC.png", 38,38);
+
 	B_ZR.loadFromFile("romfs:/buttons/ZR.png");
 	B_RIGHT.loadFromFile("romfs:/buttons/RIGHT.png");
 	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
 	B_UP.loadFromFile("romfs:/buttons/UP.png");
 	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
-	CLEAR.loadFromFile("romfs:/buttons/clear.png");
-	SCREEN.loadFromFile("romfs:/buttons/screen.png");
+	CLEAR.loadFromFile("romfs:/buttons/CLEAR.png");
+	SCREEN.loadFromFile("romfs:/buttons/SCREEN.png");
 	NOP.loadFromFile("romfs:/img/nop.png");
 
 	FAV.loadFromFileCustom("romfs:/buttons/FAV.png",43,43);

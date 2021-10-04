@@ -12,19 +12,7 @@
 #include "applet.hpp"
 #include "SDLWork.hpp"
 #include "Networking.hpp"
-#include "nspmini.hpp"
-
-extern AccountUid uid;
-extern std::string AccountID;
-extern std::string rootdirectory;
-extern std::string rootsave;
-
-extern u32 __nx_applet_exit_mode;
-extern std::string urlc;
-extern bool quit;
-extern int cancelcurl;
-extern std::string rootsave;
-extern SDLB GOD;
+#include <nspmini.hpp>
 
 bool LoadNRO(std::string path){
 	if(isFileExist(path)) {
@@ -49,16 +37,6 @@ std::string FormatHex128(AccountUid Number){
 	strm << std::hex << std::uppercase;
 	for(u32 i = 0; i < 16; i++) strm << (u32)ptr[i];
 	return strm.str();
-}
-
-std::string string_to_hex(const std::string& in) {
-    std::stringstream ss;
-
-    ss << std::hex << std::setfill('0');
-    for (size_t i = 0; in.length() > i; ++i) {
-        ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
-    }
-    return ss.str(); 
 }
 
 bool initUser(){
@@ -155,12 +133,8 @@ bool GetAppletMode(){
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
 	{
-		InstallNSP("romfs:/05B9DB505ABBE000.nsp");
 		return true;
 	}
-#ifdef ISDEBUG
-	#include "Debug.h"
-#endif
 	initUser();
 	__nx_applet_exit_mode = 1;
 	return false;

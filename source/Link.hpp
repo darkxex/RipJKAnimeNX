@@ -15,6 +15,8 @@
 #include <sys/types.h>
 
 using namespace std;
+extern std::vector<std::string> arrayservers;
+extern std::vector<std::string> arrayserversbak;
 
 bool onlinejkanimevideo(string onlineenlace,string server);
 bool linktodownoadjkanime(string urltodownload,string directorydownload);

@@ -129,6 +129,9 @@ int main(int argc, char **argv)
 	}
 
 	try{
+		//Load images from Romfs
+		LoadImages();
+
 		//Set main Thread get images and descriptions
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 		
@@ -229,6 +232,9 @@ int main(int argc, char **argv)
 								}
 								GOD.WorKey="0"; GOD.MasKey=-1;
 							}
+							else if (GOD.MapT["EXIT"].SP()) e.jbutton.button = GOD.BT_P;
+							else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = GOD.BT_M;
+							
 							else if (USER.SP()) {PlayerGet(acc);}
 							else if (B_A.SP()) {e.jbutton.button = GOD.BT_A; B_A.TickerBomb();}
 							else if (T_T.SP() ) e.jbutton.button = GOD.BT_A;
@@ -1161,6 +1167,7 @@ int main(int argc, char **argv)
 						int dist = 1100,posdist = 170;
 						B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
 						B_B.render_T(dist, 680,"Atrás"); dist -= posdist;
+						if (isHandheld) {CLEAR.render_T(dist, 680,"Cache"); dist -= posdist;}
 						break;
 					}
 					//Draw footer buttons
@@ -1170,7 +1177,6 @@ int main(int argc, char **argv)
 					//B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 					B_Y.render_T(dist, 680,"Menú"); dist -= posdist;
 					if(isDownloading) {B_X.render_T(dist, 680,"Descargas"); dist -= posdist-10;}
-					if (isHandheld) {CLEAR.render_T(dist, 680,"Cache"); dist -= posdist;}
 
 
 				break;
@@ -1471,21 +1477,11 @@ int main(int argc, char **argv)
 				VOX.render_VOX({SCREEN_WIDTH - T_D.getWidth() - 2, 671-T_D.getHeight()+4, T_D.getWidth()+4, T_D.getHeight()-5}, 255, 255, 255, 180);
 				T_D.render(SCREEN_WIDTH - T_D.getWidth() - 1, 671-T_D.getHeight());
 			}
-			if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Pulsa R Al Abrir un Juego",false);
-
+			if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Instalando NSP...",false);
+			
 			//clock cicle 1s
-			int maxt=100;
-			static int net=maxt;
-			static unsigned long long time2 = 0;
-			static unsigned long long time3 = 0;
+			static u64 time2 = 0;
 			if (onTimeC(1000,time2)) {
-				if (!HasConnection()) {
-					isConnected=false;
-					if (net <= 0) {quit=true;} else {net--;}
-				} else {
-					isConnected=true;
-					net=maxt;
-				}
 				if (Frames>0) {
 					static int rest=0;
 					printf("Frames %d - FPS: %d \r",Frames,Frames-rest);
@@ -1493,21 +1489,33 @@ int main(int argc, char **argv)
 					rest=Frames;
 				}
 			}
+			
+			//clock cicle 10s
+			static u64 time4 = 0;
+			if (onTimeC(10000,time4)) {
+				isConnected=HasConnection();
+			}
 			if (!isConnected) {
-				gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet, Cerrando: "+std::to_string(net), {255,0,0});
+				gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet", {255,0,0});
 				VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,671-gTextTexture.getHeight(), gTextTexture.getWidth()+4, gTextTexture.getHeight()}, 0, 0, 0, 180);
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 671-gTextTexture.getHeight() );
 			}
 
-			if(programationstate != statenow && isHandheld) {BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);}
-			//B_P.render_T(140, 680,"Salir",quit);
-			B_M.render_T(10, 680,"Música",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
+			if(programationstate != statenow && isHandheld) {
+				BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);
+			}
+			
+			GOD.MapT["MUSIC"].render_T(10, 680,"",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
+			
+			if((programationstate == statenow && isHandheld)|quit) {
+				GOD.MapT["EXIT"].render_T(80, 680,"",quit);
+			}
+			
 			SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 
 			//Update screen
 			SDL_RenderPresent(GOD.gRenderer);
 
-			if(!isLoaded) {LoadImages();}
 
 			//Display the list
 			if (!quit&&!reloading&&!AppletMode&&Frames>2) {preview = true;}
@@ -1515,8 +1523,9 @@ int main(int argc, char **argv)
 			if (Frames>1000) Frames=0;
 			if (Frames>0) Frames++;
 			//Update tik
+			static u64 time3 = 0;
 			if (onTimeC(300000,time3)) {
-				if (!HasConnection()) {
+				if (HasConnection()) {
 					if(!isChained) {
 						std::cout << "Reloading Animes" << std::endl;
 						//Set main Thread get images and descriptions
