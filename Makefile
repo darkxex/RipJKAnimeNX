@@ -189,9 +189,9 @@ NSP: $(BUILD)
 	@$(CURDIR)/RipJKForwader/BuildTools/$(FILENAME) -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/$(OUTDIR)/backup --nspdir $(CURDIR)/$(OUTDIR) --keyareakey 436875636B4E6F727269734973474F44
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/$(OUTDIR)/backup
-	@cp $(CURDIR)/$(OUTDIR)/$(APP_TITLEID).nsp '$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
-	@mv $(CURDIR)/$(OUTDIR)/$(APP_TITLEID).nsp '$(CURDIR)/$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
-	@rm $(CURDIR)/$(OUTDIR)/$(APP_TITLEID).nsp
+	@mv $(OUTDIR)/$(APP_TITLEID).nsp '$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
+#	@cp $(OUTDIR)/$(APP_TITLEID).nsp '$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
+#	@rm $(OUTDIR)/$(APP_TITLEID).nsp
 
 #---------------------------------------------------------------------------------
 clean:
