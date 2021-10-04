@@ -5,7 +5,6 @@ hacbrewpack_temp/
 RipJKNSP/
 build/
 Build/
-Output/
 *.nso
 *.elf
 .vscode/

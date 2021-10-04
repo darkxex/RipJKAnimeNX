@@ -14,7 +14,7 @@
 #include <ctime>
 #include <iomanip>
 #include <math.h>
-#include <Vector>
+#include <vector>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>

@@ -16,13 +16,6 @@
 #include <ctime>
 #include "applet.hpp"
 
-extern int porcendown;
-extern int sizeestimated;
-extern int cancelcurl;
-extern std::string speedD;
-extern std::string rootdirectory;
-extern bool quit;
-
 //Write file in mem to increase download speed on 3 or 5 times
 struct MemoryStruct
 {
@@ -134,6 +127,7 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,
 }
 
 std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect){
+	replace(enlace," ","%20");
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 	std::string Buffer;
@@ -175,6 +169,7 @@ std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect){
 }
 bool downloadfile(std::string enlace, std::string directorydown,bool progress){
 	if(!HasConnection()) {return false;}
+	replace(enlace," ","%20");
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 	curl = curl_easy_init();
@@ -190,6 +185,7 @@ bool downloadfile(std::string enlace, std::string directorydown,bool progress){
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+			
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 			// Install the callback function

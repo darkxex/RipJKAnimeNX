@@ -1,10 +1,9 @@
 @echo off
 rem comenta esto para desactivar el uso de la nand como root
-set USENAND=true
-set EXPORTNSP=true
 title RipJKAnime_NX
+git submodule update --recursive --init --remote --merge
 make -j20 -C nspmini
-make -j20
+make -j20 NSP
 set a=%errorlevel%
 echo ------------------------------------------
 if not exist romfs\05B9DB505ABBE000.nsp (

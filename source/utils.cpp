@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string>
 #include <cmath>
-#include <Vector>
+#include <vector>
 #include <sys/stat.h>
 #include <fstream>
 #include <iostream>
@@ -19,10 +19,6 @@
 #include <SDL_mixer.h>
 #include "applet.hpp"
 #include "SDLWork.hpp"
-
-extern SDLB GOD;
-extern std::string serverenlace;
-extern int cancelcurl;
 
 using namespace std;
 
@@ -395,16 +391,16 @@ std::vector<std::string> eraseVec(std::vector<std::string> array,std::string pat
 	}
 	return array2;
 }
-bool onTimeC(unsigned long long sec,unsigned long long& time2){
+bool onTimeC(u64 sec,u64& time8){
 	struct timeval time_now {};
 	gettimeofday(&time_now, nullptr);
 	time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
 
-	unsigned long long time1 = msecs_time;
+	u64 time1 = msecs_time;
 //	if (time1<0){time1=-time1;}
-	//static int time2 = msecs_time;
-	if (time1 > time2+sec) {
-		time2 = time1;
+	//static int time8 = msecs_time;
+	if (time1 > time8+sec) {
+		time8 = time1;
 		return true;
 	}
 	return false;
@@ -413,7 +409,7 @@ void TickerName(int& color,int sec,int min,int max){
 	static bool running=false;
 	static bool Start=false;
 
-	static unsigned long long time2 = 0;
+	static u64 time2 = 0;
 	static int increment = 5;
 	if (color < 0) {
 		color=0;
@@ -458,6 +454,17 @@ void TickerName(int& color,int sec,int min,int max){
                 } else {
  */
 }
+
+std::string string_to_hex(const std::string& in) {
+    std::stringstream ss;
+
+    ss << std::hex << std::setfill('0');
+    for (size_t i = 0; in.length() > i; ++i) {
+        ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
+    }
+    return ss.str(); 
+}
+
 
 bool isset(json data){
 	if (data.empty()) {

@@ -16,15 +16,10 @@
 #include "utils.hpp"
 #include "SDLWork.hpp"
 
-extern SDLB GOD;
-extern LTexture gTextTexture;
-extern LTexture Farest;
-extern LTexture VOX;
-extern LTexture T_T;
-extern LTexture Heart;
-extern int Frames;
+//main SLD funct (Grafics On Display == GOD)
+SDLB GOD;
 
-extern std::string rootdirectory;
+LTexture TextBuffer;
 
 //Grafics and logic
 void SDLB::intA(){
@@ -166,8 +161,8 @@ void SDLB::PleaseWait(std::string text,bool render){
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(gRenderer, &fillRect);
 
-	gTextTexture.loadFromRenderedText(gFont3, text.c_str(), { 50, 50, 50 });
-	gTextTexture.render(1280/2 - gTextTexture.getWidth()/2, 720/2 - gTextTexture.getHeight() / 2);
+	TextBuffer.loadFromRenderedText(gFont3, text.c_str(), { 50, 50, 50 });
+	TextBuffer.render(1280/2 - TextBuffer.getWidth()/2, 720/2 - TextBuffer.getHeight() / 2);
 	if (render) SDL_RenderPresent(gRenderer);
 }
 void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,bool selected){
@@ -452,14 +447,14 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 
 			if (x == selectindex) {
 				//draw Title
-				gTextTexture.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
-				gTextTexture.render(50, 9);
+				TextBuffer.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
+				TextBuffer.render(50, 9);
 				if(!Jlinks["date"].empty()) {
 					//draw Title
 					int datesize = Jlinks["date"].size()-1;
 					if (x+outof < datesize) {
-						gTextTexture.loadFromRenderedText(GOD.digifont, Jlinks["date"][x+outof], { 0, 0, 0 });
-						gTextTexture.render(50, 37);
+						TextBuffer.loadFromRenderedText(GOD.digifont, Jlinks["date"][x+outof], { 0, 0, 0 });
+						TextBuffer.render(50, 37);
 					}
 				}
 			}
@@ -530,8 +525,8 @@ void SDLB::ListClassic(int& selectindex,json Jlinks) {
 	if (indexLsize > 0 ) {
 		VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
 		if (indexLsize > 30) {
-			gTextTexture.loadFromRenderedText(gFont, std::to_string(selectindex+1)+"/"+std::to_string(indexLsize), {0,0,0});
-			gTextTexture.render(400, 690);
+			TextBuffer.loadFromRenderedText(gFont, std::to_string(selectindex+1)+"/"+std::to_string(indexLsize), {0,0,0});
+			TextBuffer.render(400, 690);
 		}
 		int of = selectindex < 30 ? 0 : selectindex - 26;
 		for (int x = of; x < indexLsize; x++) {
@@ -546,8 +541,8 @@ void SDLB::ListClassic(int& selectindex,json Jlinks) {
 			}
 			else if((x-of) < 30)
 			{
-				gTextTexture.loadFromRenderedText(digifont, temptext.substr(0,58), { 50, 50, 50 });
-				gTextTexture.render(20, 10 + ((x-of) * 22));
+				TextBuffer.loadFromRenderedText(digifont, temptext.substr(0,58), { 50, 50, 50 });
+				TextBuffer.render(20, 10 + ((x-of) * 22));
 			}
 		}
 	}

@@ -113,6 +113,11 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 export BUILD_EXEFS_SRC := $(TOPDIR)/$(EXEFS_SRC)
+ifeq ($(OS),Windows_NT)
+	FILENAME := hacbrewpack.exe
+else
+	FILENAME := hacbrewpack
+endif
 
 ifeq ($(strip $(ICON)),)
 	icons := $(wildcard *.jpg)
@@ -157,7 +162,7 @@ $(BUILD):
 	mkdir -p $(CURDIR)/Control
 	@cp $(OUTPUT).nacp $(CURDIR)/Output/control/control.nacp
 	@cp $(CURDIR)/Icon.jpg $(CURDIR)/Output/control/icon_AmericanEnglish.dat
-	@$(CURDIR)/BuildTools/hacbrewpack.exe -k $(CURDIR)/BuildTools/keys.dat --titleid 05B9DB505ABBE000 --exefsdir $(BUILD)/exefs --noromfs --logodir $(CURDIR)/Logo --controldir $(CURDIR)/Output/control --htmldocdir $(CURDIR)/HtmlDoc --nspdir $(CURDIR)/build
+	@$(CURDIR)/BuildTools/$(FILENAME) -k $(CURDIR)/BuildTools/keys.dat --titleid 05B9DB505ABBE000 --exefsdir $(BUILD)/exefs --noromfs --logodir $(CURDIR)/Logo --controldir $(CURDIR)/Output/control --htmldocdir $(CURDIR)/HtmlDoc --nspdir $(CURDIR)/build --keyareakey 436875636B4E6F727269734973474F44
 	@rm -rf $(CURDIR)/Output/control
 	@rm -rf $(CURDIR)/Output/temp
 	@mv $(CURDIR)/build/05b9db505abbe000.nsp "$(CURDIR)/Output/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp"

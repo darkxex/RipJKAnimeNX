@@ -3,18 +3,19 @@
 #include <stdio.h>
 #include <string>
 #include <cmath>
-#include <Vector>
+#include <vector>
 #include <sys/stat.h>
 #include <fstream>
 #include <iostream>
 #include <switch.h>
 #include <thread>
-#include <vector>
 #include "nlohmann/json.hpp"
 #include <iomanip>
 #include <sys/types.h>
 
 using namespace std;
+extern std::vector<std::string> arrayservers;
+extern std::vector<std::string> arrayserversbak;
 
 bool onlinejkanimevideo(string onlineenlace,string server);
 bool linktodownoadjkanime(string urltodownload,string directorydownload);

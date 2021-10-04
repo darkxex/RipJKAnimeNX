@@ -4,51 +4,10 @@
 #include "JKanime.hpp"
 #include "SDLWork.hpp"
 #include "Link.hpp"
-extern json BD;
-extern json UD;
-extern int mincapit;
-extern int maxcapit;
-extern int latest;
-extern int latestcolor;
-extern string rootdirectory;
-extern string rootsave;
-extern SDL_Thread* capithread;
-extern bool gFAV;
-extern int porcentajebufferS;
-extern int porcentajebufferAllS;
 
-extern LTexture gTextTexture;
-extern LTexture Farest;
-extern LTexture Heart;
-extern int sizeportraity;
-extern int sizeportraitx;
-extern bool isConnected;
-//img
-extern bool reloading;
-extern bool preview;
-extern int selectchapter;
-extern int imgNumbuffer;
-extern int part;
-extern int ofall;
-extern int porcentajebufferF;
-extern int porcentajebufferFF;
-extern bool quit;
-extern bool isDownloading;
-extern int porcendown;
-extern int cancelcurl;
-extern bool AppletMode;
-extern bool isChained;
-extern string serverenlace;
-extern string DownTitle;
-extern string KeyName;
-extern string AccountID;
+extern SDL_Thread* capithread;
 
 enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, hourglass, topstate, programationsliderstate};
-extern int statenow;
-extern int returnnow;
-
-extern bool reloadingsearch;
-extern int Frames;
 enum UnixT {U_day=86400, U_week=604800};
 u32 voidd =0;
 
@@ -79,13 +38,29 @@ int AnimeLoader(void* data){
 		steep++;
 		while (!HasConnection()) {
 			if (AppletMode) preview = false;
+			if (AppletMode) InstallNSP("romfs:/05B9DB505ABBE000.nsp");
 			SDL_Delay(3000);
 			if (AppletMode) quit=true;
 			if(quit) return 0;
 		}
 		
-		
-		CheckUpdates(AppletMode);
+		//execute this once, or if Mgate is true
+		static bool Mgate=true;
+		if (Mgate){
+			#ifdef ISDEBUG
+				#include "Debug.h"
+			#endif
+			//Check if dns are correct
+			string P=gethtml("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0");
+			if (P.length() < 2){
+				std::cout << "# Place Anti DNS:" << "-" << std::endl;
+				copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
+			}
+			//Check for app Updates
+			CheckUpdates(AppletMode);
+			Mgate=false;
+		}
+
 		steep++;
 		if(!reloading) {
 			//Download All not existing images
@@ -435,7 +410,7 @@ int searchjk(void* data) {//Search Thread
 	replace(texts, " ", "_");
 	replace(texts, "!", "");
 	replace(texts, ";", "");
-	if (texts.length() >= 2) {
+	if (texts.length() > 0) {
 		cout << texts << endl;
 		string content = "";
 		int page = 1;
