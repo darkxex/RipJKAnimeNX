@@ -19,7 +19,6 @@ jobs:
       run: |
         make -j$(nproc) -C nspmini
         make -j$(nproc)
-        sudo chmod 0777 * -R
         sudo chmod 0755 RipJKForwader/BuildTools/hacbrewpack
         make -j$(nproc) NSP
         

@@ -170,6 +170,8 @@ ifneq ($(ROMFS),)
 	export NROFLAGS += --romfsdir=$(CURDIR)/$(ROMFS)
 endif
 
+LOWER_TITLEID  = $(shell echo $(APP_TITLEID) | tr A-Z a-z)
+
 .PHONY: $(BUILD) clean all NSP
 
 #---------------------------------------------------------------------------------
@@ -189,9 +191,8 @@ NSP: $(BUILD)
 	@$(CURDIR)/RipJKForwader/BuildTools/$(FILENAME) -k $(CURDIR)/RipJKForwader/BuildTools/keys.dat --titleid $(APP_TITLEID) --exefsdir $(BUILD)/exefs --romfsdir $(CURDIR)/romfs  --logodir $(CURDIR)/RipJKForwader/Logo --controldir $(CURDIR)/$(OUTDIR)/control --htmldocdir $(CURDIR)/RipJKForwader/HtmlDoc --backupdir $(CURDIR)/$(OUTDIR)/backup --nspdir $(CURDIR)/$(OUTDIR) --keyareakey 436875636B4E6F727269734973474F44
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/$(OUTDIR)/backup
-	@mv $(OUTDIR)/$(APP_TITLEID).nsp '$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
-#	@cp $(OUTDIR)/$(APP_TITLEID).nsp '$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
-#	@rm $(OUTDIR)/$(APP_TITLEID).nsp
+	@mv $(OUTDIR)/$(LOWER_TITLEID).nsp '$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
+	@rm $(OUTDIR)/*.nacp $(OUTDIR)/*.elf $(OUTDIR)/*.nso $(OUTDIR)/*.pfs0
 
 #---------------------------------------------------------------------------------
 clean:
