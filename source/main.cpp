@@ -71,24 +71,6 @@ int main(int argc, char **argv)
 	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
 		mkdir(rootdirectory.c_str(), 0777);
 		mkdir((rootdirectory+"DATA").c_str(), 0777);
-		if (stat((oldroot+"DATA").c_str(), &st) != -1) {
-			GOD.PleaseWait("Copiando Archivos Importantes Espere...",true);
-			copy_me(oldroot+"favoritos.txt",rootdirectory+"favoritos.txt");
-
-			GOD.PleaseWait("Copiando Archivos Importantes Espere.",true);
-			copy_me(oldroot+"texture.png",rootdirectory+"texture.png");
-			GOD.PleaseWait("Copiando Archivos Importantes Espere..",true);
-			copy_me(oldroot+"heart.png",rootdirectory+"heart.png");
-			GOD.PleaseWait("Copiando Archivos Importantes Espere....",true);
-			copy_me(oldroot+"wada.ogg",rootdirectory+"wada.ogg");
-			GOD.PleaseWait("Copiando Archivos Importantes Espere......",true);
-			//set custom music
-			if (isFileExist(rootdirectory+"wada.ogg")) {
-				GOD.gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
-			}
-			//if (!isFileExist("RipJKAnime_NX.nro"))//detect the nro path
-			fsdevDeleteDirectoryRecursively(oldroot.c_str());
-		}
 	}
 
 	if (isFileExist(rootdirectory+"texture.png")) {
@@ -1488,11 +1470,12 @@ int main(int argc, char **argv)
 					fflush(stdout);
 					rest=Frames;
 				}
+				if (!isConnected) {isConnected=HasConnection();}
 			}
 			
 			//clock cicle 10s
 			static u64 time4 = 0;
-			if (onTimeC(10000,time4)) {
+			if (onTimeC(15000,time4)) {
 				isConnected=HasConnection();
 			}
 			if (!isConnected) {

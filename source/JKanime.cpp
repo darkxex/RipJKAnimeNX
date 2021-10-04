@@ -44,14 +44,22 @@ int AnimeLoader(void* data){
 			if(quit) return 0;
 		}
 		
-		//execute this once or if Mgate is true
+		//execute this once, or if Mgate is true
 		static bool Mgate=true;
 		if (Mgate){
 			#ifdef ISDEBUG
 				#include "Debug.h"
 			#endif
+			//Check if dns are correct
+			string P=gethtml("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0");
+			if (P.length() < 2){
+				std::cout << "# Place Anti DNS:" << "-" << std::endl;
+				copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
+			}
+			//Check for app Updates
+			CheckUpdates(AppletMode);
+			Mgate=false;
 		}
-		CheckUpdates(AppletMode);
 
 		steep++;
 		if(!reloading) {

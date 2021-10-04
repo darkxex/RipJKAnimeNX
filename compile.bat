@@ -1,7 +1,7 @@
 @echo off
 rem comenta esto para desactivar el uso de la nand como root
 title RipJKAnime_NX
-
+git submodule update --recursive --init --remote --merge
 make -j20 -C nspmini
 make -j20 NSP
 set a=%errorlevel%
