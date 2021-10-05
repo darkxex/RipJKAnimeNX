@@ -162,7 +162,7 @@ AccountUid LaunchPlayerSelect() {
 	return out_id;
 }
 
-json DInfo(){
+json DInfo(string ver){
 	static json info;
 	if (info["App"].empty()){
 		//INIT
@@ -292,9 +292,11 @@ json DInfo(){
 			}
 			info["Region"]=a;
 		}
-
 		setsysExit();
 		std::cout << std::setw(4) << info << std::endl;
+	}
+	if (ver.length() > 0){
+		info["App"]=ver;
 	}
 	return info;
 }
