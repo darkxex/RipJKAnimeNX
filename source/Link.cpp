@@ -22,9 +22,9 @@
 
 //Private Link decoders
 string MD_s(string Link){
-	if (Link.length() < 7) return "";
+	replace(Link, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
 	string decode="";
-	for (int i=1; i<5; i++) {
+	for (int i=1; i<6; i++) {
 		decode = Link;
 		cout << "----------------------------------------- "+to_string(i) << endl;
 		cout << decode << endl;
@@ -70,7 +70,6 @@ string MD_s(string Link){
 	return decode;
 }
 string Nozomi_Link(string Link){
-	if (Link.length() < 7) return "";
 	string codetemp;
 	//Get FirstKey
 	string FirstKey = gethtml(Link);
@@ -110,7 +109,6 @@ string Nozomi_Link(string Link){
 	return ThirdKey;
 }
 string Fembed_Link(string Link) {
-	if (Link.length() < 7) return "";
 	string codetemp = "";
 	replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
 	//cout << "enlace: " << Link << endl;
@@ -131,14 +129,10 @@ string Fembed_Link(string Link) {
 }
 
 //servers
-std::vector<std::string> arrayservers= {
-	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
+std::vector<std::string> arrayserversbak = {
+	"Fembed 2.0","Nozomi","MixDrop","Desu","Xtreme S","Okru"
 };
-
-std::vector<std::string> arrayserversbak= {
-	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
-};
-
+std::vector<std::string> arrayservers = arrayserversbak;
 
 bool onlinejkanimevideo(string onlineenlace,string server){
 	string videourl = "";
@@ -147,32 +141,39 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	content = gethtml(onlineenlace);
 	if (server == "Fembed 2.0") {
 		videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
-		videourl = Fembed_Link(videourl);
-	} else if (server == "Nozomi") {
+		if(videourl.length()){
+			tempcon = Fembed_Link(videourl);
+			if(tempcon.length()){videourl=tempcon;}
+		}
+	}
+	if (server == "Nozomi") {
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
-		videourl = Nozomi_Link(videourl);
-	} else if (server == "Okru") {
+		if(videourl.length()){
+			tempcon = Nozomi_Link(videourl);
+			if(tempcon.length()){videourl=tempcon;}
+		}
+	}
+	if (server == "MixDrop") {
+		videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
+		if(videourl.length()){
+			tempcon=MD_s(videourl);
+			if(tempcon.length()){videourl=tempcon;}
+		}
+	}
+	if (server == "Okru") {
 		videourl = scrapElement(content,"https://jkanime.net/jkokru.php?");
 		replace(videourl, "https://jkanime.net/jkokru.php?u=", "https://ok.ru/videoembed/");
-	} else if (server == "Desu") {
+	}
+	if (server == "Desu") {
 		videourl = scrapElement(content,"https://jkanime.net/um.php?");
-	} else if (server == "Fembed") {
+	}
+	if (server == "Fembed") {
 		videourl = scrapElement(content,"https://jkanime.net/jkfembed.php?u=");
-		//replace(videourl, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/v/");
-	} else if (server == "Xtreme S") {
+	}
+	if (server == "Xtreme S") {
 		videourl = scrapElement(content,"https://jkanime.net/jk.php?");
-		//replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
-	} else if (server == "MixDrop") {
-		videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
-		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
-		if(videourl.length())
-		{
-			videourl=MD_s(videourl);
-		}
-	} else if (server == "Local") {
-		LoadNRO("sdmc:/switch/pplay/pplay.nro");
-		return false;
-	} else if (server == "Mega") {
+	}
+	if (server == "Mega") {
 		videourl = scrapElement(content,"https://mega.nz/embed/");
 	}
 	cout << videourl << endl;
@@ -204,6 +205,19 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		}
 	}
 
+	videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
+	if (videourl.length())
+	{
+		videourl = Fembed_Link(videourl);
+		if (videourl.length())
+		{
+			cout << videourl << endl;
+			serverenlace = videourl;
+			if (downloadfile(videourl, directorydownload)) return true;
+			if(cancelcurl == 1) return false;
+		}
+	}
+
 	videourl = scrapElement(content, "https://www.mediafire.com/file/");
 	if(videourl.length())
 	{
@@ -220,15 +234,16 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		}
 	}
 
-	videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
-	if (videourl.length())
+	videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
+	if(videourl.length())
 	{
-		videourl = Fembed_Link(videourl);
+		cout << videourl << endl;
+		videourl=MD_s(videourl);
 		if (videourl.length())
 		{
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if (downloadfile(videourl, directorydownload)) return true;
+			if(downloadfile(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -260,16 +275,5 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		if(cancelcurl == 1) return false;
 	}
 
-	videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
-	if(videourl.length())
-	{
-		replace(videourl, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
-		cout << videourl << endl;
-		videourl=MD_s(videourl);
-		cout << videourl << endl;
-		serverenlace = videourl;
-		if(downloadfile(videourl, directorydownload)) return true;
-		if(cancelcurl == 1) return false;
-	}
 	return false;
 }

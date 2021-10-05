@@ -8,6 +8,7 @@
 using namespace std;
 using json = nlohmann::json;
 
+json HEAD(string url);
 std::string gethtml(std::string enlace,std::string POSTFIEL="",bool redirect = false);
 bool downloadfile(std::string enlace, std::string directorydown,bool progress = true);
 void CheckImgVector(json List,int& index);

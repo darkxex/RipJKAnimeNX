@@ -101,10 +101,12 @@ vector<string> split (string s, string delimiter) {// for string delimiter
 	while ((pos_end = s.find (delimiter, pos_start)) != string::npos) {
 		token = s.substr (pos_start, pos_end - pos_start);
 		pos_start = pos_end + delim_len;
+		if(token.length() > 0)
 		res.push_back (token);
 	}
-
-	res.push_back (s.substr (pos_start));
+	string token2 = (s.substr (pos_start));
+	if(token2.length() > 0)
+		res.push_back (token2);
 	return res;
 }
 
@@ -403,6 +405,43 @@ bool onTimeC(u64 sec,u64& time8){
 		time8 = time1;
 		return true;
 	}
+	return false;
+}
+bool inTimeN(u64 sec,int framesdelay){
+	static json data;
+	string name = to_string(sec);
+	
+	if (data[name]["frames"].empty()){
+		data[name]["frames"]=0;
+	}
+
+	//frames delay
+	//uncoment to debug
+	if (framesdelay == 0 || data[name]["frames"].get<int>() > framesdelay){
+		data[name]["frames"]=0;
+	
+		struct timeval time_now {};
+		gettimeofday(&time_now, nullptr);
+		time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+		
+
+		if (data[name]["time"].empty()){
+			data[name]["time"]=msecs_time;
+		} else{
+			u64 time1 = msecs_time;
+			u64 time2 = data[name]["time"].get<u64>()+sec;
+			//if (framesdelay != 0) std::cout << std::setw(4) << data << std::endl;//uncoment to debug
+
+			if (time1 > time2) {
+				data[name]["time"] = time1;
+				//if (framesdelay != 0)std::cout << name << " true" << std::endl;//uncoment to debug
+				return true;
+			} else {
+				//if (framesdelay != 0)std::cout << name << " false " << time2 << " - "<< time1 << " = " << time2-time1 << std::endl;//uncoment to debug
+			}
+		}
+	}
+	data[name]["frames"]= data[name]["frames"].get<int>()+1;
 	return false;
 }
 void TickerName(int& color,int sec,int min,int max){

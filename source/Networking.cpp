@@ -126,6 +126,36 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,
 	return 0;
 }
 
+json HEAD(string url){
+	replace(url," ","%20");
+	CURL *curl;
+	CURLcode res = CURLE_OK;
+	std::string Buffer;
+	json data="{}"_json;
+
+	curl = curl_easy_init();
+	if (curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+		curl_easy_setopt(curl, CURLOPT_HEADER, 1); 
+		curl_easy_setopt(curl, CURLOPT_NOBODY, 1); 
+		curl_easy_setopt(curl, CURLOPT_REFERER, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Buffer);
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK) {data["ERROR"] = curl_easy_strerror(res);}
+		curl_easy_cleanup(curl);
+	}
+	data["HEAD"] = split(Buffer, "\r\n");
+	data["RAW"] = Buffer;
+	//std::cout << std::setw(4) << data << std::endl;
+	//std::cout << "-" << Buffer  << "-" << std::endl;
+	return data;
+}
+
 std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect){
 	replace(enlace," ","%20");
 	CURL *curl;
@@ -262,7 +292,7 @@ bool CheckImgNet(std::string image,std::string url){
 }
 bool CheckUpdates(bool force){
 	try{
-		string Ver =  DInfo()["App"];
+		string Ver = DInfo()["App"];
 		//Get Config file
 		json config;
 		if (!read_DB(config,rootdirectory+"config.json")){
@@ -350,6 +380,7 @@ bool CheckUpdates(bool force){
 						
 					//Install New Update nsp
 					if (InstallNSP(fileU)){
+						DInfo(New);
 						std::cout << Ver << " ---> " << New <<std::endl;
 						return true;
 					}

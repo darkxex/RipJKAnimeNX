@@ -94,6 +94,7 @@ TTF_Font *gFont6 = NULL;
 TTF_Font* digifont = NULL;
 TTF_Font* digifont2 = NULL;
 TTF_Font* digifontC = NULL;
+TTF_Font* digifontV = NULL;
 TTF_Font *gFontcapit = NULL;
 Mix_Music* gMusic = NULL;
 

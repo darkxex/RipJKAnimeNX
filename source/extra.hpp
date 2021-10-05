@@ -54,7 +54,7 @@ LTexture VOX, T_T, T_N, T_D, T_R;
 
 
 //Gui Vars
-enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, hourglass, topstate, programationsliderstate};
+enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, agregados, hourglass, topstate, programationsliderstate};
 int statenow = programationstate;
 int returnnow = programationstate;
 //net
@@ -97,6 +97,8 @@ int histchapter=0;
 int topchapter=0;
 //Hour
 int hourchapter=0;
+//agregados
+int agregadosidx=0;
 
 //my vars
 bool isHandheld=true;
@@ -157,6 +159,9 @@ void LoadImages(){
 	GOD.MapT["EXIT"].loadFromFileCustom("romfs:/buttons/EXIT.png", 38,38);
 	GOD.MapT["MUSIC"].loadFromFileCustom("romfs:/buttons/MUSIC.png", 38,38);
 
+	GOD.MapT["ULT"].loadFromFileCustom("romfs:/buttons/ULT.png", 43,43);
+	GOD.MapT["ULTB"].loadFromFileCustom("romfs:/buttons/ULT.png",55,55);
+	
 	B_ZR.loadFromFile("romfs:/buttons/ZR.png");
 	B_RIGHT.loadFromFile("romfs:/buttons/RIGHT.png");
 	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
@@ -252,19 +257,25 @@ void callhistory(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	if (UD["history"].size()>0) {
 		statenow = historystate;
-		returnnow = historystate;
+		returnnow = statenow;
 		Frames=1;
 	}
 }
 void calltop(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	statenow = topstate;
-	returnnow = topstate;
+	returnnow = statenow;
+	Frames=1;
+}
+void callagr(){
+	GOD.WorKey="0"; GOD.MasKey=-1;
+	statenow = agregados;
+	returnnow = statenow;
 	Frames=1;
 }
 void callhourglass(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	statenow = hourglass;
-	returnnow = hourglass;
+	returnnow = statenow;
 	Frames=1;
 }

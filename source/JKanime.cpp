@@ -15,6 +15,7 @@ u32 voidd =0;
 bool DataMaker(json LinkList,int& part, int& ofall);
 int MkTOP();
 int MkHOR();
+int MkAGR(string content);
 int MkDIR();
 void DataUpdate(string Link);
 int capit(void* data);
@@ -51,15 +52,14 @@ int AnimeLoader(void* data){
 				#include "Debug.h"
 			#endif
 			//Check if dns are correct
-			string P=gethtml("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0");
-			if (P.length() < 2){
-				std::cout << "# Place Anti DNS:" << "-" << std::endl;
+			if (HEAD("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0")["HEAD"].size() < 1){
+				std::cout << "# Place DNS" << std::endl;
 				copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
 			}
 			//Check for app Updates
-			CheckUpdates(AppletMode);
 			Mgate=false;
 		}
+		CheckUpdates(AppletMode);
 
 		steep++;
 		if(!reloading) {
@@ -74,17 +74,17 @@ int AnimeLoader(void* data){
 		int temp0=0,temp1=0;
 		temp0=content.find("Programación");
 		temp1=content.find("TOP ANIMES",temp0);
-		content = content.substr(temp0,temp1-temp0);
-
+		string temcont = content.substr(temp0,temp1-temp0);
 		steep++;//rebuild list
-		vector<string> ChapLink=scrapElementAll(content, "https://jkanime.net/");
-		vector<string> ChapImag=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/");
-		BD["arrays"]["chapter"]["date"]=scrapElementAll(content, "<span>","</span>");
+		vector<string> ChapLink=scrapElementAll(temcont, "https://jkanime.net/");
+		vector<string> ChapImag=scrapElementAll(temcont, "https://cdn.jkanime.net/assets/images/");
+		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "<span>","</span>");
 
 		steep++;//Download All not existing images
 		cout << "# IMG Recent" << endl;
 		CheckImgVector(ChapImag,imgNumbuffer);
-
+		
+		
 		steep++;//'haschange' See if there is any new chap
 		bool haschange = true;
 		if (!BD["latestchapter"].empty()) {
@@ -96,7 +96,6 @@ int AnimeLoader(void* data){
 		steep++;//Display List
 		if(reloading) {Frames=0; reloading = false;}
 		
-		steep++;//TimeStamp indicate if a chap sout be reloaded
 		if (haschange || BD["TimeStamp"].empty()) {
 			//update TimeStamp
 			if (BD["arrays"]["chapter"]["link"].empty() || BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].empty()) {
@@ -115,8 +114,8 @@ int AnimeLoader(void* data){
 					ChapLink.insert(ChapLink.end(), OChapLink.begin(), OChapLink.end());
 					ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
 
-					if (ChapLink.size() > 61) {ChapLink.erase(ChapLink.begin()+60,ChapLink.end());}
-					if (ChapImag.size() > 61) {ChapImag.erase(ChapImag.begin()+60,ChapImag.end());}
+					if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
+					if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
 
 				}
 				Frames=1;
@@ -130,6 +129,10 @@ int AnimeLoader(void* data){
 		CheckImgVector(UD["history"],imgNumbuffer);
 
 		steep++;//Top, Hour to Database
+		temp0=content.find("Listado de últimos agregados");
+		temp1=content.find("</section>",temp0);
+		temcont = content.substr(temp0,temp1-temp0);
+		MkAGR(temcont);
 		MkTOP();
 		MkHOR();
 
@@ -245,6 +248,15 @@ int MkTOP(){
 	
 	cout << "# IMG Top" << endl;
 	CheckImgVector(TOPC,imgNumbuffer);
+	return 0;
+}
+int MkAGR(string content){
+	//Get Latest added animes
+	cout << "# Get Agregados" << endl;
+	BD["arrays"]["Agregados"]["link"]=scrapElementAll(content, "https://jkanime.net/");
+
+	cout << "# IMG Agregados" << endl;
+	CheckImgVector(BD["arrays"]["Agregados"]["link"],part);
 	return 0;
 }
 int MkHOR(){
@@ -580,7 +592,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		//AnimeINF["sinopsis"] = TMP.substr(0,800);
 		AnimeINF["sinopsis"] = TMP;
 	}
-	if (AnimeINF[""].empty()){
+	if (AnimeINF["Image"].empty()){
 		//get image
 		TMP = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
 		AnimeINF["Image"] = TMP;

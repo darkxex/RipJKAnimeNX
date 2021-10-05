@@ -280,8 +280,9 @@ int main(int argc, char **argv)
 								if(selectelement==2) {callfavs();}
 								if(selectelement==3) {callhourglass();}
 								if(selectelement==4) {calltop();}
-								if(selectelement==5) {callAflv();}
-								if(selectelement==6) {if(isDownloading) {statenow = downloadstate;}}
+								if(selectelement==5) {callagr();}
+								if(selectelement==6) {callAflv();}
+								if(selectelement==7) {if(isDownloading) {statenow = downloadstate;}}
 								break;
 							case programationstate:
 							{
@@ -317,6 +318,15 @@ int main(int argc, char **argv)
 								if (BD["arrays"]["Top"]["link"].size()>0)
 								{
 									capBuffer(BD["arrays"]["Top"]["link"][topchapter]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								}
+							}
+							break;
+							case agregados:
+							{
+								if (BD["arrays"]["Agregados"]["link"].size()>0)
+								{
+									capBuffer(BD["arrays"]["Agregados"]["link"][agregadosidx]);
 									gFAV = isFavorite(BD["com"]["ActualLink"]);
 								}
 							}
@@ -476,6 +486,7 @@ int main(int argc, char **argv)
 								break;
 
 							case topstate:
+							case agregados:
 							case hourglass:
 							case historystate:
 							case favoritesstate:
@@ -653,6 +664,9 @@ int main(int argc, char **argv)
 							case topstate:
 								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
 								break;
+							case agregados:
+								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
+								break;
 							case hourglass:
 								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
 								break;
@@ -693,6 +707,9 @@ int main(int argc, char **argv)
 								break;
 							case topstate:
 								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+								break;
+							case agregados:
+								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
 								break;
 							case hourglass:
 								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
@@ -741,6 +758,9 @@ int main(int argc, char **argv)
 
 							case topstate:
 								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+								break;
+							case agregados:
+								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
 								break;
 							case hourglass:
 								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
@@ -793,6 +813,9 @@ int main(int argc, char **argv)
 
 							case topstate:
 								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+								break;
+							case agregados:
+								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
 								break;
 							case hourglass:
 								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
@@ -1063,7 +1086,7 @@ int main(int argc, char **argv)
 					}
 
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.digifontC, ("(Ver "+DInfo()["App"].get<string>()+") #KASTXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.digifontV, ("(Ver "+DInfo()["App"].get<string>()+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 3, 672);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Recientes", {100,0,0});
@@ -1089,7 +1112,7 @@ int main(int argc, char **argv)
 					if (statenow==programationsliderstate) {
 
 						{
-							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","AnimeFLV"};
+							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV"};
 							if(isDownloading) {StatesList.push_back("Descargas");}
 
 							int mwide = 60,XD=940,YD=120,W=1280-XD;
@@ -1127,8 +1150,9 @@ int main(int argc, char **argv)
 								if(x == 2) {FAVB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 3) {HORB.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 4) {TOPB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 5) {AFLV.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 6) {DOWB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 5) {GOD.MapT["ULTB"].render(XD+10, YD + (x * mwide)+5);}
+								if(x == 6) {AFLV.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 7) {DOWB.render(XD+10, YD + (x * mwide)+5);}
 
 								if (x == selectelement) {
 									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);
@@ -1343,6 +1367,42 @@ int main(int argc, char **argv)
 				}
 				break;
 			}
+			case agregados: {
+				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+				int histsize=BD["arrays"]["Agregados"]["link"].size(); //BD["arrays"]["Agregados"]["link"]
+				if (histsize > 0) {
+					//if (favsize > 30) ongridF=false;
+					if (!ongrid) GOD.ListClassic(agregadosidx,BD["arrays"]["Agregados"]);
+					if (preview)
+					{
+						if (ongrid) {
+							VOX.TickerColor(GOD.HB,50,200, 200);
+							GOD.HG=100; GOD.HR=100;
+							GOD.ListCover(agregadosidx,BD["arrays"]["Agregados"],ongrid,Frames);
+							GOD.MapT["ULT"].render_T(5, 15,"");
+						} else {
+							GOD.ListCover(agregadosidx,BD["arrays"]["Agregados"]);
+							B_UP.render_T(580, 5,"");
+							B_DOWN.render_T(580, 630,"");
+						}
+					}
+				} else NOP.render_T(230, 355,"");
+
+				//Draw Header
+				gTextTexture.loadFromRenderedText(GOD.gFont, "Ultimos Animes Agregados", {100,0,0});
+				if(ongrid) {
+					gTextTexture.render(5, 1);
+				}else {
+					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
+				}
+
+				{//Draw footer buttons
+					int dist = 1100,posdist = 180;
+					B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
+					B_B.render_T(dist, 680,"Volver"); dist -= posdist;
+				}
+				break;
+			}
 			case hourglass:              {
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 
@@ -1461,9 +1521,8 @@ int main(int argc, char **argv)
 			}
 			if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Instalando NSP...",false);
 			
-			//clock cicle 1s
-			static u64 time2 = 0;
-			if (onTimeC(1000,time2)) {
+			//presice clock cicle 1s
+			if (inTimeN(1000,0)) {
 				if (Frames>0) {
 					static int rest=0;
 					printf("Frames %d - FPS: %d \r",Frames,Frames-rest);
@@ -1473,9 +1532,8 @@ int main(int argc, char **argv)
 				if (!isConnected) {isConnected=HasConnection();}
 			}
 			
-			//clock cicle 10s
-			static u64 time4 = 0;
-			if (onTimeC(15000,time4)) {
+			//clock cicle 15s
+			if (inTimeN(15000)) {
 				isConnected=HasConnection();
 			}
 			if (!isConnected) {
@@ -1506,8 +1564,7 @@ int main(int argc, char **argv)
 			if (Frames>1000) Frames=0;
 			if (Frames>0) Frames++;
 			//Update tik
-			static u64 time3 = 0;
-			if (onTimeC(300000,time3)) {
+			if (inTimeN(600000)) {
 				if (HasConnection()) {
 					if(!isChained) {
 						std::cout << "Reloading Animes" << std::endl;
