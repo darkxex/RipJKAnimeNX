@@ -101,10 +101,12 @@ vector<string> split (string s, string delimiter) {// for string delimiter
 	while ((pos_end = s.find (delimiter, pos_start)) != string::npos) {
 		token = s.substr (pos_start, pos_end - pos_start);
 		pos_start = pos_end + delim_len;
+		if(token.length() > 0)
 		res.push_back (token);
 	}
-
-	res.push_back (s.substr (pos_start));
+	string token2 = (s.substr (pos_start));
+	if(token2.length() > 0)
+		res.push_back (token2);
 	return res;
 }
 
