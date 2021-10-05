@@ -416,6 +416,7 @@ bool inTimeN(u64 sec,int framesdelay){
 	}
 
 	//frames delay
+	//uncoment to debug
 	if (framesdelay == 0 || data[name]["frames"].get<int>() > framesdelay){
 		data[name]["frames"]=0;
 	
@@ -429,17 +430,15 @@ bool inTimeN(u64 sec,int framesdelay){
 		} else{
 			u64 time1 = msecs_time;
 			u64 time2 = data[name]["time"].get<u64>()+sec;
-			if (framesdelay != 0) std::cout << std::setw(4) << data << std::endl;
+			//if (framesdelay != 0) std::cout << std::setw(4) << data << std::endl;//uncoment to debug
 
 			if (time1 > time2) {
 				data[name]["time"] = time1;
-				if (framesdelay != 0)std::cout << name << " true" << std::endl;
+				//if (framesdelay != 0)std::cout << name << " true" << std::endl;//uncoment to debug
 				return true;
-			}else {
-				if (framesdelay != 0)std::cout << name << " false " << time2 << " - "<< time1 << " = " << time2-time1 << std::endl;
+			} else {
+				//if (framesdelay != 0)std::cout << name << " false " << time2 << " - "<< time1 << " = " << time2-time1 << std::endl;//uncoment to debug
 			}
-				
-
 		}
 	}
 	data[name]["frames"]= data[name]["frames"].get<int>()+1;
