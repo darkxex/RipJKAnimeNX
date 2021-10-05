@@ -1521,9 +1521,8 @@ int main(int argc, char **argv)
 			}
 			if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Instalando NSP...",false);
 			
-			//clock cicle 1s
-			static u64 time2 = 0;
-			if (onTimeC(1000,time2)) {
+			//presice clock cicle 1s
+			if (inTimeN(1000,0)) {
 				if (Frames>0) {
 					static int rest=0;
 					printf("Frames %d - FPS: %d \r",Frames,Frames-rest);
@@ -1533,9 +1532,8 @@ int main(int argc, char **argv)
 				if (!isConnected) {isConnected=HasConnection();}
 			}
 			
-			//clock cicle 10s
-			static u64 time4 = 0;
-			if (onTimeC(15000,time4)) {
+			//clock cicle 15s
+			if (inTimeN(15000)) {
 				isConnected=HasConnection();
 			}
 			if (!isConnected) {
@@ -1566,10 +1564,7 @@ int main(int argc, char **argv)
 			if (Frames>1000) Frames=0;
 			if (Frames>0) Frames++;
 			//Update tik
-			static u64 time3 = 0;
-			inTimeN(600000);
-			inTimeN(60000);
-			if (onTimeC(600000,time3)) {
+			if (inTimeN(600000)) {
 				if (HasConnection()) {
 					if(!isChained) {
 						std::cout << "Reloading Animes" << std::endl;

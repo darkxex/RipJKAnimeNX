@@ -407,6 +407,44 @@ bool onTimeC(u64 sec,u64& time8){
 	}
 	return false;
 }
+bool inTimeN(u64 sec,int framesdelay){
+	static json data;
+	string name = to_string(sec);
+	
+	if (data[name]["frames"].empty()){
+		data[name]["frames"]=0;
+	}
+
+	//frames delay
+	if (framesdelay == 0 || data[name]["frames"].get<int>() > framesdelay){
+		data[name]["frames"]=0;
+	
+		struct timeval time_now {};
+		gettimeofday(&time_now, nullptr);
+		time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+		
+
+		if (data[name]["time"].empty()){
+			data[name]["time"]=msecs_time;
+		} else{
+			u64 time1 = msecs_time;
+			u64 time2 = data[name]["time"].get<u64>()+sec;
+			if (framesdelay != 0) std::cout << std::setw(4) << data << std::endl;
+
+			if (time1 > time2) {
+				data[name]["time"] = time1;
+				if (framesdelay != 0)std::cout << name << " true" << std::endl;
+				return true;
+			}else {
+				if (framesdelay != 0)std::cout << name << " false " << time2 << " - "<< time1 << " = " << time2-time1 << std::endl;
+			}
+				
+
+		}
+	}
+	data[name]["frames"]= data[name]["frames"].get<int>()+1;
+	return false;
+}
 void TickerName(int& color,int sec,int min,int max){
 	static bool running=false;
 	static bool Start=false;

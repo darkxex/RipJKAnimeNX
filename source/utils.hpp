@@ -20,6 +20,7 @@ bool write_DB(json base,std::string path);
 void led_on(int inter);
 std::vector<std::string> eraseVec(std::vector<std::string> array,std::string patther);
 bool onTimeC(u64 sec,u64& time8);
+bool inTimeN(u64 sec,int framesdelay = 100);
 void TickerName(int& color,int sec,int min,int max);
 void RemoveAccents(std::string& word);
 std::string string_to_hex(const std::string& in);
