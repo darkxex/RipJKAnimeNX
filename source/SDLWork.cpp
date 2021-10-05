@@ -344,7 +344,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			}
 		} else {
 			if (selectindex < 0) {
-				selectindex = chapsize+selectindex;
+				selectindex = 0;
 			} else if (selectindex > chapsize) {
 				if (selectindex < chapsize+10&&JlinksSize > 30) {
 					selectindex=chapsize;
