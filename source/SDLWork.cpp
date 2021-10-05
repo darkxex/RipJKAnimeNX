@@ -117,6 +117,7 @@ void SDLB::intA(){
 	gFontcapit = TTF_OpenFont("romfs:/fonts/Arista.ttf", 100);
 	digifont = TTF_OpenFont("romfs:/fonts/digifont.otf", 16);
 	digifontC = TTF_OpenFont("romfs:/fonts/digifont.otf", 9);
+	digifontV = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
 
 }
 void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
