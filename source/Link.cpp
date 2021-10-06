@@ -111,19 +111,23 @@ string Nozomi_Link(string Link){
 string Fembed_Link(string Link) {
 	string codetemp = "";
 	replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
-	//cout << "enlace: " << Link << endl;
+	
+	cout << "enlace: " << Link << endl;
 
 	//POST to api
 	string videojson = gethtml(Link, "0");
-	//cout << "Json720key: " << videojson << endl;
+	cout << "Json720key: " << videojson << endl;
 
 	//decode json
 	json data;
 	if(json::accept(videojson))
 	{
 		data = json::parse(videojson);
-		if (!data["data"][1]["file"].empty())
+		if (!data["data"][1]["file"].empty()){
 			codetemp = data["data"][1]["file"];
+		} else if (!data["data"][0]["file"].empty()){
+			codetemp = data["data"][0]["file"];
+		}
 	}
 	return codetemp;
 }

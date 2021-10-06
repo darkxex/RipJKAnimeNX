@@ -387,7 +387,10 @@ bool CheckUpdates(bool force){
 				}
 			}
 		}
-	} catch(...) {std::cout << "# Update Error catch" << std::endl;}
+	} catch(...) {
+		led_on(2);
+		std::cout << "# Update Error catch" << std::endl;
+	}
 	return false;
 }
 

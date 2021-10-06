@@ -185,8 +185,9 @@ int AnimeLoader(void* data){
 		steep++;//Load Directory
 		MkDIR();
 	} catch(...) {
+		led_on(2);
 		printf("Thread Chain Error Catched, Steep#%d\n",steep);
-		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
+		//appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
 	if(quit) write_DB(BD,rootdirectory+"DataBase.json");
@@ -305,51 +306,61 @@ int MkDIR(){
 	if (BD["arrays"]["Directory"]["TimeStamp"].empty()){BD["arrays"]["Directory"]["TimeStamp"]=0;}
 	if (BD["arrays"]["Directory"]["InTime"].empty()){BD["arrays"]["Directory"]["InTime"]=0;}
 	if (BD["arrays"]["Directory"]["page"].empty()){BD["arrays"]["Directory"]["page"]=1;}
-	if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_week){
-		
-		//Flush Resents by week
-		vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
-		ChapLink.erase(ChapLink.begin()+30,ChapLink.end());
-		BD["arrays"]["chapter"]["link"]=ChapLink;
-
-		cout << "# Get Directory" << endl;
-		vector<string> DIR={};
-		vector<string> TDIR={};
-
-		part=0;
-		ofall=0;
-		while (!quit) {
-			string content=gethtml("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
-			replace(content,"https://jkanime.net/directorio/","");
-			replace(content,"https://jkanime.net///","");
-			TDIR=scrapElementAll(content,"https://jkanime.net/");
+	try{
+	
+		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_week){
 			
-
-			if (TDIR.size() > voidd){
-				DIR.insert(DIR.end(), TDIR.begin(), TDIR.end());
-			} else 
-				break;//just in case
-			
-			string scrap = scrapElement(content, "Resultados Siguientes");
-			//cout << scrap << "  # " << to_string(BD["arrays"]["Directory"]["page"]) << endl;
-			if (scrap.length() > 0) {
-				//some code here soon
-			} else {
-				break;
+			//Flush Resents by week
+			vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
+			if (ChapLink.size() > 30){
+				ChapLink.erase(ChapLink.begin()+30,ChapLink.end());
+				BD["arrays"]["chapter"]["link"]=ChapLink;
 			}
-			BD["arrays"]["Directory"]["page"]=BD["arrays"]["Directory"]["page"].get<int>()+1;
-			ofall++;
+
+			cout << "# Get Directory" << endl;
+			vector<string> DIR={};
+			vector<string> TDIR={};
+
+			part=0;
+			ofall=0;
+			while (!quit) {
+				string content=gethtml("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
+				replace(content,"https://jkanime.net/directorio/","");
+				replace(content,"https://jkanime.net///","");
+				TDIR=scrapElementAll(content,"https://jkanime.net/");
+				
+
+				if (TDIR.size() > voidd){
+					DIR.insert(DIR.end(), TDIR.begin(), TDIR.end());
+				} else 
+					break;//just in case
+				
+				string scrap = scrapElement(content, "Resultados Siguientes");
+				//cout << scrap << "  # " << to_string(BD["arrays"]["Directory"]["page"]) << endl;
+				if (scrap.length() > 0) {
+					//some code here soon
+				} else {
+					break;
+				}
+				BD["arrays"]["Directory"]["page"]=BD["arrays"]["Directory"]["page"].get<int>()+1;
+				ofall++;
+			}
+			ofall=0;
+			if(quit) return false;
+			BD["arrays"]["Directory"]["pageT"]=BD["arrays"]["Directory"]["page"];
+			BD["arrays"]["Directory"]["page"]=1;
+			DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());
+			BD["arrays"]["Directory"]["TimeStamp"]=TimeNow();
+			BD["arrays"]["Directory"]["link"]=DIR;
+			//cout << BD["arrays"]["Directory"] << endl;
+			BD["arrays"]["Directory"]["InTime"]=0;
+			write_DB(BD,rootdirectory+"DataBase.json");
 		}
-		ofall=0;
-		if(quit) return false;
-		BD["arrays"]["Directory"]["pageT"]=BD["arrays"]["Directory"]["page"];
-		BD["arrays"]["Directory"]["page"]=1;
-		DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());
-		BD["arrays"]["Directory"]["TimeStamp"]=TimeNow();
-		BD["arrays"]["Directory"]["link"]=DIR;
-		//cout << BD["arrays"]["Directory"] << endl;
-		BD["arrays"]["Directory"]["InTime"]=0;
-		write_DB(BD,rootdirectory+"DataBase.json");
+	} catch(...) {
+		led_on(2);
+		printf("Thread Chain Error Catched, Get Dir Error\n");
+		//write_DB(BD,rootdirectory+"DataBase.json");
+		return 0;
 	}
 	if(quit) return false;
 	//Build All Data Base
@@ -362,6 +373,7 @@ int MkDIR(){
 				write_DB(BD,rootdirectory+"DataBase.json");
 			}
 		} catch(...) {
+			led_on(2);
 			printf("Thread Chain Error Catched,Dir Error\n");
 			//write_DB(BD,rootdirectory+"DataBase.json");
 			return 0;
@@ -400,6 +412,7 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 	}
 	if(cancelcurl==0) led_on(3); else led_on(0);
 	} catch(...) {
+		led_on(2);
 		printf("Thread Download Error Catched\n");
 		cout << BD["arrays"]["downloads"] << endl;
 	}
@@ -477,6 +490,7 @@ int searchjk(void* data) {//Search Thread
 		returnnow = programationstate;
 	}
 	} catch(...) {
+		led_on(2);
 		printf("Thread Search Error Catched\n");
 		cout << BD["arrays"]["search"] << endl;
 	}
@@ -507,6 +521,7 @@ int capit(void* data) {//Get chap thread
 			CheckImgNet(image,BD["DataBase"][name]["Image"]);
 		}
 	}catch(...) {
+		led_on(2);
 		printf("Error \n");
 	}
 	return 0;
@@ -572,6 +587,7 @@ int capBuffer (string Tlink) {//anime manager
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 			}
 		}catch(...) {
+			led_on(2);
 			printf("Error \n");
 		}
 	}
@@ -728,6 +744,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		BD["DataBase"][name]=AnimeINF;
 		cout << "Saved: " << name << endl;
 	} catch(...) {
+		led_on(2);
 		cout << "Anime Problemático: "<< name << endl;
 		cout << strm.str() << endl;
 	}

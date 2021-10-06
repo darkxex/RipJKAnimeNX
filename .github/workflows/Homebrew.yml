@@ -21,6 +21,7 @@ jobs:
         make -j$(nproc)
         sudo chmod 0755 RipJKForwader/BuildTools/hacbrewpack
         make -j$(nproc) NSP
+        rm out/*.nacp out/*.elf out/*.nso out/*.pfs0
         
     - uses: actions/upload-artifact@master
       with:

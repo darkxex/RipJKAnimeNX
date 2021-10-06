@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 3
-VERSION_MICRO := 5
+VERSION_MICRO := 6
 
 APP_TITLE	:=	RipJKAnimeNX
 APP_AUTHOR	:=	AngelXex & Kronos2308
@@ -192,7 +192,7 @@ NSP: $(BUILD)
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/$(OUTDIR)/backup
 	@mv $(OUTDIR)/$(LOWER_TITLEID).nsp '$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
-	@rm $(OUTDIR)/*.nacp $(OUTDIR)/*.elf $(OUTDIR)/*.nso $(OUTDIR)/*.pfs0
+	#@rm $(OUTDIR)/*.nacp $(OUTDIR)/*.elf $(OUTDIR)/*.nso $(OUTDIR)/*.pfs0
 
 #---------------------------------------------------------------------------------
 clean:

@@ -370,11 +370,11 @@ int main(int argc, char **argv)
 										if (hsize > 0) {
 											UD["history"] = eraseVec(UD["history"],item);
 											//UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
+											UD["history"].insert(UD["history"].begin(),tempurl);
+										} else {
+											UD["history"].push_back(tempurl);
 										}
-										UD["history"].insert(UD["history"].begin(),tempurl);
-										//UD["history"].push_back(tempurl);
 										write_DB(UD,rootsave+"UserData.json");
-
 									}
 								} else {
 									if (isConnected) serverpront = true;
@@ -1575,10 +1575,12 @@ int main(int argc, char **argv)
 			}
 		}
 	} catch(...) {
+		led_on(2);
 		printf("Error Catched\n");
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
 		std::cout << "com: " << BD["com"] << std::endl;
 		write_DB(BD,rootdirectory+"DataBase.json.bak");
+		write_DB(UD,rootdirectory+"UserData.json.bak");
 		quit=true;
 	}
 	//Quit if loop break for no reason
