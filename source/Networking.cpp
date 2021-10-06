@@ -392,11 +392,14 @@ bool CheckUpdates(bool force){
 }
 
 /*
-Spected
-{
-	"AutoUpdate": 1,
-	"author":"??"
-	"repo": "??"
-}
+
+Spected:
+config.json
+	{
+		"AutoUpdate": 1,
+		"author":"??"
+		"repo": "??"
+	}
+
 On romfs or on the root dir of the app
 */

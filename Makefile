@@ -32,10 +32,10 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 3
-VERSION_MICRO := 4
+VERSION_MICRO := 5
 
-APP_TITLE	:=	RipJKAnime NX
-APP_AUTHOR	:=	AngelXex
+APP_TITLE	:=	RipJKAnimeNX
+APP_AUTHOR	:=	AngelXex & Kronos2308
 APP_VERSION	:=	${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}
 
 TARGET		:=	$(subst $e ,_,$(notdir $(APP_TITLE)))
