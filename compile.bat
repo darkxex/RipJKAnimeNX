@@ -6,11 +6,6 @@ if not exist romfs\05B9DB505ABBE000.nsp (
 	move /y "RipJKForwader\Output\RipJKAnime[05B9DB505ABBE000][v0].nsp" "romfs\05B9DB505ABBE000.nsp"
 )
 
-echo nspmini ------------------------------------------
-title nspmini
-git submodule update --recursive --init --remote --merge
-make -j20 -C nspmini
-
 echo RipJKAnime_NX ------------------------------------
 title RipJKAnime_NX
 make -j20 NSP

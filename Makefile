@@ -44,7 +44,7 @@ BUILD		:=	build
 SOURCES		:=	source
 #source/NSP source/NSP/data source/NSP/extra source/NSP/install source/NSP/nx source/NSP/nx/ipc
 DATA		:=	data
-INCLUDES	:=	include source nspmini/include
+INCLUDES	:=	include source
 EXEFS_SRC	:=	RipJKForwader/exefs_src
 ROMFS		:=	romfs
 ICON        :=  Icon.jpg
@@ -81,7 +81,7 @@ LIBS	:=	-lnsp -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -lwebp -ljpeg `sdl2-confi
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX) $(CURDIR)/nspmini
+LIBDIRS	:= $(PORTLIBS) $(LIBNX)
 
 
 #---------------------------------------------------------------------------------
@@ -192,7 +192,6 @@ NSP: $(BUILD)
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/$(OUTDIR)/backup
 	@mv $(OUTDIR)/$(LOWER_TITLEID).nsp '$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
-	#@rm $(OUTDIR)/*.nacp $(OUTDIR)/*.elf $(OUTDIR)/*.nso $(OUTDIR)/*.pfs0
 
 #---------------------------------------------------------------------------------
 clean:
