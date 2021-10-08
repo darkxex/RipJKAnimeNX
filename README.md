@@ -7,7 +7,7 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 <img style="display:inline" src="ScreenShots/ScreenShots_2.jpg" width="232"/> <img style="display:inline" src="ScreenShots/ScreenShots_3.jpg" width="232"/> <img style="display:inline" src="ScreenShots/ScreenShots_4.jpg" width="232"/>
 
 ### Para instalarlo Solo deberás de:
-* Copiar [RipJKAnime_NX.nro](/out/RipJKAnime_NX.nro?raw=true)  en /switch/ y abrirlo una vez desde el Álbum esto instalara el icono en el Home.
+* Copiar [RipJKAnimeNX.nro](/out/RipJKAnimeNX.nro?raw=true)  en /switch/ y abrirlo una vez desde el Álbum esto instalara el icono en el Home.
 * * Solo debes hacer esto una vez a menos que pierdas el icono del Home 
 <details>
   <summary>Metodo Alternativo</summary>
