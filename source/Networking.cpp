@@ -387,16 +387,22 @@ bool CheckUpdates(bool force){
 				}
 			}
 		}
-	} catch(...) {std::cout << "# Update Error catch" << std::endl;}
+	} catch(...) {
+		led_on(2);
+		std::cout << "# Update Error catch" << std::endl;
+	}
 	return false;
 }
 
 /*
-Spected
-{
-	"AutoUpdate": 1,
-	"author":"??"
-	"repo": "??"
-}
+
+Spected:
+config.json
+	{
+		"AutoUpdate": 1,
+		"author":"??"
+		"repo": "??"
+	}
+
 On romfs or on the root dir of the app
 */

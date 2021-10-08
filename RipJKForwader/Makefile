@@ -39,7 +39,7 @@ EXEFS_SRC	:=	exefs_src
 # ROMFS	:=	romfs
 
 APP_TITLE := RipJKAnime
-APP_AUTHOR := AngelXex
+APP_AUTHOR := AngelXex & Kronos2308
 APP_VERSION := (forwarder)
 APP_TITLEID := 05B9DB505ABBE000
 

@@ -17,10 +17,12 @@ jobs:
     - name: Make app
       continue-on-error: true
       run: |
-        make -j$(nproc) -C nspmini
+        git clone https://github.com/StarDustCFW/nspmini
+        make -C nspmini portlib
         make -j$(nproc)
         sudo chmod 0755 RipJKForwader/BuildTools/hacbrewpack
         make -j$(nproc) NSP
+        rm out/*.nacp out/*.elf out/*.nso out/*.pfs0
         
     - uses: actions/upload-artifact@master
       with:

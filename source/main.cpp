@@ -370,11 +370,11 @@ int main(int argc, char **argv)
 										if (hsize > 0) {
 											UD["history"] = eraseVec(UD["history"],item);
 											//UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
+											UD["history"].insert(UD["history"].begin(),tempurl);
+										} else {
+											UD["history"].push_back(tempurl);
 										}
-										UD["history"].insert(UD["history"].begin(),tempurl);
-										//UD["history"].push_back(tempurl);
 										write_DB(UD,rootsave+"UserData.json");
-
 									}
 								} else {
 									if (isConnected) serverpront = true;
@@ -877,7 +877,7 @@ int main(int argc, char **argv)
 				}
 
 				{//draw description
-					VOX.render_VOX({10,63, 770, 340}, 255, 255, 255, 100);
+					VOX.render_VOX({10,63, 770, 340}, 255, 255, 255, 170);
 					static std::string rese_prot = "..";
 					if (rese_prot != BD["com"]["sinopsis"]) {//load texture on text change
 						T_R.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["sinopsis"], textColor, 750);
@@ -1057,6 +1057,8 @@ int main(int argc, char **argv)
 								HISB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
 								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - HISB.getWidth() - 70, 1);
 							}
+						} else {
+							VOX.render_VOX({ 0,14, 50, 46}, 255, 255, 255, 200);
 						}
 						double angle = 0.0;
 						static int Ticker=0;
@@ -1519,7 +1521,7 @@ int main(int argc, char **argv)
 				VOX.render_VOX({SCREEN_WIDTH - T_D.getWidth() - 2, 671-T_D.getHeight()+4, T_D.getWidth()+4, T_D.getHeight()-5}, 255, 255, 255, 180);
 				T_D.render(SCREEN_WIDTH - T_D.getWidth() - 1, 671-T_D.getHeight());
 			}
-			if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Instalando NSP...",false);
+			if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Instalando NSP, Espere...",false);
 			
 			//presice clock cicle 1s
 			if (inTimeN(1000,0)) {
@@ -1575,10 +1577,12 @@ int main(int argc, char **argv)
 			}
 		}
 	} catch(...) {
+		led_on(2);
 		printf("Error Catched\n");
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
 		std::cout << "com: " << BD["com"] << std::endl;
 		write_DB(BD,rootdirectory+"DataBase.json.bak");
+		write_DB(UD,rootdirectory+"UserData.json.bak");
 		quit=true;
 	}
 	//Quit if loop break for no reason

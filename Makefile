@@ -32,10 +32,10 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 3
-VERSION_MICRO := 4
+VERSION_MICRO := 6
 
-APP_TITLE	:=	RipJKAnime NX
-APP_AUTHOR	:=	AngelXex
+APP_TITLE	:=	RipJKAnimeNX
+APP_AUTHOR	:=	AngelXex & Kronos2308
 APP_VERSION	:=	${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}
 
 TARGET		:=	$(subst $e ,_,$(notdir $(APP_TITLE)))
@@ -44,7 +44,7 @@ BUILD		:=	build
 SOURCES		:=	source
 #source/NSP source/NSP/data source/NSP/extra source/NSP/install source/NSP/nx source/NSP/nx/ipc
 DATA		:=	data
-INCLUDES	:=	include source nspmini/include
+INCLUDES	:=	include source
 EXEFS_SRC	:=	RipJKForwader/exefs_src
 ROMFS		:=	romfs
 ICON        :=  Icon.jpg
@@ -81,7 +81,7 @@ LIBS	:=	-lnsp -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -lwebp -ljpeg `sdl2-confi
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX) $(CURDIR)/nspmini
+LIBDIRS	:= $(PORTLIBS) $(LIBNX)
 
 
 #---------------------------------------------------------------------------------
@@ -192,7 +192,6 @@ NSP: $(BUILD)
 	@rm -rf $(CURDIR)/$(OUTDIR)/control
 	@rm -rf $(CURDIR)/$(OUTDIR)/backup
 	@mv $(OUTDIR)/$(LOWER_TITLEID).nsp '$(OUTDIR)/$(APP_TITLE)[$(APP_TITLEID)][v0].nsp'
-	@rm $(OUTDIR)/*.nacp $(OUTDIR)/*.elf $(OUTDIR)/*.nso $(OUTDIR)/*.pfs0
 
 #---------------------------------------------------------------------------------
 clean:

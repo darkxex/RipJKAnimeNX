@@ -245,7 +245,7 @@ bool write_DB(json base,std::string path){
 		//commit
 		if (type == "save") fsdevCommitDevice("save");
 		if (type == "user") fsdevCommitDevice("user");
-	} catch(...) {
+	} catch(...) {led_on(2);
 		std::cout << "Json: write Error... "<< path << std::endl; 
 		return false;
 	}
