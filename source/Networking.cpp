@@ -260,15 +260,6 @@ namespace Net {
 			if (res != CURLE_OK) {
 				data["ERROR"] = curl_easy_strerror(res);
 			} else {
-				/*
-				try {
-				}catch(...){
-					std::cout << " error get info " << std::endl;
-					std::cout << " EURL: " << red << std::endl;
-				}
-				
-				*/
-					
 				//Get Info
 				curl_easy_getinfo(curl, CURLINFO_HEADER_SIZE, &sizeh);
 				curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
@@ -277,7 +268,6 @@ namespace Net {
 				if (redirects > 0){
 					curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &red);
 				}
-
 			}			
 			curl_easy_cleanup(curl);
 		}
