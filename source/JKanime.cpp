@@ -37,7 +37,7 @@ int AnimeLoader(void* data){
 			preview = false;
 		}
 		steep++;
-		while (!HasConnection()) {
+		while (!Net::HasConnection()) {
 			if (AppletMode) preview = false;
 			if (AppletMode) InstallNSP("romfs:/05B9DB505ABBE000.nsp");
 			SDL_Delay(3000);
@@ -52,9 +52,13 @@ int AnimeLoader(void* data){
 				#include "Debug.h"
 			#endif
 			//Check if dns are correct
-			if (HEAD("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0")["HEAD"].size() < 1){
+			int Req = Net::HEAD("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0")["code"];
+			 switch(Req){
+				case 0:
+				case 503:
 				std::cout << "# Place DNS" << std::endl;
 				copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
+				break;
 			}
 			//Check for app Updates
 			Mgate=false;
@@ -68,7 +72,8 @@ int AnimeLoader(void* data){
 		}
 
 		steep++;//Get main page
-		string content = gethtml("https://jkanime.net");
+		json MainPage=Net::REQUEST("https://jkanime.net/");//Check headers ToDo
+		string content = MainPage["BODY"];
 
 		steep++;//Get Programation list, Links and Images
 		int temp0=0,temp1=0;
@@ -174,7 +179,7 @@ int AnimeLoader(void* data){
 		vector<string> vec={};
 		//load main
 		cout << "# Cache Main" << endl;
-		content = gethtml("https://jkanime.net");
+		content = Net::REQUEST("https://jkanime.net")["BODY"];
 		replace(content, "\"https://jkanime.net/\"", "");
 		vec=scrapElementAll(content, "https://jkanime.net/");
 		sort( vec.begin(),vec.end());
@@ -190,7 +195,7 @@ int AnimeLoader(void* data){
 		//appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
-	if(quit) write_DB(BD,rootdirectory+"DataBase.json");
+	if(quit) write_DB(AB,rootdirectory+"AnimeBase.json");
 	cout << "# End Thread Chain" << endl;
 	isChained=false;
 	ChainManager(false,!isDownloading&&!isChained);
@@ -209,22 +214,22 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 	for (int x = 0; x < ofall&& !quit; x++)
 	{
 		if(hasmchap) part = x+1;
-		if (!isConnected) while (!HasConnection()) {SDL_Delay(2000); if(quit) return false; }
+		if (!isConnected) while (!Net::HasConnection()) {SDL_Delay(2000); if(quit) return false; }
 		string link = LinkList[x];
 		string name = KeyOfLink(link);
-		if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"] ) {
-			if (BD["DataBase"][name]["TimeStamp"].empty() || BD["DataBase"][name]["enemision"]=="true") {
+		if (AB["AnimeBase"][name]["TimeStamp"] != BD["TimeStamp"] ) {
+			if (AB["AnimeBase"][name]["TimeStamp"].empty() || AB["AnimeBase"][name]["enemision"]=="true") {
 				part = x+1;
 				DataUpdate(link);
 				hasmchap=true;
 				if (sep >= 101){
 					//write_DB(BD,"sdmc:/DataBase.json");
-					write_DB(BD,rootdirectory+"DataBase.json");
+					write_DB(AB,rootdirectory+"AnimeBase.json");
 					sep=0;
 				}
 				sep++;
 			} else {
-				//BD["DataBase"][name]["TimeStamp"] = BD["TimeStamp"];
+				//AB["AnimeBase"][name]["TimeStamp"] = BD["TimeStamp"];
 			}
 		}
 	}
@@ -232,7 +237,7 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 	ofall=0;
 	if(quit) return false;
 	if(hasmchap) {
-		write_DB(BD,rootdirectory+"DataBase.json");//write json
+		write_DB(AB,rootdirectory+"AnimeBase.json");//write json
 	}
 	return true;
 }
@@ -240,7 +245,7 @@ int MkTOP(){
 	//load Top
 	vector<string> TOPC={};
 	cout << "# Get Top" << endl;
-	string content=gethtml("https://jkanime.net/top/");
+	string content=Net::REQUEST("https://jkanime.net/top/")["BODY"];
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
 	TOPC=scrapElementAll(content,"https://jkanime.net/");
@@ -263,7 +268,7 @@ int MkAGR(string content){
 int MkHOR(){
 	//load Horario
 	cout << "# Get HourGlass" << endl;
-	string content=gethtml("https://jkanime.net/horario/");
+	string content=Net::REQUEST("https://jkanime.net/horario/")["BODY"];
 	replace(content,"https://jkanime.net/horario/","");
 	vector<string> STP={};
 
@@ -324,7 +329,7 @@ int MkDIR(){
 			part=0;
 			ofall=0;
 			while (!quit) {
-				string content=gethtml("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
+				string content=Net::REQUEST("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/")["BODY"];
 				replace(content,"https://jkanime.net/directorio/","");
 				replace(content,"https://jkanime.net///","");
 				TDIR=scrapElementAll(content,"https://jkanime.net/");
@@ -370,7 +375,7 @@ int MkDIR(){
 		try{
 			if (DataMaker(BD["arrays"]["Directory"]["link"], part, ofall)){
 				BD["arrays"]["Directory"]["InTime"]=1;
-				write_DB(BD,rootdirectory+"DataBase.json");
+				write_DB(AB,rootdirectory+"AnimeBase.json");
 			}
 		} catch(...) {
 			led_on(2);
@@ -440,7 +445,7 @@ int searchjk(void* data) {//Search Thread
 		string content = "";
 		int page = 1;
 		while (!quit) {
-			string tempCont=gethtml("https://jkanime.net/buscar/" + texts + "/"+to_string(page)+"/");
+			string tempCont=Net::REQUEST("https://jkanime.net/buscar/" + texts + "/"+to_string(page)+"/")["BODY"];
 			content += tempCont;
 			string scrap = scrapElement(tempCont, "Resultados Siguientes");
 			cout << scrap << "  # " << to_string(page) << endl;
@@ -499,26 +504,26 @@ int searchjk(void* data) {//Search Thread
 	return 0;
 }
 int capit(void* data) {//Get chap thread
-	if (!HasConnection()) return 0;
+	if (!Net::HasConnection()) return 0;
 	string link = BD["com"]["ActualLink"];
 	string name = KeyOfLink(link);
 	DataUpdate(link);
 	try{
 		//cout << BD << endl;
-		BD["com"]["sinopsis"] = BD["DataBase"][name]["sinopsis"];
-		BD["com"]["nextdate"] = BD["DataBase"][name]["nextdate"];//"......";
-		BD["com"]["generos"] = BD["DataBase"][name]["generos"];//"......";
-		BD["com"]["Emitido"] = BD["DataBase"][name]["Emitido"];
-		BD["com"]["enemision"] = BD["DataBase"][name]["enemision"];
-		mincapit = BD["DataBase"][name]["mincapit"];//1;
-		maxcapit = BD["DataBase"][name]["maxcapit"];//-1;
+		BD["com"]["sinopsis"] = AB["AnimeBase"][name]["sinopsis"];
+		BD["com"]["nextdate"] = AB["AnimeBase"][name]["nextdate"];//"......";
+		BD["com"]["generos"] = AB["AnimeBase"][name]["generos"];//"......";
+		BD["com"]["Emitido"] = AB["AnimeBase"][name]["Emitido"];
+		BD["com"]["enemision"] = AB["AnimeBase"][name]["enemision"];
+		mincapit = AB["AnimeBase"][name]["mincapit"];//1;
+		maxcapit = AB["AnimeBase"][name]["maxcapit"];//-1;
 		//write json
-		write_DB(BD,rootdirectory+"DataBase.json");
+		write_DB(AB,rootdirectory+"AnimeBase.json");
 
 		//Get Image
 		string image = rootdirectory+"DATA/"+name+".jpg";
-		if (!BD["DataBase"][name]["Image"].empty()) {
-			CheckImgNet(image,BD["DataBase"][name]["Image"]);
+		if (!AB["AnimeBase"][name]["Image"].empty()) {
+			CheckImgNet(image,AB["AnimeBase"][name]["Image"]);
 		}
 	}catch(...) {
 		led_on(2);
@@ -542,7 +547,7 @@ int capBuffer (string Tlink) {//anime manager
 	string image = rootdirectory+"DATA/"+name+".jpg";
 	statenow = chapterstate;
 
-	if (BD["DataBase"][name]["TimeStamp"].empty())
+	if (AB["AnimeBase"][name]["TimeStamp"].empty())
 	{
 		BD["com"]["sinopsis"] = "......";
 		BD["com"]["nextdate"] = "......";
@@ -554,21 +559,21 @@ int capBuffer (string Tlink) {//anime manager
 		capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 	} else {
 		try{
-			BD["com"]["sinopsis"] = BD["DataBase"][name]["sinopsis"];
-			BD["com"]["nextdate"] = BD["DataBase"][name]["nextdate"];//"......";
-			BD["com"]["generos"] = BD["DataBase"][name]["generos"];//"......";
-			BD["com"]["Emitido"] = BD["DataBase"][name]["Emitido"];
-			BD["com"]["enemision"] = BD["DataBase"][name]["enemision"];
-			maxcapit = BD["DataBase"][name]["maxcapit"];
-			mincapit = BD["DataBase"][name]["mincapit"];
+			BD["com"]["sinopsis"] = AB["AnimeBase"][name]["sinopsis"];
+			BD["com"]["nextdate"] = AB["AnimeBase"][name]["nextdate"];//"......";
+			BD["com"]["generos"] = AB["AnimeBase"][name]["generos"];//"......";
+			BD["com"]["Emitido"] = AB["AnimeBase"][name]["Emitido"];
+			BD["com"]["enemision"] = AB["AnimeBase"][name]["enemision"];
+			maxcapit = AB["AnimeBase"][name]["maxcapit"];
+			mincapit = AB["AnimeBase"][name]["mincapit"];
 			//check For latest cap seend
 			if (UD["chapter"][name].empty()||UD["chapter"][name]["latest"].empty()) {
 				UD["chapter"].erase(name);
 				//get position to the latest cap if in emision
 				if (BD["com"]["enemision"] == "true") {
-					latest = BD["DataBase"][name]["maxcapit"];//is in emision
+					latest = AB["AnimeBase"][name]["maxcapit"];//is in emision
 				} else {
-					latest = BD["DataBase"][name]["mincapit"];//is not in emision
+					latest = AB["AnimeBase"][name]["mincapit"];//is not in emision
 				}
 				latestcolor = -1;
 			}
@@ -578,11 +583,11 @@ int capBuffer (string Tlink) {//anime manager
 			}
 
 			//Get Image
-			if (!BD["DataBase"][name]["Image"].empty()) {
-				CheckImgNet(image,BD["DataBase"][name]["Image"]);
+			if (!AB["AnimeBase"][name]["Image"].empty()) {
+				CheckImgNet(image,AB["AnimeBase"][name]["Image"]);
 			}
 
-			if (BD["DataBase"][name]["TimeStamp"] != BD["TimeStamp"]) {
+			if (AB["AnimeBase"][name]["TimeStamp"] != BD["TimeStamp"]) {
 				BD["com"]["nextdate"] = "Loading...";
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 			}
@@ -597,9 +602,9 @@ int capBuffer (string Tlink) {//anime manager
 void DataUpdate(string Link) {//Get info off chapter
 	if(quit) return;
 	string name = KeyOfLink(Link);
-	string a = gethtml("https://jkanime.net/"+name+"/");
+	string a = Net::REQUEST("https://jkanime.net/"+name+"/")["BODY"];
 	if(quit) return;
-	json AnimeINF=BD["DataBase"][name];//
+	json AnimeINF=AB["AnimeBase"][name];//
 	string TMP="";
 	if (AnimeINF["sinopsis"].empty()){
 		//Sinopsis
@@ -712,7 +717,8 @@ void DataUpdate(string Link) {//Get info off chapter
 		AnimeINF["maxcapit"] = 1;
 	}
 
-	if (AnimeINF["mincapit"].empty()){
+	if (AnimeINF["mincapit"].empty())
+	{
 		//empieza por 0?
 		int zero1, zero2;
 		string zerocontainer = "";
@@ -720,8 +726,9 @@ void DataUpdate(string Link) {//Get info off chapter
 		zero1 = a.rfind("ajax/pagination_episodes/");
 		zero2 = a.find("'", zero1);
 		zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
+		replace(zerocontainer, "//", "/");
 		//cout << zerocontainer << endl;
-		zerocontainer2 = gethtml(zerocontainer);
+		zerocontainer2 = Net::REQUEST(zerocontainer)["BODY"];
 
 		int tempzero = zerocontainer2.find("\"0\"");
 		if (tempzero != -1) {
@@ -741,7 +748,7 @@ void DataUpdate(string Link) {//Get info off chapter
 //		strm << setw(4) << base;
 		strm << AnimeINF;
 		//write to DB
-		BD["DataBase"][name]=AnimeINF;
+		AB["AnimeBase"][name]=AnimeINF;
 		cout << "Saved: " << name << endl;
 	} catch(...) {
 		led_on(2);
