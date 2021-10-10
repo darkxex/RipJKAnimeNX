@@ -130,6 +130,7 @@ int WdayG=0;
 std::vector<std::string> StatesList= {};
 json BD;
 json UD;
+json AB;
 
 //caps vars
 int maxcapit = 1;

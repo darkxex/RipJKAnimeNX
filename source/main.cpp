@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	printf("Nxlink server Conected\n");
 	AppletMode=GetAppletMode();
 	ChainManager(true,true);
-	isConnected=HasConnection();
+	isConnected=Net::HasConnection();
 
 	//Mount user
 	FsFileSystem data;
@@ -54,16 +54,24 @@ int main(int argc, char **argv)
 	}
 
 	//Read a JSON file
-	if(!read_DB(BD,rootdirectory+"DataBase.json"))
+	if(!read_DB(AB,rootdirectory+"AnimeBase.json"))
 	{
-		read_DB(BD,"romfs:/DataBase.json");
+		read_DB(AB,"romfs:/AnimeBase.json");
 	}
-
+	
+	read_DB(BD,rootdirectory+"DataBase.json");
+	
 	BD["com"] = "{}"_json;
 	if(!BD["USER"].empty()) {
 		UD=BD["USER"];
 	}
 	BD.erase("USER");
+	if(!BD["DataBase"].empty()) {
+		BD.erase("DataBase");
+	} else {
+		BD.erase("DataBase");
+	}
+	
 	read_DB(UD,rootsave+"UserData.json");
 
 	GOD.intA();//init the SDL
@@ -240,7 +248,10 @@ int main(int argc, char **argv)
 								quit = true;
 								cancelcurl = 1;
 								GOD.PleaseWait("Borrando cache");
-								read_DB(BD,"romfs:/DataBase.json");
+								read_DB(AB,"romfs:/AnimeBase.json");
+								BD="{}"_json;
+								remove((rootdirectory+"update.nsp.json").c_str());
+								remove((rootdirectory+"update.nsp").c_str());
 								fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 								statenow=99;
 								break;
@@ -416,9 +427,9 @@ int main(int argc, char **argv)
 						}
 						else if (e.jbutton.button == GOD.BT_L || e.jbutton.button == GOD.BT_ZL) {// (L & ZL) button down
 							if (statenow == chapterstate&&e.jbutton.button == GOD.BT_L) {
-								if(!BD["DataBase"][KeyName]["Precuela"].empty()) {
+								if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
 									if (!serverpront) {
-										capBuffer(BD["DataBase"][KeyName]["Precuela"]);
+										capBuffer(AB["AnimeBase"][KeyName]["Precuela"]);
 										gFAV = isFavorite(BD["com"]["ActualLink"]);
 									} else {
 										serverpront=false;
@@ -610,9 +621,9 @@ int main(int argc, char **argv)
 							switch (statenow)
 							{
 							case chapterstate:
-								if(!BD["DataBase"][KeyName]["Secuela"].empty()&&!serverpront) {
+								if(!AB["AnimeBase"][KeyName]["Secuela"].empty()&&!serverpront) {
 									if (!serverpront) {
-										capBuffer(BD["DataBase"][KeyName]["Secuela"]);
+										capBuffer(AB["AnimeBase"][KeyName]["Secuela"]);
 										gFAV = isFavorite(BD["com"]["ActualLink"]);
 									} else {
 										serverpront=false;
@@ -1017,15 +1028,15 @@ int main(int argc, char **argv)
 					B_Y.render_T(dist, 680,"Favorito"); dist -= posdist;
 				}
 
-				if(!BD["DataBase"][KeyName]["Secuela"].empty()) {
-					std::string imagelocal=BD["DataBase"][KeyName]["Secuela"];
+				if(!AB["AnimeBase"][KeyName]["Secuela"].empty()) {
+					std::string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
 					GOD.Cover(imagelocal,160,457,"Secuela",120,GOD.BT_R);
 				}
-				if(!BD["DataBase"][KeyName]["Precuela"].empty()) {
-					std::string imagelocal=BD["DataBase"][KeyName]["Precuela"];
+				if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
+					std::string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_L.render_T(dist, 680,"Precuela"); dist -= posdist;}
@@ -1531,12 +1542,12 @@ int main(int argc, char **argv)
 					fflush(stdout);
 					rest=Frames;
 				}
-				if (!isConnected) {isConnected=HasConnection();}
+				if (!isConnected) {isConnected=Net::HasConnection();}
 			}
 			
 			//clock cicle 15s
 			if (inTimeN(15000)) {
-				isConnected=HasConnection();
+				isConnected=Net::HasConnection();
 			}
 			if (!isConnected) {
 				gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet", {255,0,0});
@@ -1567,7 +1578,7 @@ int main(int argc, char **argv)
 			if (Frames>0) Frames++;
 			//Update tik
 			if (inTimeN(600000)) {
-				if (HasConnection()) {
+				if (Net::HasConnection()) {
 					if(!isChained) {
 						std::cout << "Reloading Animes" << std::endl;
 						//Set main Thread get images and descriptions
@@ -1581,6 +1592,7 @@ int main(int argc, char **argv)
 		printf("Error Catched\n");
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
 		std::cout << "com: " << BD["com"] << std::endl;
+		write_DB(AB,rootdirectory+"AnimeBase.json.bak");
 		write_DB(BD,rootdirectory+"DataBase.json.bak");
 		write_DB(UD,rootdirectory+"UserData.json.bak");
 		quit=true;
@@ -1593,6 +1605,7 @@ int main(int argc, char **argv)
 
 	// write prettified JSON
 	write_DB(BD,rootdirectory+"DataBase.json");
+	write_DB(AB,rootdirectory+"AnimeBase.json");
 //	write_DB(UD,rootsave+"UserData.json");
 
 	if (AppletMode) {

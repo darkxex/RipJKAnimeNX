@@ -14,6 +14,7 @@
 #include "Networking.hpp"
 #include <nspmini.hpp>
 
+
 bool LoadNRO(std::string path){
 	if(isFileExist(path)) {
 		//__nx_applet_exit_mode = 0;//LoadNRO("sdmc:/switch/pplay/pplay.nro");
@@ -174,11 +175,15 @@ json DInfo(string ver){
 
 		Result ret = 0;
 
-		//App Ver
-		json base;
-		read_DB(base,"romfs:/V");
-		info["App"]=base["V"];
-
+		//Get Config file
+		json config;
+		if (!read_DB(config,rootdirectory+"config.json")){
+			if (!read_DB(config,"romfs:/config.json")){
+				std::cout  << "- Fail Config" <<std::endl;
+			}
+		}
+		info["config"]=config;
+		
 		//DeviceID
 		u64 id = 0;
 		if (R_FAILED(ret = splGetConfig(SplConfigItem_DeviceId, &id))) {
@@ -292,6 +297,12 @@ json DInfo(string ver){
 			}
 			info["Region"]=a;
 		}
+		
+		//App Ver
+		json base;
+		read_DB(base,"romfs:/V");
+		info["App"]=base["V"];
+
 		setsysExit();
 		std::cout << std::setw(4) << info << std::endl;
 	}
@@ -371,14 +382,13 @@ Result WebBrowserCall(std::string url,bool nag){
 		urlc = url;
 		if (url.length() <= 0) return 0;
 	}
-
+	WebSession session;
 	WebCommonConfig config;
 	WebCommonReply reply;
 	WebExitReason exitReason = (WebExitReason)0;
 	// Create the config. There's a number of web*Create() funcs, see libnx web.h.
 	// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
 	rc = webPageCreate(&config, url.c_str());
-
 	printf("webPageCreate(): 0x%x\n", rc);
 	if (R_SUCCEEDED(rc)) {
 		if (nag) {
@@ -387,6 +397,7 @@ Result WebBrowserCall(std::string url,bool nag){
 			webConfigSetUid(&config,uid);
 		}
 		printf("SetMainConfigs\n");
+		webConfigSetJsExtension (&config, true);
 		webConfigSetScreenShot (&config, true);
 		webConfigSetBootDisplayKind (&config, WebBootDisplayKind_Black);
 		webConfigSetPageCache (&config, true);
@@ -394,6 +405,7 @@ Result WebBrowserCall(std::string url,bool nag){
 		webConfigSetPageScrollIndicator (&config, true);
 		webConfigSetMediaPlayerSpeedControl (&config, true);
 		webConfigSetMediaAutoPlay (&config, true);
+		webConfigSetTransferMemory (&config, true);
 		if (!nag) {
 			printf("SetCapConfigs\n");
 			webConfigSetDisplayUrlKind (&config, false);
@@ -411,18 +423,26 @@ Result WebBrowserCall(std::string url,bool nag){
 			} else webConfigSetWhitelist(&config, "^http*");
 		}
 
+		// Create Session
+		webSessionCreate (&session, &config);
 
-		// Launch the applet and wait for it to exit.
-		printf("Running webConfigShow...\n");
-		rc = webConfigShow(&config, &reply); // If you don't use reply you can pass NULL for it.
-		printf("webConfigShow(): 0x%x\n", rc);
+		//Star A web Session and NOT wait for exit if is player session
+		Event *out_event;
+		rc = webSessionStart (&session, &out_event);
+		printf("Running session... 0x%x ", rc);
+		if (nag) {
+			rc = webSessionWaitForExit (&session, &reply);
+			if (R_SUCCEEDED(rc)) printf(", 0x%x", rc);
 
-		if (R_SUCCEEDED(rc)) { // Normally you can ignore exitReason.
-			rc = webReplyGetExitReason(&reply, &exitReason);
-			printf("webReplyGetExitReason(): 0x%x", rc);
-			if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
-			printf("\n");
+			if (R_SUCCEEDED(rc)) { // Normally you can ignore exitReason.
+				rc = webReplyGetExitReason(&reply, &exitReason);
+				printf("webReplyGetExitReason(): 0x%x", rc);
+				if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
+			}
+		} else {
+			sleep(3);
 		}
+		printf("\n");
 	}
 	return rc;
 }

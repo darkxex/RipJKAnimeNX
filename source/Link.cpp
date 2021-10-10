@@ -28,7 +28,7 @@ string MD_s(string Link){
 		decode = Link;
 		cout << "----------------------------------------- "+to_string(i) << endl;
 		cout << decode << endl;
-		string tempmedia = gethtml(decode);
+		string tempmedia = Net::GET(decode);
 		decode = scrapElement(tempmedia, "MDCore|","'");
 		cout << decode << endl;
 		if(decode.length())
@@ -72,31 +72,34 @@ string MD_s(string Link){
 string Nozomi_Link(string Link){
 	string codetemp;
 	//Get FirstKey
-	string FirstKey = gethtml(Link);
+	string FirstKey = Net::GET(Link);
 	codetemp = scrapElement(FirstKey,"name=\"data\" value=\"", "\"");
 	replace(codetemp,"name=\"data\" value=\"","");
 	FirstKey = codetemp;
 	cout << "FirstKey: "<< FirstKey << endl;
 	//Get SecondKey
 	string data = "data=" + FirstKey;
-	string SecondKey = gethtml("https://jkanime.net/gsplay/redirect_post.php",data,true);
+	string SecondKey = Net::REDIRECT("https://jkanime.net/gsplay/redirect_post.php",data);
+	sleep(3);
 	replace(SecondKey,"https://jkanime.net/gsplay/player.html#","");
+	replace(SecondKey,"/gsplay/player.html#","");
 	cout << "Secondkey: "<< SecondKey << endl;
 	//Get ThirdKey
 	string ThirdKey="";
 	string second = "v=" + SecondKey;
 	for (int i=1; i<5; i++) {
-		cout << "----------------------------------------- "+to_string(i) << endl;
-		ThirdKey = gethtml("https://jkanime.net/gsplay/api.php",second);
+		cout << "-----------------------------------------> "+to_string(i) << endl;
+		codetemp = Net::POST("https://jkanime.net/gsplay/api.php",second);
+		
 		//decode json
 		json data;
-		if(json::accept(ThirdKey))
+		if(json::accept(codetemp))
 		{
-			data = json::parse(ThirdKey);
+			data = json::parse(codetemp);
 			if (!data["file"].empty())
 			{
-				codetemp = data["file"];
-				replace(codetemp,"\r","");
+				ThirdKey = data["file"];
+				replace(ThirdKey,"\r","");
 
 				break;
 			} else {
@@ -104,8 +107,7 @@ string Nozomi_Link(string Link){
 			}
 		}
 	}
-	ThirdKey = codetemp;
-	cout << "ThirdKey: "<< ThirdKey << "-" << endl;
+	cout << "Link: "<< ThirdKey << "-" << endl;
 	return ThirdKey;
 }
 string Fembed_Link(string Link) {
@@ -115,18 +117,20 @@ string Fembed_Link(string Link) {
 	cout << "enlace: " << Link << endl;
 
 	//POST to api
-	string videojson = gethtml(Link, "0");
-	cout << "Json720key: " << videojson << endl;
+	string videojson = Net::POST(Link);
+	//cout << "Json720key: " << videojson << endl;
 
 	//decode json
 	json data;
 	if(json::accept(videojson))
 	{
 		data = json::parse(videojson);
-		if (!data["data"][1]["file"].empty()){
-			codetemp = data["data"][1]["file"];
-		} else if (!data["data"][0]["file"].empty()){
-			codetemp = data["data"][0]["file"];
+		int sz = data["data"].size()-1;
+		cout << "num: " << sz << endl;
+		if(sz > 0){
+			if (!data["data"][sz]["file"].empty()){
+				codetemp = data["data"][sz]["file"];
+			}
 		}
 	}
 	return codetemp;
@@ -134,7 +138,7 @@ string Fembed_Link(string Link) {
 
 //servers
 std::vector<std::string> arrayserversbak = {
-	"Fembed 2.0","Nozomi","MixDrop","Desu","Xtreme S","Okru"
+	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
 };
 std::vector<std::string> arrayservers = arrayserversbak;
 
@@ -142,7 +146,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	string videourl = "";
 	string content = "";
 	string tempcon = "";
-	content = gethtml(onlineenlace);
+	content = Net::GET(onlineenlace);
 	if (server == "Fembed 2.0") {
 		videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
 		if(videourl.length()){
@@ -194,7 +198,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	string videourl = "";
 	string content = "";
-	content = gethtml(urltodownload);
+	content = Net::GET(urltodownload);
 
 	videourl = scrapElement(content, "https://jkanime.net/um2.php?");
 	if(videourl.length())
@@ -204,7 +208,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		{
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
+			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -217,7 +221,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		{
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if (downloadfile(videourl, directorydownload)) return true;
+			if (Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -226,14 +230,14 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	if(videourl.length())
 	{
 		cout << videourl << endl;
-		string tempmedia = gethtml(videourl);
+		string tempmedia = Net::GET(videourl);
 		videourl = scrapElement(tempmedia, "https://download");
 		if(videourl.length())
 		{
 			replace(videourl, "\\", "");
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
+			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -247,7 +251,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		{
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
+			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -256,14 +260,14 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	if(videourl.length())
 	{
 		cout << videourl << endl;
-		string tempmedia = gethtml(videourl);
+		string tempmedia = Net::GET(videourl);
 		videourl = scrapElement(tempmedia, "https://www24.zippyshare.com/d");
 		if(videourl.length())
 		{
 			replace(videourl, "\\", "");
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
+			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -275,7 +279,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
 		cout << videourl << endl;
 		serverenlace = videourl;
-		if(downloadfile(videourl, directorydownload)) return true;
+		if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 		if(cancelcurl == 1) return false;
 	}
 

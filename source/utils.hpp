@@ -42,6 +42,7 @@ extern int sizeestimated;
 extern std::string speedD;
 extern json BD;
 extern json UD;
+extern json AB;
 extern int mincapit;
 extern int maxcapit;
 extern int latest;
