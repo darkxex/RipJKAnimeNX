@@ -8,7 +8,7 @@ std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
 #include "extra.hpp"
 
 //make some includes to clean a little the main
-std::string urlc = "https://myrincon.es";
+std::string urlc = "https://myrincon.duckdns.org";
 
 //MAIN INT
 int main(int argc, char **argv)
@@ -248,7 +248,10 @@ int main(int argc, char **argv)
 								quit = true;
 								cancelcurl = 1;
 								GOD.PleaseWait("Borrando cache");
-								read_DB(BD,"romfs:/DataBase.json");
+								read_DB(AB,"romfs:/AnimeBase.json");
+								BD="{}"_json;
+								remove((rootdirectory+"update.nsp.json").c_str());
+								remove((rootdirectory+"update.nsp").c_str());
 								fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 								statenow=99;
 								break;
