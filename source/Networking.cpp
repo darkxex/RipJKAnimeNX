@@ -55,9 +55,7 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 	return written;
 }
 
-int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
-                  double TotalToUpload, double NowUploaded)
-{
+int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,double TotalToUpload, double NowUploaded){
 
 	// ensure that the file to be downloaded is not empty
 	// because that would cause a division by zero error later on
@@ -119,131 +117,56 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,
 
 }
 
-int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,
-                  double TotalToUpload, double NowUploaded)
+int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,double TotalToUpload, double NowUploaded)
 {
 	if (cancelcurl == 1)
 		return 1;
 	return 0;
 }
 
-std::string gethtml(std::string enlace,std::string POSTFIEL,bool redirect){
-	replace(enlace," ","%20");
-	CURL *curl;
-	CURLcode res = CURLE_OK;
-	std::string Buffer;
-
-	curl = curl_easy_init();
-	if (curl) {
-		curl_easy_setopt(curl, CURLOPT_URL, enlace.c_str());
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
-        curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
-        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIES.txt").c_str());  
-		curl_easy_setopt(curl, CURLOPT_REFERER, enlace.c_str());
-		if (POSTFIEL.length()>0) {
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
-		}
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-
-		if(redirect)
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-		else
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Buffer);
-		res = curl_easy_perform(curl);
-		if(redirect&&CURLE_OK == res)
-		{
-			CURLcode curl_res;
-			char *url = "";
-			curl_res = curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
-			if((CURLE_OK == curl_res) && url)
-			{
-				printf("CURLINFO_EFFECTIVE_URL: %s\n", url);
-				Buffer = std::string(url);
-			}
-		}
-		curl_easy_cleanup(curl);
-		if (res != CURLE_OK) {printf("\n%s\n",curl_easy_strerror(res));}
-	}
-	//std::cout << "Buffer:  " << Buffer << std::endl;
-	return Buffer;
-}
-bool downloadfile(std::string enlace, std::string directorydown,bool progress){
-	if(!Net::HasConnection()) {return false;}
-	replace(enlace," ","%20");
-	CURL *curl;
-	CURLcode res = CURLE_OK;
-	curl = curl_easy_init();
-	bool allok=false;
-	if (curl) {
-		struct MemoryStruct chunk;
-		FILE *fp = fopen(directorydown.c_str(), "wb");;
-		if(fp) {
-			chunk.memory = (char*)malloc(1);
-			chunk.size = 0;
-			curl_easy_setopt(curl, CURLOPT_URL, enlace.c_str());
-			curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-			
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
-			// Install the callback function
-			if (progress) {
-				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
-			} else {
-				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func_str);
-			}
-
-			res = curl_easy_perform(curl);
-			if ((res == CURLE_OK)) {
-				printf("#size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
-				if (chunk.size < 1000000  && directorydown.find(".mp4") != string::npos) {
-					printf("####size:%ld found:%ld in:%s\n",chunk.size,directorydown.find(".mp4"),directorydown.c_str());
-					allok=false;//
-				} else {
-					fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
-					allok=true;
-				}
-			}else{
-				allok=false;
-				printf("\n%s\n",curl_easy_strerror(res));
-			}
-			/* always cleanup */
-			curl_easy_cleanup(curl);
-			free(chunk.memory);
-		}
-		fclose(fp);
-		if (!allok) {remove(directorydown.c_str());}
-	}
-	return allok;
-}
 
 namespace Net {
 	string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+	int DebugNet = 0;//0 no debug ,  1 some debug, 2 All debug
 	
-	json REQUEST(string url,string POSTFIEL){
+	//Simplification
+	string REDIRECT(string url,string POSTFIEL){
+		return REQUEST(url,POSTFIEL)["RED"];
+	}
+	string POST(string url,string POSTFIEL){
+		if (POSTFIEL.length() == 0) {POSTFIEL="0";}
+		return REQUEST(url,POSTFIEL)["BODY"];
+	}
+	string GET(string url){
+		return REQUEST(url)["BODY"];
+	}
+	json HEAD(string url){
+		return REQUEST(url,"",true);
+	}
+	
+	//General Request
+	json REQUEST(string url,string POSTFIEL,bool HEADR){
 		replace(url," ","%20");
 		CURL *curl;
 		CURLcode res = CURLE_OK;
 		std::string Buffer;
 		json data="{}"_json;
+		data["URL"] = url;
 		char *red = "";
-		long http_code;
-		long redirects;
-		u64 sizeh;
+		long http_code=0;
+		long redirects=0;
+		u64 sizeh=1;
+		data["RED"] = "";
 
 		curl = curl_easy_init();
 		if (curl) {
 			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 			curl_easy_setopt(curl, CURLOPT_USERAGENT, UserAgent.c_str());
-			curl_easy_setopt(curl, CURLOPT_HEADER, 1); 
-			if (POSTFIEL.length()>0) {
+			curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+			
+			if (HEADR){
+				curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+			} else if (POSTFIEL.length()>0) {
 				curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
 				data["POST"] = POSTFIEL;
 			}
@@ -268,89 +191,93 @@ namespace Net {
 				if (redirects > 0){
 					curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &red);
 				}
+				data["RED"] = red;
+				if (DebugNet > 0 && redirects > 0){
+					std::cout << " EURL: " << red << std::endl;
+				}
 			}			
 			curl_easy_cleanup(curl);
 		}
 		//data["RAW"] = Buffer;
 		data["CODE"] = http_code;
 		data["COUNT"] = redirects;
-		data["RED"] = red;
 		data["SIZE"] = sizeh;
 		data["HEAD"] = Buffer.substr(0,sizeh); //split(Buffer.substr(0,sizeh), "\r\n");
-		data["BODY"] = Buffer.substr(sizeh);
-		if (url.find("https://jkanime.net/gsplay") != string::npos){
-			std::cout << " ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " << std::endl;
-				try {
-					std::cout << std::setw(4) << data << std::endl;
-				
-				}catch(...){
-					std::cout << " CODE: " << http_code << std::endl;
-					std::cout << " Redirects: " << redirects << std::endl;
-					std::cout << " EURL: " << red << std::endl;
-					std::cout << " error display info " << std::endl;
-					data["RED"]="";
-				}
+		if (!HEADR) data["BODY"] = Buffer.substr(sizeh);
+		if (DebugNet > 0){
+			if (url.find("https://jkanime.net/gsplay") != string::npos|| DebugNet > 1)
+			{
+				std::cout << " ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " << std::endl;
+					try {
+						std::cout << std::setw(4) << data << std::endl;
+					
+					}catch(...){
+						std::cout << " CODE: " << http_code << std::endl;
+						std::cout << " Redirects: " << redirects << std::endl;
+						std::cout << " EURL: " << red << std::endl;
+						std::cout << " error display info " << std::endl;
+						data["RED"]="";
+					}
 
-			
+				
+			}
 		}
-		
-		//std::cout << "-" << Buffer  << "-" << std::endl;
 		return data;
 	}
 
-	json HEAD(string url){
+	bool DOWNLOAD(string url,string path,bool progress){
+		if(!Net::HasConnection()) {return false;}
 		replace(url," ","%20");
 		CURL *curl;
 		CURLcode res = CURLE_OK;
-		std::string Buffer;
-		json data="{}"_json;
-		data["URL"] = url;
-		char *red = "";
-		long http_code=0;
-		long redirects=0;
-		u64 sizeh=0;
-		
 		curl = curl_easy_init();
+		bool allok=false;
 		if (curl) {
-			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-			curl_easy_setopt(curl, CURLOPT_USERAGENT, UserAgent.c_str());
-			curl_easy_setopt(curl, CURLOPT_HEADER, 1); 
-			curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
-
-			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
-			curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIES.txt").c_str()); 
-			curl_easy_setopt(curl, CURLOPT_REFERER, url.c_str());
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Buffer);
-			res = curl_easy_perform(curl);
-			if (res != CURLE_OK) {
-				data["ERROR"] = curl_easy_strerror(res);
-			} else {
-				//Get Info
-				curl_easy_getinfo(curl, CURLINFO_HEADER_SIZE, &sizeh);
-				curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
-				curl_easy_getinfo(curl, CURLINFO_REDIRECT_COUNT, &redirects);
+			struct MemoryStruct chunk;
+			FILE *fp = fopen(path.c_str(), "wb");;
+			if(fp) {
+				chunk.memory = (char*)malloc(1);
+				chunk.size = 0;
+				curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+				curl_easy_setopt(curl, CURLOPT_USERAGENT, UserAgent.c_str());
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 				
-				if (redirects > 0){
-					curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &red);
+				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+				// Install the callback function
+				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+				if (progress) {
+					curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
+				} else {
+					curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func_str);
 				}
+
+				res = curl_easy_perform(curl);
+				if ((res == CURLE_OK)) {
+					printf("#size:%ld found:%ld in:%s\n",chunk.size,path.find(".mp4"),path.c_str());
+					if (chunk.size < 1000000  && path.find(".mp4") != string::npos) {
+						printf("####size:%ld found:%ld in:%s\n",chunk.size,path.find(".mp4"),path.c_str());
+						allok=false;//
+					} else {
+						fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+						allok=true;
+					}
+				}else{
+					allok=false;
+					printf("\n%s\n",curl_easy_strerror(res));
+				}
+				/* always cleanup */
+				curl_easy_cleanup(curl);
+				free(chunk.memory);
 			}
-
-			curl_easy_cleanup(curl);
+			fclose(fp);
+			if (!allok) {remove(path.c_str());}
 		}
-		data["CODE"] = http_code;
-		data["COUNT"] = redirects;
-		data["RED"] = red;
-		data["SIZE"] = sizeh;
-		data["HEAD"] = Buffer;//split(Buffer.substr(0), "\r\n");
-		std::cout << std::setw(4) << data << std::endl;
-		//std::cout << "-" << Buffer  << "-" << std::endl;
-		return data;
+		return allok;
 	}
-
+	
 	bool HasConnection(){
 		NifmInternetConnectionType connectionType;
 		NifmInternetConnectionStatus connectionStatus;
@@ -389,7 +316,7 @@ bool CheckImgNet(std::string image,std::string url){
 			tmp = url;
 		}
 		printf("# Missing %s Downloading\n",image.c_str());
-		return downloadfile(tmp,image,false);
+		return Net::DOWNLOAD(tmp,image,false);
 	}
 	return true;
 }
@@ -415,7 +342,7 @@ bool CheckUpdates(bool force){
 		}
 		string reurl="https://api.github.com/repos/"+config["author"].get<string>()+"/"+config["repo"].get<string>()+"/releases";
 
-		std::string APIJ = Net::REQUEST(reurl)["BODY"];
+		std::string APIJ = Net::GET(reurl);
 		if(json::accept(APIJ))
 		{
 			//Parse and use the JSON data
@@ -469,7 +396,7 @@ bool CheckUpdates(bool force){
 					
 					if (needDown){
 					//Download New Update
-						if (!downloadfile(Nurl, fileU,false))
+						if (!Net::DOWNLOAD(Nurl, fileU,false))
 						{
 							std::cout << "Download error" << New <<std::endl; 
 							return false;

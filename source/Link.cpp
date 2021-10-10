@@ -28,7 +28,7 @@ string MD_s(string Link){
 		decode = Link;
 		cout << "----------------------------------------- "+to_string(i) << endl;
 		cout << decode << endl;
-		string tempmedia = Net::REQUEST(decode)["BODY"];
+		string tempmedia = Net::GET(decode);
 		decode = scrapElement(tempmedia, "MDCore|","'");
 		cout << decode << endl;
 		if(decode.length())
@@ -72,14 +72,14 @@ string MD_s(string Link){
 string Nozomi_Link(string Link){
 	string codetemp;
 	//Get FirstKey
-	string FirstKey = Net::REQUEST(Link)["BODY"];
+	string FirstKey = Net::GET(Link);
 	codetemp = scrapElement(FirstKey,"name=\"data\" value=\"", "\"");
 	replace(codetemp,"name=\"data\" value=\"","");
 	FirstKey = codetemp;
 	cout << "FirstKey: "<< FirstKey << endl;
 	//Get SecondKey
 	string data = "data=" + FirstKey;
-	string SecondKey = Net::REQUEST("https://jkanime.net/gsplay/redirect_post.php",data)["RED"];
+	string SecondKey = Net::REDIRECT("https://jkanime.net/gsplay/redirect_post.php",data);
 	sleep(3);
 	replace(SecondKey,"https://jkanime.net/gsplay/player.html#","");
 	replace(SecondKey,"/gsplay/player.html#","");
@@ -88,13 +88,9 @@ string Nozomi_Link(string Link){
 	string ThirdKey="";
 	string second = "v=" + SecondKey;
 	for (int i=1; i<5; i++) {
-		try {
-			cout << "-----------------------------------------> "+to_string(i) << endl;
-			codetemp = Net::REQUEST("https://jkanime.net/gsplay/api.php",second)["BODY"];
-		} catch(...){
-			cout << "ERROR Net::POST" << endl;
-			return "";
-		}
+		cout << "-----------------------------------------> "+to_string(i) << endl;
+		codetemp = Net::POST("https://jkanime.net/gsplay/api.php",second);
+		
 		//decode json
 		json data;
 		if(json::accept(codetemp))
@@ -121,7 +117,7 @@ string Fembed_Link(string Link) {
 	cout << "enlace: " << Link << endl;
 
 	//POST to api
-	string videojson = Net::REQUEST(Link, "0")["BODY"];
+	string videojson = Net::POST(Link);
 	//cout << "Json720key: " << videojson << endl;
 
 	//decode json
@@ -150,7 +146,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	string videourl = "";
 	string content = "";
 	string tempcon = "";
-	content = Net::REQUEST(onlineenlace)["BODY"];
+	content = Net::GET(onlineenlace);
 	if (server == "Fembed 2.0") {
 		videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
 		if(videourl.length()){
@@ -202,7 +198,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	string videourl = "";
 	string content = "";
-	content = Net::REQUEST(urltodownload)["BODY"];
+	content = Net::GET(urltodownload);
 
 	videourl = scrapElement(content, "https://jkanime.net/um2.php?");
 	if(videourl.length())
@@ -212,7 +208,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		{
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
+			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -225,7 +221,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		{
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if (downloadfile(videourl, directorydownload)) return true;
+			if (Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -234,14 +230,14 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	if(videourl.length())
 	{
 		cout << videourl << endl;
-		string tempmedia = Net::REQUEST(videourl)["BODY"];
+		string tempmedia = Net::GET(videourl);
 		videourl = scrapElement(tempmedia, "https://download");
 		if(videourl.length())
 		{
 			replace(videourl, "\\", "");
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
+			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -255,7 +251,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		{
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
+			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -264,14 +260,14 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	if(videourl.length())
 	{
 		cout << videourl << endl;
-		string tempmedia = Net::REQUEST(videourl)["BODY"];
+		string tempmedia = Net::GET(videourl);
 		videourl = scrapElement(tempmedia, "https://www24.zippyshare.com/d");
 		if(videourl.length())
 		{
 			replace(videourl, "\\", "");
 			cout << videourl << endl;
 			serverenlace = videourl;
-			if(downloadfile(videourl, directorydownload)) return true;
+			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
 	}
@@ -283,7 +279,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
 		cout << videourl << endl;
 		serverenlace = videourl;
-		if(downloadfile(videourl, directorydownload)) return true;
+		if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 		if(cancelcurl == 1) return false;
 	}
 

@@ -52,7 +52,7 @@ int AnimeLoader(void* data){
 				#include "Debug.h"
 			#endif
 			//Check if dns are correct
-			int Req = Net::HEAD("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0")["code"];
+			int Req = Net::HEAD("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0")["CODE"];
 			 switch(Req){
 				case 0:
 				case 503:
@@ -60,9 +60,9 @@ int AnimeLoader(void* data){
 				copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
 				break;
 			}
-			//Check for app Updates
 			Mgate=false;
 		}
+		//Check for app Updates
 		CheckUpdates(AppletMode);
 
 		steep++;
@@ -72,7 +72,8 @@ int AnimeLoader(void* data){
 		}
 
 		steep++;//Get main page
-		json MainPage=Net::REQUEST("https://jkanime.net/");//Check headers ToDo
+		json MainPage=Net::REQUEST("https://jkanime.net/");
+		//Check headers ToDo
 		string content = MainPage["BODY"];
 
 		steep++;//Get Programation list, Links and Images
@@ -179,7 +180,7 @@ int AnimeLoader(void* data){
 		vector<string> vec={};
 		//load main
 		cout << "# Cache Main" << endl;
-		content = Net::REQUEST("https://jkanime.net")["BODY"];
+		content = Net::GET("https://jkanime.net");
 		replace(content, "\"https://jkanime.net/\"", "");
 		vec=scrapElementAll(content, "https://jkanime.net/");
 		sort( vec.begin(),vec.end());
@@ -245,7 +246,7 @@ int MkTOP(){
 	//load Top
 	vector<string> TOPC={};
 	cout << "# Get Top" << endl;
-	string content=Net::REQUEST("https://jkanime.net/top/")["BODY"];
+	string content=Net::GET("https://jkanime.net/top/");
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
 	TOPC=scrapElementAll(content,"https://jkanime.net/");
@@ -268,7 +269,7 @@ int MkAGR(string content){
 int MkHOR(){
 	//load Horario
 	cout << "# Get HourGlass" << endl;
-	string content=Net::REQUEST("https://jkanime.net/horario/")["BODY"];
+	string content=Net::GET("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	vector<string> STP={};
 
@@ -329,7 +330,7 @@ int MkDIR(){
 			part=0;
 			ofall=0;
 			while (!quit) {
-				string content=Net::REQUEST("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/")["BODY"];
+				string content=Net::GET("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
 				replace(content,"https://jkanime.net/directorio/","");
 				replace(content,"https://jkanime.net///","");
 				TDIR=scrapElementAll(content,"https://jkanime.net/");
@@ -445,7 +446,7 @@ int searchjk(void* data) {//Search Thread
 		string content = "";
 		int page = 1;
 		while (!quit) {
-			string tempCont=Net::REQUEST("https://jkanime.net/buscar/" + texts + "/"+to_string(page)+"/")["BODY"];
+			string tempCont=Net::GET("https://jkanime.net/buscar/" + texts + "/"+to_string(page)+"/");
 			content += tempCont;
 			string scrap = scrapElement(tempCont, "Resultados Siguientes");
 			cout << scrap << "  # " << to_string(page) << endl;
@@ -602,7 +603,7 @@ int capBuffer (string Tlink) {//anime manager
 void DataUpdate(string Link) {//Get info off chapter
 	if(quit) return;
 	string name = KeyOfLink(Link);
-	string a = Net::REQUEST("https://jkanime.net/"+name+"/")["BODY"];
+	string a = Net::GET("https://jkanime.net/"+name+"/");
 	if(quit) return;
 	json AnimeINF=AB["AnimeBase"][name];//
 	string TMP="";
@@ -728,7 +729,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
 		replace(zerocontainer, "//", "/");
 		//cout << zerocontainer << endl;
-		zerocontainer2 = Net::REQUEST(zerocontainer)["BODY"];
+		zerocontainer2 = Net::GET(zerocontainer);
 
 		int tempzero = zerocontainer2.find("\"0\"");
 		if (tempzero != -1) {

@@ -8,7 +8,7 @@ std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
 #include "extra.hpp"
 
 //make some includes to clean a little the main
-std::string urlc = "https://myrincon.duckdns.org";
+std::string urlc = "https://myrincon.es";
 
 //MAIN INT
 int main(int argc, char **argv)

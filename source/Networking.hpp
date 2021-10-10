@@ -10,12 +10,13 @@ using json = nlohmann::json;
 
 namespace Net {
 bool HasConnection();
-json HEAD(string url);
-json REQUEST(string url,string POSTFIEL="");
+json REQUEST(string url,string POSTFIEL="",bool HEADR=false);
 bool DOWNLOAD(string url,string path,bool progress = true);
 
-json REDIRECT(string url,string POSTFIEL="");
-json POST(string url,string POSTFIEL);
+json HEAD(string url);
+string REDIRECT(string url,string POSTFIEL="");
+string POST(string url,string POSTFIEL="");
+string GET(string url);
 }
 
 
