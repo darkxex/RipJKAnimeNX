@@ -175,11 +175,15 @@ json DInfo(string ver){
 
 		Result ret = 0;
 
-		//App Ver
-		json base;
-		read_DB(base,"romfs:/V");
-		info["App"]=base["V"];
-
+		//Get Config file
+		json config;
+		if (!read_DB(config,rootdirectory+"config.json")){
+			if (!read_DB(config,"romfs:/config.json")){
+				std::cout  << "- Fail Config" <<std::endl;
+			}
+		}
+		info["config"]=config;
+		
 		//DeviceID
 		u64 id = 0;
 		if (R_FAILED(ret = splGetConfig(SplConfigItem_DeviceId, &id))) {
@@ -293,6 +297,12 @@ json DInfo(string ver){
 			}
 			info["Region"]=a;
 		}
+		
+		//App Ver
+		json base;
+		read_DB(base,"romfs:/V");
+		info["App"]=base["V"];
+
 		setsysExit();
 		std::cout << std::setw(4) << info << std::endl;
 	}

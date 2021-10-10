@@ -56,9 +56,9 @@ int AnimeLoader(void* data){
 			 switch(Req){
 				case 0:
 				case 503:
-				std::cout << "# Place DNS" << std::endl;
-				copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
-				break;
+					std::cout << "# Place DNS" << std::endl;
+					copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
+					break;
 			}
 			Mgate=false;
 		}

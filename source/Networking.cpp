@@ -323,18 +323,13 @@ bool CheckImgNet(std::string image,std::string url){
 bool CheckUpdates(bool force){
 	try{
 		string Ver = DInfo()["App"];
-		//Get Config file
-		json config;
-		if (!read_DB(config,rootdirectory+"config.json")){
-			if (!read_DB(config,"romfs:/config.json")){
-				std::cout  << "- Fail Config" <<std::endl;
-				return false;
-			}
-			if (config["AutoUpdate"].empty()){
-				std::cout  << "- Config empty " <<std::endl;
-				return false;
-			}
+		//Get Config
+		json config = DInfo()["config"];
+		if (config["AutoUpdate"].empty()){
+			std::cout  << "- Config empty " <<std::endl;
+			return false;
 		}
+		
 		//Get AutoUpdate state use 0 to disable
 		if (config["AutoUpdate"].get<int>() != 1){
 			std::cout  << "- AutoUpdate Disabled" <<std::endl;
