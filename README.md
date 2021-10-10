@@ -57,10 +57,10 @@ make NSP
 - [ ] **Sección de ajustes**
 - [ ] **Abrir PPLAY desde la app**
 - [ ] **Integrar un reproductor interno**
-- [ ] **Que la app no se congele al usar el navegador**
 - [ ] **Crear Salvas de Usuario si no existen**
 - [ ] **Utilizar OpenGL**
 ### Done 
+- [x] **Que la app no se congele al usar el navegador**
 - [x] **Agregar slideshow**
 - [x] **Agregar sección de recomendados**
 - [x] **Gestionar la interfaz de decargas**
