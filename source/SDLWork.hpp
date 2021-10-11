@@ -43,6 +43,8 @@ void setAlpha(Uint8 alpha);
 
 //Renders texture at given point
 void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+void ScaleA(int H, int W);//Absolute
+void ScaleR(int H, int W);//relative
 int render_T(int x, int y, std::string text="", bool presed=false);
 bool render_AH(int x, int y, int w, int h, bool type);
 void render_VOX(SDL_Rect Form,int R, int G, int B, int A);
@@ -52,9 +54,12 @@ bool SPr();
 //Gets image dimensions
 int getWidth();
 int getHeight();
+int getWidthR();
+int getHeightR();
 int getX();
 int getY();
 bool mark;
+bool isZero();
 
 //texture Scale
 int offtik=0;
@@ -70,6 +75,7 @@ private:
 //The actual hardware texture
 SDL_Texture* mTexture;
 
+bool isRe = false;
 
 //Image dimensions
 int mWidth, mHeight, mX, mY, SelIns;
@@ -118,7 +124,7 @@ int MasKey=-1;
 std::string WorKey="00";
 
 void Image(std::string path,int X, int Y,int W, int H,int key);
-void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,bool selected=false);
+void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,int selected=0);
 void PleaseWait(std::string text,bool render = true);
 void ListCover(int& selectindex,json Jlinks, bool ongrid=false,int limit=0);
 void ListClassic(int& selectindex,json Jlinks);
