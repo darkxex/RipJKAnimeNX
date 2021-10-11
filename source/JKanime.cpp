@@ -726,8 +726,9 @@ void DataUpdate(string Link) {//Get info off chapter
 		string zerocontainer2 = "";
 		zero1 = a.rfind("ajax/pagination_episodes/");
 		zero2 = a.find("'", zero1);
-		zerocontainer = "https://www.jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
-		replace(zerocontainer, "//", "/");
+		zerocontainer = "https://jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
+		replace(zerocontainer, "//a", "/a");
+		replace(zerocontainer, "//1/", "/1/");
 		//cout << zerocontainer << endl;
 		zerocontainer2 = Net::GET(zerocontainer);
 
