@@ -394,11 +394,11 @@ int main(int argc, char **argv)
 								break;
 							}
 						}
-						else if (e.jbutton.button == BT_P) {// (+) button down close to home menu
+						if (e.jbutton.button == BT_P) {// (+) button down close to home menu
 							cancelcurl = 1;
 							quit = true;
 						}
-						else if (e.jbutton.button == BT_M) {// (-) button down
+						if (e.jbutton.button == BT_M) {// (-) button down
 							if (Mix_PlayingMusic() == 0)
 							{
 								//Play the music
@@ -425,7 +425,7 @@ int main(int argc, char **argv)
 								}
 							}
 						}
-						else if (e.jbutton.button == BT_L || e.jbutton.button == BT_ZL) {// (L & ZL) button down
+						if (e.jbutton.button == BT_L || e.jbutton.button == BT_ZL) {// (L & ZL) button down
 							if (statenow == chapterstate&&e.jbutton.button == BT_L) {
 								if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
 									if (!serverpront) {
@@ -452,7 +452,7 @@ int main(int argc, char **argv)
 							}
 							
 						}
-						else if (e.jbutton.button == BT_ZR) {// (ZR) button down
+						if (e.jbutton.button == BT_ZR) {// (ZR) button down
 							if(isDownloading && isHandheld) {
 								lcdoff = !lcdoff;
 								appletSetLcdBacklightOffEnabled(lcdoff);
@@ -472,7 +472,7 @@ int main(int argc, char **argv)
 								break;
 							}
 						}
-						else if (e.jbutton.button == BT_B) {// (B) button down
+						if (e.jbutton.button == BT_B) {// (B) button down
 
 							switch (statenow)
 							{
@@ -507,7 +507,7 @@ int main(int argc, char **argv)
 								break;
 							}
 						}
-						else if (e.jbutton.button == BT_X) {// (X) button down
+						if (e.jbutton.button == BT_X) {// (X) button down
 							switch (statenow)
 							{
 							case programationstate:
@@ -548,7 +548,7 @@ int main(int argc, char **argv)
 
 							}
 						}
-						else if (e.jbutton.button == BT_Y) {// (Y) button down
+						if (e.jbutton.button == BT_Y) {// (Y) button down
 
 							switch (statenow)
 							{
@@ -587,7 +587,7 @@ int main(int argc, char **argv)
 
 							}
 						}
-						else if (e.jbutton.button == BT_R3) {// (R3) button down
+						if (e.jbutton.button == BT_R3) {// (R3) button down
 							switch (statenow)
 							{//only for test
 							case chapterstate:
@@ -609,15 +609,14 @@ int main(int argc, char **argv)
 								break;
 							}
 						}
-						else if (e.jbutton.button == BT_L3) {// (L3) button down
+						if (e.jbutton.button == BT_L3) {// (L3) button down
 							switch (statenow)
 							{
 								//Change UI
 							}
 
 						}
-						else if (e.jbutton.button == BT_R) {// (R) button down
-
+						if (e.jbutton.button == BT_R) {// (R) button down
 							switch (statenow)
 							{
 							case chapterstate:
@@ -645,8 +644,7 @@ int main(int argc, char **argv)
 
 
 						}
-						else if (e.jbutton.button == BT_LEFT || e.jbutton.button == BT_LS_LEFT) {// (left) button down
-
+						if (e.jbutton.button == BT_LEFT || e.jbutton.button == BT_LS_LEFT) {// (left) button down
 							switch (statenow)
 							{
 							case chapterstate:
@@ -660,40 +658,12 @@ int main(int argc, char **argv)
 									latest = mincapit;
 								}
 								break;
-							case programationstate:
-								if (!reloading)
-								{
-									GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
-								}
-								break;
-							case searchstate:
-								if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-								{
-									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
-								}
-								break;
-							case topstate:
-								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case agregados:
-								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case hourglass:
-								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case historystate:
-								GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
-								break;
-							case favoritesstate:
-								GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
-								break;
 							}
 						}
-						else if (e.jbutton.button == BT_RIGHT || e.jbutton.button == BT_LS_RIGHT) {// (right) button down
+						if (e.jbutton.button == BT_RIGHT || e.jbutton.button == BT_LS_RIGHT) {// (right) button down
 							switch (statenow)
 							{
 							case chapterstate:
-
 								if(serverpront) {serverpront = false;}
 								if (latest < maxcapit)
 								{
@@ -704,45 +674,11 @@ int main(int argc, char **argv)
 									latest = maxcapit;
 								}
 								break;
-							case programationstate:
-								if (!reloading)
-								{
-									GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
-								}
-								break;
-							case searchstate:
-								if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-								{
-									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
-								}
-								break;
-							case topstate:
-								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case agregados:
-								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case hourglass:
-								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case historystate:
-								GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
-								break;
-							case favoritesstate:
-								GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
-								break;
 							}
 						}
-						else if (e.jbutton.button == BT_UP || e.jbutton.button == BT_LS_UP) {// (up) button down
-
+						if (e.jbutton.button == BT_UP || e.jbutton.button == BT_LS_UP) {// (up) button down
 							switch (statenow)
 							{
-							case programationstate:
-								if (!reloading)
-								{
-									GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
-								}
-								break;
 							case chapterstate:
 								if(!serverpront) {//selectserver
 									if (latest < maxcapit)
@@ -760,50 +696,11 @@ int main(int argc, char **argv)
 									}
 								}
 								break;
-							case searchstate:
-								if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-								{
-									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
-								}
-								break;
-
-							case topstate:
-								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case agregados:
-								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case hourglass:
-								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case historystate:
-								GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
-								break;
-							case favoritesstate:
-								GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
-								break;
-							case programationsliderstate:
-								GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
-								break;
 							}
 						}
-						else if (e.jbutton.button == BT_DOWN || e.jbutton.button == BT_LS_DOWN) {// (down) button down
+						if (e.jbutton.button == BT_DOWN || e.jbutton.button == BT_LS_DOWN) {// (down) button down
 							switch (statenow)
 							{
-							case programationstate:
-								if (!reloading)
-								{
-									GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
-								}
-								break;
-
-							case searchstate:
-								if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-								{
-									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
-								}
-								break;
-
 							case chapterstate:
 								if(!serverpront) {//selectserver
 									if (latest > 1)
@@ -821,27 +718,51 @@ int main(int argc, char **argv)
 									}
 								}
 								break;
-
-							case topstate:
-								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case agregados:
-								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case hourglass:
-								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case historystate:
-								GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
-								break;
-							case favoritesstate:
-								GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
-								break;
-							case programationsliderstate:
-								GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
-								break;
 							}
 						}
+						
+						//Global HID
+						switch (e.jbutton.button){
+							case BT_LEFT:
+							case BT_UP:
+							case BT_RIGHT:
+							case BT_DOWN:
+							case BT_LS_LEFT:
+							case BT_LS_UP:
+							case BT_LS_RIGHT:
+							case BT_LS_DOWN:
+							{
+								switch (statenow)
+								{
+								case programationstate:
+									if (!reloading) GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case searchstate:
+									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case topstate:
+									GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case agregados:
+									GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case hourglass:
+									GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case historystate:
+									GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+									break;
+								case favoritesstate:
+									GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongrid);
+									break;
+								case programationsliderstate:
+									GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
+									break;
+								}
+							}
+							break;
+						}
+						//
 					}
 					break;
 				default:

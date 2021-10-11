@@ -549,6 +549,7 @@ void SDLB::ListClassic(int& selectindex,json Jlinks) {
 	}
 }
 void SDLB::HandleList(int& selectchapter, int allsize, int key,bool ongrid){
+	if (allsize <=0) return;
 	allsize--;
 //	std::cout << selectchapter << " - " << allsize << std::endl;
 	switch(key) {
