@@ -54,7 +54,6 @@ LTexture VOX, T_T, T_N, T_D, T_R;
 
 
 //Gui Vars
-enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, agregados, hourglass, topstate, programationsliderstate};
 int statenow = programationstate;
 int returnnow = programationstate;
 //net

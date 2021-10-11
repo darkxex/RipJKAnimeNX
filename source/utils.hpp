@@ -28,6 +28,30 @@ bool isset(json data);
 void NameOfLink(std::string& word);
 std::string KeyOfLink(std::string word);
 
+typedef enum {
+	programationstate,
+	downloadstate,
+	chapterstate,
+	searchstate,
+	favoritesstate,
+	historystate,
+	agregados,
+	hourglass,
+	topstate,
+	programationsliderstate
+} states;
+
+typedef enum {
+	BT_A, BT_B, BT_X, BT_Y,
+	BT_L3, BT_R3,
+	BT_L, BT_R, BT_ZL, BT_ZR,
+	BT_P, BT_M,
+	BT_LEFT, BT_UP, BT_RIGHT, BT_DOWN,
+	BT_LS_LEFT, BT_LS_UP, BT_LS_RIGHT, BT_LS_DOWN,
+	BT_RS_LEFT, BT_RS_UP, BT_RS_RIGHT, BT_RS_DOWN,
+	BT_1
+} SDL_Keys;
+
 //extern to all
 extern AccountUid uid;
 extern std::string AccountID;

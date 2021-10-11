@@ -6,8 +6,6 @@
 #include "Link.hpp"
 
 extern SDL_Thread* capithread;
-
-enum states { programationstate, downloadstate, chapterstate, searchstate, favoritesstate, historystate, hourglass, topstate, programationsliderstate};
 enum UnixT {U_day=86400, U_week=604800};
 u32 voidd =0;
 
