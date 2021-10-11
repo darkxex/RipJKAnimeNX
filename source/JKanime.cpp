@@ -85,7 +85,7 @@ int AnimeLoader(void* data){
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "<span>","</span>");
 
 		steep++;//Download All not existing images
-		cout << "# IMG Recent" << endl;
+		cout << "# IMG Recent ";
 		CheckImgVector(ChapImag,imgNumbuffer);
 		
 		
@@ -120,7 +120,6 @@ int AnimeLoader(void* data){
 
 					if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
 					if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
-
 				}
 				Frames=1;
 				BD["arrays"]["chapter"]["link"]=ChapLink;
@@ -129,7 +128,7 @@ int AnimeLoader(void* data){
 		}
 
  		steep++;//Get history
-		cout << "# IMG history" << endl;
+		cout << "# IMG history ";
 		CheckImgVector(UD["history"],imgNumbuffer);
 
 		steep++;//Top, Hour to Database
@@ -142,42 +141,42 @@ int AnimeLoader(void* data){
 
 		steep++;//Download All not existing images of Favorites
 		if(UD["favoritos"].empty()) {
-			cout << "# Get fav list" << endl;
+			cout << "# Get fav list ";
 			getFavorite();
-			cout << "# Goted fav list" << endl;
+			cout << "# Goted fav list ";
 		}
-		cout << "# IMG fav" << endl;
+		cout << "# IMG fav ";
 		CheckImgVector(UD["favoritos"],porcentajebufferF);
 		
-		cout << "# End Image Download" << endl;
+		cout << "# End Image Download ";
 
 
 		steep++;//Load to cache all Programation Chaps
-		cout << "# Cache Recent" << endl;
+		cout << "# Cache Recent ";
 		if (haschange) {
-			cout << "# Cache Recent, haschange" << endl;
+			cout << "# Cache Recent, haschange ";
 			if(DataMaker(BD["arrays"]["chapter"]["link"], part, ofall)) {
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
 		}
 
 		steep++;//Load to cache all Favorites Chaps
-		cout << "# Cache favs" << endl;
+		cout << "# Cache favs ";
 		DataMaker(UD["favoritos"], part, ofall);
 
 		steep++;//Cache Top
-		cout << "# Cache Top" << endl;
+		cout << "# Cache Top ";
 		DataMaker(BD["arrays"]["Top"]["link"], part, ofall);
 
 		steep++;//Cache Horario
-		cout << "# Cache Horario" << endl;
+		cout << "# Cache Horario ";
 		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
 
 /*
 		steep++;//extra vector
 		vector<string> vec={};
 		//load main
-		cout << "# Cache Main" << endl;
+		cout << "# Cache Main ";
 		content = Net::GET("https://jkanime.net");
 		replace(content, "\"https://jkanime.net/\"", "");
 		vec=scrapElementAll(content, "https://jkanime.net/");
@@ -191,11 +190,11 @@ int AnimeLoader(void* data){
 	} catch(...) {
 		led_on(2);
 		printf("Thread Chain Error Catched, Steep#%d\n",steep);
-		//appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
+		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
 	if(quit) write_DB(AB,rootdirectory+"AnimeBase.json");
-	cout << "# End Thread Chain" << endl;
+	cout << endl << "# End Thread Chain" << endl;
 	isChained=false;
 	ChainManager(false,!isDownloading&&!isChained);
 	//exit after load the cache if are in applet mode
@@ -207,7 +206,7 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
 	string a = "";
 	part=0;
-	int sep=0;
+	//int sep=0;
 	ofall=LinkList.size();
 	if (ofall <= 0){return false;}
 	for (int x = 0; x < ofall&& !quit; x++)
@@ -221,12 +220,15 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 				part = x+1;
 				DataUpdate(link);
 				hasmchap=true;
+				/*
 				if (sep >= 101){
 					//write_DB(BD,"sdmc:/DataBase.json");
 					write_DB(AB,rootdirectory+"AnimeBase.json");
 					sep=0;
 				}
+				
 				sep++;
+				*/
 			} else {
 				//AB["AnimeBase"][name]["TimeStamp"] = BD["TimeStamp"];
 			}
@@ -243,7 +245,7 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 int MkTOP(){
 	//load Top
 	vector<string> TOPC={};
-	cout << "# Get Top" << endl;
+	cout << "# Get Top ";
 	string content=Net::GET("https://jkanime.net/top/");
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
@@ -251,22 +253,22 @@ int MkTOP(){
 	TOPC.erase(unique(TOPC.begin(),TOPC.end()),TOPC.end());
 	BD["arrays"]["Top"]["link"]=TOPC;
 	
-	cout << "# IMG Top" << endl;
+	cout << "# IMG Top ";
 	CheckImgVector(TOPC,imgNumbuffer);
 	return 0;
 }
 int MkAGR(string content){
 	//Get Latest added animes
-	cout << "# Get Agregados" << endl;
+	cout << "# Get Agregados ";
 	BD["arrays"]["Agregados"]["link"]=scrapElementAll(content, "https://jkanime.net/");
 
-	cout << "# IMG Agregados" << endl;
+	cout << "# IMG Agregados ";
 	CheckImgVector(BD["arrays"]["Agregados"]["link"],part);
 	return 0;
 }
 int MkHOR(){
 	//load Horario
-	cout << "# Get HourGlass" << endl;
+	cout << "# Get HourGlass ";
 	string content=Net::GET("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	vector<string> STP={};
@@ -301,7 +303,7 @@ int MkHOR(){
 	//HORC.erase(unique(HORC.begin(),HORC.end()),HORC.end());
 	BD["arrays"]["HourGlass"]["link"]=HORC;
 	BD["arrays"]["HourGlass"]["Todos"]=HORC;
-	cout << "# IMG HourGlass" << endl;
+	cout << "# IMG HourGlass ";
 	CheckImgVector(HORC,imgNumbuffer);
 	return 0;
 }
@@ -321,11 +323,11 @@ int MkDIR(){
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 			}
 
-			cout << "# Get Directory" << endl;
+			cout << "# Get Directory ";
 			vector<string> DIR={};
 			vector<string> TDIR={};
 
-			part=0;
+			part=1;
 			ofall=0;
 			while (!quit) {
 				string content=Net::GET("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
@@ -370,7 +372,7 @@ int MkDIR(){
 	//Build All Data Base
 	if (BD["arrays"]["Directory"]["InTime"].get<int>() == 0)
 	{
-		cout << "# Cache Directory" << endl;
+		cout << "# Cache Directory ";
 		try{
 			if (DataMaker(BD["arrays"]["Directory"]["link"], part, ofall)){
 				BD["arrays"]["Directory"]["InTime"]=1;
@@ -517,7 +519,7 @@ int capit(void* data) {//Get chap thread
 		mincapit = AB["AnimeBase"][name]["mincapit"];//1;
 		maxcapit = AB["AnimeBase"][name]["maxcapit"];//-1;
 		//write json
-		write_DB(AB,rootdirectory+"AnimeBase.json");
+		//write_DB(AB,rootdirectory+"AnimeBase.json");
 
 		//Get Image
 		string image = rootdirectory+"DATA/"+name+".jpg";
