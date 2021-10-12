@@ -252,6 +252,7 @@ int main(int argc, char **argv)
 								BD="{}"_json;
 								remove((rootdirectory+"update.nsp.json").c_str());
 								remove((rootdirectory+"update.nsp").c_str());
+								remove((rootdirectory+"LOG.txt").c_str());
 								fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 								statenow=99;
 								break;
