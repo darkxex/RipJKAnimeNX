@@ -70,7 +70,6 @@ string MD_s(string Link){
 	return decode;
 }
 string Nozomi_Link(string Link){
-	LOG::Screen();
 	string codetemp;
 	//Get FirstKey
 	string FirstKey = Net::GET(Link);
@@ -109,7 +108,6 @@ string Nozomi_Link(string Link){
 		}
 	}
 	cout << "Link: "<< ThirdKey << "-" << endl;
-	LOG::Mem();
 	return ThirdKey;
 }
 string Fembed_Link(string Link) {

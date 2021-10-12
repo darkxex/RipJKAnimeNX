@@ -17,6 +17,10 @@ int main(int argc, char **argv)
 	romfsInit();
 	nxlinkStdio();
 	printf("Nxlink server Conected\n");
+	
+	//LOG Init
+	LOG::init();
+
 	AppletMode=GetAppletMode();
 	ChainManager(true,true);
 	isConnected=Net::HasConnection();
@@ -215,10 +219,8 @@ int main(int argc, char **argv)
 								break;
 							}
 							else if (GOD.MasKey >=0) {
-								if (statenow != programationsliderstate) {
-									if(GOD.MapT[GOD.WorKey].SP()) {
-										e.jbutton.button=GOD.MasKey;
-									}
+								if(GOD.MapT[GOD.WorKey].SP()) {
+									e.jbutton.button=GOD.MasKey;
 								}
 								GOD.WorKey="0"; GOD.MasKey=-1;
 							}
@@ -426,8 +428,8 @@ int main(int argc, char **argv)
 								}
 							}
 						}
-						if (e.jbutton.button == BT_L || e.jbutton.button == BT_ZL) {// (L & ZL) button down
-							if (statenow == chapterstate&&e.jbutton.button == BT_L) {
+						if (e.jbutton.button == BT_L) {// (L) button down
+							if (statenow == chapterstate) {
 								if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
 									if (!serverpront) {
 										capBuffer(AB["AnimeBase"][KeyName]["Precuela"]);
@@ -440,10 +442,7 @@ int main(int argc, char **argv)
 
 							if (statenow == programationstate)
 							{
-								if (e.jbutton.button == BT_ZL)
-									WebBrowserCall(urlc,true);
-								else
-									callAflv();
+								callAflv();
 							}
 							if (statenow == hourglass){
 								if (WdayG > 0){
@@ -451,7 +450,18 @@ int main(int argc, char **argv)
 									BD["arrays"]["HourGlass"]["link"] = BD["arrays"]["HourGlass"][Wday[WdayG]];
 								}
 							}
-							
+							if (statenow == programationsliderstate)
+							{
+								Btimer=false;
+								bannersel--;
+								if (bannersel<0)bannersel=8;
+							}
+						}
+						if (e.jbutton.button == BT_ZL) {// (ZL) button down
+							if (statenow == programationstate)
+							{
+								WebBrowserCall(urlc,true);
+							}
 						}
 						if (e.jbutton.button == BT_ZR) {// (ZR) button down
 							if(isDownloading && isHandheld) {
@@ -643,6 +653,12 @@ int main(int argc, char **argv)
 								}
 							}
 
+							if (statenow == programationsliderstate)
+							{
+								Btimer=false;
+								bannersel++;
+								if (bannersel>8)bannersel=0;
+							}
 
 						}
 						if (e.jbutton.button == BT_LEFT || e.jbutton.button == BT_LS_LEFT) {// (left) button down
@@ -664,6 +680,14 @@ int main(int argc, char **argv)
 						if (e.jbutton.button == BT_RIGHT || e.jbutton.button == BT_LS_RIGHT) {// (right) button down
 							switch (statenow)
 							{
+							case programationsliderstate:
+								if (BD["arrays"]["Banner"]["link"].size()>0)
+								{
+									returnnow = programationsliderstate;
+									capBuffer(BD["arrays"]["Banner"]["link"][bannersel]);
+									gFAV = isFavorite(BD["com"]["ActualLink"]);
+								}
+								break;
 							case chapterstate:
 								if(serverpront) {serverpront = false;}
 								if (latest < maxcapit)
@@ -812,9 +836,12 @@ int main(int argc, char **argv)
 				{//draw description
 					VOX.render_VOX({10,63, 770, 340}, 255, 255, 255, 170);
 					static std::string rese_prot = "..";
-					if (rese_prot != BD["com"]["sinopsis"]) {//load texture on text change
-						T_R.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["sinopsis"], textColor, 750);
-						rese_prot = BD["com"]["sinopsis"];
+					string rese_p = BD["com"]["sinopsis"];
+					rese_p = rese_p.substr(0,800);
+					
+					if (rese_prot != rese_p) {//load texture on text change
+						T_R.loadFromRenderedTextWrap(GOD.gFont, rese_p, textColor, 750);
+						rese_prot = rese_p;
 					}
 					T_R.render(posxbase, posybase + 65);
 
@@ -1102,6 +1129,30 @@ int main(int argc, char **argv)
 									VOX.render_VOX({XD+80,YD + (x * mwide)+mwide+2, W-130, 1}, 255, 255, 255, 235);
 								}
 							}
+						}
+						{//Draw Banner
+							int XF=5, YF=65, WF=760, HF=427;
+							string temptext = BD["arrays"]["Banner"]["name"][bannersel];
+							//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
+							//NameOfLink(temptext);
+
+							VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
+							GOD.Image(BD["arrays"]["Banner"]["files"][bannersel], XF, YF, WF, HF,BT_RIGHT);
+							
+							VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
+							gTextTexture.loadFromRenderedText(GOD.gFont4, temptext.substr(0,60)+ ":", textColor);
+							gTextTexture.render(XF, YF-5);
+							
+							VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
+							B_RIGHT.render_T(XF+5, YF+HF-40,"Ver Ahora");
+							//clock cicle 5s
+							if (inTimeN(5001)) {
+								if (Btimer){
+									bannersel++;
+									if (bannersel>8)bannersel=0;
+								} else  Btimer=true;
+							}
+							
 						}
 
 						//Draw footer buttons
@@ -1511,7 +1562,7 @@ int main(int argc, char **argv)
 		}
 	} catch(...) {
 		led_on(2);
-		printf("Error Catched\n");
+		cout << "- Error Catched Main" << std::endl;
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
 		std::cout << "com: " << BD["com"] << std::endl;
 		write_DB(AB,rootdirectory+"AnimeBase.json.bak");
@@ -1571,12 +1622,15 @@ int main(int argc, char **argv)
 
 	//Free resources and close SDL
 	GOD.deint();
+	//LOG Save
+	LOG::SaveFile();
 	accountExit();
 	hidsysExit();
 	socketExit();
 	romfsExit();
 	socketExit();
 
+	
 	//unmount and commit
 	fsdevCommitDevice("save");
 	fsdevUnmountDevice("save");
@@ -1585,6 +1639,7 @@ int main(int argc, char **argv)
 	fsdevCommitDevice("user");
 	fsdevUnmountDevice("user");
 	fsFsClose(&data);
+	
 
 	accountExit();
 	appletUnlockExit ();

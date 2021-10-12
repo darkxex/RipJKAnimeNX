@@ -80,7 +80,9 @@ vector<string> scrapElementAll(std::string content, std::string get,std::string 
 			replace(Element, "\\", "");
 			replace(Element, "\n", "");
 			replace(Element, "<span>", "");
-			replace(Element, " ", "");
+			replace(Element, "<h2>", "");
+			replace(Element, "</h2>", "");
+			//replace(Element, " ", "");
 
 
 			res.push_back (Element+addend);

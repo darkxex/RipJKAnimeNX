@@ -98,7 +98,9 @@ int topchapter=0;
 int hourchapter=0;
 //agregados
 int agregadosidx=0;
-
+//banner
+int bannersel=0;
+bool Btimer=true;
 //my vars
 bool isHandheld=true;
 bool isChained=false;
