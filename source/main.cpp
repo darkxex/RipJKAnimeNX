@@ -222,27 +222,27 @@ int main(int argc, char **argv)
 								}
 								GOD.WorKey="0"; GOD.MasKey=-1;
 							}
-							else if (GOD.MapT["EXIT"].SP()) e.jbutton.button = GOD.BT_P;
-							else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = GOD.BT_M;
+							else if (GOD.MapT["EXIT"].SP()) e.jbutton.button = BT_P;
+							else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
 							
 							else if (USER.SP()) {PlayerGet(acc);}
-							else if (B_A.SP()) {e.jbutton.button = GOD.BT_A; B_A.TickerBomb();}
-							else if (T_T.SP() ) e.jbutton.button = GOD.BT_A;
-							else if (B_B.SP()) e.jbutton.button = GOD.BT_B;
-							else if (BACK.SP()) e.jbutton.button = GOD.BT_B;
-							else if (B_X.SP()) e.jbutton.button = GOD.BT_X;
-							else if (B_Y.SP()) e.jbutton.button = GOD.BT_Y;
-							else if (B_L.SP()) e.jbutton.button = GOD.BT_L;
-							else if (B_R.SP()) e.jbutton.button = GOD.BT_R;
-							else if (B_ZR.SP()) e.jbutton.button = GOD.BT_ZR;
-							else if (B_P.SP()) e.jbutton.button = GOD.BT_P;
-							else if (B_M.SP()) e.jbutton.button = GOD.BT_M;
-							else if (B_LEFT.SP()) e.jbutton.button = GOD.BT_LEFT;
-							else if (B_RIGHT.SP()) e.jbutton.button = GOD.BT_RIGHT;
-							else if (B_UP.SP()) e.jbutton.button = GOD.BT_UP;
-							else if (B_DOWN.SP()) e.jbutton.button = GOD.BT_DOWN;
+							else if (B_A.SP()) {e.jbutton.button = BT_A; B_A.TickerBomb();}
+							else if (T_T.SP() ) e.jbutton.button = BT_A;
+							else if (B_B.SP()) e.jbutton.button = BT_B;
+							else if (BACK.SP()) e.jbutton.button = BT_B;
+							else if (B_X.SP()) e.jbutton.button = BT_X;
+							else if (B_Y.SP()) e.jbutton.button = BT_Y;
+							else if (B_L.SP()) e.jbutton.button = BT_L;
+							else if (B_R.SP()) e.jbutton.button = BT_R;
+							else if (B_ZR.SP()) e.jbutton.button = BT_ZR;
+							else if (B_P.SP()) e.jbutton.button = BT_P;
+							else if (B_M.SP()) e.jbutton.button = BT_M;
+							else if (B_LEFT.SP()) e.jbutton.button = BT_LEFT;
+							else if (B_RIGHT.SP()) e.jbutton.button = BT_RIGHT;
+							else if (B_UP.SP()) e.jbutton.button = BT_UP;
+							else if (B_DOWN.SP()) e.jbutton.button = BT_DOWN;
 							else if (T_D.SP()&&isDownloading) statenow = downloadstate;
-							else if (SCREEN.SP()) e.jbutton.button = GOD.BT_ZR;
+							else if (SCREEN.SP()) e.jbutton.button = BT_ZR;
 							else if (CLEAR.SP()) {
 								preview = false;
 								quit = true;
@@ -252,6 +252,7 @@ int main(int argc, char **argv)
 								BD="{}"_json;
 								remove((rootdirectory+"update.nsp.json").c_str());
 								remove((rootdirectory+"update.nsp").c_str());
+								remove((rootdirectory+"LOG.txt").c_str());
 								fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
 								statenow=99;
 								break;
@@ -268,10 +269,10 @@ int main(int argc, char **argv)
 							e.jbutton.button=-1;
 							//SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
 							if (e.jaxis.value < -22000) {
-								e.jbutton.button = GOD.BT_UP;
+								e.jbutton.button = BT_UP;
 							}
 							if (e.jaxis.value > 22000) {
-								e.jbutton.button = GOD.BT_DOWN;
+								e.jbutton.button = BT_DOWN;
 							}
 						} else break;
 
@@ -281,7 +282,7 @@ int main(int argc, char **argv)
 					// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 					// seek for joystick #0
 					if (e.jbutton.which == 0) {
-						if (e.jbutton.button == GOD.BT_A) {// (A) button down
+						if (e.jbutton.button == BT_A) {// (A) button down
 
 							switch (statenow)
 							{
@@ -394,11 +395,11 @@ int main(int argc, char **argv)
 								break;
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_P) {// (+) button down close to home menu
+						if (e.jbutton.button == BT_P) {// (+) button down close to home menu
 							cancelcurl = 1;
 							quit = true;
 						}
-						else if (e.jbutton.button == GOD.BT_M) {// (-) button down
+						if (e.jbutton.button == BT_M) {// (-) button down
 							if (Mix_PlayingMusic() == 0)
 							{
 								//Play the music
@@ -425,8 +426,8 @@ int main(int argc, char **argv)
 								}
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_L || e.jbutton.button == GOD.BT_ZL) {// (L & ZL) button down
-							if (statenow == chapterstate&&e.jbutton.button == GOD.BT_L) {
+						if (e.jbutton.button == BT_L || e.jbutton.button == BT_ZL) {// (L & ZL) button down
+							if (statenow == chapterstate&&e.jbutton.button == BT_L) {
 								if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
 									if (!serverpront) {
 										capBuffer(AB["AnimeBase"][KeyName]["Precuela"]);
@@ -439,7 +440,7 @@ int main(int argc, char **argv)
 
 							if (statenow == programationstate)
 							{
-								if (e.jbutton.button == GOD.BT_ZL)
+								if (e.jbutton.button == BT_ZL)
 									WebBrowserCall(urlc,true);
 								else
 									callAflv();
@@ -452,7 +453,7 @@ int main(int argc, char **argv)
 							}
 							
 						}
-						else if (e.jbutton.button == GOD.BT_ZR) {// (ZR) button down
+						if (e.jbutton.button == BT_ZR) {// (ZR) button down
 							if(isDownloading && isHandheld) {
 								lcdoff = !lcdoff;
 								appletSetLcdBacklightOffEnabled(lcdoff);
@@ -472,7 +473,7 @@ int main(int argc, char **argv)
 								break;
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_B) {// (B) button down
+						if (e.jbutton.button == BT_B) {// (B) button down
 
 							switch (statenow)
 							{
@@ -507,7 +508,7 @@ int main(int argc, char **argv)
 								break;
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_X) {// (X) button down
+						if (e.jbutton.button == BT_X) {// (X) button down
 							switch (statenow)
 							{
 							case programationstate:
@@ -548,7 +549,7 @@ int main(int argc, char **argv)
 
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_Y) {// (Y) button down
+						if (e.jbutton.button == BT_Y) {// (Y) button down
 
 							switch (statenow)
 							{
@@ -587,7 +588,7 @@ int main(int argc, char **argv)
 
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_R3) {// (R3) button down
+						if (e.jbutton.button == BT_R3) {// (R3) button down
 							switch (statenow)
 							{//only for test
 							case chapterstate:
@@ -609,15 +610,14 @@ int main(int argc, char **argv)
 								break;
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_L3) {// (L3) button down
+						if (e.jbutton.button == BT_L3) {// (L3) button down
 							switch (statenow)
 							{
 								//Change UI
 							}
 
 						}
-						else if (e.jbutton.button == GOD.BT_R) {// (R) button down
-
+						if (e.jbutton.button == BT_R) {// (R) button down
 							switch (statenow)
 							{
 							case chapterstate:
@@ -645,8 +645,7 @@ int main(int argc, char **argv)
 
 
 						}
-						else if (e.jbutton.button == GOD.BT_LEFT || e.jbutton.button == GOD.BT_LS_LEFT) {// (left) button down
-
+						if (e.jbutton.button == BT_LEFT || e.jbutton.button == BT_LS_LEFT) {// (left) button down
 							switch (statenow)
 							{
 							case chapterstate:
@@ -660,40 +659,12 @@ int main(int argc, char **argv)
 									latest = mincapit;
 								}
 								break;
-							case programationstate:
-								if (!reloading)
-								{
-									GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
-								}
-								break;
-							case searchstate:
-								if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-								{
-									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
-								}
-								break;
-							case topstate:
-								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case agregados:
-								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case hourglass:
-								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case historystate:
-								GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
-								break;
-							case favoritesstate:
-								GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
-								break;
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_RIGHT || e.jbutton.button == GOD.BT_LS_RIGHT) {// (right) button down
+						if (e.jbutton.button == BT_RIGHT || e.jbutton.button == BT_LS_RIGHT) {// (right) button down
 							switch (statenow)
 							{
 							case chapterstate:
-
 								if(serverpront) {serverpront = false;}
 								if (latest < maxcapit)
 								{
@@ -704,45 +675,11 @@ int main(int argc, char **argv)
 									latest = maxcapit;
 								}
 								break;
-							case programationstate:
-								if (!reloading)
-								{
-									GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
-								}
-								break;
-							case searchstate:
-								if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-								{
-									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
-								}
-								break;
-							case topstate:
-								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case agregados:
-								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case hourglass:
-								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case historystate:
-								GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
-								break;
-							case favoritesstate:
-								GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
-								break;
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_UP || e.jbutton.button == GOD.BT_LS_UP) {// (up) button down
-
+						if (e.jbutton.button == BT_UP || e.jbutton.button == BT_LS_UP) {// (up) button down
 							switch (statenow)
 							{
-							case programationstate:
-								if (!reloading)
-								{
-									GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
-								}
-								break;
 							case chapterstate:
 								if(!serverpront) {//selectserver
 									if (latest < maxcapit)
@@ -760,50 +697,11 @@ int main(int argc, char **argv)
 									}
 								}
 								break;
-							case searchstate:
-								if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-								{
-									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
-								}
-								break;
-
-							case topstate:
-								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case agregados:
-								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case hourglass:
-								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case historystate:
-								GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
-								break;
-							case favoritesstate:
-								GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
-								break;
-							case programationsliderstate:
-								GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
-								break;
 							}
 						}
-						else if (e.jbutton.button == GOD.BT_DOWN || e.jbutton.button == GOD.BT_LS_DOWN) {// (down) button down
+						if (e.jbutton.button == BT_DOWN || e.jbutton.button == BT_LS_DOWN) {// (down) button down
 							switch (statenow)
 							{
-							case programationstate:
-								if (!reloading)
-								{
-									GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
-								}
-								break;
-
-							case searchstate:
-								if (!reloadingsearch&&(BD["arrays"]["search"]["link"].size() >= 1))
-								{
-									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongridS);
-								}
-								break;
-
 							case chapterstate:
 								if(!serverpront) {//selectserver
 									if (latest > 1)
@@ -821,27 +719,51 @@ int main(int argc, char **argv)
 									}
 								}
 								break;
-
-							case topstate:
-								GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case agregados:
-								GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case hourglass:
-								GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
-								break;
-							case historystate:
-								GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
-								break;
-							case favoritesstate:
-								GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongridF);
-								break;
-							case programationsliderstate:
-								GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
-								break;
 							}
 						}
+						
+						//Global HID
+						switch (e.jbutton.button){
+							case BT_LEFT:
+							case BT_UP:
+							case BT_RIGHT:
+							case BT_DOWN:
+							case BT_LS_LEFT:
+							case BT_LS_UP:
+							case BT_LS_RIGHT:
+							case BT_LS_DOWN:
+							{
+								switch (statenow)
+								{
+								case programationstate:
+									if (!reloading) GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case searchstate:
+									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case topstate:
+									GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case agregados:
+									GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case hourglass:
+									GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
+									break;
+								case historystate:
+									GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
+									break;
+								case favoritesstate:
+									GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongrid);
+									break;
+								case programationsliderstate:
+									GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
+									break;
+								}
+							}
+							break;
+						}
+						//
 					}
 					break;
 				default:
@@ -884,7 +806,7 @@ int main(int argc, char **argv)
 
 				{//draw preview image
 					VOX.render_VOX({ SCREEN_WIDTH - 412,63, 404, 590}, 0, 0, 0, 200);
-					GOD.Image(BD["com"]["ActualLink"],SCREEN_WIDTH - 410, 65,400, 550,GOD.BT_B);
+					GOD.Image(BD["com"]["ActualLink"],SCREEN_WIDTH - 410, 65,400, 550,BT_B);
 				}
 
 				{//draw description
@@ -950,7 +872,7 @@ int main(int argc, char **argv)
 						}
 						B_DOWN.render_T(280+XS, 630+YS,"");
 					}
-					if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula" && mincapit != maxcapit) {//draw caps numbers Slider
+					if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula") {//draw caps numbers Slider
 						VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
 						SDL_Color com = {};
 						if (latest-2 >= mincapit) {
@@ -1000,8 +922,8 @@ int main(int argc, char **argv)
 					} else {
 						VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
 						if (BD["com"]["nextdate"] == "Pelicula" || mincapit == maxcapit) {
-							T_N.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
-							T_N.render(posxbase + 282+XS-T_N.getWidth()/2, posybase + 558+YS);
+							T_T.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
+							T_T.render(posxbase + 282+XS-T_T.getWidth()/2, posybase + 558+YS);
 						} else {
 							gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
 							gTextTexture.render(posxbase + 282+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
@@ -1033,14 +955,14 @@ int main(int argc, char **argv)
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
-					GOD.Cover(imagelocal,160,457,"Secuela",120,GOD.BT_R);
+					GOD.Cover(imagelocal,160,457,"Secuela",120,BT_R);
 				}
 				if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
 					std::string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_L.render_T(dist, 680,"Precuela"); dist -= posdist;}
-					GOD.Cover(imagelocal,10,457,"Precuela",120,GOD.BT_L);
+					GOD.Cover(imagelocal,10,457,"Precuela",120,BT_L);
 				}
 
 				break;

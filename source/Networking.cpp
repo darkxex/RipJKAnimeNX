@@ -407,6 +407,7 @@ bool CheckUpdates(bool force){
 					if (InstallNSP(fileU)){
 						DInfo(New);
 						std::cout << Ver << " ---> " << New <<std::endl;
+						remove((rootdirectory+"LOG.txt").c_str());
 						return true;
 					}
 				}

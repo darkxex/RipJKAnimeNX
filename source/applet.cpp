@@ -45,14 +45,13 @@ bool initUser(){
 	rc =  accountInitialize(AccountServiceType_Application);
 	if (R_SUCCEEDED(rc)) {
 		accountGetPreselectedUser(&uid);
-		printf("User Init OK\n");
+		cout <<"User Init OK" <<std::endl;
 		return GetUserID();
 	} else {
-		printf("Failied to init User\n");
+		cout << "Failied to init User" <<std::endl;
 		return false;
 	}
 }
-
 bool SelectUser(){
 	AccountUid user = LaunchPlayerSelect();
 	if(accountUidIsValid(&user))
@@ -66,10 +65,10 @@ bool GetUserID(){
 	if(accountUidIsValid(&uid))
 	{
 		AccountID=FormatHex128(uid);
-		printf("Gotted user uid: %s\n",AccountID.c_str());
+		cout << "Gotted user uid:"<< AccountID.c_str() <<std::endl;
 		return true;
 	}
-	printf("Failied to get user ID\n");
+	cout << "Failied to get user ID" <<std::endl;
 	return false;
 }
 bool MountUserSave(FsFileSystem& acc){
@@ -86,11 +85,11 @@ bool MountUserSave(FsFileSystem& acc){
 		} else {
 			rootsave = rootdirectory+AccountID;
 			GetUserImage();
-			printf("Failied to Mount User Save\n");
+			cout << "Failied to Mount User Save" <<std::endl;
 			return false;
 		}
 	} else {
-		printf("Invalid User UID\n");
+		cout << "Invalid User UID" <<std::endl;
 	}
 	return false;
 }
@@ -112,20 +111,20 @@ bool GetUserImage(){
 				if(f)
 				{
 					fwrite(icon, 1, iconsize, f);
-					printf("Saved user image: %s\n",(rootsave+"User.jpg").c_str());
+					cout << "Saved user image: "+rootsave+"User.jpg" <<std::endl;
 					fclose(f);
 				} else {
-					printf("Failied to open output file image\n");
+					cout << "Failied to open output file image" <<std::endl;
 				}
 			}
 			delete[] icon;
 		} else
-			printf("Failied user image size\n");
+			cout << "Failied user image size" <<std::endl;
 
 		accountProfileClose(&prof);
 		return true;
 	}
-	printf("Failied user image\n");
+	cout << "Failied user image" <<std::endl;
 	return false;
 }
 bool GetAppletMode(){
@@ -184,6 +183,7 @@ json DInfo(string ver){
 		}
 		info["config"]=config;
 		
+		info["UNIX"]=time(0);
 		//DeviceID
 		u64 id = 0;
 		if (R_FAILED(ret = splGetConfig(SplConfigItem_DeviceId, &id))) {
@@ -304,7 +304,7 @@ json DInfo(string ver){
 		info["App"]=base["V"];
 
 		setsysExit();
-		std::cout << std::setw(4) << info << std::endl;
+		cout << std::setw(4) << info << std::endl;
 	}
 	if (ver.length() > 0){
 		info["App"]=ver;
@@ -319,7 +319,7 @@ bool ChainManager(bool Chain,bool AndChaing){
 			appletSetAutoSleepDisabled(true);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
-			printf("Chain App...\n");
+			cout << "Chain App..." <<std::endl;
 			return true;
 		} else return false;
 	} else {
@@ -329,7 +329,7 @@ bool ChainManager(bool Chain,bool AndChaing){
 			appletSetAutoSleepDisabled(false);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);
-			printf("UnChain App...\n");
+			cout << "UnChain App..." <<std::endl;
 			return true;
 		} else return false;
 	}
@@ -376,6 +376,7 @@ std::string KeyboardCall (std::string hint, std::string text){
 }
 
 Result WebBrowserCall(std::string url,bool nag){
+	cout << "WEB :"+url <<std::endl;
 	Result rc = 0;
 	if (nag) {
 		url = KeyboardCall ("Escribir URL http://", url);

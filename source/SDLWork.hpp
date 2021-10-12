@@ -43,6 +43,8 @@ void setAlpha(Uint8 alpha);
 
 //Renders texture at given point
 void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+void ScaleA(int H, int W);//Absolute
+void ScaleR(int H, int W);//relative
 int render_T(int x, int y, std::string text="", bool presed=false);
 bool render_AH(int x, int y, int w, int h, bool type);
 void render_VOX(SDL_Rect Form,int R, int G, int B, int A);
@@ -52,9 +54,12 @@ bool SPr();
 //Gets image dimensions
 int getWidth();
 int getHeight();
+int getWidthR();
+int getHeightR();
 int getX();
 int getY();
 bool mark;
+bool isZero();
 
 //texture Scale
 int offtik=0;
@@ -70,6 +75,7 @@ private:
 //The actual hardware texture
 SDL_Texture* mTexture;
 
+bool isRe = false;
 
 //Image dimensions
 int mWidth, mHeight, mX, mY, SelIns;
@@ -98,16 +104,6 @@ TTF_Font* digifontV = NULL;
 TTF_Font *gFontcapit = NULL;
 Mix_Music* gMusic = NULL;
 
-enum SDL_Keys {
-	BT_A, BT_B, BT_X, BT_Y,
-	BT_L3, BT_R3,
-	BT_L, BT_R, BT_ZL, BT_ZR,
-	BT_P, BT_M,
-	BT_LEFT, BT_UP, BT_RIGHT, BT_DOWN,
-	BT_LS_LEFT, BT_LS_UP, BT_LS_RIGHT, BT_LS_DOWN,
-	BT_RS_LEFT, BT_RS_UP, BT_RS_RIGHT, BT_RS_DOWN,
-	BT_1
-};
 //list vars
 int outof=0;
 
@@ -128,7 +124,7 @@ int MasKey=-1;
 std::string WorKey="00";
 
 void Image(std::string path,int X, int Y,int W, int H,int key);
-void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,bool selected=false);
+void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,int selected=0);
 void PleaseWait(std::string text,bool render = true);
 void ListCover(int& selectindex,json Jlinks, bool ongrid=false,int limit=0);
 void ListClassic(int& selectindex,json Jlinks);

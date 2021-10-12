@@ -493,7 +493,6 @@ void TickerName(int& color,int sec,int min,int max){
                 } else {
  */
 }
-
 std::string string_to_hex(const std::string& in) {
     std::stringstream ss;
 
@@ -503,8 +502,6 @@ std::string string_to_hex(const std::string& in) {
     }
     return ss.str(); 
 }
-
-
 bool isset(json data){
 	if (data.empty()) {
 		return false;
@@ -529,9 +526,65 @@ std::string KeyOfLink(std::string word){
 	return word;
 }
 template <typename Map, typename F>
-void map_erase_if(Map& m, F pred)
-{
+void map_erase_if(Map& m, F pred){
 	for (typename Map::iterator i = m.begin();
 	     (i = std::find_if(i, m.end(), pred)) != m.end();
 	     m.erase(i++));
 }
+
+namespace LOG {
+	streambuf* stream_buffer_cout;
+	streambuf* stream_buffer_cin;
+	std::stringstream redirectStream;
+	fstream file;
+	
+	bool MLOG(){
+//		return true;
+//		return (DInfo()["TID"] == "05B80C7D3B860000");
+		return (DInfo()["TID"] == "05B9DB505ABBE000");
+	}
+	
+	void init(){
+		if (MLOG()){
+			// Backup streambuffers of  cout
+			stream_buffer_cout = cout.rdbuf();
+			stream_buffer_cin = cin.rdbuf();
+			
+			Mem();
+			cout << "HEAD>" << endl;
+			cout << std::setw(4) << DInfo() << std::endl;
+		}
+	}
+
+	
+	void SaveFile(){
+		if (MLOG()){
+			//Save log File
+			cout << "END>" << endl;
+			file.open(rootdirectory+"LOG.txt", ios::out);
+			//redirectStream << stream_buffer_cout;
+			file << redirectStream.str();
+			file.close();
+		}
+	}
+	
+	void Mem(){
+		if (MLOG()){
+			cout << "Log to Mem >" << endl;
+			// Redirect cout to Mem
+			cout.rdbuf(redirectStream.rdbuf());
+		}
+	}
+	void Screen(){
+		if (MLOG()){
+			// Redirect cout back to screen
+			cout.rdbuf(stream_buffer_cout);
+			cout << "Log to screen >" << endl;
+		}
+	}
+}
+
+
+
+
+

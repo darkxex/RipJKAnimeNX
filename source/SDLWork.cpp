@@ -15,6 +15,7 @@
 #include <math.h>
 #include "utils.hpp"
 #include "SDLWork.hpp"
+#include "applet.hpp"
 
 //main SLD funct (Grafics On Display == GOD)
 SDLB GOD;
@@ -23,6 +24,9 @@ LTexture TextBuffer;
 
 //Grafics and logic
 void SDLB::intA(){
+	//LOG Init
+	LOG::init();
+	
 	//Start up SDL and create window
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
@@ -130,18 +134,18 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 		path=path.substr(0,val1);
 		path = rootdirectory+"DATA/"+path+".jpg";
 	}
-	std::string KeyImage=path.substr(25)+"-"+std::to_string(W)+"x"+std::to_string(H);
+	std::string KeyImage=path.substr(25);
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
-		KeyImage+="-"+std::to_string(W)+"x"+std::to_string(H);
 		path = "romfs:/img/nop.png";
 	}
 
-	if ( MapT.find(KeyImage) == MapT.end()) {
-		MapT[KeyImage].loadFromFileCustom(path.c_str(), H, W);
-	} else if (MapT[KeyImage].getHeight() < H) {
-		MapT[KeyImage].loadFromFileCustom(path.c_str(), H, W);
+	
+	if (MapT.find(KeyImage) == MapT.end() || MapT[KeyImage].isZero()) {
+		cout << "Loaded to mem :"+KeyImage+"<--"<< endl;
+		MapT[KeyImage].loadFromFile(path.c_str());
 	}
+	MapT[KeyImage].ScaleA(H,W);
 
 	MapT[KeyImage].render(X, Y);
 	if(key >= 0) {
@@ -166,12 +170,11 @@ void SDLB::PleaseWait(std::string text,bool render){
 	TextBuffer.render(1280/2 - TextBuffer.getWidth()/2, 720/2 - TextBuffer.getHeight() / 2);
 	if (render) SDL_RenderPresent(gRenderer);
 }
-void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,bool selected){
+void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,int selected){
 //render images and map to memory for fast display
-	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
+	std::string KeyImage=path.substr(25);
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
-		KeyImage+="-"+std::to_string(WS);
 		path = "romfs:/img/nop.png";
 	}
 
@@ -179,22 +182,21 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 	int sizeportraity =424;
 
 	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-	if ( MapT.find(KeyImage) == MapT.end()) {
-		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
-	} else if (MapT[KeyImage].getHeight() < 10) {
-		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+	if (MapT.find(KeyImage) == MapT.end() || MapT[KeyImage].isZero()) {
+		MapT[KeyImage].loadFromFile(path.c_str());
 	}
-
+	
 	//make the math
 	static int blue=255;
-	if(selected) {
+	if(selected > 0) {
 		MapT[KeyImage].TickerColor(blue,150,250);
-		WS=120;
+		WS=WS+selected;
 		HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-		MapT[KeyImage].offW=WS;
-		MapT[KeyImage].offH=HS;
-	} else blue=0;
-
+	} else{
+		blue=0;
+	} 
+	MapT[KeyImage].ScaleA(HS,WS);
+	
 	std::string KeyText=Text+"-"+std::to_string(WS);
 	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
 
@@ -225,20 +227,15 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,b
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
 	if(MapT[KeyImage].SP()) {WorKey=KeyImage; MasKey=key;}
-	if(selected) {
-		MapT[KeyImage].offW=0;
-		MapT[KeyImage].offH=0;
-	}
 }
 void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render){
 //render images and map to memory for fast display
-	std::string KeyImage=path.substr(25)+"-"+std::to_string(WS);
-	std::string KeyText=Text+"-"+std::to_string(WS);
-	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
+	std::string KeyImage=path.substr(25);
+	std::string KeyText=Text;
+	std::string KeyTextH=Text+"-Head";
 
 	if (!isFileExist(path)) {
 		KeyImage="SuperPro.jpg";
-		KeyImage+="-"+std::to_string(WS);
 		path = "romfs:/img/SuperPro.jpg";
 	}
 	int sizeportraitx = 300;
@@ -246,15 +243,17 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	//make the math
 	bool needload = false;
 	
-	if ( MapT.find(KeyImage) == MapT.end() || (MapT[KeyImage].getHeight() < 10)) {
+
+	if ( MapT.find(KeyImage) == MapT.end() || MapT[KeyImage].isZero()) {
 		needload = true;
 	}
 	
 	static int HS=0;
 	if (needload){
 		HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
-		MapT[KeyImage].loadFromFileCustom(path.c_str(), HS, WS);
+		MapT[KeyImage].loadFromFile(path.c_str());
 	}
+	MapT[KeyImage].ScaleA(HS,WS);
 
 	if (!render) {return;}
 	
@@ -440,7 +439,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 		{
 			//Grid Animation
 			if (limit>0) {
-				std::string KeyImage=imagelocal.substr(25)+"-"+std::to_string(nosel);
+				std::string KeyImage=imagelocal.substr(25);
 				if ( MapT.find(KeyImage) == MapT.end()) {
 					if (limit < x) break;
 				}
@@ -478,7 +477,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 			}
 			if ((AbsoluteSize < Frames)&&(x > 30)) break;
 			if (x == selectindex) {
-				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,issel,BT_A,true);
+				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,issel,BT_A,7);
 			} else {
 				selectindex+=outof;
 				//if(x >= 30) break;
@@ -549,6 +548,7 @@ void SDLB::ListClassic(int& selectindex,json Jlinks) {
 	}
 }
 void SDLB::HandleList(int& selectchapter, int allsize, int key,bool ongrid){
+	if (allsize <=0) return;
 	allsize--;
 //	std::cout << selectchapter << " - " << allsize << std::endl;
 	switch(key) {
@@ -643,6 +643,9 @@ void SDLB::ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool on
 	VOX.render_VOX({X,Y+BarPos, W, BarSize},255, 255, 255, 240);
 }
 void SDLB::deint(){
+	//LOG Save
+	LOG::SaveFile();
+
 	//Clear Texture Map
 	MapT.clear();
 	//Free global font
@@ -894,6 +897,8 @@ void LTexture::free(){
 		mHeight = 0;
 		mX = 0;
 		mY = 0;
+		offW = 0;
+		offH = 0;
 		SelIns = -1;
 	}
 }
@@ -909,13 +914,20 @@ void LTexture::setAlpha(Uint8 alpha){
 	//Modulate texture alpha
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
+void LTexture::ScaleA(int H, int W){//Absolute
+	offW = W;
+	offH = H;
+}
+void LTexture::ScaleR(int H, int W){//relative
+	offW = mWidth+W;
+	offH = mHeight+H;
+}
 void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip){
 	//texture boom
 	TickerScale();
 	int offtikx2=offtik*2;
 
-	//Set rendering space and render to screen
-
+	//Set rendering Overwrite
 	int TextureW=offW > 0 ? offW : mWidth;
 	int TextureH=offH > 0 ? offH : mHeight;
 
@@ -1052,12 +1064,12 @@ void LTexture::render_VOX(SDL_Rect Form,int R, int G, int B, int A){
 }
 bool LTexture::SP(){
 	//return on negative touch
-	if (GOD.TouchX <= 0||GOD.TouchY <= 0||mWidth <= 0||mHeight <= 0) return false;
+	if (GOD.TouchX < 0||GOD.TouchY < 0||getWidth() < 0||getHeight() < 0) return false;
 	if (SelIns != GOD.GenState) return false;
 	if (!mark) return false;
 
 	//check if touched
-	if(GOD.TouchX > mX-3 && GOD.TouchX < mX + mWidth +3 && GOD.TouchY > mY-3 && GOD.TouchY < mY + mHeight +3) {
+	if(GOD.TouchX > mX-3 && GOD.TouchX < mX + getWidth() +3 && GOD.TouchY > mY-3 && GOD.TouchY < mY + getHeight() +3) {
 		//printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
 		return true;
 	}
@@ -1065,7 +1077,6 @@ bool LTexture::SP(){
 }
 //is press relesed
 bool LTexture::SPr(){
-	static bool isRe = false;
 	if (SP()) {
 		if (!isRe) isRe = true;
 	} else if (isRe) {
@@ -1080,11 +1091,20 @@ int LTexture::getWidth(){
 int LTexture::getHeight(){
 	return offH > 0 ? offH : mHeight;
 }
+int LTexture::getWidthR(){
+	return mWidth;
+}
+int LTexture::getHeightR(){
+	return mHeight;
+}
 int LTexture::getX(){
 	return mX;
 }
 int LTexture::getY(){
 	return mY;
+}
+bool LTexture::isZero(){
+	return !(mHeight > 1 && mWidth > 1 && mTexture != NULL);
 }
 
 
