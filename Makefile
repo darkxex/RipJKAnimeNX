@@ -31,8 +31,8 @@ include $(DEVKITPRO)/libnx/switch_rules
 #     - <libnx folder>/default_icon.jpg
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
-VERSION_MINOR := 3
-VERSION_MICRO := 9
+VERSION_MINOR := 4
+VERSION_MICRO := 0
 
 APP_TITLE	:=	RipJKAnimeNX
 APP_AUTHOR	:=	AngelXex & Kronos2308
