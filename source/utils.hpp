@@ -28,6 +28,13 @@ bool isset(json data);
 void NameOfLink(std::string& word);
 std::string KeyOfLink(std::string word);
 
+namespace LOG {
+	void init();
+	void SaveFile();
+	void Mem();
+	void Screen();
+}
+
 typedef enum {
 	programationstate,
 	downloadstate,

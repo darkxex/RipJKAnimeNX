@@ -85,7 +85,7 @@ int AnimeLoader(void* data){
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "<span>","</span>");
 
 		steep++;//Download All not existing images
-		cout << "# IMG Recent ";
+		cout << "# IMG Recent " << std::endl;
 		CheckImgVector(ChapImag,imgNumbuffer);
 		
 		
@@ -124,11 +124,13 @@ int AnimeLoader(void* data){
 				Frames=1;
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 				BD["arrays"]["chapter"]["images"]=ChapImag;
+			} else {
+				cout << "TimeStamp: " << BD["TimeStamp"] << endl;
 			}
 		}
 
  		steep++;//Get history
-		cout << "# IMG history ";
+		cout << "# IMG history " << endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
 
 		steep++;//Top, Hour to Database
@@ -141,42 +143,42 @@ int AnimeLoader(void* data){
 
 		steep++;//Download All not existing images of Favorites
 		if(UD["favoritos"].empty()) {
-			cout << "# Get fav list ";
+			cout << "# Get fav list " << endl;
 			getFavorite();
-			cout << "# Goted fav list ";
+			cout << "# Goted fav list " << endl;
 		}
-		cout << "# IMG fav ";
+		cout << "# IMG fav " << endl;
 		CheckImgVector(UD["favoritos"],porcentajebufferF);
 		
-		cout << "# End Image Download ";
+		cout << "# End Image Download " << endl;
 
 
 		steep++;//Load to cache all Programation Chaps
-		cout << "# Cache Recent ";
+		cout << "# Cache Recent " << endl;
 		if (haschange) {
-			cout << "# Cache Recent, haschange ";
+			cout << "# Cache Recent, haschange " << endl;
 			if(DataMaker(BD["arrays"]["chapter"]["link"], part, ofall)) {
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
 		}
 
 		steep++;//Load to cache all Favorites Chaps
-		cout << "# Cache favs ";
+		cout << "# Cache favs " << endl;
 		DataMaker(UD["favoritos"], part, ofall);
 
 		steep++;//Cache Top
-		cout << "# Cache Top ";
+		cout << "# Cache Top " << endl;
 		DataMaker(BD["arrays"]["Top"]["link"], part, ofall);
 
 		steep++;//Cache Horario
-		cout << "# Cache Horario ";
+		cout << "# Cache Horario " << endl;
 		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
 
 /*
 		steep++;//extra vector
 		vector<string> vec={};
 		//load main
-		cout << "# Cache Main ";
+		cout << "# Cache Main " << endl;
 		content = Net::GET("https://jkanime.net");
 		replace(content, "\"https://jkanime.net/\"", "");
 		vec=scrapElementAll(content, "https://jkanime.net/");
@@ -189,12 +191,12 @@ int AnimeLoader(void* data){
 		MkDIR();
 	} catch(...) {
 		led_on(2);
-		printf("Thread Chain Error Catched, Steep#%d\n",steep);
+		cout << "Thread Chain Error Catched, Steep#" << steep <<std::endl;
 		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
 	if(quit) write_DB(AB,rootdirectory+"AnimeBase.json");
-	cout << endl << "# End Thread Chain" << endl;
+	cout << "# End Thread Chain" << endl;
 	isChained=false;
 	ChainManager(false,!isDownloading&&!isChained);
 	//exit after load the cache if are in applet mode
@@ -245,7 +247,7 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 int MkTOP(){
 	//load Top
 	vector<string> TOPC={};
-	cout << "# Get Top ";
+	cout << "# Get Top " << endl;
 	string content=Net::GET("https://jkanime.net/top/");
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
@@ -253,22 +255,22 @@ int MkTOP(){
 	TOPC.erase(unique(TOPC.begin(),TOPC.end()),TOPC.end());
 	BD["arrays"]["Top"]["link"]=TOPC;
 	
-	cout << "# IMG Top ";
+	cout << "# IMG Top " << endl;
 	CheckImgVector(TOPC,imgNumbuffer);
 	return 0;
 }
 int MkAGR(string content){
 	//Get Latest added animes
-	cout << "# Get Agregados ";
+	cout << "# Get Agregados " << endl;
 	BD["arrays"]["Agregados"]["link"]=scrapElementAll(content, "https://jkanime.net/");
 
-	cout << "# IMG Agregados ";
+	cout << "# IMG Agregados " << endl;
 	CheckImgVector(BD["arrays"]["Agregados"]["link"],part);
 	return 0;
 }
 int MkHOR(){
 	//load Horario
-	cout << "# Get HourGlass ";
+	cout << "# Get HourGlass " << endl;
 	string content=Net::GET("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	vector<string> STP={};
@@ -303,7 +305,7 @@ int MkHOR(){
 	//HORC.erase(unique(HORC.begin(),HORC.end()),HORC.end());
 	BD["arrays"]["HourGlass"]["link"]=HORC;
 	BD["arrays"]["HourGlass"]["Todos"]=HORC;
-	cout << "# IMG HourGlass ";
+	cout << "# IMG HourGlass " << endl;
 	CheckImgVector(HORC,imgNumbuffer);
 	return 0;
 }
@@ -323,7 +325,7 @@ int MkDIR(){
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 			}
 
-			cout << "# Get Directory ";
+			cout << "# Get Directory " << endl;
 			vector<string> DIR={};
 			vector<string> TDIR={};
 
@@ -364,7 +366,7 @@ int MkDIR(){
 		}
 	} catch(...) {
 		led_on(2);
-		printf("Thread Chain Error Catched, Get Dir Error\n");
+		cout << "Thread Chain Error Catched, Get Dir Error" <<std::endl;
 		//write_DB(BD,rootdirectory+"DataBase.json");
 		return 0;
 	}
@@ -372,7 +374,7 @@ int MkDIR(){
 	//Build All Data Base
 	if (BD["arrays"]["Directory"]["InTime"].get<int>() == 0)
 	{
-		cout << "# Cache Directory ";
+		cout << "# Cache Directory " << endl;
 		try{
 			if (DataMaker(BD["arrays"]["Directory"]["link"], part, ofall)){
 				BD["arrays"]["Directory"]["InTime"]=1;
@@ -380,7 +382,7 @@ int MkDIR(){
 			}
 		} catch(...) {
 			led_on(2);
-			printf("Thread Chain Error Catched,Dir Error\n");
+			cout << "Thread Chain Error Catched,Dir Error" <<std::endl;
 			//write_DB(BD,rootdirectory+"DataBase.json");
 			return 0;
 		}
@@ -419,7 +421,7 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 	if(cancelcurl==0) led_on(3); else led_on(0);
 	} catch(...) {
 		led_on(2);
-		printf("Thread Download Error Catched\n");
+		cout << "Thread Download Error Catched" <<std::endl;
 		cout << BD["arrays"]["downloads"] << endl;
 	}
 	cancelcurl = 0;
@@ -497,7 +499,7 @@ int searchjk(void* data) {//Search Thread
 	}
 	} catch(...) {
 		led_on(2);
-		printf("Thread Search Error Catched\n");
+		cout << "Thread Search Error Catched" <<std::endl;
 		cout << BD["arrays"]["search"] << endl;
 	}
 	reloadingsearch = false;
@@ -528,7 +530,7 @@ int capit(void* data) {//Get chap thread
 		}
 	}catch(...) {
 		led_on(2);
-		printf("Error \n");
+		cout << "Error "+name <<std::endl;
 	}
 	return 0;
 }
@@ -594,7 +596,7 @@ int capBuffer (string Tlink) {//anime manager
 			}
 		}catch(...) {
 			led_on(2);
-			printf("Error \n");
+			cout << "Error buff"+name << endl;
 		}
 	}
 	CheckImgNet(image);

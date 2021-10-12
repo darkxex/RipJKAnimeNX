@@ -15,6 +15,7 @@
 #include <math.h>
 #include "utils.hpp"
 #include "SDLWork.hpp"
+#include "applet.hpp"
 
 //main SLD funct (Grafics On Display == GOD)
 SDLB GOD;
@@ -23,6 +24,9 @@ LTexture TextBuffer;
 
 //Grafics and logic
 void SDLB::intA(){
+	//LOG Init
+	LOG::init();
+	
 	//Start up SDL and create window
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
@@ -639,6 +643,9 @@ void SDLB::ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool on
 	VOX.render_VOX({X,Y+BarPos, W, BarSize},255, 255, 255, 240);
 }
 void SDLB::deint(){
+	//LOG Save
+	LOG::SaveFile();
+
 	//Clear Texture Map
 	MapT.clear();
 	//Free global font
