@@ -103,6 +103,7 @@ int hourchapter=0;
 //agregados
 int agregadosidx=0;
 //banner
+int bannersize=8;
 int bannersel=0;
 bool Btimer=true;
 //my vars

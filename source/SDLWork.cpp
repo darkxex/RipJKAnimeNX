@@ -983,9 +983,8 @@ int LTexture::render_T(int x, int y, std::string text, bool presed){
 }
 bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 	//tactil stuff
-	mX = x; mY = y;  SelIns = GOD.GenState;
-	static bool anend = false;
-	static int delayp = 0;
+	mX = x; mY = y;
+	SelIns = GOD.GenState;
 	int sizeH = 0;
 	int HP = h < 0 ? h * -1 : h;
 	if(type) {
@@ -998,7 +997,8 @@ bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 			sizeH = h;
 			//delayp = h;
 		}
-		{        //SIDE
+		{   
+			//SIDE
 			SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
 			SDL_Rect HeaderRect = {x+w,y, 2, sizeH*-1};
 			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
@@ -1029,7 +1029,7 @@ bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 				delayp-=30;
 				sizeH = h < 0 ? delayp* -1 : delayp;
 
-				{        //SIDE
+				{   //SIDE
 					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
 					SDL_Rect HeaderRect = {x+w,y, 3, sizeH*-1};
 					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);

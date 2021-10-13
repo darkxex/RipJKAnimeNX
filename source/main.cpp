@@ -449,7 +449,7 @@ int main(int argc, char **argv)
 							{
 								Btimer=false;
 								bannersel--;
-								if (bannersel<0)bannersel=8;
+								if (bannersel<0)bannersel=bannersize;
 							}
 						}
 						if (e.jbutton.button == BT_ZL) {// (ZL) button down
@@ -652,7 +652,7 @@ int main(int argc, char **argv)
 							{
 								Btimer=false;
 								bannersel++;
-								if (bannersel>8)bannersel=0;
+								if (bannersel>bannersize)bannersel=0;
 							}
 
 						}
@@ -829,13 +829,13 @@ int main(int argc, char **argv)
 				}
 
 				{//draw description
-				int XG=10,YG=63,WG=770,HG=50;
+					int XG=10,YG=63,WG=850,HG=50;
 					static string rese_prot = "..";
 					string rese_p = BD["com"]["sinopsis"];
 					if (rese_prot != rese_p) {//load texture on text change
-						T_R.loadFromRenderedTextWrap(GOD.gFont, rese_p, textColor, 750);
+						T_R.loadFromRenderedTextWrap(GOD.gFont, rese_p, textColor, WG-20);
 						rese_prot = rese_p;
-						cout << "desc:" << T_R.getHeight()+60 << endl;
+						//cout << "desc:" << T_R.getHeight()+60 << endl;
 					}
 					HG = T_R.getHeight()+60;
 					HG = HG < 340 ? 340 : HG;
@@ -843,10 +843,10 @@ int main(int argc, char **argv)
 					VOX.render_VOX({XG, YG, WG, HG}, 255, 255, 255, 170);
 					T_R.render(XG+10, YG+10);
 
-					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["Emitido"], textColor,750);
+					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["Emitido"], textColor,WG-20);
 					gTextTexture.render(XG+10, YG+HG-(gTextTexture.getHeight()*2)-5);
 
-					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["generos"], textColor,750);
+					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["generos"], textColor,WG-20);
 					gTextTexture.render(XG+10, YG+HG-gTextTexture.getHeight()-5);
 				}
 				bool anend=false;
@@ -980,14 +980,14 @@ int main(int argc, char **argv)
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
-					GOD.Cover(imagelocal,160,476,"Secuela",120,BT_R);
+					GOD.Cover(imagelocal,160,456,"Secuela",120,BT_R);
 				}
 				if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_L.render_T(dist, 680,"Precuela"); dist -= posdist;}
-					GOD.Cover(imagelocal,10,476,"Precuela",120,BT_L);
+					GOD.Cover(imagelocal,10,456,"Precuela",120,BT_L);
 				}
 
 				break;
@@ -1130,12 +1130,29 @@ int main(int argc, char **argv)
 						}
 						{//Draw Banner
 							int XF=10, YF=65, WF=760, HF=427;
-							string temptext = BD["arrays"]["Banner"]["name"][bannersel];
+							bannersize = BD["arrays"]["Banner"]["files"].size()-1;
+							//clock cicle 5s
+							bool makebomb = false;
+							if (inTimeN(5001)) {
+								if (Btimer){
+									makebomb = true;
+									bannersel++;
+									if (bannersel>bannersize) bannersel=0;
+								} else
+									Btimer=true;
+							}
 							//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
 							//NameOfLink(temptext);
-
+							string path = BD["arrays"]["Banner"]["files"][bannersel];
+							string temptext = BD["arrays"]["Banner"]["name"][bannersel];
+						
 							VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
-							GOD.Image(BD["arrays"]["Banner"]["files"][bannersel], XF, YF, WF, HF,BT_RIGHT);
+							GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);
+							if (makebomb) {
+								GOD.MapT[path.substr(25)].offboom_size=2;
+								GOD.MapT[path.substr(25)].TickerBomb();
+								makebomb = false;
+							}
 							
 							VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
 							gTextTexture.loadFromRenderedText(GOD.gFont4, temptext.substr(0,60)+ ":", textColor);
@@ -1143,13 +1160,7 @@ int main(int argc, char **argv)
 							
 							VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
 							B_RIGHT.render_T(XF+5, YF+HF-40,"Ver Ahora");
-							//clock cicle 5s
-							if (inTimeN(5001)) {
-								if (Btimer){
-									bannersel++;
-									if (bannersel>8)bannersel=0;
-								} else  Btimer=true;
-							}
+							
 							
 						}
 
@@ -1579,13 +1590,13 @@ int main(int argc, char **argv)
 	write_DB(AB,rootdirectory+"AnimeBase.json");
 //	write_DB(UD,rootsave+"UserData.json");
 
-	if (AppletMode) {
-		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
-	}
 	if (NULL == capithread) {printf("capithread Not in use\n");} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
 	if (NULL == downloadthread) {printf("downloadthread Not in use\n");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
 	if (NULL == searchthread) {printf("searchthread Not in use\n");} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
 	if (NULL == Loaderthread) {printf("Loaderthread Not in use\n");}else {printf("Loaderthread in use: %s\n", SDL_GetError()); SDL_WaitThread(Loaderthread, NULL);}
+	if (AppletMode) {
+		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
+	}
 
 
 
