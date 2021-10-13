@@ -1,14 +1,9 @@
 #include <string>
-//use the nand of the switch
-std::string rootdirectory = "user:/RipJKAnime_NX/";
-std::string rootsave = "save:/";
-std::string oldroot = "sdmc:/switch/RipJKAnime_NX/";
-
 #include "JKanime.hpp"
 #include "extra.hpp"
 
 //make some includes to clean a little the main
-std::string urlc = "https://myrincon.duckdns.org";
+string urlc = "https://myrincon.duckdns.org";
 
 //MAIN INT
 int main(int argc, char **argv)
@@ -147,7 +142,7 @@ int main(int argc, char **argv)
 				{
 					cancelcurl = 1;
 					quit = true;
-					std::cout << "Saliendo" << std::endl;
+					cout << "Saliendo" << endl;
 				}
 				GOD.GenState = statenow;
 				switch (e.type) {
@@ -366,10 +361,10 @@ int main(int argc, char **argv)
 							break;
 							case chapterstate:
 								if(serverpront) {
-									std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(latest) + "/";
-										std::string temp = tempurl;
+									string tempurl = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
+										string temp = tempurl;
 										NameOfLink(temp);
-										std::string text = "Cargando "+temp.substr(0,42)+"... desde "+arrayservers[selectserver]+" ...";
+										string text = "Cargando "+temp.substr(0,42)+"... desde "+arrayservers[selectserver]+" ...";
 										GOD.PleaseWait(text);
 									if(!onlinejkanimevideo(tempurl,arrayservers[selectserver])) {
 										arrayservers.erase(arrayservers.begin()+selectserver);
@@ -378,12 +373,12 @@ int main(int argc, char **argv)
 										UD["chapter"][KeyName]["latest"] = latest;
 										latestcolor = latest;
 
-										std::string item=BD["com"]["ActualLink"].get<std::string>();
+										string item=BD["com"]["ActualLink"].get<string>();
 										int hsize = UD["history"].size();
 										if (hsize > 49) {UD["history"].erase(UD["history"].end());}//limit history
 										if (hsize > 0) {
 											UD["history"] = eraseVec(UD["history"],item);
-											//UD["history"].erase(std::remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
+											//UD["history"].erase(remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
 											UD["history"].insert(UD["history"].begin(),tempurl);
 										} else {
 											UD["history"].push_back(tempurl);
@@ -473,8 +468,8 @@ int main(int argc, char **argv)
 							{
 							case programationstate:
 								statenow=programationsliderstate;
-								std::cout << BD << std::endl;
-								std::cout << UD << std::endl;
+								cout << BD << endl;
+								cout << UD << endl;
 								break;
 							case programationsliderstate:
 								statenow=programationstate;
@@ -533,7 +528,7 @@ int main(int argc, char **argv)
 								statenow = downloadstate;
 								cancelcurl = 0;
 //							GOD.PleaseWait("Calculando Links Espere...");
-								urltodownload  = BD["com"]["ActualLink"].get<std::string>() + std::to_string(latest) + "/";
+								urltodownload  = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
 								if(isDownloading) {
 									bool gogo = false;
 									for (u64 x=0; x < BD["arrays"]["downloads"]["queue"].size(); x++) {
@@ -605,7 +600,7 @@ int main(int argc, char **argv)
 								if(serverpront) {
 									arrayservers.push_back("test");
 								} else {
-									std::string tempurl = BD["com"]["ActualLink"].get<std::string>() + std::to_string(latest) + "/";
+									string tempurl = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
 									WebBrowserCall(tempurl);
 								}
 								break;
@@ -815,7 +810,7 @@ int main(int argc, char **argv)
 				VOX.render_VOX({0,0, SCREEN_WIDTH, 670},170, 170, 170, 100);
 				VOX.render_VOX({0,0, 1280, 60},200, 200, 200, 130);
 				GOD.HR=200; GOD.HG=200; GOD.HB=200;
-				std::string temptext = BD["com"]["ActualLink"];
+				string temptext = BD["com"]["ActualLink"];
 				NameOfLink(temptext);
 
 				/*
@@ -834,22 +829,25 @@ int main(int argc, char **argv)
 				}
 
 				{//draw description
-					VOX.render_VOX({10,63, 770, 340}, 255, 255, 255, 170);
-					static std::string rese_prot = "..";
+				int XG=10,YG=63,WG=770,HG=50;
+					static string rese_prot = "..";
 					string rese_p = BD["com"]["sinopsis"];
-					rese_p = rese_p.substr(0,800);
-					
 					if (rese_prot != rese_p) {//load texture on text change
 						T_R.loadFromRenderedTextWrap(GOD.gFont, rese_p, textColor, 750);
 						rese_prot = rese_p;
+						cout << "desc:" << T_R.getHeight()+60 << endl;
 					}
-					T_R.render(posxbase, posybase + 65);
+					HG = T_R.getHeight()+60;
+					HG = HG < 340 ? 340 : HG;
+					
+					VOX.render_VOX({XG, YG, WG, HG}, 255, 255, 255, 170);
+					T_R.render(XG+10, YG+10);
 
 					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["Emitido"], textColor,750);
-					gTextTexture.render(posxbase, posybase + 350-gTextTexture.getHeight());
+					gTextTexture.render(XG+10, YG+HG-(gTextTexture.getHeight()*2)-5);
 
 					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["generos"], textColor,750);
-					gTextTexture.render(posxbase, posybase + 380-gTextTexture.getHeight());
+					gTextTexture.render(XG+10, YG+HG-gTextTexture.getHeight()-5);
 				}
 				bool anend=false;
 				int sizefix = 0;
@@ -905,23 +903,23 @@ int main(int argc, char **argv)
 						if (latest-2 >= mincapit) {
 							com=textGray;
 							if (latest-2 == latestcolor) com=textGrayGreen;
-							gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest-2), com);
+							gTextTexture.loadFromRenderedText(GOD.digifont2,  to_string(latest-2), com);
 							gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						if (latest-1 >= mincapit) {
 							com=textGray;
 							if (latest-1 == latestcolor) com=textGrayGreen;
-							gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest-1), com);
+							gTextTexture.loadFromRenderedText(GOD.digifont2,  to_string(latest-1), com);
 							gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						{
 							com=textBlue;
 							if (latest == latestcolor) com=textWhiteGreen;
 							if (serverpront) {
-								T_N.loadFromRenderedText(GOD.digifont2, std::to_string(latest), com);
+								T_N.loadFromRenderedText(GOD.digifont2, to_string(latest), com);
 								T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 565+YS);
 							} else {
-								T_T.loadFromRenderedText(GOD.digifont2, std::to_string(latest), com);
+								T_T.loadFromRenderedText(GOD.digifont2, to_string(latest), com);
 								T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 565+YS);
 							}
 						}
@@ -929,13 +927,13 @@ int main(int argc, char **argv)
 						if (latest+1 <= maxcapit) {
 							com=textGray;
 							if (latest+1 == latestcolor) com=textGrayGreen;
-							gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest+1), com);
+							gTextTexture.loadFromRenderedText(GOD.digifont2,  to_string(latest+1), com);
 							gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						if (latest+2 <= maxcapit) {
 							com=textGray;
 							if (latest+2 == latestcolor) com=textGrayGreen;
-							gTextTexture.loadFromRenderedText(GOD.digifont2,  std::to_string(latest+2), com);
+							gTextTexture.loadFromRenderedText(GOD.digifont2,  to_string(latest+2), com);
 							gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 
@@ -944,8 +942,8 @@ int main(int argc, char **argv)
 							B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
 						}
 
-						B_LEFT.render_T(75+XS, 580+YS,std::to_string(mincapit),latest == mincapit);
-						B_RIGHT.render_T(485+XS, 580+YS,std::to_string(maxcapit),latest == maxcapit);
+						B_LEFT.render_T(75+XS, 580+YS,to_string(mincapit),latest == mincapit);
+						B_RIGHT.render_T(485+XS, 580+YS,to_string(maxcapit),latest == maxcapit);
 					} else {
 						VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
 						if (BD["com"]["nextdate"] == "Pelicula" || mincapit == maxcapit) {
@@ -978,18 +976,18 @@ int main(int argc, char **argv)
 				}
 
 				if(!AB["AnimeBase"][KeyName]["Secuela"].empty()) {
-					std::string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
+					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
-					GOD.Cover(imagelocal,160,457,"Secuela",120,BT_R);
+					GOD.Cover(imagelocal,160,476,"Secuela",120,BT_R);
 				}
 				if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
-					std::string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
+					string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_L.render_T(dist, 680,"Precuela"); dist -= posdist;}
-					GOD.Cover(imagelocal,10,457,"Precuela",120,BT_L);
+					GOD.Cover(imagelocal,10,476,"Precuela",120,BT_L);
 				}
 
 				break;
@@ -1033,7 +1031,7 @@ int main(int argc, char **argv)
 						}
 
 						if (part > 0) {
-							gTextTexture.loadFromRenderedText(GOD.digifontC, std::to_string(ofall - part), {50,50,50});
+							gTextTexture.loadFromRenderedText(GOD.digifontC, to_string(ofall - part), {50,50,50});
 							gTextTexture.render(27 - (gTextTexture.getWidth()/2), 30);
 						}
 						REC.render(5, 15,NULL,angle);
@@ -1057,18 +1055,18 @@ int main(int argc, char **argv)
 					}else {
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 						if (imgNumbuffer > 0) {
-							gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
+							gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 							//Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
 						}
 						if (part > 0) {
-							gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(part)+"/"+std::to_string(ofall)+")", {0,100,0});
+							gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+to_string(part)+"/"+to_string(ofall)+")", {0,100,0});
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 						}
 					}
 				} else {
-					std::string textpro="Cargando programación";
-					if(imgNumbuffer>0) {textpro+=" "+std::to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
+					string textpro="Cargando programación";
+					if(imgNumbuffer>0) {textpro+=" "+to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
 					GOD.PleaseWait(textpro,false);
 				}
 					if (statenow==programationsliderstate) {
@@ -1085,15 +1083,15 @@ int main(int argc, char **argv)
 							gTextTexture.loadFromRenderedText(GOD.gFont5, "Menú Primario",textColor);
 							gTextTexture.render(XD+20, 65);
 							if (imgNumbuffer > 0) {
-								gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+std::to_string(imgNumbuffer)+"/30)", {0,100,0});
+								gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
 								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
 							}
 							if (part > 0) {
-								gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(part)+"/"+std::to_string(ofall)+")", {0,100,0});
+								gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+to_string(part)+"/"+to_string(ofall)+")", {0,100,0});
 								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15,  70);
 							}
 							if (porcentajebufferF > 0) {
-								gTextTexture.loadFromRenderedText(GOD.gFont, "BúferFav: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
+								gTextTexture.loadFromRenderedText(GOD.gFont, "BúferFav: ("+to_string(porcentajebufferF)+"/"+to_string(porcentajebufferFF)+")", {0,100,0});
 								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
 							}
 							int indexLsize = StatesList.size();
@@ -1131,7 +1129,7 @@ int main(int argc, char **argv)
 							}
 						}
 						{//Draw Banner
-							int XF=5, YF=65, WF=760, HF=427;
+							int XF=10, YF=65, WF=760, HF=427;
 							string temptext = BD["arrays"]["Banner"]["name"][bannersel];
 							//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
 							//NameOfLink(temptext);
@@ -1222,10 +1220,10 @@ int main(int argc, char **argv)
 				}
 				else
 				{
-					std::string added="";
+					string added="";
 					if(porcentajebufferF > 0) {
 						int persen = ((porcentajebufferF) * 100) / porcentajebufferFF;
-						added=" ("+std::to_string(persen)+"%)";
+						added=" ("+to_string(persen)+"%)";
 					}
 					GOD.PleaseWait("Cargando búsqueda..."+added,false);
 					Frames=1;
@@ -1263,7 +1261,7 @@ int main(int argc, char **argv)
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 
 					if (porcentajebufferF > 0) {
-						gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+std::to_string(porcentajebufferF)+"/"+std::to_string(porcentajebufferFF)+")", {0,100,0});
+						gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+to_string(porcentajebufferF)+"/"+to_string(porcentajebufferFF)+")", {0,100,0});
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 					}
 				}
@@ -1273,7 +1271,7 @@ int main(int argc, char **argv)
 					B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
 					B_B.render_T(dist, 680,"Volver"); dist -= posdist;
 					if ((int)UD["favoritos"].size() >= 1) {
-						B_X.render_T(dist, 680,"Borrar #"+std::to_string(favchapter+1)); dist -= posdist;
+						B_X.render_T(dist, 680,"Borrar #"+to_string(favchapter+1)); dist -= posdist;
 					}else NOP.render_T(230, 355,"");
 				}
 				break;
@@ -1442,16 +1440,16 @@ int main(int argc, char **argv)
 				gTextTexture.render(posxbase, posybase + 60);
 
 				if (serverenlace != "Error de descarga") {
-					gTextTexture.loadFromRenderedText(GOD.gFontcapit, std::to_string(porcendown) + "\%", textColor);
+					gTextTexture.loadFromRenderedText(GOD.gFontcapit, to_string(porcendown) + "\%", textColor);
 					gTextTexture.render(posxbase + 280, posybase + 90);
 
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + std::to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
+					gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
 					gTextTexture.render(posxbase, posybase + 160);
 
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 					gTextTexture.render(posxbase, posybase + 200);
 
-					if (std::to_string(porcendown) == "100"&&!isDownloading) {
+					if (to_string(porcendown) == "100"&&!isDownloading) {
 						//Render red filled quad
 						VOX.render_VOX({ posxbase + 198, posybase + 500, 580, 50 }, 255, 255, 255, 195);
 						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
@@ -1478,13 +1476,13 @@ int main(int argc, char **argv)
 				gTextTexture.loadFromRenderedText(GOD.digifont, "Cola De Descarga :", textColor);
 				gTextTexture.render(posxbase, posybase+240);
 				for (u64 x = 0; x < BD["arrays"]["downloads"]["log"].size(); x++) {
-					std::string descarga = BD["arrays"]["downloads"]["log"][x];
+					string descarga = BD["arrays"]["downloads"]["log"][x];
 					//NameOfLink(descarga);
 					SDL_Color txtColor = textColor;//{ 50, 50, 50 };
 
 					if(descarga.substr(0,3) == "100") txtColor = { 0, 100, 0 };
 					if(descarga.substr(0,3) == "Err") txtColor = { 150, 50, 50 };
-					if(descarga.substr(0,3) == ">>>") {txtColor = { 0, 0, 0 }; replace(descarga,">>>>",">>"+std::to_string(porcendown)+"\%");}
+					if(descarga.substr(0,3) == ">>>") {txtColor = { 0, 0, 0 }; replace(descarga,">>>>",">>"+to_string(porcendown)+"\%");}
 					if(descarga.substr(0,3) == "htt") {txtColor = { 100, 100, 100}; NameOfLink(descarga); descarga="En Cola: "+descarga;}
 
 					gTextTexture.loadFromRenderedText(GOD.digifont, descarga, txtColor);
@@ -1501,7 +1499,7 @@ int main(int argc, char **argv)
 
 			//global render
 			if(isDownloading&& downloadstate != statenow) {
-				T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,42)+"... ("+std::to_string(porcendown)+"\%)", {50,50,50});
+				T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,42)+"... ("+to_string(porcendown)+"\%)", {50,50,50});
 				VOX.render_VOX({SCREEN_WIDTH - T_D.getWidth() - 2, 671-T_D.getHeight()+4, T_D.getWidth()+4, T_D.getHeight()-5}, 255, 255, 255, 180);
 				T_D.render(SCREEN_WIDTH - T_D.getWidth() - 1, 671-T_D.getHeight());
 			}
@@ -1553,7 +1551,7 @@ int main(int argc, char **argv)
 			if (inTimeN(600000)) {
 				if (Net::HasConnection()) {
 					if(!isChained) {
-						std::cout << "Reloading Animes" << std::endl;
+						cout << "Reloading Animes" << endl;
 						//Set main Thread get images and descriptions
 						Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 					}
@@ -1562,9 +1560,9 @@ int main(int argc, char **argv)
 		}
 	} catch(...) {
 		led_on(2);
-		cout << "- Error Catched Main" << std::endl;
+		cout << "- Error Catched Main" << endl;
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
-		std::cout << "com: " << BD["com"] << std::endl;
+		cout << "com: " << BD["com"] << endl;
 		write_DB(AB,rootdirectory+"AnimeBase.json.bak");
 		write_DB(BD,rootdirectory+"DataBase.json.bak");
 		write_DB(UD,rootdirectory+"UserData.json.bak");

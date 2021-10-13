@@ -933,7 +933,6 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 	int TextureH=offH > 0 ? offH : mHeight;
 
 	SDL_Rect renderQuad = { x-offtik, y-offtik, TextureW+offtikx2, TextureH+offtikx2};
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	//Set clip rendering dimensions
 	if (clip != NULL)
 	{
@@ -952,8 +951,6 @@ int LTexture::render_T(int x, int y, std::string text, bool presed){
 	int TMPW = 0;
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
-
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
 	if (presed ) {setColor( 150, 150, 150);}
 	else {setColor( 255, 255, 255);}

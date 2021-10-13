@@ -31,7 +31,11 @@
 #include "utils.hpp"
 #include "Link.hpp"
 
-//////////////////////////////////aquí empieza el pc.
+//use the nand of the switch
+string rootdirectory = "user:/RipJKAnime_NX/";
+string rootsave = "save:/";
+string oldroot = "sdmc:/switch/RipJKAnime_NX/";
+
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;
 //Rendered texture
