@@ -57,6 +57,8 @@ int AnimeLoader(void* data){
 				case 503:
 					std::cout << "# Place DNS" << std::endl;
 					copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
+					std::cout << "# Reload DNS" << std::endl;
+					ReloadDNS();
 					break;
 			}
 			Mgate=false;

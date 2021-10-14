@@ -32,6 +32,15 @@ bool InstallNSP(std::string nsp){
 	return mini::InstallSD(nsp);
 }
 
+bool ReloadDNS(){
+	static Service sfdnsresSrv;
+    // Call sfdnsres service to reload hosts file
+    smGetService(&sfdnsresSrv, "sfdnsres");
+    serviceDispatch(&sfdnsresSrv, 65000);
+    serviceClose(&sfdnsresSrv);
+	return true;
+}
+
 std::string FormatHex128(AccountUid Number){
 	auto ptr = reinterpret_cast<u8*>(Number.uid);
 	std::stringstream strm;
