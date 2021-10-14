@@ -32,7 +32,7 @@ static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, v
 	char *ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
 	if (ptr == NULL)
 	{
-		printf("Failed to realloc mem");
+		cout << "Failed to realloc mem" << endl;
 		return 0;
 	}
 
@@ -76,7 +76,7 @@ int progress_func(void* ptr, double TotalToDownload, double NowDownloaded,double
 	time_t now = time(0);
 	struct tm *tm;
 	if ((tm = localtime (&now)) == NULL) {
-		printf ("Error extracting time stuff\n");
+		cout << "Error extracting time stuff" << endl;
 	}
 	//printf ("working %f\n",doneF);
 	//calculate speed
@@ -256,9 +256,9 @@ namespace Net {
 
 				res = curl_easy_perform(curl);
 				if ((res == CURLE_OK)) {
-					printf("#size:%ld found:%ld in:%s\n",chunk.size,path.find(".mp4"),path.c_str());
+					cout << "#size:" << chunk.size << " found:" << path.find(".mp4") << " in:" << path.c_str() << endl;
 					if (chunk.size < 1000000  && path.find(".mp4") != string::npos) {
-						printf("####size:%ld found:%ld in:%s\n",chunk.size,path.find(".mp4"),path.c_str());
+						cout << "####size:" << chunk.size << " found:" << path.find(".mp4") << " in:" << path.c_str() << endl;
 						allok=false;//
 					} else {
 						fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
@@ -266,7 +266,7 @@ namespace Net {
 					}
 				}else{
 					allok=false;
-					printf("\n%s\n",curl_easy_strerror(res));
+					cout << curl_easy_strerror(res) << endl;
 				}
 				/* always cleanup */
 				curl_easy_cleanup(curl);
@@ -311,11 +311,13 @@ void CheckImgVector(json List,int& index){
 bool CheckImgNet(std::string image,std::string url){
 	replace(image,"\"","");
 	if (!isFileExist(image.c_str())) {
-		std::string tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
+		std::string tmp = "";
 		if(url.length() > 0) {
 			tmp = url;
+		} else {
+			tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
 		}
-		printf("# Missing %s Downloading\n",image.c_str());
+		cout << "# Missing "+image+", Downloading..." << endl;
 		return Net::DOWNLOAD(tmp,image,false);
 	}
 	return true;

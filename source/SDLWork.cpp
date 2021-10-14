@@ -23,10 +23,7 @@ SDLB GOD;
 LTexture TextBuffer;
 
 //Grafics and logic
-void SDLB::intA(){
-	//LOG Init
-	LOG::init();
-	
+void SDLB::intA(){	
 	//Start up SDL and create window
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
@@ -226,6 +223,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y, MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()}, 0, 0, 0, 200);
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
+	if (GenState == programationsliderstate){return;}
 	if(MapT[KeyImage].SP()) {WorKey=KeyImage; MasKey=key;}
 }
 void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render){
@@ -284,6 +282,8 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y, MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()}, 0, 0, 0, 200);
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
+
+	if (GenState == programationsliderstate){return;}
 
 	//How not to handle a touch input, wala, yolo
 	static int findex = -1;
@@ -475,6 +475,10 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				HO = 470;
 				offset3++;
 			}
+			if (GenState == programationsliderstate){
+				if (x < 6) continue;
+				if (x > 9 && x < 16) continue;
+			}
 			if ((AbsoluteSize < Frames)&&(x > 30)) break;
 			if (x == selectindex) {
 				Cover(imagelocal,10 +  (MainOffSet * 127)-4,HO-13,TEXT,issel,BT_A,7);
@@ -643,9 +647,6 @@ void SDLB::ScrollBarDraw(int X, int Y,int H,int W, int Total, int Select,bool on
 	VOX.render_VOX({X,Y+BarPos, W, BarSize},255, 255, 255, 240);
 }
 void SDLB::deint(){
-	//LOG Save
-	LOG::SaveFile();
-
 	//Clear Texture Map
 	MapT.clear();
 	//Free global font
@@ -932,7 +933,6 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 	int TextureH=offH > 0 ? offH : mHeight;
 
 	SDL_Rect renderQuad = { x-offtik, y-offtik, TextureW+offtikx2, TextureH+offtikx2};
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	//Set clip rendering dimensions
 	if (clip != NULL)
 	{
@@ -951,8 +951,6 @@ int LTexture::render_T(int x, int y, std::string text, bool presed){
 	int TMPW = 0;
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
-
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
 	if (presed ) {setColor( 150, 150, 150);}
 	else {setColor( 255, 255, 255);}
@@ -985,9 +983,8 @@ int LTexture::render_T(int x, int y, std::string text, bool presed){
 }
 bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 	//tactil stuff
-	mX = x; mY = y;  SelIns = GOD.GenState;
-	static bool anend = false;
-	static int delayp = 0;
+	mX = x; mY = y;
+	SelIns = GOD.GenState;
 	int sizeH = 0;
 	int HP = h < 0 ? h * -1 : h;
 	if(type) {
@@ -1000,7 +997,8 @@ bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 			sizeH = h;
 			//delayp = h;
 		}
-		{        //SIDE
+		{   
+			//SIDE
 			SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
 			SDL_Rect HeaderRect = {x+w,y, 2, sizeH*-1};
 			SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);
@@ -1031,7 +1029,7 @@ bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 				delayp-=30;
 				sizeH = h < 0 ? delayp* -1 : delayp;
 
-				{        //SIDE
+				{   //SIDE
 					SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
 					SDL_Rect HeaderRect = {x+w,y, 3, sizeH*-1};
 					SDL_RenderFillRect(GOD.gRenderer, &HeaderRect);

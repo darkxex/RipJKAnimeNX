@@ -23,5 +23,5 @@
 127.0.0.1 youradexchange.com
 127.0.0.1 *addthis.com
 127.0.0.1 *culturedischargenarcotic*
-177.0.0.1 *google-analytics*
+127.0.0.1 *google-analytics*
 

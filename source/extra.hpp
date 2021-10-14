@@ -31,7 +31,11 @@
 #include "utils.hpp"
 #include "Link.hpp"
 
-//////////////////////////////////aquí empieza el pc.
+//use the nand of the switch
+string rootdirectory = "user:/RipJKAnime_NX/";
+string rootsave = "save:/";
+string oldroot = "sdmc:/switch/RipJKAnime_NX/";
+
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;
 //Rendered texture
@@ -98,7 +102,10 @@ int topchapter=0;
 int hourchapter=0;
 //agregados
 int agregadosidx=0;
-
+//banner
+int bannersize=8;
+int bannersel=0;
+bool Btimer=true;
 //my vars
 bool isHandheld=true;
 bool isChained=false;

@@ -46,8 +46,18 @@ void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* 
 void ScaleA(int H, int W);//Absolute
 void ScaleR(int H, int W);//relative
 int render_T(int x, int y, std::string text="", bool presed=false);
-bool render_AH(int x, int y, int w, int h, bool type);
 void render_VOX(SDL_Rect Form,int R, int G, int B, int A);
+//render_AH
+bool anend = false;
+int delayp = 0;
+bool render_AH(int x, int y, int w, int h, bool type);
+
+//render_AW
+bool anendW = false;
+int delaypW = 0;
+bool render_AW(int x, int y, int w, int h, bool type);
+
+
 //get touch
 bool SP();
 bool SPr();
@@ -70,7 +80,6 @@ int offboom=0;
 int offboom_min=0, offboom_size=11;
 //W H overwrite
 int offW=0, offH=0;
-
 private:
 //The actual hardware texture
 SDL_Texture* mTexture;

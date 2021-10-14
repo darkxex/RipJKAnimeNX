@@ -14,6 +14,7 @@ bool DataMaker(json LinkList,int& part, int& ofall);
 int MkTOP();
 int MkHOR();
 int MkAGR(string content);
+int MkBNR(string content);
 int MkDIR();
 void DataUpdate(string Link);
 int capit(void* data);
@@ -56,6 +57,8 @@ int AnimeLoader(void* data){
 				case 503:
 					std::cout << "# Place DNS" << std::endl;
 					copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
+					std::cout << "# Reload DNS" << std::endl;
+					ReloadDNS();
 					break;
 			}
 			Mgate=false;
@@ -73,6 +76,10 @@ int AnimeLoader(void* data){
 		json MainPage=Net::REQUEST("https://jkanime.net/");
 		//Check headers ToDo
 		string content = MainPage["BODY"];
+		if (content.length() < 2){
+			cout << "- Error can't connect with Web" << endl;
+			throw "Error Connect";
+		}
 
 		steep++;//Get Programation list, Links and Images
 		int temp0=0,temp1=0;
@@ -104,7 +111,7 @@ int AnimeLoader(void* data){
 			//update TimeStamp
 			if (BD["arrays"]["chapter"]["link"].empty() || BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].empty()) {
 				BD["TimeStamp"] = to_string(TimeNow());
-				cout << "New TimeStamp: " << BD["TimeStamp"] << endl;
+				cout << "# New TimeStamp: " << BD["TimeStamp"] << endl;
 
 				//merge vectors
 				if (!BD["arrays"]["chapter"]["images"].empty() && !BD["arrays"]["chapter"]["link"].empty())
@@ -124,20 +131,27 @@ int AnimeLoader(void* data){
 				Frames=1;
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 				BD["arrays"]["chapter"]["images"]=ChapImag;
-			} else {
-				cout << "TimeStamp: " << BD["TimeStamp"] << endl;
-			}
+			} 
+		} else {
+			cout << "# TimeStamp: " << BD["TimeStamp"] << endl;
 		}
 
  		steep++;//Get history
-		cout << "# IMG history " << endl;
+		cout << "# IMG History " << endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
 
-		steep++;//Top, Hour to Database
+		steep++;//Agregados to Database
 		temp0=content.find("Listado de últimos agregados");
 		temp1=content.find("</section>",temp0);
 		temcont = content.substr(temp0,temp1-temp0);
 		MkAGR(temcont);
+		
+		steep++;//banner to Database
+		temp0=content.find("<section class=\"hero\">");
+		temp1=content.find("<div class=\"solopc\">",temp0);
+		temcont = content.substr(temp0,temp1-temp0);
+		MkBNR(temcont);
+		steep++;//Top, Hour to Database
 		MkTOP();
 		MkHOR();
 
@@ -147,7 +161,7 @@ int AnimeLoader(void* data){
 			getFavorite();
 			cout << "# Goted fav list " << endl;
 		}
-		cout << "# IMG fav " << endl;
+		cout << "# IMG favoritos " << endl;
 		CheckImgVector(UD["favoritos"],porcentajebufferF);
 		
 		cout << "# End Image Download " << endl;
@@ -163,7 +177,7 @@ int AnimeLoader(void* data){
 		}
 
 		steep++;//Load to cache all Favorites Chaps
-		cout << "# Cache favs " << endl;
+		cout << "# Cache favoritos " << endl;
 		DataMaker(UD["favoritos"], part, ofall);
 
 		steep++;//Cache Top
@@ -171,27 +185,14 @@ int AnimeLoader(void* data){
 		DataMaker(BD["arrays"]["Top"]["link"], part, ofall);
 
 		steep++;//Cache Horario
-		cout << "# Cache Horario " << endl;
+		cout << "# Cache HourGlass " << endl;
 		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
 
-/*
-		steep++;//extra vector
-		vector<string> vec={};
-		//load main
-		cout << "# Cache Main " << endl;
-		content = Net::GET("https://jkanime.net");
-		replace(content, "\"https://jkanime.net/\"", "");
-		vec=scrapElementAll(content, "https://jkanime.net/");
-		sort( vec.begin(),vec.end());
-		vec.erase(unique(vec.begin(),vec.end()),vec.end());
-		BD["arrays"]["Main"]["link"]=vec;
-		DataMaker(vec, part, ofall);
-*/
 		steep++;//Load Directory
 		MkDIR();
 	} catch(...) {
 		led_on(2);
-		cout << "Thread Chain Error Catched, Steep#" << steep <<std::endl;
+		cout << "- Thread Chain Error Catched, Steep#" << steep <<std::endl;
 		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
@@ -259,6 +260,30 @@ int MkTOP(){
 	CheckImgVector(TOPC,imgNumbuffer);
 	return 0;
 }
+
+int MkBNR(string content){
+	//Get Latest added animes
+	cout << "# Get Banner " << endl;
+	BD["arrays"]["Banner"]["link"]=scrapElementAll(content, "https://jkanime.net/");
+	BD["arrays"]["Banner"]["img"]=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/animes/video/image/");
+	BD["arrays"]["Banner"]["name"]=scrapElementAll(content, "<h2>","</h2>");
+	
+	cout << "# IMG Banner " << endl;
+	BD["arrays"]["Banner"]["files"].clear();
+	int sizeI = BD["arrays"]["Banner"]["img"].size();
+	for (int i=0; i < sizeI; i++){
+		string url = BD["arrays"]["Banner"]["img"][i];
+		string name = url;
+		replace(name,"https://cdn.jkanime.net/assets/images/animes/video/image/","");
+		name = rootdirectory+"DATA/"+name;
+		BD["arrays"]["Banner"]["files"].push_back(name);
+
+		CheckImgNet(name,url);
+	}
+	//cout << std::setw(4) << BD["arrays"]["Banner"] << std::endl;
+	return 0;
+}
+
 int MkAGR(string content){
 	//Get Latest added animes
 	cout << "# Get Agregados " << endl;
@@ -366,8 +391,7 @@ int MkDIR(){
 		}
 	} catch(...) {
 		led_on(2);
-		cout << "Thread Chain Error Catched, Get Dir Error" <<std::endl;
-		//write_DB(BD,rootdirectory+"DataBase.json");
+		cout << "- Thread Chain Error Catched, Get Dir Error" <<std::endl;
 		return 0;
 	}
 	if(quit) return false;
@@ -382,7 +406,7 @@ int MkDIR(){
 			}
 		} catch(...) {
 			led_on(2);
-			cout << "Thread Chain Error Catched,Dir Error" <<std::endl;
+			cout << "- Thread Chain Error Catched,Dir Error" <<std::endl;
 			//write_DB(BD,rootdirectory+"DataBase.json");
 			return 0;
 		}
@@ -421,7 +445,7 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 	if(cancelcurl==0) led_on(3); else led_on(0);
 	} catch(...) {
 		led_on(2);
-		cout << "Thread Download Error Catched" <<std::endl;
+		cout << "- Thread Download Error Catched" <<std::endl;
 		cout << BD["arrays"]["downloads"] << endl;
 	}
 	cancelcurl = 0;
@@ -444,7 +468,7 @@ int searchjk(void* data) {//Search Thread
 	replace(texts, "!", "");
 	replace(texts, ";", "");
 	if (texts.length() > 0) {
-		cout << texts << endl;
+		cout << "# Search: " << texts << endl;
 		string content = "";
 		int page = 1;
 		while (!quit) {
@@ -499,7 +523,7 @@ int searchjk(void* data) {//Search Thread
 	}
 	} catch(...) {
 		led_on(2);
-		cout << "Thread Search Error Catched" <<std::endl;
+		cout << "- Thread Search Error Catched" <<std::endl;
 		cout << BD["arrays"]["search"] << endl;
 	}
 	reloadingsearch = false;
@@ -530,7 +554,7 @@ int capit(void* data) {//Get chap thread
 		}
 	}catch(...) {
 		led_on(2);
-		cout << "Error "+name <<std::endl;
+		cout << "- Error "+name <<std::endl;
 	}
 	return 0;
 }
@@ -596,7 +620,7 @@ int capBuffer (string Tlink) {//anime manager
 			}
 		}catch(...) {
 			led_on(2);
-			cout << "Error buff"+name << endl;
+			cout << "- Error buff"+name << endl;
 		}
 	}
 	CheckImgNet(image);
