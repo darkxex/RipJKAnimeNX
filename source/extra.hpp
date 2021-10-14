@@ -260,6 +260,7 @@ void callAflv(){
 	statenow=programationstate;
 	WebBrowserCall("https://animeflv.net",true);
 }
+
 void callhistory(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	if (UD["history"].size()>0) {

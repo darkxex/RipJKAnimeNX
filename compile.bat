@@ -13,7 +13,7 @@ set a=%errorlevel%
 
 
 if %a% equ 0 color 0a
-"C:\devkitPro\tools\bin\nxlink.exe" "out\RipJKAnimeNX.nro"  -s -a 192.168.0.7
+"C:\devkitPro\tools\bin\nxlink.exe" "out\RipJKAnimeNX.nro"  -s -a 192.168.0.10
 
 echo -----------------------------------
 

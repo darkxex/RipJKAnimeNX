@@ -5,7 +5,70 @@
 //make some includes to clean a little the main
 string urlc = "https://myrincon.duckdns.org";
 
+enum Temas { Default, Classic, Crazy };
+Temas TemaActual = Default;
 //MAIN INT
+void writeinconf(string temaguardado)
+{  ofstream myfile ("sdmc:/ripconf.ini");
+  if (myfile.is_open())
+  {
+    myfile << temaguardado;
+    myfile.close();
+  }}
+void selectskin()
+{	switch(TemaActual) {
+   									case Default  :
+									//undertale
+
+									Farest.free();
+									Farest.loadFromFile("romfs:/img/texture.png");
+									Heart.free();
+									Heart.loadFromFile("romfs:/img/heart.png");
+							
+									Mix_FreeMusic(GOD.gMusic);
+
+									GOD.gMusic = Mix_LoadMUS("romfs:/audio/wada.ogg");
+									writeinconf("0");
+									TemaActual = Classic;
+     								break; 
+   									case Classic :
+      								//digimon
+									Farest.free();
+									Farest.loadFromFile("romfs:/img/digitexture.png");
+									Heart.free();
+									Heart.loadFromFile("romfs:/img/digiheart.png");
+							
+									Mix_FreeMusic(GOD.gMusic);
+
+									GOD.gMusic = Mix_LoadMUS("romfs:/audio/digiwada.ogg");
+									writeinconf("1");
+									TemaActual = Crazy;
+      								break; 
+									case Crazy :
+									//miku
+									Farest.free();
+									Farest.loadFromFile("romfs:/img/crazytexture.png");
+									Heart.free();
+									Heart.loadFromFile("romfs:/img/crazyheart.png");
+							
+									Mix_FreeMusic(GOD.gMusic);
+
+									GOD.gMusic = Mix_LoadMUS("romfs:/audio/crazywada.ogg");
+								    writeinconf("2");
+                                    TemaActual = Default;
+      								break;
+   
+   
+  									default : 
+                                    TemaActual = Default;
+									
+									}
+									if (Mix_PlayingMusic() == 0)
+				{
+					Mix_PlayMusic(GOD.gMusic, -1);
+				}
+									
+									}
 int main(int argc, char **argv)
 {
 	socketInitializeDefault();
@@ -75,6 +138,34 @@ int main(int argc, char **argv)
 
 	GOD.intA();//init the SDL
 
+
+//lectura de Tema, puedes remplazarlo a la BD, pero como no tengo idea como usarla lo hice en un simple ini.
+if (isFileExist("sdmc:/ripconf.ini")) {
+string line;
+  ifstream myfile ("sdmc:/ripconf.ini");
+  if (myfile.is_open())
+  {
+    while ( getline (myfile,line) )
+    {
+	 TemaActual = static_cast<Temas>(stoi(line));
+      cout << line << '\n';
+
+    }
+    myfile.close();
+  }
+	}
+else
+	{
+    ofstream myfile ("sdmc:/ripconf.ini");
+  if (myfile.is_open())
+  {
+    myfile << "0";
+    myfile.close();
+  }
+  else cout << "Unable to open file";
+   }
+
+//fin de cargado de tema.
 	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
 		mkdir(rootdirectory.c_str(), 0777);
 		mkdir((rootdirectory+"DATA").c_str(), 0777);
@@ -90,6 +181,8 @@ int main(int argc, char **argv)
 		Heart.loadFromFile(rootdirectory+"heart.png");
 	} else {
 		Heart.loadFromFile("romfs:/img/heart.png");
+
+		selectskin();
 	}
 
 	gTextTexture.mark=false;
@@ -291,7 +384,16 @@ int main(int argc, char **argv)
 								if(selectelement==4) {calltop();}
 								if(selectelement==5) {callagr();}
 								if(selectelement==6) {callAflv();}
-								if(selectelement==7) {if(isDownloading) {statenow = downloadstate;}}
+
+								//Por favor, ve si puedes Ordenar esto.
+								if(selectelement==7) {
+							
+								selectskin();
+								
+									}
+                                
+									//Fin del Ordenar esto.
+								if(selectelement==8) {if(isDownloading) {statenow = downloadstate;}}
 								break;
 							case programationstate:
 							{
@@ -1072,9 +1174,9 @@ int main(int argc, char **argv)
 					if (statenow==programationsliderstate) {
 
 						{
-							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV"};
+							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV","Temas"};
 							if(isDownloading) {StatesList.push_back("Descargas");}
-
+							
 							int mwide = 60,XD=940,YD=120,W=1280-XD;
 							VOX.render_VOX({XD,61, 1280, 608}, 160, 160, 160, 220);//draw area
 							VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);//head line
@@ -1113,6 +1215,7 @@ int main(int argc, char **argv)
 								if(x == 5) {GOD.MapT["ULTB"].render(XD+10, YD + (x * mwide)+5);}
 								if(x == 6) {AFLV.render(XD+10, YD + (x * mwide)+5);}
 								if(x == 7) {DOWB.render(XD+10, YD + (x * mwide)+5);}
+								if(x == 8) {DOWB.render(XD+10, YD + (x * mwide)+5);}
 
 								if (x == selectelement) {
 									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);

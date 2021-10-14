@@ -97,8 +97,8 @@ void SDLB::intA(){
 				if (Mix_PlayingMusic() == 0)
 				{
 					//Play the music
-					if(isFileExist(rootdirectory+"play"))
-						Mix_PlayMusic(gMusic, -1);
+					//if(isFileExist(rootdirectory+"play"))
+					//	Mix_PlayMusic(gMusic, -1);
 				}
 			}
 		}
