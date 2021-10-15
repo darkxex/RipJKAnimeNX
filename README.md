@@ -17,6 +17,12 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 
 ## Actualizar la app
 * Esta Aplicacion se Actualiza de forma automática para que tengas siempre la ultima versión
+* Si tienes 2.2.8 o superior es simple resiviras el update de forma automatica solo debes abrir la app con internet
+<img style="display:inline" src="https://user-images.githubusercontent.com/36446521/137326527-f382c107-b441-4c92-a697-5f937eddb1c0.png" width="232"/>
+
+* * veras la version aumentar luego que la flecha deje de girar , deberas abrirla de nuevo para ver los cambios
+* Si usas una version inferior deberas o bien instalar el nsp o abrir el nro desde el album para obtener la ultima
+
 * * (A menos que se desactive deliberadamente)
 # A tener en cuenta
 * Esta app no funciona correctamente en modo applet (desde el album) porque requiere mas memoria y del uso del navegador 
