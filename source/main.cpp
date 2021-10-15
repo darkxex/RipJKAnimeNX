@@ -5,34 +5,7 @@
 //make some includes to clean a little the main
 string urlc = "https://myrincon.duckdns.org";
 
-enum Temas { Default, Classic, Crazy };
-Temas TemaActual = Default;
 //MAIN INT
-void selectskin() {	
-	switch(TemaActual) {
-   		case Default  :
-			//undertale
-			GOD.setSkin("romfs:/theme/Asriel");
-			TemaActual = Classic;
-			break; 
-
-   		case Classic :
-			//digimon
-			GOD.setSkin("romfs:/theme/Digimon");
-			TemaActual = Crazy;
-			break; 
-
-		case Crazy :
-			//miku
-			GOD.setSkin("romfs:/theme/Miku");
-			TemaActual = Default;
-			break;
-
-  		default : 
-			TemaActual = Default;
-	}
-}
-
 int main(int argc, char **argv)
 {
 	socketInitializeDefault();
@@ -101,41 +74,6 @@ int main(int argc, char **argv)
 	read_DB(UD,rootsave+"UserData.json");
 
 	GOD.intA();//init the SDL
-
-/*
-
-//lectura de Tema, puedes remplazarlo a la BD, pero como no tengo idea como usarla lo hice en un simple ini.
-if (isFileExist("sdmc:/ripconf.ini")) {
-string line;
-  ifstream myfile ("sdmc:/ripconf.ini");
-  if (myfile.is_open())
-  {
-    while ( getline (myfile,line) )
-    {
-	 TemaActual = static_cast<Temas>(stoi(line));
-      cout << line << '\n';
-
-    }
-    myfile.close();
-  }
-	}
-else
-	{
-    ofstream myfile ("sdmc:/ripconf.ini");
-  if (myfile.is_open())
-  {
-    myfile << "0";
-    myfile.close();
-  }
-  else cout << "Unable to open file";
-   }
-
-
-
-		selectskin();
-
-*/
-	//fin de cargado de tema.
 
 	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
 		mkdir(rootdirectory.c_str(), 0777);
@@ -284,6 +222,7 @@ else
 							else if (B_L.SP()) e.jbutton.button = BT_L;
 							else if (B_R.SP()) e.jbutton.button = BT_R;
 							else if (B_ZR.SP()) e.jbutton.button = BT_ZR;
+							else if (B_ZL.SP()) e.jbutton.button = BT_ZL;
 							else if (B_P.SP()) e.jbutton.button = BT_P;
 							else if (B_M.SP()) e.jbutton.button = BT_M;
 							else if (B_LEFT.SP()) e.jbutton.button = BT_LEFT;
@@ -343,16 +282,7 @@ else
 								if(selectelement==4) {calltop();}
 								if(selectelement==5) {callagr();}
 								if(selectelement==6) {callAflv();}
-
-								//Por favor, ve si puedes Ordenar esto.
-								if(selectelement==7) {
-							
-								selectskin();
-								
-									}
-                                
-									//Fin del Ordenar esto.
-								if(selectelement==8) {if(isDownloading) {statenow = downloadstate;}}
+								if(selectelement==7) {if(isDownloading) {statenow = downloadstate;}}
 								break;
 							case programationstate:
 							{
@@ -514,9 +444,15 @@ else
 							}
 						}
 						if (e.jbutton.button == BT_ZL) {// (ZL) button down
-							if (statenow == programationstate)
+							switch (statenow)
 							{
+							case programationstate:
 								WebBrowserCall(urlc,true);
+								break;
+							case chapterstate:
+							case programationsliderstate:
+								selectskin();
+								break;
 							}
 						}
 						if (e.jbutton.button == BT_ZR) {// (ZR) button down
@@ -1129,7 +1065,7 @@ else
 					if (statenow==programationsliderstate) {
 
 						{
-							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV","Temas"};
+							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV"};
 							if(isDownloading) {StatesList.push_back("Descargas");}
 							
 							int mwide = 60,XD=940,YD=120,W=1280-XD;

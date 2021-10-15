@@ -41,7 +41,7 @@ const int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;
 //Rendered texture
 LTexture gTextTexture, Farest, Heart;
 //Render Buttons
-LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
+LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_ZL, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 //Render extra
 LTexture SCREEN,
          BUS, BUSB,
@@ -168,6 +168,7 @@ void LoadImages(){
 	GOD.MapT["ULTB"].loadFromFileCustom("romfs:/img/ULT.png",55,55);
 	
 	B_ZR.loadFromFile("romfs:/img/ZR.png");
+	B_ZL.loadFromFile("romfs:/img/ZL.png");
 	B_RIGHT.loadFromFile("romfs:/img/RIGHT.png");
 	B_LEFT.loadFromFile("romfs:/img/LEFT.png");
 	B_UP.loadFromFile("romfs:/img/UP.png");
@@ -285,3 +286,31 @@ void callhourglass(){
 	returnnow = statenow;
 	Frames=1;
 }
+
+enum Temas { Default, Classic, Crazy };
+Temas TemaSiguiente = Default;
+void selectskin() {	
+	switch(TemaSiguiente) {
+   		case Default  :
+			//undertale
+			GOD.setSkin("romfs:/theme/Asriel");
+			TemaSiguiente = Classic;
+			break; 
+
+   		case Classic :
+			//digimon
+			GOD.setSkin("romfs:/theme/Digimon");
+			TemaSiguiente = Crazy;
+			break; 
+
+		case Crazy :
+			//miku
+			GOD.setSkin("romfs:/theme/Miku");
+			TemaSiguiente = Default;
+			break;
+
+  		default : 
+			TemaSiguiente = Classic;
+	}
+}
+

@@ -271,17 +271,18 @@ int MkBNR(string content){
 	BD["arrays"]["Banner"]["name"]=scrapElementAll(content, "<h2>","</h2>");
 	
 	cout << "# IMG Banner " << endl;
-	BD["arrays"]["Banner"]["files"].clear();
+	vector<string> BannerFile;
 	int sizeI = BD["arrays"]["Banner"]["img"].size();
 	for (int i=0; i < sizeI; i++){
 		string url = BD["arrays"]["Banner"]["img"][i];
 		string name = url;
 		replace(name,"https://cdn.jkanime.net/assets/images/animes/video/image/","");
 		name = rootdirectory+"DATA/"+name;
-		BD["arrays"]["Banner"]["files"].push_back(name);
+		BannerFile.push_back(name);
 
 		CheckImgNet(name,url);
 	}
+	BD["arrays"]["Banner"]["files"]=BannerFile;
 	//cout << setw(4) << BD["arrays"]["Banner"] << endl;
 	return 0;
 }
