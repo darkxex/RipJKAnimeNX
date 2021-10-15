@@ -34,6 +34,7 @@
 //use the nand of the switch
 string rootdirectory = "user:/RipJKAnime_NX/";
 string rootsave = "save:/";
+string roottheme = "themes:/";
 string oldroot = "sdmc:/switch/RipJKAnimeNX/";
 
 //Screen dimension constants
@@ -58,8 +59,8 @@ LTexture VOX, T_T, T_N, T_D, T_R;
 
 
 //Gui Vars
-int statenow = programationstate;
-int returnnow = programationstate;
+int statenow = programation_s;
+int returnnow = programation_s;
 //net
 std::string urltodownload = "";
 int porcendown = 0;
@@ -216,7 +217,7 @@ void PlayerGet(FsFileSystem& acc){
 		UD = "{}"_json;
 		read_DB(UD,rootsave+"UserData.json");
 
-		if(statenow==chapterstate) {
+		if(statenow==chapter_s) {
 			capBuffer(BD["com"]["ActualLink"]);
 			gFAV = isFavorite(BD["com"]["ActualLink"]);
 		}
@@ -226,7 +227,7 @@ void PlayerGet(FsFileSystem& acc){
 
 //call states
 void callmenuslide(){
-	statenow=programationsliderstate;
+	statenow=menu_s;
 	selectelement = 2;
 }
 void callsearch(){
@@ -238,8 +239,8 @@ void callsearch(){
 		if ((BD["searchtext"].get<std::string>()).length() > 0) {
 			searchchapter = 0;
 			reloadingsearch = true;
-			statenow = searchstate;
-			returnnow = searchstate;
+			statenow = search_s;
+			returnnow = search_s;
 			searchthread = SDL_CreateThread(searchjk, "searchthread", (void*)NULL);
 		}
 	}
@@ -249,40 +250,40 @@ void callfavs(){
 	if (!reloading)
 	{
 		getFavorite();
-		returnnow = favoritesstate;
-		statenow = favoritesstate;
+		returnnow = favorites_s;
+		statenow = favorites_s;
 		Frames=1;
 	}
 }
 void callAflv(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
-	statenow=programationstate;
+	statenow=programation_s;
 	WebBrowserCall("https://animeflv.net",true);
 }
 
 void callhistory(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	if (UD["history"].size()>0) {
-		statenow = historystate;
+		statenow = history_s;
 		returnnow = statenow;
 		Frames=1;
 	}
 }
 void calltop(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
-	statenow = topstate;
+	statenow = top_s;
 	returnnow = statenow;
 	Frames=1;
 }
 void callagr(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
-	statenow = agregados;
+	statenow = agregados_s;
 	returnnow = statenow;
 	Frames=1;
 }
 void callhourglass(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
-	statenow = hourglass;
+	statenow = hourglass_s;
 	returnnow = statenow;
 	Frames=1;
 }
@@ -293,19 +294,19 @@ void selectskin() {
 	switch(TemaSiguiente) {
    		case Default  :
 			//undertale
-			GOD.setSkin("romfs:/theme/Asriel");
+			GOD.setSkin(roottheme+"Devilovania");
 			TemaSiguiente = Classic;
 			break; 
 
    		case Classic :
 			//digimon
-			GOD.setSkin("romfs:/theme/Digimon");
+			GOD.setSkin(roottheme+"Digimon");
 			TemaSiguiente = Crazy;
 			break; 
 
 		case Crazy :
 			//miku
-			GOD.setSkin("romfs:/theme/Miku");
+			GOD.setSkin(roottheme+"Miku");
 			TemaSiguiente = Default;
 			break;
 

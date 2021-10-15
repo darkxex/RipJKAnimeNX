@@ -36,16 +36,17 @@ namespace LOG {
 }
 
 typedef enum {
-	programationstate,
-	downloadstate,
-	chapterstate,
-	searchstate,
-	favoritesstate,
-	historystate,
-	agregados,
-	hourglass,
-	topstate,
-	programationsliderstate
+	programation_s,
+	menu_s,
+	chapter_s,
+	download_s,
+	search_s,
+	favorites_s,
+	history_s,
+	hourglass_s,
+	top_s,
+	agregados_s,
+	themas_s
 } states;
 
 typedef enum {
@@ -62,8 +63,12 @@ typedef enum {
 //extern to all
 extern AccountUid uid;
 extern std::string AccountID;
+
 extern std::string rootdirectory;
 extern std::string rootsave;
+extern std::string roottheme;
+
+
 extern u32 __nx_applet_exit_mode;
 extern std::string urlc;
 extern bool quit;

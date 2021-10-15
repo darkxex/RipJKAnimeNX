@@ -41,6 +41,38 @@ bool ReloadDNS(){
 	return true;
 }
 
+FsFileSystem fst; FsFile rom;
+bool mount_theme(string in,bool mount){
+	string file = rootdirectory+"theme.romfs";
+	if (mount){
+		if(isFileExist(in+":/")) {
+			cout << in+":/  is mounted" << endl;
+			return true;
+		}
+		if(isFileExist(file)) {
+			if (R_FAILED(romfsMountFromFsdev(file.c_str(), 0, "themes")))
+				cout << "unable to mount  "+ in << endl;
+			else
+				cout << in+":/  now mounted" << endl;
+
+			//fsFileClose (&rom);
+			//fsFsClose(&fst);
+			//fsFsOpenFile(&fst, file.c_str(), FsOpenMode_Read, &rom);
+			
+			//romfsMountFromFile(rom, 0, "themes");
+			return true;
+		}
+	} else {
+		romfsUnmount (in.c_str());
+		fsFileClose (&rom);
+		fsFsClose(&fst);
+		cout << in+":/  now Closed" << endl;
+		return true;
+	}
+	cout << "unable to mount  "+ file << endl;
+	return false;
+}
+
 std::string FormatHex128(AccountUid Number){
 	auto ptr = reinterpret_cast<u8*>(Number.uid);
 	std::stringstream strm;
@@ -415,12 +447,12 @@ Result WebBrowserCall(std::string url,bool nag){
 		webConfigSetPageScrollIndicator (&config, true);
 		webConfigSetMediaPlayerSpeedControl (&config, true);
 		webConfigSetMediaAutoPlay (&config, true);
-		webConfigSetTransferMemory (&config, true);
+		//webConfigSetTransferMemory (&config, true);
 		if (!nag) {
 			bool Direct=false;
 			printf("SetCapConfigs\n");
-			webConfigSetDisplayUrlKind (&config, false);
-			webConfigSetPlayReport(&config, false);
+			//webConfigSetDisplayUrlKind (&config, false);
+			//webConfigSetPlayReport(&config, false);
 			//webConfigSetFooter(&config, false);
 			
 			//Ignore for direct play

@@ -8,6 +8,7 @@ using json = nlohmann::json;
 bool LoadNRO(std::string path);
 bool InstallNSP(std::string nsp);
 bool ReloadDNS();
+bool mount_theme(string in,bool mount=false);
 bool GetAppletMode();
 AccountUid LaunchPlayerSelect();
 bool SelectUser();

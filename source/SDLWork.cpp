@@ -129,7 +129,8 @@ void SDLB::loadSkin(string img){
 	}
 	SkinMaster = UD["Themes"]["use"];
 	UD["Themes"]["name"] = NameOfTheme(SkinMaster);
-
+	cout << std::setw(4) << UD["Themes"] << std::endl;
+	
 	//images
 	Farest.free();
 	Farest.loadFromFile(theme("/background.png"));
@@ -257,7 +258,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y, MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()}, 0, 0, 0, 200);
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
-	if (GenState == programationsliderstate){return;}
+	if (GenState == menu_s){return;}
 	if(MapT[KeyImage].SP()) {WorKey=KeyImage; MasKey=key;}
 }
 void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render){
@@ -317,7 +318,7 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
 
-	if (GenState == programationsliderstate){return;}
+	if (GenState == menu_s){return;}
 
 	//How not to handle a touch input, wala, yolo
 	static int findex = -1;
@@ -509,7 +510,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				HO = 470;
 				offset3++;
 			}
-			if (GenState == programationsliderstate){
+			if (GenState == menu_s){
 				if (x < 6) continue;
 				if (x > 9 && x < 16) continue;
 			}

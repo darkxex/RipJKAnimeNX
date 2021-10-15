@@ -45,8 +45,7 @@ int AnimeLoader(void* data){
 		}
 		
 		//execute this once, or if Mgate is true
-		//desactivé el MGate para Testeo.
-		static bool Mgate=false;
+		static bool Mgate=true;
 		if (Mgate){
 			#ifdef ISDEBUG
 				#include "Debug.h"
@@ -56,26 +55,21 @@ int AnimeLoader(void* data){
 			 switch(Req){
 				case 0:
 				case 503:
-					/*cout << "# Place DNS" << endl;
+					cout << "# Place DNS" << endl;
 					fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
 					mkdir("sdmc:/atmosphere/hosts",0777);
 					copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
 					cout << "# Reload DNS" << endl;
-					ReloadDNS();*/
-
-						cout << "# Place DNS" << endl;
-						fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
-						mkdir("sdmc:/atmosphere/hosts",0777);
-						ofstream myfile ("sdmc:/atmosphere/hosts/default.txt");
-  						if (myfile.is_open())
-  						{
-   					 	myfile << "#Empty Hosts for RipJK\n";
-    					myfile << "\n";
-    					myfile.close();
-  						}
-					 	cout << "# Reload DNS" << endl;
-						ReloadDNS();
+					ReloadDNS();
 					break;
+			}
+			//Download themes
+			if (!mount_theme("themes",true))
+			{
+				if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/theme.romfs",rootdirectory+"theme.romfs")){
+					mount_theme("themes",true);
+					GOD.loadSkin();//Esto carga la skin guardada y la musica
+				}
 			}
 			Mgate=false;
 		}
@@ -99,7 +93,7 @@ int AnimeLoader(void* data){
 
 		steep++;//Get Programation list, Links and Images
 		int temp0=0,temp1=0;
-		temp0=content.find("Programación");
+		temp0=content.find("ProgramaciÃ³n");
 		temp1=content.find("TOP ANIMES",temp0);
 		string temcont = content.substr(temp0,temp1-temp0);
 		steep++;//rebuild list
@@ -157,7 +151,7 @@ int AnimeLoader(void* data){
 		CheckImgVector(UD["history"],imgNumbuffer);
 
 		steep++;//Agregados to Database
-		temp0=content.find("Listado de últimos agregados");
+		temp0=content.find("Listado de Ãºltimos agregados");
 		temp1=content.find("</section>",temp0);
 		temcont = content.substr(temp0,temp1-temp0);
 		MkAGR(temcont);
@@ -467,7 +461,7 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 	}
 	cancelcurl = 0;
 	isDownloading=false;
-	statenow = downloadstate;
+	statenow = download_s;
 	ChainManager(false,!isDownloading&&!isChained);
 	return 0;
 }
@@ -535,8 +529,8 @@ int searchjk(void* data) {//Search Thread
 	}
 	else
 	{
-		statenow = programationstate;
-		returnnow = programationstate;
+		statenow = programation_s;
+		returnnow = programation_s;
 	}
 	} catch(...) {
 		led_on(2);
@@ -589,7 +583,7 @@ int capBuffer (string Tlink) {//anime manager
 	cout << "Link: " << Tlink << endl;
 
 	string image = rootdirectory+"DATA/"+name+".jpg";
-	statenow = chapterstate;
+	statenow = chapter_s;
 
 	if (AB["AnimeBase"][name]["TimeStamp"].is_null())
 	{
@@ -710,7 +704,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	} else {
 		//find next date
 		int re1 =0, re2=0;
-		re1 = a.find("<b>Próximo episodio</b>");
+		re1 = a.find("<b>PrÃ³ximo episodio</b>");
 		if(re1 > 1) {
 			re1 += 25;
 			re2 = a.find("<i class", re1);
@@ -797,7 +791,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		cout << "Saved: " << name << endl;
 	} catch(...) {
 		led_on(2);
-		cout << "Anime Problemático: "<< name << endl;
+		cout << "Anime ProblemÃ¡tico: "<< name << endl;
 		cout << strm.str() << endl;
 	}
 }

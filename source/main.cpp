@@ -4,7 +4,6 @@
 
 //make some includes to clean a little the main
 string urlc = "https://myrincon.duckdns.org";
-int mcounter = 0;
 
 //MAIN INT
 int main(int argc, char **argv)
@@ -14,10 +13,6 @@ int main(int argc, char **argv)
 	nxlinkStdio();
 	printf("Nxlink server Conected\n");
 
-	AppletMode=GetAppletMode();
-	ChainManager(true,true);
-	isConnected=Net::HasConnection();
-
 	//Mount user
 	FsFileSystem data;
 	fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
@@ -25,6 +20,12 @@ int main(int argc, char **argv)
 
 	//LOG Init
 	LOG::init();
+	
+	AppletMode=GetAppletMode();
+	ChainManager(true,true);
+	isConnected=Net::HasConnection();
+
+	mount_theme("themes",true);
 	
 	//Mount Save Data
 	FsFileSystem acc;
@@ -71,7 +72,6 @@ int main(int argc, char **argv)
 	}
 	
 	read_DB(UD,rootsave+"UserData.json");
-
 
 	GOD.intA();//init the SDL
 
@@ -135,9 +135,6 @@ int main(int argc, char **argv)
 					cout << "Saliendo" << endl;
 				}
 				GOD.GenState = statenow;
-			
-				
-
 				switch (e.type) {
 				case SDL_FINGERDOWN:
 					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
@@ -232,7 +229,7 @@ int main(int argc, char **argv)
 							else if (B_RIGHT.SP()) e.jbutton.button = BT_RIGHT;
 							else if (B_UP.SP()) e.jbutton.button = BT_UP;
 							else if (B_DOWN.SP()) e.jbutton.button = BT_DOWN;
-							else if (T_D.SP()&&isDownloading) statenow = downloadstate;
+							else if (T_D.SP()&&isDownloading) statenow = download_s;
 							else if (SCREEN.SP()) e.jbutton.button = BT_ZR;
 							else if (CLEAR.SP()) {
 								preview = false;
@@ -256,7 +253,7 @@ int main(int argc, char **argv)
 				case SDL_JOYAXISMOTION:
 					if (e.type == SDL_JOYAXISMOTION)
 					{
-						if (e.jaxis.axis == 1 && statenow==chapterstate) {
+						if (e.jaxis.axis == 1 && statenow==chapter_s) {
 							e.jbutton.button=-1;
 							//SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
 							if (e.jaxis.value < -22000) {
@@ -268,14 +265,6 @@ int main(int argc, char **argv)
 						} else break;
 
 					}
-				case SDL_JOYBUTTONUP:
-				if (e.jbutton.which == 0) {
-						if (e.jbutton.button == BT_M) {// (-) button down
-							
-							}
-							}
-							
-				break;
 				case SDL_JOYBUTTONDOWN:
 					//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 					// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
@@ -285,7 +274,7 @@ int main(int argc, char **argv)
 
 							switch (statenow)
 							{
-							case programationsliderstate:
+							case menu_s:
 								if(selectelement==0) {callsearch();}
 								if(selectelement==1) {callhistory();}
 								if(selectelement==2) {callfavs();}
@@ -293,9 +282,9 @@ int main(int argc, char **argv)
 								if(selectelement==4) {calltop();}
 								if(selectelement==5) {callagr();}
 								if(selectelement==6) {callAflv();}
-								if(selectelement==7) {if(isDownloading) {statenow = downloadstate;}}
+								if(selectelement==7) {if(isDownloading) {statenow = download_s;}}
 								break;
-							case programationstate:
+							case programation_s:
 							{
 								if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1)
 								{
@@ -305,7 +294,7 @@ int main(int argc, char **argv)
 							}
 							break;
 
-							case searchstate:
+							case search_s:
 							{
 								if (!reloadingsearch && BD["arrays"]["search"]["link"].size()>=1)
 								{
@@ -315,7 +304,7 @@ int main(int argc, char **argv)
 
 							}
 							break;
-							case hourglass:
+							case hourglass_s:
 							{
 								if (BD["arrays"]["HourGlass"]["link"].size()>0)
 								{
@@ -324,7 +313,7 @@ int main(int argc, char **argv)
 								}
 							}
 							break;
-							case topstate:
+							case top_s:
 							{
 								if (BD["arrays"]["Top"]["link"].size()>0)
 								{
@@ -333,7 +322,7 @@ int main(int argc, char **argv)
 								}
 							}
 							break;
-							case agregados:
+							case agregados_s:
 							{
 								if (BD["arrays"]["Agregados"]["link"].size()>0)
 								{
@@ -342,7 +331,7 @@ int main(int argc, char **argv)
 								}
 							}
 							break;
-							case historystate:
+							case history_s:
 							{
 								if (UD["history"].size()>0)
 								{
@@ -353,7 +342,7 @@ int main(int argc, char **argv)
 							}
 							break;
 
-							case favoritesstate:
+							case favorites_s:
 							{
 								if ((int)UD["favoritos"].size() >= 1 ) {
 									capBuffer(UD["favoritos"][favchapter]);
@@ -361,7 +350,7 @@ int main(int argc, char **argv)
 								}
 							}
 							break;
-							case chapterstate:
+							case chapter_s:
 								if(serverpront) {
 									string tempurl = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
 										string temp = tempurl;
@@ -399,24 +388,6 @@ int main(int argc, char **argv)
 							quit = true;
 						}
 						if (e.jbutton.button == BT_M) {// (-) button down
-						mcounter++;
-						if (mcounter == 5)
-						{cout <<"replace host"<<endl;
-						fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
-						mkdir("sdmc:/atmosphere/hosts",0777);
-						ofstream myfile ("sdmc:/atmosphere/hosts/default.txt");
-  						if (myfile.is_open())
-  						{
-   					 	myfile << "#Empty Hosts for RipJK\n";
-    					myfile << "\n";
-    					myfile.close();
-  						}
-					 	cout << "# Reload DNS" << endl;
-						ReloadDNS();
-						Mix_Music *are = Mix_LoadMUS("romfs:/are.ogg");
-						Mix_PlayMusic(are, 1);
-						mcounter= 0;
-						}
 							if (Mix_PlayingMusic() == 0)
 							{
 								//Play the music
@@ -444,7 +415,7 @@ int main(int argc, char **argv)
 							}
 						}
 						if (e.jbutton.button == BT_L) {// (L) button down
-							if (statenow == chapterstate) {
+							if (statenow == chapter_s) {
 								if(!AB["AnimeBase"][KeyName]["Precuela"].is_null()) {
 									if (!serverpront) {
 										capBuffer(AB["AnimeBase"][KeyName]["Precuela"]);
@@ -455,17 +426,17 @@ int main(int argc, char **argv)
 								}
 							}
 
-							if (statenow == programationstate)
+							if (statenow == programation_s)
 							{
 								callAflv();
 							}
-							if (statenow == hourglass){
+							if (statenow == hourglass_s){
 								if (WdayG > 0){
 									WdayG--;
 									BD["arrays"]["HourGlass"]["link"] = BD["arrays"]["HourGlass"][Wday[WdayG]];
 								}
 							}
-							if (statenow == programationsliderstate)
+							if (statenow == menu_s)
 							{
 								Btimer=false;
 								bannersel--;
@@ -475,11 +446,11 @@ int main(int argc, char **argv)
 						if (e.jbutton.button == BT_ZL) {// (ZL) button down
 							switch (statenow)
 							{
-							case programationstate:
+							case programation_s:
 								WebBrowserCall(urlc,true);
 								break;
-							case chapterstate:
-							case programationsliderstate:
+							case chapter_s:
+							case menu_s:
 								selectskin();
 								break;
 							}
@@ -492,15 +463,15 @@ int main(int argc, char **argv)
 
 							switch (statenow)
 							{
-							case programationstate:
-								statenow=programationsliderstate;
+							case programation_s:
+								statenow=menu_s;
 								cout << BD << endl;
 								cout << UD << endl;
 								break;
-							case programationsliderstate:
-								statenow=programationstate;
+							case menu_s:
+								statenow=programation_s;
 								break;
-							case favoritesstate:
+							case favorites_s:
 								break;
 							}
 						}
@@ -508,11 +479,11 @@ int main(int argc, char **argv)
 
 							switch (statenow)
 							{
-							case downloadstate:
-								statenow = chapterstate;
+							case download_s:
+								statenow = chapter_s;
 								if (porcendown >= 100) led_on(0);
 								break;
-							case chapterstate:
+							case chapter_s:
 								if(serverpront) {
 									serverpront=false;
 									arrayservers=arrayserversbak;
@@ -520,38 +491,38 @@ int main(int argc, char **argv)
 									statenow=returnnow;
 								}
 								break;
-							case searchstate:
+							case search_s:
 								if (!reloadingsearch)
 								{
-									returnnow = programationstate;
-									statenow = programationstate;
+									returnnow = programation_s;
+									statenow = programation_s;
 								}
 								break;
 
-							case topstate:
-							case agregados:
-							case hourglass:
-							case historystate:
-							case favoritesstate:
-							case programationsliderstate:
-								returnnow = programationstate;
-								statenow = programationstate;
+							case top_s:
+							case agregados_s:
+							case hourglass_s:
+							case history_s:
+							case favorites_s:
+							case menu_s:
+								returnnow = programation_s;
+								statenow = programation_s;
 								break;
 							}
 						}
 						if (e.jbutton.button == BT_X) {// (X) button down
 							switch (statenow)
 							{
-							case programationstate:
+							case programation_s:
 								if(isDownloading)
-									statenow = downloadstate;
+									statenow = download_s;
 								break;
-							case downloadstate:
+							case download_s:
 								cancelcurl = 1;
 								break;
-							case chapterstate:
+							case chapter_s:
 								if (!isConnected) break;
-								statenow = downloadstate;
+								statenow = download_s;
 								cancelcurl = 0;
 //							GOD.PleaseWait("Calculando Links Espere...");
 								urltodownload  = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
@@ -570,10 +541,10 @@ int main(int argc, char **argv)
 									downloadthread = SDL_CreateThread(downloadjkanimevideo, "jkthread", (void*)NULL);
 								}
 								break;
-							case searchstate:
+							case search_s:
 
 								break;
-							case favoritesstate:
+							case favorites_s:
 								delFavorite(favchapter);
 								if (favchapter > 0) favchapter--;
 								break;
@@ -584,25 +555,25 @@ int main(int argc, char **argv)
 
 							switch (statenow)
 							{
-							case programationstate:
+							case programation_s:
 								callmenuslide();
 								break;
-							case programationsliderstate:
+							case menu_s:
 								callfavs();
 								break;
 							/*
 							        if (!reloading)
 							        {
 							                getFavorite();
-							                returnnow = favoritesstate;
-							                statenow = favoritesstate;
+							                returnnow = favorites_s;
+							                statenow = favorites_s;
 							                Frames=1;
 							        }
 							        break;
 							 */
-							case downloadstate:
+							case download_s:
 								break;
-							case chapterstate:
+							case chapter_s:
 							{//AGREGAR A FAVORITOS
 								addFavorite(BD["com"]["ActualLink"]);
 								gFAV = true;
@@ -610,7 +581,7 @@ int main(int argc, char **argv)
 							}
 
 							break;
-							case favoritesstate:
+							case favorites_s:
 
 								break;
 
@@ -622,7 +593,7 @@ int main(int argc, char **argv)
 						if (e.jbutton.button == BT_R3) {// (R3) button down
 							switch (statenow)
 							{//only for test
-							case chapterstate:{
+							case chapter_s:{
 								string tempurl = BD["com"]["ActualLink"].get<string>();
 								if(serverpront) {
 									tempurl = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
@@ -630,9 +601,9 @@ int main(int argc, char **argv)
 								WebBrowserCall(tempurl);
 								break;
 							}
-							case programationstate:
-							case searchstate:
-							case favoritesstate:
+							case programation_s:
+							case search_s:
+							case favorites_s:
 								ongrid = !ongrid;
 								break;
 							}
@@ -647,7 +618,7 @@ int main(int argc, char **argv)
 						if (e.jbutton.button == BT_R) {// (R) button down
 							switch (statenow)
 							{
-							case chapterstate:
+							case chapter_s:
 								if(!AB["AnimeBase"][KeyName]["Secuela"].is_null()&&!serverpront) {
 									if (!serverpront) {
 										capBuffer(AB["AnimeBase"][KeyName]["Secuela"]);
@@ -657,20 +628,20 @@ int main(int argc, char **argv)
 									}
 								}
 								break;
-							case programationstate:
-							case searchstate:
+							case programation_s:
+							case search_s:
 								callsearch();
 								break;
 
 							}
-							if (statenow == hourglass){
+							if (statenow == hourglass_s){
 								if (WdayG < 7){
 									WdayG++;
 									BD["arrays"]["HourGlass"]["link"] = BD["arrays"]["HourGlass"][Wday[WdayG]];
 								}
 							}
 
-							if (statenow == programationsliderstate)
+							if (statenow == menu_s)
 							{
 								Btimer=false;
 								bannersel++;
@@ -681,7 +652,7 @@ int main(int argc, char **argv)
 						if (e.jbutton.button == BT_LEFT || e.jbutton.button == BT_LS_LEFT) {// (left) button down
 							switch (statenow)
 							{
-							case chapterstate:
+							case chapter_s:
 								if(serverpront) {serverpront = false;}
 								if (latest > mincapit)
 								{
@@ -697,15 +668,15 @@ int main(int argc, char **argv)
 						if (e.jbutton.button == BT_RIGHT || e.jbutton.button == BT_LS_RIGHT) {// (right) button down
 							switch (statenow)
 							{
-							case programationsliderstate:
+							case menu_s:
 								if (BD["arrays"]["Banner"]["link"].size()>0)
 								{
-									returnnow = programationsliderstate;
+									returnnow = menu_s;
 									capBuffer(BD["arrays"]["Banner"]["link"][bannersel]);
 									gFAV = isFavorite(BD["com"]["ActualLink"]);
 								}
 								break;
-							case chapterstate:
+							case chapter_s:
 								if(serverpront) {serverpront = false;}
 								if (latest < maxcapit)
 								{
@@ -721,7 +692,7 @@ int main(int argc, char **argv)
 						if (e.jbutton.button == BT_UP || e.jbutton.button == BT_LS_UP) {// (up) button down
 							switch (statenow)
 							{
-							case chapterstate:
+							case chapter_s:
 								if(!serverpront) {//selectserver
 									if (latest < maxcapit)
 									{
@@ -743,7 +714,7 @@ int main(int argc, char **argv)
 						if (e.jbutton.button == BT_DOWN || e.jbutton.button == BT_LS_DOWN) {// (down) button down
 							switch (statenow)
 							{
-							case chapterstate:
+							case chapter_s:
 								if(!serverpront) {//selectserver
 									if (latest > 1)
 									{
@@ -776,28 +747,28 @@ int main(int argc, char **argv)
 							{
 								switch (statenow)
 								{
-								case programationstate:
+								case programation_s:
 									if (!reloading) GOD.HandleList(selectchapter, BD["arrays"]["chapter"]["link"].size(), e.jbutton.button, ongrid);
 									break;
-								case searchstate:
+								case search_s:
 									GOD.HandleList(searchchapter, BD["arrays"]["search"]["link"].size(), e.jbutton.button, ongrid);
 									break;
-								case topstate:
+								case top_s:
 									GOD.HandleList(topchapter, BD["arrays"]["Top"]["link"].size(), e.jbutton.button, ongrid);
 									break;
-								case agregados:
+								case agregados_s:
 									GOD.HandleList(agregadosidx, BD["arrays"]["Agregados"]["link"].size(), e.jbutton.button, ongrid);
 									break;
-								case hourglass:
+								case hourglass_s:
 									GOD.HandleList(hourchapter, BD["arrays"]["HourGlass"]["link"].size(), e.jbutton.button, ongrid);
 									break;
-								case historystate:
+								case history_s:
 									GOD.HandleList(histchapter, UD["history"].size(), e.jbutton.button, ongrid);
 									break;
-								case favoritesstate:
+								case favorites_s:
 									GOD.HandleList(favchapter, UD["favoritos"].size(), e.jbutton.button, ongrid);
 									break;
-								case programationsliderstate:
+								case menu_s:
 									GOD.HandleList(selectelement, StatesList.size(), e.jbutton.button, false);
 									break;
 								}
@@ -826,7 +797,7 @@ int main(int argc, char **argv)
 			//render states
 			switch (statenow)
 			{
-			case chapterstate:                   {
+			case chapter_s:                   {
 				//Draw a background to a nice view
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 				VOX.render_VOX({0,0, SCREEN_WIDTH, 670},170, 170, 170, 100);
@@ -1014,8 +985,8 @@ int main(int argc, char **argv)
 
 				break;
 			}
-			case programationsliderstate:
-			case programationstate:      {
+			case menu_s:
+			case programation_s:      {
 				if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1) {
 
 					if(ongrid) {
@@ -1026,13 +997,13 @@ int main(int argc, char **argv)
 						}
 						if (GOD.fingermotion_RIGHT & (GOD.TouchX > 850)) {
 							GOD.fingermotion_RIGHT = false;
-							statenow=programationstate;
+							statenow=programation_s;
 						}
 						GOD.HR=200; GOD.HG=200; GOD.HB=200;
 						if (preview)
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
-							if (isHandheld && statenow!=programationsliderstate) {
+							if (isHandheld && statenow!=menu_s) {
 								FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
 								HISB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
 								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - HISB.getWidth() - 70, 1);
@@ -1091,7 +1062,7 @@ int main(int argc, char **argv)
 					if(imgNumbuffer>0) {textpro+=" "+to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
 					GOD.PleaseWait(textpro,false);
 				}
-					if (statenow==programationsliderstate) {
+					if (statenow==menu_s) {
 
 						{
 							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV"};
@@ -1205,7 +1176,7 @@ int main(int argc, char **argv)
 
 				break;
 			}
-			case searchstate:                    {
+			case search_s:                    {
 				if (!reloadingsearch) {
 					int srchsize=BD["arrays"]["search"]["link"].size();
 					if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
@@ -1264,7 +1235,7 @@ int main(int argc, char **argv)
 				}
 				break;
 			}
-			case favoritesstate:         {
+			case favorites_s:         {
 				json VecF;
 				VecF["link"]=UD["favoritos"];
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
@@ -1310,7 +1281,7 @@ int main(int argc, char **argv)
 				}
 				break;
 			}
-			case historystate:           {
+			case history_s:           {
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				json VecF;
 				VecF["link"]=UD["history"];
@@ -1349,7 +1320,7 @@ int main(int argc, char **argv)
 				}
 				break;
 			}
-			case topstate:               {
+			case top_s:               {
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int histsize=BD["arrays"]["Top"]["link"].size();
 				if (histsize > 0) {
@@ -1385,7 +1356,7 @@ int main(int argc, char **argv)
 				}
 				break;
 			}
-			case agregados: {
+			case agregados_s: {
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int histsize=BD["arrays"]["Agregados"]["link"].size(); //BD["arrays"]["Agregados"]["link"]
 				if (histsize > 0) {
@@ -1421,7 +1392,7 @@ int main(int argc, char **argv)
 				}
 				break;
 			}
-			case hourglass:              {
+			case hourglass_s:              {
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 
 				int histsize=BD["arrays"]["HourGlass"]["link"].size();
@@ -1461,7 +1432,7 @@ int main(int argc, char **argv)
 				}
 				break;
 			}
-			case downloadstate:              {
+			case download_s:              {
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 				VOX.render_VOX({0,0, 1280, 60},200, 200, 200, 130); //Head
 				VOX.render_VOX({16,65, 900, 162}, 210, 210, 210, 115);//Rectangle
@@ -1532,7 +1503,7 @@ int main(int argc, char **argv)
 			}
 
 			//global render
-			if(isDownloading&& downloadstate != statenow) {
+			if(isDownloading&& download_s != statenow) {
 				T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,42)+"... ("+to_string(porcendown)+"\%)", {50,50,50});
 				VOX.render_VOX({SCREEN_WIDTH - T_D.getWidth() - 2, 671-T_D.getHeight()+4, T_D.getWidth()+4, T_D.getHeight()-5}, 255, 255, 255, 180);
 				T_D.render(SCREEN_WIDTH - T_D.getWidth() - 1, 671-T_D.getHeight());
@@ -1560,13 +1531,13 @@ int main(int argc, char **argv)
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 671-gTextTexture.getHeight() );
 			}
 
-			if(programationstate != statenow && isHandheld) {
+			if(programation_s != statenow && isHandheld) {
 				BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);
 			}
 			
 			GOD.MapT["MUSIC"].render_T(10, 680,"",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
 			
-			if((programationstate == statenow && isHandheld)|quit) {
+			if((programation_s == statenow && isHandheld)|quit) {
 				GOD.MapT["EXIT"].render_T(80, 680,"",quit);
 			}
 			
@@ -1664,6 +1635,7 @@ int main(int argc, char **argv)
 
 	
 	//unmount and commit
+	mount_theme("themes",false);
 	fsdevCommitDevice("save");
 	fsdevUnmountDevice("save");
 	fsFsClose(&acc);
