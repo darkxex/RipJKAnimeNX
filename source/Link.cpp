@@ -158,7 +158,6 @@ std::vector<std::string> arrayserversbak = {
 std::vector<std::string> arrayservers = arrayserversbak;
 
 bool onlinejkanimevideo(string onlineenlace,string server){
-	bool autoplay = true;
 	string videourl = "";
 	string content = "";
 	string tempcon = "";
@@ -173,12 +172,8 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	if (server == "Nozomi") {
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
 		if(videourl.length()){
-
 			tempcon = Nozomi_player(videourl);
-
-			if(tempcon.length()){videourl=tempcon;
-			autoplay = false;
-			}
+			if(tempcon.length()){videourl=tempcon;}
 		}
 	}
 	if (server == "MixDrop") {
@@ -207,10 +202,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	cout << videourl << endl;
 	if (videourl.length() != 0)
 	{
-		if (autoplay == true)
 		WebBrowserCall(videourl);
-		else
-		WebBrowserforNozomi(videourl);
 		videourl = "";
 		return true;
 	} else {
