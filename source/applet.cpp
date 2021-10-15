@@ -422,8 +422,8 @@ Result WebBrowserCall(std::string url,bool nag){
 			webConfigSetMediaPlayerAutoClose (&config, true);
 			//play direct links
 			//if(url.substr(9,9) == "-delivery" || url.find("apidata.googleusercontent"))
-			//desactive el mediaplayer.
-			webConfigSetBootAsMediaPlayer(&config, false);
+
+			webConfigSetBootAsMediaPlayer(&config, true);
 			//webConfigSetFooter(&config, false);
 
 
@@ -458,5 +458,74 @@ Result WebBrowserCall(std::string url,bool nag){
 	return rc;
 }
 
+//iba a editar el webbrowsercall pero vi que tienes muchas llamadas a esa función, así que para evitar joder algo grande hice una aparte.
+Result WebBrowserforNozomi(std::string url,bool nag){
+	cout << "WEB :"+url <<std::endl;
+	Result rc = 0;
+	if (nag) {
+		url = KeyboardCall ("Escribir URL http://", url);
+		urlc = url;
+		if (url.length() <= 0) return 0;
+	}
+	WebSession session;
+	WebCommonConfig config;
+	WebCommonReply reply;
+	WebExitReason exitReason = (WebExitReason)0;
+	// Create the config. There's a number of web*Create() funcs, see libnx web.h.
+	// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
+	rc = webPageCreate(&config, url.c_str());
+	printf("webPageCreate(): 0x%x\n", rc);
+	if (R_SUCCEEDED(rc)) {
+		if (nag) {
+			printf("Try to save logins\n");//
+			//mount user data to save logins and that stuff
+			webConfigSetUid(&config,uid);
+		}
+		printf("SetMainConfigs\n");
+		webConfigSetJsExtension (&config, true);
+		webConfigSetScreenShot (&config, true);
+		webConfigSetBootDisplayKind (&config, WebBootDisplayKind_Black);
+		webConfigSetPageCache (&config, true);
+		webConfigSetBootLoadingIcon (&config, true);
+		webConfigSetPageScrollIndicator (&config, true);
+		webConfigSetMediaPlayerSpeedControl (&config, true);
+		webConfigSetMediaAutoPlay (&config, true);
+		webConfigSetTransferMemory (&config, true);
+		if (!nag) {
+			printf("SetCapConfigs\n");
+			webConfigSetDisplayUrlKind (&config, false);
+			//ambos en false...
+			webConfigSetMediaPlayerAutoClose (&config, false);
+			webConfigSetBootAsMediaPlayer(&config, false);
+		
+			if(url.substr(0,20) == "https://jkanime.net/")
+			{
+				webConfigSetWhitelist(&config, "^https://jkanime\\.net($|/)");
+			} else webConfigSetWhitelist(&config, "^http*");
+		}
+
+		// Create Session
+		webSessionCreate (&session, &config);
+
+		//Star A web Session and NOT wait for exit if is player session
+		Event *out_event;
+		rc = webSessionStart (&session, &out_event);
+		printf("Running session... 0x%x ", rc);
+		if (nag) {
+			rc = webSessionWaitForExit (&session, &reply);
+			if (R_SUCCEEDED(rc)) printf(", 0x%x", rc);
+
+			if (R_SUCCEEDED(rc)) { // Normally you can ignore exitReason.
+				rc = webReplyGetExitReason(&reply, &exitReason);
+				printf("webReplyGetExitReason(): 0x%x", rc);
+				if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
+			}
+		} else {
+			sleep(3);
+		}
+		printf("\n");
+	}
+	return rc;
+}
 //KeyboardCall ("Buscar Anime (3 letras minimo.)", "");
 

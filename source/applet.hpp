@@ -18,3 +18,4 @@ json DInfo(string ver="");
 bool ChainManager(bool Chain,bool AndChaing);
 std::string KeyboardCall (std::string hint="", std::string text="");
 Result WebBrowserCall(std::string url="",bool nag=false);
+Result WebBrowserforNozomi(std::string url="",bool nag=false);
