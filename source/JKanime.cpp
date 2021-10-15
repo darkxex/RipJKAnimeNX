@@ -45,7 +45,8 @@ int AnimeLoader(void* data){
 		}
 		
 		//execute this once, or if Mgate is true
-		static bool Mgate=true;
+		//Desactivé el MGate
+		static bool Mgate=false;
 		if (Mgate){
 			#ifdef ISDEBUG
 				#include "Debug.h"
