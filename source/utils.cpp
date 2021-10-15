@@ -191,7 +191,7 @@ void touch(std::string route){
 bool copy_me(std::string origen, std::string destino) {
 	if(isFileExist(origen))
 	{
-		printf("%s a %s\n",origen.c_str(),destino.c_str());
+		cout << "# copy "<< origen << " >> " << destino;
 		std::string tempdest = destino+".tmp";
 		std::ifstream source(origen, std::ios::binary);
 		std::ofstream dest(tempdest, std::ios::binary);
@@ -200,7 +200,7 @@ bool copy_me(std::string origen, std::string destino) {
 		dest.close();
 		remove(destino.c_str());
 		rename (tempdest.c_str(), destino.c_str());
-		if(isFileExist(destino)) printf("%s a %s OK\n\n",origen.c_str(),destino.c_str());
+		if(isFileExist(destino)) cout << "OK" << endl; else cout << "KO" << endl;
 		return true;
 	}else{
 		return false;
@@ -563,8 +563,8 @@ namespace LOG {
 		if (MLOG()){
 			//Save log File
 			cout << "END>" << endl;
-			file.open(rootdirectory+"LOG.txt", ios::out);
-			//redirectStream << stream_buffer_cout;
+			file.open(rootdirectory+"LOG.txt", ios::app);
+			//file.open(rootdirectory+"LOG.txt", ios::out);
 			file << redirectStream.str();
 			file.close();
 		}

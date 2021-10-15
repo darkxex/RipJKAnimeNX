@@ -55,9 +55,11 @@ int AnimeLoader(void* data){
 			 switch(Req){
 				case 0:
 				case 503:
-					std::cout << "# Place DNS" << std::endl;
+					cout << "# Place DNS" << endl;
+					fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
+					mkdir("sdmc:/atmosphere/hosts",0777);
 					copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
-					std::cout << "# Reload DNS" << std::endl;
+					cout << "# Reload DNS" << endl;
 					ReloadDNS();
 					break;
 			}
@@ -92,7 +94,7 @@ int AnimeLoader(void* data){
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "<span>","</span>");
 
 		steep++;//Download All not existing images
-		cout << "# IMG Recent " << std::endl;
+		cout << "# IMG Recent " << endl;
 		CheckImgVector(ChapImag,imgNumbuffer);
 		
 		
@@ -192,7 +194,7 @@ int AnimeLoader(void* data){
 		MkDIR();
 	} catch(...) {
 		led_on(2);
-		cout << "- Thread Chain Error Catched, Steep#" << steep <<std::endl;
+		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
 		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
@@ -280,7 +282,7 @@ int MkBNR(string content){
 
 		CheckImgNet(name,url);
 	}
-	//cout << std::setw(4) << BD["arrays"]["Banner"] << std::endl;
+	//cout << setw(4) << BD["arrays"]["Banner"] << endl;
 	return 0;
 }
 
@@ -391,7 +393,7 @@ int MkDIR(){
 		}
 	} catch(...) {
 		led_on(2);
-		cout << "- Thread Chain Error Catched, Get Dir Error" <<std::endl;
+		cout << "- Thread Chain Error Catched, Get Dir Error" <<endl;
 		return 0;
 	}
 	if(quit) return false;
@@ -406,7 +408,7 @@ int MkDIR(){
 			}
 		} catch(...) {
 			led_on(2);
-			cout << "- Thread Chain Error Catched,Dir Error" <<std::endl;
+			cout << "- Thread Chain Error Catched,Dir Error" <<endl;
 			//write_DB(BD,rootdirectory+"DataBase.json");
 			return 0;
 		}
@@ -445,7 +447,7 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 	if(cancelcurl==0) led_on(3); else led_on(0);
 	} catch(...) {
 		led_on(2);
-		cout << "- Thread Download Error Catched" <<std::endl;
+		cout << "- Thread Download Error Catched" <<endl;
 		cout << BD["arrays"]["downloads"] << endl;
 	}
 	cancelcurl = 0;
@@ -523,7 +525,7 @@ int searchjk(void* data) {//Search Thread
 	}
 	} catch(...) {
 		led_on(2);
-		cout << "- Thread Search Error Catched" <<std::endl;
+		cout << "- Thread Search Error Catched" <<endl;
 		cout << BD["arrays"]["search"] << endl;
 	}
 	reloadingsearch = false;
@@ -554,7 +556,7 @@ int capit(void* data) {//Get chap thread
 		}
 	}catch(...) {
 		led_on(2);
-		cout << "- Error "+name <<std::endl;
+		cout << "- Error "+name <<endl;
 	}
 	return 0;
 }

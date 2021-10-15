@@ -8,76 +8,37 @@ string urlc = "https://myrincon.duckdns.org";
 enum Temas { Default, Classic, Crazy };
 Temas TemaActual = Default;
 //MAIN INT
-void writeinconf(string temaguardado)
-{  ofstream myfile ("sdmc:/ripconf.ini");
-  if (myfile.is_open())
-  {
-    myfile << temaguardado;
-    myfile.close();
-  }}
-void selectskin()
-{	switch(TemaActual) {
-   									case Default  :
-									//undertale
+void selectskin() {	
+	switch(TemaActual) {
+   		case Default  :
+			//undertale
+			GOD.setSkin("romfs:/theme/Asriel");
+			TemaActual = Classic;
+			break; 
 
-									Farest.free();
-									Farest.loadFromFile("romfs:/img/texture.png");
-									Heart.free();
-									Heart.loadFromFile("romfs:/img/heart.png");
-							
-									Mix_FreeMusic(GOD.gMusic);
+   		case Classic :
+			//digimon
+			GOD.setSkin("romfs:/theme/Digimon");
+			TemaActual = Crazy;
+			break; 
 
-									GOD.gMusic = Mix_LoadMUS("romfs:/audio/wada.ogg");
-									writeinconf("0");
-									TemaActual = Classic;
-     								break; 
-   									case Classic :
-      								//digimon
-									Farest.free();
-									Farest.loadFromFile("romfs:/img/digitexture.png");
-									Heart.free();
-									Heart.loadFromFile("romfs:/img/digiheart.png");
-							
-									Mix_FreeMusic(GOD.gMusic);
+		case Crazy :
+			//miku
+			GOD.setSkin("romfs:/theme/Miku");
+			TemaActual = Default;
+			break;
 
-									GOD.gMusic = Mix_LoadMUS("romfs:/audio/digiwada.ogg");
-									writeinconf("1");
-									TemaActual = Crazy;
-      								break; 
-									case Crazy :
-									//miku
-									Farest.free();
-									Farest.loadFromFile("romfs:/img/crazytexture.png");
-									Heart.free();
-									Heart.loadFromFile("romfs:/img/crazyheart.png");
-							
-									Mix_FreeMusic(GOD.gMusic);
+  		default : 
+			TemaActual = Default;
+	}
+}
 
-									GOD.gMusic = Mix_LoadMUS("romfs:/audio/crazywada.ogg");
-								    writeinconf("2");
-                                    TemaActual = Default;
-      								break;
-   
-   
-  									default : 
-                                    TemaActual = Default;
-									
-									}
-									if (Mix_PlayingMusic() == 0)
-				{
-					Mix_PlayMusic(GOD.gMusic, -1);
-				}
-									
-									}
 int main(int argc, char **argv)
 {
 	socketInitializeDefault();
 	romfsInit();
 	nxlinkStdio();
 	printf("Nxlink server Conected\n");
-	
-	//LOG Init
-	LOG::init();
 
 	AppletMode=GetAppletMode();
 	ChainManager(true,true);
@@ -88,6 +49,9 @@ int main(int argc, char **argv)
 	fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
 	fsdevMountDevice("user", data);
 
+	//LOG Init
+	LOG::init();
+	
 	//Mount Save Data
 	FsFileSystem acc;
 	if (MountUserSave(acc) & !AppletMode) {
@@ -138,6 +102,7 @@ int main(int argc, char **argv)
 
 	GOD.intA();//init the SDL
 
+/*
 
 //lectura de Tema, puedes remplazarlo a la BD, pero como no tengo idea como usarla lo hice en un simple ini.
 if (isFileExist("sdmc:/ripconf.ini")) {
@@ -165,25 +130,19 @@ else
   else cout << "Unable to open file";
    }
 
-//fin de cargado de tema.
+
+
+		selectskin();
+
+*/
+	//fin de cargado de tema.
+
 	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
 		mkdir(rootdirectory.c_str(), 0777);
 		mkdir((rootdirectory+"DATA").c_str(), 0777);
 	}
-
-	if (isFileExist(rootdirectory+"texture.png")) {
-		Farest.loadFromFile(rootdirectory+"texture.png");
-	} else {
-		Farest.loadFromFile("romfs:/img/texture.png");
-	}
-
-	if (isFileExist(rootdirectory+"heart.png")) {
-		Heart.loadFromFile(rootdirectory+"heart.png");
-	} else {
-		Heart.loadFromFile("romfs:/img/heart.png");
-
-		selectskin();
-	}
+	
+	GOD.loadSkin();//Esto carga la skin guardada y la musica
 
 	gTextTexture.mark=false;
 	Farest.mark=false;
@@ -698,22 +657,18 @@ else
 						if (e.jbutton.button == BT_R3) {// (R3) button down
 							switch (statenow)
 							{//only for test
-							case chapterstate:
+							case chapterstate:{
+								string tempurl = BD["com"]["ActualLink"].get<string>();
 								if(serverpront) {
-									arrayservers.push_back("test");
-								} else {
-									string tempurl = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
-									WebBrowserCall(tempurl);
+									tempurl = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
 								}
+								WebBrowserCall(tempurl);
 								break;
+							}
 							case programationstate:
-								ongrid = !ongrid;
-								break;
 							case searchstate:
-								ongridS = !ongridS;
-								break;
 							case favoritesstate:
-								ongridF = !ongridF;
+								ongrid = !ongrid;
 								break;
 							}
 						}
@@ -1288,16 +1243,16 @@ else
 			case searchstate:                    {
 				if (!reloadingsearch) {
 					int srchsize=BD["arrays"]["search"]["link"].size();
-					if(ongridS) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+					if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 					if (srchsize > 0) {
-						//if (srchsize > 30) ongridS=false;
-						if (!ongridS) GOD.ListClassic(searchchapter,BD["arrays"]["search"]);
+						//if (srchsize > 30) ongrid=false;
+						if (!ongrid) GOD.ListClassic(searchchapter,BD["arrays"]["search"]);
 						if (preview)
 						{
-							if (ongridS) {
+							if (ongrid) {
 								VOX.TickerColor(GOD.HG,210,255, 200);
 								GOD.HR=200; GOD.HB=200;
-								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongridS,Frames);
+								GOD.ListCover(searchchapter,BD["arrays"]["search"],ongrid,Frames);
 								BUS.render_T(5, 15,"");
 								if (isHandheld) {
 									BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
@@ -1313,7 +1268,7 @@ else
 					}
 					//Draw Header
 					gTextTexture.loadFromRenderedText(GOD.gFont, "Resultados de Búsqueda:", {100,0,0});
-					if(ongridS) {
+					if(ongrid) {
 						int distan = gTextTexture.getWidth()+10;
 						gTextTexture.render(5, 1);
 						gTextTexture.loadFromRenderedText(GOD.gFont, BD["searchtext"], {0,0,0});
@@ -1347,17 +1302,17 @@ else
 			case favoritesstate:         {
 				json VecF;
 				VecF["link"]=UD["favoritos"];
-				if(ongridF) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
+				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int favsize=UD["favoritos"].size();
 				if (favsize > 0) {
-					//if (favsize > 30) ongridF=false;
-					if (!ongridF) GOD.ListClassic(favchapter,VecF);
+					//if (favsize > 30) ongrid=false;
+					if (!ongrid) GOD.ListClassic(favchapter,VecF);
 					if (preview)
 					{
-						if (ongridF) {
+						if (ongrid) {
 							VOX.TickerColor(GOD.HR,210,255, 200);
 							GOD.HG=200; GOD.HB=200;
-							GOD.ListCover(favchapter,VecF,ongridF,Frames);
+							GOD.ListCover(favchapter,VecF,ongrid,Frames);
 							FAV.render_T(5, 15,"");
 						} else {
 							GOD.ListCover(favchapter, VecF);
@@ -1369,7 +1324,7 @@ else
 
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
-				if(ongridF) {
+				if(ongrid) {
 					gTextTexture.render(5, 1);
 				}else {
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
@@ -1397,7 +1352,7 @@ else
 
 				int histsize=VecF["link"].size();
 				if (histsize > 0) {
-					//if (favsize > 30) ongridF=false;
+					//if (favsize > 30) ongrid=false;
 					if (!ongrid) GOD.ListClassic(histchapter,VecF);
 					if (preview)
 					{
@@ -1433,7 +1388,7 @@ else
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int histsize=BD["arrays"]["Top"]["link"].size();
 				if (histsize > 0) {
-					//if (favsize > 30) ongridF=false;
+					//if (favsize > 30) ongrid=false;
 					if (!ongrid) GOD.ListClassic(topchapter,BD["arrays"]["Top"]);
 					if (preview)
 					{
@@ -1469,7 +1424,7 @@ else
 				if(ongrid) {USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);}
 				int histsize=BD["arrays"]["Agregados"]["link"].size(); //BD["arrays"]["Agregados"]["link"]
 				if (histsize > 0) {
-					//if (favsize > 30) ongridF=false;
+					//if (favsize > 30) ongrid=false;
 					if (!ongrid) GOD.ListClassic(agregadosidx,BD["arrays"]["Agregados"]);
 					if (preview)
 					{
@@ -1506,7 +1461,7 @@ else
 
 				int histsize=BD["arrays"]["HourGlass"]["link"].size();
 				if (histsize > 0) {
-					//if (favsize > 30) ongridF=false;
+					//if (favsize > 30) ongrid=false;
 					if (!ongrid) GOD.ListClassic(hourchapter,BD["arrays"]["HourGlass"]);
 					if (preview)
 					{
