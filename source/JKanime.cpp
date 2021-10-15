@@ -45,7 +45,7 @@ int AnimeLoader(void* data){
 		}
 		
 		//execute this once, or if Mgate is true
-		//DesactivÃ© el MGate
+		//desactivé el MGate para Testeo.
 		static bool Mgate=false;
 		if (Mgate){
 			#ifdef ISDEBUG
@@ -86,7 +86,7 @@ int AnimeLoader(void* data){
 
 		steep++;//Get Programation list, Links and Images
 		int temp0=0,temp1=0;
-		temp0=content.find("ProgramaciÃ³n");
+		temp0=content.find("Programación");
 		temp1=content.find("TOP ANIMES",temp0);
 		string temcont = content.substr(temp0,temp1-temp0);
 		steep++;//rebuild list
@@ -144,7 +144,7 @@ int AnimeLoader(void* data){
 		CheckImgVector(UD["history"],imgNumbuffer);
 
 		steep++;//Agregados to Database
-		temp0=content.find("Listado de Ãºltimos agregados");
+		temp0=content.find("Listado de últimos agregados");
 		temp1=content.find("</section>",temp0);
 		temcont = content.substr(temp0,temp1-temp0);
 		MkAGR(temcont);
@@ -697,7 +697,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	} else {
 		//find next date
 		int re1 =0, re2=0;
-		re1 = a.find("<b>PrÃ³ximo episodio</b>");
+		re1 = a.find("<b>Próximo episodio</b>");
 		if(re1 > 1) {
 			re1 += 25;
 			re2 = a.find("<i class", re1);
@@ -784,7 +784,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		cout << "Saved: " << name << endl;
 	} catch(...) {
 		led_on(2);
-		cout << "Anime ProblemÃ¡tico: "<< name << endl;
+		cout << "Anime Problemático: "<< name << endl;
 		cout << strm.str() << endl;
 	}
 }
