@@ -349,6 +349,7 @@ bool CheckUpdates(bool force){
 				
 				//New ver
 				string New = base[0]["tag_name"];
+				if (New.length() > 5) New = New.substr(0,5);//Tomar Major, Minor, y Micro solamente
 
 				//Check for new updates
 				if (Ver != New || force){
