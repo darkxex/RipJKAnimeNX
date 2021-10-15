@@ -419,12 +419,11 @@ Result WebBrowserCall(std::string url,bool nag){
 		if (!nag) {
 			printf("SetCapConfigs\n");
 			webConfigSetDisplayUrlKind (&config, false);
-			webConfigSetMediaPlayerAutoClose (&config, true);
-			//play direct links
-			//if(url.substr(9,9) == "-delivery" || url.find("apidata.googleusercontent"))
-			//desactive el mediaplayer.
-			webConfigSetBootAsMediaPlayer(&config, false);
+			webConfigSetBootAsMediaPlayer(&config, true);
 			//webConfigSetFooter(&config, false);
+			//play direct links
+			webConfigSetMediaPlayerAutoClose (&config, true);
+			webConfigSetPlayReport(&config, false);
 
 
 			//block redirection
