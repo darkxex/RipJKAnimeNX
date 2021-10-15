@@ -56,12 +56,25 @@ int AnimeLoader(void* data){
 			 switch(Req){
 				case 0:
 				case 503:
-					cout << "# Place DNS" << endl;
+					/*cout << "# Place DNS" << endl;
 					fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
 					mkdir("sdmc:/atmosphere/hosts",0777);
 					copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
 					cout << "# Reload DNS" << endl;
-					ReloadDNS();
+					ReloadDNS();*/
+
+						cout << "# Place DNS" << endl;
+						fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
+						mkdir("sdmc:/atmosphere/hosts",0777);
+						ofstream myfile ("sdmc:/atmosphere/hosts/default.txt");
+  						if (myfile.is_open())
+  						{
+   					 	myfile << "#Empty Hosts for RipJK\n";
+    					myfile << "\n";
+    					myfile.close();
+  						}
+					 	cout << "# Reload DNS" << endl;
+						ReloadDNS();
 					break;
 			}
 			Mgate=false;
