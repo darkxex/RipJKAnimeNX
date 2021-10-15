@@ -233,7 +233,7 @@ void callsearch(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	if (!reloadingsearch)
 	{
-		if (BD["searchtext"].empty()) {BD["searchtext"]="";}
+		if (BD["searchtext"].is_null()) {BD["searchtext"]="";}
 		BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
 		if ((BD["searchtext"].get<std::string>()).length() > 0) {
 			searchchapter = 0;

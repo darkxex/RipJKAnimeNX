@@ -413,7 +413,7 @@ bool inTimeN(u64 sec,int framesdelay){
 	static json data;
 	string name = to_string(sec);
 	
-	if (data[name]["frames"].empty()){
+	if (data[name]["frames"].is_null()){
 		data[name]["frames"]=0;
 	}
 
@@ -427,7 +427,7 @@ bool inTimeN(u64 sec,int framesdelay){
 		time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
 		
 
-		if (data[name]["time"].empty()){
+		if (data[name]["time"].is_null()){
 			data[name]["time"]=msecs_time;
 		} else{
 			u64 time1 = msecs_time;
@@ -505,7 +505,7 @@ std::string string_to_hex(const std::string& in) {
     return ss.str(); 
 }
 bool isset(json data){
-	if (data.empty()) {
+	if (data.is_null()) {
 		return false;
 	}
 	return true;

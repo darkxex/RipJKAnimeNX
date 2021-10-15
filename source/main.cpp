@@ -61,13 +61,11 @@ int main(int argc, char **argv)
 	read_DB(BD,rootdirectory+"DataBase.json");
 	
 	BD["com"] = "{}"_json;
-	if(!BD["USER"].empty()) {
+	if(!BD["USER"].is_null()) {
 		UD=BD["USER"];
 	}
 	BD.erase("USER");
-	if(!BD["DataBase"].empty()) {
-		BD.erase("DataBase");
-	} else {
+	if(!BD["DataBase"].is_null()) {
 		BD.erase("DataBase");
 	}
 	
@@ -416,7 +414,7 @@ int main(int argc, char **argv)
 						}
 						if (e.jbutton.button == BT_L) {// (L) button down
 							if (statenow == chapterstate) {
-								if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
+								if(!AB["AnimeBase"][KeyName]["Precuela"].is_null()) {
 									if (!serverpront) {
 										capBuffer(AB["AnimeBase"][KeyName]["Precuela"]);
 										gFAV = isFavorite(BD["com"]["ActualLink"]);
@@ -619,7 +617,7 @@ int main(int argc, char **argv)
 							switch (statenow)
 							{
 							case chapterstate:
-								if(!AB["AnimeBase"][KeyName]["Secuela"].empty()&&!serverpront) {
+								if(!AB["AnimeBase"][KeyName]["Secuela"].is_null()&&!serverpront) {
 									if (!serverpront) {
 										capBuffer(AB["AnimeBase"][KeyName]["Secuela"]);
 										gFAV = isFavorite(BD["com"]["ActualLink"]);
@@ -968,14 +966,14 @@ int main(int argc, char **argv)
 					B_Y.render_T(dist, 680,"Favorito"); dist -= posdist;
 				}
 
-				if(!AB["AnimeBase"][KeyName]["Secuela"].empty()) {
+				if(!AB["AnimeBase"][KeyName]["Secuela"].is_null()) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
 					GOD.Cover(imagelocal,160,456,"Secuela",120,BT_R);
 				}
-				if(!AB["AnimeBase"][KeyName]["Precuela"].empty()) {
+				if(!AB["AnimeBase"][KeyName]["Precuela"].is_null()) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";

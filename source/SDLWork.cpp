@@ -124,7 +124,7 @@ string NameOfTheme(string path){
 	return path;
 }
 void SDLB::loadSkin(string img){
-	if (UD["Themes"]["use"].empty()){
+	if (UD["Themes"]["use"].is_null()){
 		UD["Themes"]["use"]=defcord;
 	}
 	SkinMaster = UD["Themes"]["use"];
@@ -483,7 +483,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				//draw Title
 				TextBuffer.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
 				TextBuffer.render(50, 9);
-				if(!Jlinks["date"].empty()) {
+				if(!Jlinks["date"].is_null()) {
 					//draw Title
 					int datesize = Jlinks["date"].size()-1;
 					if (x+outof < datesize) {

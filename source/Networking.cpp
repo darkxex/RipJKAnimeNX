@@ -327,7 +327,7 @@ bool CheckUpdates(bool force){
 		string Ver = DInfo()["App"];
 		//Get Config
 		json config = DInfo()["config"];
-		if (config["AutoUpdate"].empty()){
+		if (config["AutoUpdate"].is_null()){
 			std::cout  << "- Config empty " <<std::endl;
 			return false;
 		}
@@ -345,7 +345,7 @@ bool CheckUpdates(bool force){
 			//Parse and use the JSON data
 			json base = json::parse(APIJ);
 			//main vars
-			if (!base[0]["tag_name"].empty()){
+			if (!base[0]["tag_name"].is_null()){
 				
 				//New ver
 				string New = base[0]["tag_name"];

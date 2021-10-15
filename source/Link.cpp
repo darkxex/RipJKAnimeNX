@@ -96,7 +96,7 @@ string Nozomi_Link(string Link){
 		if(json::accept(codetemp))
 		{
 			data = json::parse(codetemp);
-			if (!data["file"].empty())
+			if (!data["file"].is_null())
 			{
 				ThirdKey = data["file"];
 				replace(ThirdKey,"\r","");
@@ -143,7 +143,7 @@ string Fembed_Link(string Link) {
 		int sz = data["data"].size()-1;
 		cout << "num: " << sz << endl;
 		if(sz > 0){
-			if (!data["data"][sz]["file"].empty()){
+			if (!data["data"][sz]["file"].is_null()){
 				codetemp = data["data"][sz]["file"];
 			}
 		}

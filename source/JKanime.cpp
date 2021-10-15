@@ -30,7 +30,7 @@ int AnimeLoader(void* data){
 		isChained=true;
 		ChainManager(true,true);
 		steep++;//Wait for connection
-		if (BD["arrays"]["chapter"]["link"].empty()) {
+		if (BD["arrays"]["chapter"]["link"].is_null()) {
 			//hide the list for rebuild
 			reloading = true;
 			preview = false;
@@ -100,7 +100,7 @@ int AnimeLoader(void* data){
 		
 		steep++;//'haschange' See if there is any new chap
 		bool haschange = true;
-		if (!BD["latestchapter"].empty()) {
+		if (!BD["latestchapter"].is_null()) {
 			if (BD["latestchapter"] == ChapLink[0] && !reloading)
 			{
 				haschange = false;
@@ -109,14 +109,14 @@ int AnimeLoader(void* data){
 		steep++;//Display List
 		if(reloading) {Frames=0; reloading = false;}
 		
-		if (haschange || BD["TimeStamp"].empty()) {
+		if (haschange || BD["TimeStamp"].is_null()) {
 			//update TimeStamp
-			if (BD["arrays"]["chapter"]["link"].empty() || BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].empty()) {
+			if (BD["arrays"]["chapter"]["link"].is_null() || BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].is_null()) {
 				BD["TimeStamp"] = to_string(TimeNow());
 				cout << "# New TimeStamp: " << BD["TimeStamp"] << endl;
 
 				//merge vectors
-				if (!BD["arrays"]["chapter"]["images"].empty() && !BD["arrays"]["chapter"]["link"].empty())
+				if (!BD["arrays"]["chapter"]["images"].is_null() && !BD["arrays"]["chapter"]["link"].is_null())
 				{
 					vector<string> OChapLink=BD["arrays"]["chapter"]["link"];
 					vector<string> OChapImag=BD["arrays"]["chapter"]["images"];
@@ -158,7 +158,7 @@ int AnimeLoader(void* data){
 		MkHOR();
 
 		steep++;//Download All not existing images of Favorites
-		if(UD["favoritos"].empty()) {
+		if(UD["favoritos"].is_null()) {
 			cout << "# Get fav list " << endl;
 			getFavorite();
 			cout << "# Goted fav list " << endl;
@@ -221,7 +221,7 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 		string link = LinkList[x];
 		string name = KeyOfLink(link);
 		if (AB["AnimeBase"][name]["TimeStamp"] != BD["TimeStamp"] ) {
-			if (AB["AnimeBase"][name]["TimeStamp"].empty() || AB["AnimeBase"][name]["enemision"]=="true") {
+			if (AB["AnimeBase"][name]["TimeStamp"].is_null() || AB["AnimeBase"][name]["enemision"]=="true") {
 				part = x+1;
 				DataUpdate(link);
 				hasmchap=true;
@@ -339,9 +339,9 @@ int MkHOR(){
 }
 int MkDIR(){
 	//make directory
-	if (BD["arrays"]["Directory"]["TimeStamp"].empty()){BD["arrays"]["Directory"]["TimeStamp"]=0;}
-	if (BD["arrays"]["Directory"]["InTime"].empty()){BD["arrays"]["Directory"]["InTime"]=0;}
-	if (BD["arrays"]["Directory"]["page"].empty()){BD["arrays"]["Directory"]["page"]=1;}
+	if (BD["arrays"]["Directory"]["TimeStamp"].is_null()){BD["arrays"]["Directory"]["TimeStamp"]=0;}
+	if (BD["arrays"]["Directory"]["InTime"].is_null()){BD["arrays"]["Directory"]["InTime"]=0;}
+	if (BD["arrays"]["Directory"]["page"].is_null()){BD["arrays"]["Directory"]["page"]=1;}
 	try{
 	
 		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_week){
@@ -552,7 +552,7 @@ int capit(void* data) {//Get chap thread
 
 		//Get Image
 		string image = rootdirectory+"DATA/"+name+".jpg";
-		if (!AB["AnimeBase"][name]["Image"].empty()) {
+		if (!AB["AnimeBase"][name]["Image"].is_null()) {
 			CheckImgNet(image,AB["AnimeBase"][name]["Image"]);
 		}
 	}catch(...) {
@@ -577,7 +577,7 @@ int capBuffer (string Tlink) {//anime manager
 	string image = rootdirectory+"DATA/"+name+".jpg";
 	statenow = chapterstate;
 
-	if (AB["AnimeBase"][name]["TimeStamp"].empty())
+	if (AB["AnimeBase"][name]["TimeStamp"].is_null())
 	{
 		BD["com"]["sinopsis"] = "......";
 		BD["com"]["nextdate"] = "......";
@@ -597,8 +597,8 @@ int capBuffer (string Tlink) {//anime manager
 			maxcapit = AB["AnimeBase"][name]["maxcapit"];
 			mincapit = AB["AnimeBase"][name]["mincapit"];
 			//check For latest cap seend
-			if (UD["chapter"][name].empty()||UD["chapter"][name]["latest"].empty()) {
-				UD["chapter"].erase(name);
+			if (UD["chapter"][name].is_null()||UD["chapter"][name]["latest"].is_null()) {
+				//UD["chapter"].erase(name);
 				//get position to the latest cap if in emision
 				if (BD["com"]["enemision"] == "true") {
 					latest = AB["AnimeBase"][name]["maxcapit"];//is in emision
@@ -613,7 +613,7 @@ int capBuffer (string Tlink) {//anime manager
 			}
 
 			//Get Image
-			if (!AB["AnimeBase"][name]["Image"].empty()) {
+			if (!AB["AnimeBase"][name]["Image"].is_null()) {
 				CheckImgNet(image,AB["AnimeBase"][name]["Image"]);
 			}
 
@@ -636,27 +636,27 @@ void DataUpdate(string Link) {//Get info off chapter
 	if(quit) return;
 	json AnimeINF=AB["AnimeBase"][name];//
 	string TMP="";
-	if (AnimeINF["sinopsis"].empty()){
+	if (AnimeINF["sinopsis"].is_null()){
 		//Sinopsis
 		TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 		replace(TMP, "<p rel=\"sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
 		//AnimeINF["sinopsis"] = TMP.substr(0,800);
 		AnimeINF["sinopsis"] = TMP;
 	}
-	if (AnimeINF["Image"].empty()){
+	if (AnimeINF["Image"].is_null()){
 		//get image
 		TMP = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
 		AnimeINF["Image"] = TMP;
 	}
 
-	if (AnimeINF["Tipo"].empty()){
+	if (AnimeINF["Tipo"].is_null()){
 		//Anime info
 		TMP = scrapElement(a, "<span>Tipo:","</li");
 		replace(TMP, "<span>Tipo:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
 		AnimeINF["Tipo"] = TMP;
 	}
 
-	if (AnimeINF["Idiomas"].empty()){
+	if (AnimeINF["Idiomas"].is_null()){
 		TMP = scrapElement(a, "Idiomas:","</li");
 		replace(TMP, "Idiomas:", ""); replace(TMP, "  ", " "); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
 		AnimeINF["Idiomas"] = TMP;
@@ -706,7 +706,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	}
 	AnimeINF["nextdate"] = TMP;
 
-	if (AnimeINF["generos"].empty()){
+	if (AnimeINF["generos"].is_null()){
 		//Generos
 		int indx1 = 1, indx2, indx3;
 		indx1 = a.find("<span>Genero:</span>", indx1);
@@ -747,7 +747,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		AnimeINF["maxcapit"] = 1;
 	}
 
-	if (AnimeINF["mincapit"].empty())
+	if (AnimeINF["mincapit"].is_null())
 	{
 		//empieza por 0?
 		int zero1, zero2;
@@ -796,7 +796,7 @@ void addFavorite(string text) {
 	}
 }
 void getFavorite() {
-	if (UD["favoritos"].empty()) {
+	if (UD["favoritos"].is_null()) {
 		if (isFileExist(rootdirectory+"favoritos.txt")) {
 			string temp;
 			ifstream file(rootdirectory+"favoritos.txt");
@@ -817,7 +817,7 @@ void getFavorite() {
 	}
 }
 bool isFavorite(string fav){
-	if (!UD["favoritos"].empty()) {
+	if (!UD["favoritos"].is_null()) {
 		if(find(UD["favoritos"].begin(), UD["favoritos"].end(), fav) != UD["favoritos"].end())
 		{
 			return true;
@@ -827,7 +827,7 @@ bool isFavorite(string fav){
 	return false;
 }
 void delFavorite(int inst){
-	if (!UD["favoritos"].empty()) {
+	if (!UD["favoritos"].is_null()) {
 		UD["favoritos"].erase(inst);
 		write_DB(UD,rootsave+"UserData.json");
 	}

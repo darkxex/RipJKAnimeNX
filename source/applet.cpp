@@ -173,7 +173,7 @@ AccountUid LaunchPlayerSelect() {
 
 json DInfo(string ver){
 	static json info;
-	if (info["App"].empty()){
+	if (info["App"].is_null()){
 		//INIT
 		setInitialize();
 		setsysInitialize();
@@ -417,20 +417,30 @@ Result WebBrowserCall(std::string url,bool nag){
 		webConfigSetMediaAutoPlay (&config, true);
 		webConfigSetTransferMemory (&config, true);
 		if (!nag) {
+			bool Direct=false;
 			printf("SetCapConfigs\n");
 			webConfigSetDisplayUrlKind (&config, false);
-			webConfigSetBootAsMediaPlayer(&config, true);
-			//webConfigSetFooter(&config, false);
-			//play direct links
-			webConfigSetMediaPlayerAutoClose (&config, true);
 			webConfigSetPlayReport(&config, false);
+			//webConfigSetFooter(&config, false);
+			
+			//Ignore for direct play
+			//if(url.find("/gsplay/player.html") == string::npos){Direct=false;}
+			
+			//Use direct play on 
+			if(url.find("mxdcontent.net/") != string::npos){Direct=true;}//Mixdrop
+			if(url.find("fvs.io/redirector") != string::npos){Direct=true;}//Fembed
 
+			if (Direct){
+				webConfigSetMediaPlayerAutoClose (&config, true);
+				webConfigSetBootAsMediaPlayer(&config, true);
+			}
 
 			//block redirection
-			if(url.substr(0,20) == "https://jkanime.net/")
-			{
+			if(url.substr(0,20) == "https://jkanime.net/") {
 				webConfigSetWhitelist(&config, "^https://jkanime\\.net($|/)");
-			} else webConfigSetWhitelist(&config, "^http*");
+			} else {
+				webConfigSetWhitelist(&config, "^http*");
+			}
 		}
 
 		// Create Session
