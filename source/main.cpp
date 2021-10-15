@@ -1559,7 +1559,7 @@ int main(int argc, char **argv)
 			if (Frames>1000) Frames=0;
 			if (Frames>0) Frames++;
 			//Update tik
-			if (inTimeN(600000)) {
+			if (inTimeN(1260000)) {
 				if (Net::HasConnection()) {
 					if(!isChained) {
 						cout << "Reloading Animes" << endl;
