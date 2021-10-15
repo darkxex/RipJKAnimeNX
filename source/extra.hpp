@@ -34,7 +34,7 @@
 //use the nand of the switch
 string rootdirectory = "user:/RipJKAnime_NX/";
 string rootsave = "save:/";
-string oldroot = "sdmc:/switch/RipJKAnime_NX/";
+string oldroot = "sdmc:/switch/RipJKAnimeNX/";
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;
@@ -113,8 +113,6 @@ bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
 bool ongrid=true;
-bool ongridS=true;
-bool ongridF=true;
 AccountUid uid;
 std::string AccountID="-.-";
 
@@ -153,50 +151,50 @@ bool isConnected = true;
 //load images
 void LoadImages(){
 	//images that not change
-	B_A.loadFromFile("romfs:/buttons/A.png");
-	B_B.loadFromFile("romfs:/buttons/B.png");
-	B_Y.loadFromFile("romfs:/buttons/Y.png");
-	B_X.loadFromFile("romfs:/buttons/X.png");
-	B_L.loadFromFile("romfs:/buttons/L.png");
-	B_R.loadFromFile("romfs:/buttons/R.png");
-	B_M.loadFromFile("romfs:/buttons/MINUS.png");
-	B_P.loadFromFile("romfs:/buttons/PLUS.png");
+	B_A.loadFromFile("romfs:/img/A.png");
+	B_B.loadFromFile("romfs:/img/B.png");
+	B_Y.loadFromFile("romfs:/img/Y.png");
+	B_X.loadFromFile("romfs:/img/X.png");
+	B_L.loadFromFile("romfs:/img/L.png");
+	B_R.loadFromFile("romfs:/img/R.png");
+	B_M.loadFromFile("romfs:/img/MINUS.png");
+	B_P.loadFromFile("romfs:/img/PLUS.png");
 	
 	//GOD.MapT[""].loadFromFileCustom("", 38,38)
-	GOD.MapT["EXIT"].loadFromFileCustom("romfs:/buttons/EXIT.png", 38,38);
-	GOD.MapT["MUSIC"].loadFromFileCustom("romfs:/buttons/MUSIC.png", 38,38);
+	GOD.MapT["EXIT"].loadFromFileCustom("romfs:/img/EXIT.png", 38,38);
+	GOD.MapT["MUSIC"].loadFromFileCustom("romfs:/img/MUSIC.png", 38,38);
 
-	GOD.MapT["ULT"].loadFromFileCustom("romfs:/buttons/ULT.png", 43,43);
-	GOD.MapT["ULTB"].loadFromFileCustom("romfs:/buttons/ULT.png",55,55);
+	GOD.MapT["ULT"].loadFromFileCustom("romfs:/img/ULT.png", 43,43);
+	GOD.MapT["ULTB"].loadFromFileCustom("romfs:/img/ULT.png",55,55);
 	
-	B_ZR.loadFromFile("romfs:/buttons/ZR.png");
-	B_RIGHT.loadFromFile("romfs:/buttons/RIGHT.png");
-	B_LEFT.loadFromFile("romfs:/buttons/LEFT.png");
-	B_UP.loadFromFile("romfs:/buttons/UP.png");
-	B_DOWN.loadFromFile("romfs:/buttons/DOWN.png");
-	CLEAR.loadFromFile("romfs:/buttons/CLEAR.png");
-	SCREEN.loadFromFile("romfs:/buttons/SCREEN.png");
+	B_ZR.loadFromFile("romfs:/img/ZR.png");
+	B_RIGHT.loadFromFile("romfs:/img/RIGHT.png");
+	B_LEFT.loadFromFile("romfs:/img/LEFT.png");
+	B_UP.loadFromFile("romfs:/img/UP.png");
+	B_DOWN.loadFromFile("romfs:/img/DOWN.png");
+	CLEAR.loadFromFile("romfs:/img/CLEAR.png");
+	SCREEN.loadFromFile("romfs:/img/SCREEN.png");
 	NOP.loadFromFile("romfs:/img/nop.png");
 
-	FAV.loadFromFileCustom("romfs:/buttons/FAV.png",43,43);
-	NFAV.loadFromFileCustom("romfs:/buttons/NFAV.png",43,43);
-	BUS.loadFromFileCustom("romfs:/buttons/BUS.png",43,43);
+	FAV.loadFromFileCustom("romfs:/img/FAV.png",43,43);
+	NFAV.loadFromFileCustom("romfs:/img/NFAV.png",43,43);
+	BUS.loadFromFileCustom("romfs:/img/BUS.png",43,43);
 
-	REC.loadFromFileCustom("romfs:/buttons/REC.png",43,43);
-	HIS.loadFromFileCustom("romfs:/buttons/HIS.png",43,43);
-	TOP.loadFromFileCustom("romfs:/buttons/TOP.png",43,43);
-	DOW.loadFromFileCustom("romfs:/buttons/DOW.png",43,43);
-	HOR.loadFromFileCustom("romfs:/buttons/HOR.png",43,43);
+	REC.loadFromFileCustom("romfs:/img/REC.png",43,43);
+	HIS.loadFromFileCustom("romfs:/img/HIS.png",43,43);
+	TOP.loadFromFileCustom("romfs:/img/TOP.png",43,43);
+	DOW.loadFromFileCustom("romfs:/img/DOW.png",43,43);
+	HOR.loadFromFileCustom("romfs:/img/HOR.png",43,43);
 
-	TOPB.loadFromFileCustom("romfs:/buttons/TOP.png",55, 55);
-	DOWB.loadFromFileCustom("romfs:/buttons/DOW.png",55, 55);
-	HORB.loadFromFileCustom("romfs:/buttons/HOR.png",55, 55);
+	TOPB.loadFromFileCustom("romfs:/img/TOP.png",55, 55);
+	DOWB.loadFromFileCustom("romfs:/img/DOW.png",55, 55);
+	HORB.loadFromFileCustom("romfs:/img/HOR.png",55, 55);
 
-	HISB.loadFromFileCustom("romfs:/buttons/HIS.png",55, 55);
-	BACK.loadFromFileCustom("romfs:/buttons/BACK.png",55, 55);
-	FAVB.loadFromFileCustom("romfs:/buttons/FAV.png",55, 55);
-	BUSB.loadFromFileCustom("romfs:/buttons/BUS.png",55, 55);
-	AFLV.loadFromFileCustom("romfs:/buttons/AF.png",55, 55);
+	HISB.loadFromFileCustom("romfs:/img/HIS.png",55, 55);
+	BACK.loadFromFileCustom("romfs:/img/BACK.png",55, 55);
+	FAVB.loadFromFileCustom("romfs:/img/FAV.png",55, 55);
+	BUSB.loadFromFileCustom("romfs:/img/BUS.png",55, 55);
+	AFLV.loadFromFileCustom("romfs:/img/AF.png",55, 55);
 	isLoaded=true;
 }
 void PlayerGet(FsFileSystem& acc){
