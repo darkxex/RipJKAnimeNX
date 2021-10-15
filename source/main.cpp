@@ -4,6 +4,7 @@
 
 //make some includes to clean a little the main
 string urlc = "https://myrincon.duckdns.org";
+int mcounter = 0;
 
 //MAIN INT
 int main(int argc, char **argv)
@@ -71,6 +72,7 @@ int main(int argc, char **argv)
 	
 	read_DB(UD,rootsave+"UserData.json");
 
+
 	GOD.intA();//init the SDL
 
 	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
@@ -133,6 +135,9 @@ int main(int argc, char **argv)
 					cout << "Saliendo" << endl;
 				}
 				GOD.GenState = statenow;
+			
+				
+
 				switch (e.type) {
 				case SDL_FINGERDOWN:
 					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
@@ -263,6 +268,14 @@ int main(int argc, char **argv)
 						} else break;
 
 					}
+				case SDL_JOYBUTTONUP:
+				if (e.jbutton.which == 0) {
+						if (e.jbutton.button == BT_M) {// (-) button down
+							
+							}
+							}
+							
+				break;
 				case SDL_JOYBUTTONDOWN:
 					//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
 					// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
@@ -386,6 +399,24 @@ int main(int argc, char **argv)
 							quit = true;
 						}
 						if (e.jbutton.button == BT_M) {// (-) button down
+						mcounter++;
+						if (mcounter == 5)
+						{cout <<"replace host"<<endl;
+						fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
+						mkdir("sdmc:/atmosphere/hosts",0777);
+						ofstream myfile ("sdmc:/atmosphere/hosts/default.txt");
+  						if (myfile.is_open())
+  						{
+   					 	myfile << "#Empty Hosts for RipJK\n";
+    					myfile << "\n";
+    					myfile.close();
+  						}
+					 	cout << "# Reload DNS" << endl;
+						ReloadDNS();
+						Mix_Music *are = Mix_LoadMUS("romfs:/are.ogg");
+						Mix_PlayMusic(are, 1);
+						mcounter= 0;
+						}
 							if (Mix_PlayingMusic() == 0)
 							{
 								//Play the music
