@@ -23,7 +23,7 @@ SDLB GOD;
 LTexture TextBuffer;
 
 //Grafics and logic
-void SDLB::intA(){	
+void SDLB::intA(){
 	//Start up SDL and create window
 	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0)
@@ -81,25 +81,6 @@ void SDLB::intA(){
 					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 
 				}
-
-				//Load music
-				if (isFileExist(rootdirectory+"wada.ogg")) {
-					gMusic = Mix_LoadMUS((rootdirectory+"wada.ogg").c_str());
-				} else {
-					gMusic = Mix_LoadMUS("romfs:/audio/wada.ogg");
-				}
-
-				if (gMusic == NULL)
-				{
-					printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
-
-				}
-				if (Mix_PlayingMusic() == 0)
-				{
-					//Play the music
-					//if(isFileExist(rootdirectory+"play"))
-					//	Mix_PlayMusic(gMusic, -1);
-				}
 			}
 		}
 	}
@@ -121,6 +102,59 @@ void SDLB::intA(){
 	digifontV = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
 
 }
+
+string defcord = "romfs:/theme/Asriel";
+string SkinMaster = defcord;
+string theme(string file){
+	if (SkinMaster == defcord){
+		if (isFileExist(rootdirectory+file)){
+			return rootdirectory+file;
+		}
+	}
+	if (!isFileExist(SkinMaster+file)){
+		return defcord+file;
+	}
+	return SkinMaster+file;
+}
+string NameOfTheme(string path){
+	u64 v2 = path.rfind("/");
+	if (v2 != string::npos){
+		path = path.substr(v2 + 1);
+	}
+	return path;
+}
+void SDLB::loadSkin(string img){
+	if (UD["Themes"]["use"].empty()){
+		UD["Themes"]["use"]=defcord;
+	}
+	SkinMaster = UD["Themes"]["use"];
+	UD["Themes"]["name"] = NameOfTheme(SkinMaster);
+
+	//images
+	Farest.free();
+	Farest.loadFromFile(theme("/background.png"));
+	Heart.free();
+	Heart.loadFromFile(theme("/heart.png"));
+	
+	//Load music
+	Mix_FreeMusic(gMusic);
+	gMusic = Mix_LoadMUS(theme("/wada.ogg").c_str());
+
+	if (gMusic == NULL)
+	{
+		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+	} else {
+		//Play the music
+		if(isFileExist(rootdirectory+"play"))
+			Mix_PlayMusic(gMusic, -1);
+	}
+}
+void SDLB::setSkin(string path){
+	UD["Themes"]["use"] = path;
+	write_DB(UD,rootsave+"UserData.json");
+	loadSkin();
+}
+
 void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 //render images and map to memory for fast display
 	//Image of cap
@@ -247,13 +281,12 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	}
 	
 	static int HS=0;
+	if (needload || HS==0){HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);}
 	if (needload){
-		HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
 		MapT[KeyImage].loadFromFile(path.c_str());
 	}
 	MapT[KeyImage].ScaleA(HS,WS);
 
-	if (!render) {return;}
 	
 	if (Text.length()) {
 		if ( MapT.find(KeyText) == MapT.end() ) {
@@ -270,6 +303,7 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
 		}
 	}
+	if (!render) {return;}
 	if (Text.length()) {
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3, WS + 6, HS + 6 + MapT[KeyText].getHeight()+7}, 0, 0, 0, 200);
 		MapT[KeyText].render(X + 2, Y + 5+MapT[KeyImage].getHeight());

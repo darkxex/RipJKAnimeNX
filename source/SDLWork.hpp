@@ -131,6 +131,9 @@ int TouchY=-1;
 int GenState=-1;
 int MasKey=-1;
 std::string WorKey="00";
+//Skin manager
+void loadSkin(string img="");
+void setSkin(string path="");
 
 void Image(std::string path,int X, int Y,int W, int H,int key);
 void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,int selected=0);
