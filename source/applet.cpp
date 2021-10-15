@@ -422,7 +422,8 @@ Result WebBrowserCall(std::string url,bool nag){
 			webConfigSetMediaPlayerAutoClose (&config, true);
 			//play direct links
 			//if(url.substr(9,9) == "-delivery" || url.find("apidata.googleusercontent"))
-			webConfigSetBootAsMediaPlayer(&config, true);
+			//desactive el mediaplayer.
+			webConfigSetBootAsMediaPlayer(&config, false);
 			//webConfigSetFooter(&config, false);
 
 

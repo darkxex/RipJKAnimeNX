@@ -110,6 +110,21 @@ string Nozomi_Link(string Link){
 	cout << "Link: "<< ThirdKey << "-" << endl;
 	return ThirdKey;
 }
+
+string Nozomi_player(string Link){
+	string codetemp;
+	//Get FirstKey
+	string FirstKey = Net::GET(Link);
+	codetemp = scrapElement(FirstKey,"name=\"data\" value=\"", "\"");
+	replace(codetemp,"name=\"data\" value=\"","");
+	FirstKey = codetemp;
+	cout << "FirstKey: "<< FirstKey << endl;
+	//Get SecondKey
+	string data = "data=" + FirstKey;
+	string SecondKey = Net::REDIRECT("https://jkanime.net/gsplay/redirect_post.php",data);
+	
+	return SecondKey;
+}
 string Fembed_Link(string Link) {
 	string codetemp = "";
 	replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
@@ -157,7 +172,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	if (server == "Nozomi") {
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
 		if(videourl.length()){
-			tempcon = Nozomi_Link(videourl);
+			tempcon = Nozomi_player(videourl);
 			if(tempcon.length()){videourl=tempcon;}
 		}
 	}
