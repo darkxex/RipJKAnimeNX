@@ -127,7 +127,7 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,do
 
 namespace Net {
 	string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
-	int DebugNet = 0;//0 no debug ,  1 some debug, 2 All debug
+	int DebugNet = 1;//0 no debug ,  1 some debug, 2 All debug
 	
 	//Simplification
 	string REDIRECT(string url,string POSTFIEL){
@@ -141,11 +141,15 @@ namespace Net {
 		return REQUEST(url)["BODY"];
 	}
 	json HEAD(string url){
-		return REQUEST(url,"",true);
+		json deb = REQUEST(url,"",true,true);
+		if ( DebugNet > 0){
+			cout << std::setw(4) << deb << std::endl;
+		}
+		return deb;
 	}
 	
 	//General Request
-	json REQUEST(string url,string POSTFIEL,bool HEADR){
+	json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 		replace(url," ","%20");
 		CURL *curl;
 		CURLcode res = CURLE_OK;
@@ -173,8 +177,13 @@ namespace Net {
 			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
 			curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIES.txt").c_str()); 
 			curl_easy_setopt(curl, CURLOPT_REFERER, url.c_str());
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+			if (Verify){
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1L);
+			} else {
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+			}
 			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);

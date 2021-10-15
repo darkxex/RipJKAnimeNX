@@ -1,4 +1,6 @@
+#---------------------------------
 # Generated With RipJkAnime NX
+#---------------------------------
 
 # Bypass connect and browser 
 127.0.0.1 be*.nintendo.*

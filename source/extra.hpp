@@ -287,31 +287,3 @@ void callhourglass(){
 	returnnow = statenow;
 	Frames=1;
 }
-
-enum Temas { Default, Classic, Crazy };
-Temas TemaSiguiente = Default;
-void selectskin() {	
-	switch(TemaSiguiente) {
-   		case Default  :
-			//undertale
-			GOD.setSkin(roottheme+"Devilovania");
-			TemaSiguiente = Classic;
-			break; 
-
-   		case Classic :
-			//digimon
-			GOD.setSkin(roottheme+"Digimon");
-			TemaSiguiente = Crazy;
-			break; 
-
-		case Crazy :
-			//miku
-			GOD.setSkin(roottheme+"Miku");
-			TemaSiguiente = Default;
-			break;
-
-  		default : 
-			TemaSiguiente = Classic;
-	}
-}
-

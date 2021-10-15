@@ -156,6 +156,28 @@ void SDLB::setSkin(string path){
 	loadSkin();
 }
 
+std::vector<std::string> temas;
+int them = 0;
+void SDLB::selectskin(string val) {
+	temas = {
+		roottheme+"Devilovania",
+		roottheme+"Digimon",
+		roottheme+"Miku",
+		roottheme+"NoBulletsFly",
+		roottheme+"Velvet-sad",
+		roottheme+"Megalovania",
+		roottheme+"TocToc",
+		roottheme+"TrueHero",
+		"romfs:/theme/Asriel"
+	};
+
+	GOD.setSkin(temas[them]);
+	//next theme
+	int allp = temas.size()-1;
+	them++;
+	if (them > allp) them=0;
+}
+
 void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 //render images and map to memory for fast display
 	//Image of cap

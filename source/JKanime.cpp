@@ -68,7 +68,6 @@ int AnimeLoader(void* data){
 			{
 				if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/theme.romfs",rootdirectory+"theme.romfs")){
 					mount_theme("themes",true);
-					GOD.loadSkin();//Esto carga la skin guardada y la musica
 				}
 			}
 			Mgate=false;

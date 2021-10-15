@@ -451,7 +451,7 @@ int main(int argc, char **argv)
 								break;
 							case chapter_s:
 							case menu_s:
-								selectskin();
+								GOD.selectskin();
 								break;
 							}
 						}
@@ -1155,7 +1155,13 @@ int main(int argc, char **argv)
 							VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
 							B_RIGHT.render_T(XF+5, YF+HF-40,"Ver Ahora");
 							
-							
+							if (!UD["Themes"]["name"].is_null()){
+								//Thema temporal
+								static int WT = 190;
+								VOX.render_VOX({XF, YF+HF+10, WT+15, 45}, 255, 255, 255, 185);
+								WT = B_ZL.render_T(XF+5, YF+HF+15,"Tema: "+UD["Themes"]["name"].get<string>());
+								
+							}						
 						}
 
 						//Draw footer buttons
