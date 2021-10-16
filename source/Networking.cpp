@@ -211,10 +211,15 @@ namespace Net {
 		data["CODE"] = http_code;
 		data["COUNT"] = redirects;
 		data["SIZE"] = sizeh;
-		data["HEAD"] = Buffer.substr(0,sizeh); //split(Buffer.substr(0,sizeh), "\r\n");
-		if (!HEADR) data["BODY"] = Buffer.substr(sizeh);
-		if (DebugNet > 0){
-			if (url.find("https://jkanime.net/gsplay") != string::npos|| DebugNet > 1)
+		if (HEADR){
+			data["HEAD"] = split(Buffer.substr(0,sizeh), "\r\n");
+		} else {
+			data["HEAD"].push_back(Buffer.substr(0,sizeh)); //split(Buffer.substr(0,sizeh), "\r\n");
+			data["BODY"] = Buffer.substr(sizeh);
+		}
+		
+		if (DebugNet > 1){
+			if (url.find("https://jkanime.net/gsplay") != string::npos|| DebugNet > 2)
 			{
 				std::cout << " ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " << std::endl;
 					try {

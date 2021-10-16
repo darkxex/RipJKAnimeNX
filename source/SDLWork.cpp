@@ -207,12 +207,17 @@ void SDLB::selectskin(string val) {
 	if (them > allp) them=0;
 }
 bool SDLB::JKMainLoop(){
-	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
-
+	//enable alpha blend
+	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 	//Update screen
 	SDL_RenderPresent(gRenderer);
-
-	return !quit && appletMainLoop();
+	
+	//if get false once then collapse
+	static bool killer = true;
+	if (killer){
+		killer=!quit && appletMainLoop();
+	}
+	return killer;
 }
 //draw one quadrant arc, and mirror the other 4 quadrants
 void sdl_ellipse(SDL_Renderer* r, int x0, int y0, int radiusX, int radiusY) {
@@ -317,47 +322,49 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 		//Handle events on queue
 		while (SDL_PollEvent(&e))
 		{
-			
 			//User requests quit
 			if (e.type == SDL_QUIT)
 			{
 				cancelcurl = 1;
 				quit = true;
-				cout << "Saliendo" << endl;
+				cout << "Saliendo NAG" << endl;
 			}
 			GOD.GenState = statenow;
 			switch (e.type) {
-			case SDL_FINGERDOWN:
-				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
-				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-				break;
-			case SDL_FINGERUP:
-				e.jbutton.button = BT_B;
-				if (GOD.MapT["EXIT"].SP()) e.jbutton.button = BT_P;
-				else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
-				else if (B_A.SP()) {e.jbutton.button = BT_A;}
-				else if (B_B.SP()) {e.jbutton.button = BT_B;}
-				else if (NAG.SP()) {e.jbutton.button = -1;}
-				GOD.TouchX = -1;
-				GOD.TouchY = -1;
-			case SDL_JOYBUTTONDOWN:
-				if (e.jbutton.which == 0) {
-					if (e.jbutton.button == BT_P) {// (+) button down close to home menu
-						cancelcurl = 1;
-						quit = true;
-						return false;
+				case SDL_FINGERDOWN:
+					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+					break;
+				case SDL_FINGERUP:
+					e.jbutton.button = BT_B;
+					if (GOD.MapT["EXIT"].SP()) e.jbutton.button = BT_P;
+					else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
+					else if (B_A.SP()) {e.jbutton.button = BT_A;}
+					else if (B_B.SP()) {e.jbutton.button = BT_B;}
+					else if (NAG.SP()) {e.jbutton.button = -1;}
+					GOD.TouchX = -1;
+					GOD.TouchY = -1;
+				case SDL_JOYBUTTONDOWN:
+					if (e.jbutton.which == 0) {
+						if (e.jbutton.button == BT_P) {// (+) button down close to home menu
+							cancelcurl = 1;
+							quit = true;
+							return false;
+						}
+						if (e.jbutton.button == BT_M) {// (-) button down
+							SwapMusic();
+							return false;
+						}
+						if (e.jbutton.button == BT_A) {// (A) button down
+							return true;
+						}
+						if (e.jbutton.button == BT_B) {// (B) button down
+							return false;
+						}
 					}
-					if (e.jbutton.button == BT_M) {// (-) button down
-						SwapMusic();
-						return false;
-					}
-					if (e.jbutton.button == BT_A) {// (A) button down
-						return true;
-					}
-					if (e.jbutton.button == BT_B) {// (B) button down
-						return false;
-					}
-				}
+					break;
+				default:
+					break;
 			}
 		}
 	}

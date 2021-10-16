@@ -835,13 +835,14 @@ bool isFavorite(string fav){
 		{
 			return true;
 		}
-
 	}
 	return false;
 }
 void delFavorite(int inst){
 	if (!UD["favoritos"].is_null()) {
-		UD["favoritos"].erase(inst);
-		write_DB(UD,rootsave+"UserData.json");
+		if (GOD.Confirm("Desea Borrarlo?")){
+			UD["favoritos"].erase(inst);
+			write_DB(UD,rootsave+"UserData.json");
+		}
 	}
 }

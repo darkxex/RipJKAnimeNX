@@ -393,10 +393,8 @@ int main(int argc, char **argv)
 							}
 						}
 						if (e.jbutton.button == BT_P) {// (+) button down close to home menu
-							if (GOD.Confirm("Desea Salir?")){
-								cancelcurl = 1;
-								quit = true;
-							}
+							cancelcurl = 1;
+							quit = true;
 						}
 						if (e.jbutton.button == BT_M) {// (-) button down
 							GOD.SwapMusic();
