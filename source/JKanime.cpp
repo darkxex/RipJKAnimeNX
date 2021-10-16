@@ -50,18 +50,24 @@ int AnimeLoader(void* data){
 			#ifdef ISDEBUG
 				#include "Debug.h"
 			#endif
-			//Check if dns are correct
 			int Req = Net::HEAD("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0")["CODE"];
-			 switch(Req){
+			switch(Req){
 				case 0:
 				case 503:
+				if (!isSXOS){
+					//Check if dns are correct
 					cout << "# Place DNS" << endl;
 					fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
 					mkdir("sdmc:/atmosphere/hosts",0777);
 					copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
 					cout << "# Reload DNS" << endl;
 					ReloadDNS();
-					break;
+				} else{
+					//Disable Stealth mode
+					//txStealthMode(0);
+				}
+				break;
+				
 			}
 			//Download themes
 			if (!mount_theme("themes",true))

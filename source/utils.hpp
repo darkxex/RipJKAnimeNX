@@ -69,6 +69,9 @@ extern std::string rootsave;
 extern std::string roottheme;
 
 
+//Screen dimension constants
+extern const int SCREEN_WIDTH, SCREEN_HEIGHT;
+
 extern u32 __nx_applet_exit_mode;
 extern std::string urlc;
 extern bool quit;
@@ -98,6 +101,7 @@ extern int porcentajebufferFF;
 extern bool isDownloading;
 extern bool AppletMode;
 extern bool isChained;
+extern bool isSXOS;
 extern string serverenlace;
 extern string DownTitle;
 extern string KeyName;

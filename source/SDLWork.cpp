@@ -85,24 +85,62 @@ void SDLB::intA(){
 		}
 	}
 
-	B_O_F = TTF_OpenFont("romfs:/fonts/AF.ttf", 19);
-	digifont2 = TTF_OpenFont("romfs:/fonts/AF.ttf", 35);
-	Arista = TTF_OpenFont("romfs:/fonts/Arista.ttf", 27);
+	AF_19 = TTF_OpenFont("romfs:/fonts/AF.ttf", 19);
+	AF_35 = TTF_OpenFont("romfs:/fonts/AF.ttf", 35);
+	Arista_27 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 27);
 
-	//B_O_F = TTF_OpenFont("romfs:/fonts/Comic.ttf", 19);
-	gFont = TTF_OpenFont("romfs:/fonts/Comic.ttf", 16);
-	gFont2 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 150);
-	gFont3 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 40);
-	gFont4 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 30);
-	gFont5 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 20);
-	gFont6 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 50);
-	gFontcapit = TTF_OpenFont("romfs:/fonts/Arista.ttf", 100);
-	digifont = TTF_OpenFont("romfs:/fonts/digifont.otf", 16);
-	digifontC = TTF_OpenFont("romfs:/fonts/digifont.otf", 9);
-	digifontV = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
+	//Comic_19 = TTF_OpenFont("romfs:/fonts/Comic.ttf", 19);
+	Comic_16 = TTF_OpenFont("romfs:/fonts/Comic.ttf", 16);
+	Arista_150 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 150);
+	Arista_40 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 40);
+	Arista_30 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 30);
+	Arista_20 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 20);
+	Arista_50 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 50);
+	Arista_100 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 100);
+	digi_16 = TTF_OpenFont("romfs:/fonts/digifont.otf", 16);
+	digi_9 = TTF_OpenFont("romfs:/fonts/digifont.otf", 9);
+	digi_11 = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
 
 }
+void SDLB::SwapMusic(bool swap){
+	if(!swap){
+		if (gMusic == NULL)
+		{
+			printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+			return;
+		} else {
+			//get Music State
+			if(!isFileExist(rootdirectory+"play")){
+				return;
+			}
+		}
+	}
 
+	if (Mix_PlayingMusic() == 0)
+	{
+		//Play the music
+		Mix_PlayMusic(gMusic, -1);
+		touch(rootdirectory+"play");
+	}
+	//If music is being played
+	else if (swap)
+	{
+		//If the music is paused
+		if (Mix_PausedMusic() == 1)
+		{
+			//Resume the music
+			Mix_ResumeMusic();
+			touch(rootdirectory+"play");
+		}
+		//If the music is playing
+		else
+		{
+			//Pause the music
+			Mix_PauseMusic();
+			remove((rootdirectory+"play").c_str());
+		}
+	}
+}
 string defcord = "romfs:/theme/Asriel";
 string SkinMaster = defcord;
 string theme(string file){
@@ -141,25 +179,16 @@ void SDLB::loadSkin(string img){
 	Mix_FreeMusic(gMusic);
 	gMusic = Mix_LoadMUS(theme("/wada.ogg").c_str());
 
-	if (gMusic == NULL)
-	{
-		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
-	} else {
-		//Play the music
-		if(isFileExist(rootdirectory+"play"))
-			Mix_PlayMusic(gMusic, -1);
-	}
+	SwapMusic(false);
 }
 void SDLB::setSkin(string path){
 	UD["Themes"]["use"] = path;
 	write_DB(UD,rootsave+"UserData.json");
 	loadSkin();
 }
-
-std::vector<std::string> temas;
-int them = 0;
 void SDLB::selectskin(string val) {
-	temas = {
+	static int them = 0;
+	std::vector<std::string> temas = {
 		roottheme+"Devilovania",
 		roottheme+"Digimon",
 		roottheme+"Miku",
@@ -177,7 +206,150 @@ void SDLB::selectskin(string val) {
 	them++;
 	if (them > allp) them=0;
 }
+bool SDLB::JKMainLoop(){
+	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
 
+	//Update screen
+	SDL_RenderPresent(gRenderer);
+
+	return !quit && appletMainLoop();
+}
+//draw one quadrant arc, and mirror the other 4 quadrants
+void sdl_ellipse(SDL_Renderer* r, int x0, int y0, int radiusX, int radiusY) {
+    float pi  = 3.14159265358979323846264338327950288419716939937510;
+    float pih = pi / 2.0; //half of pi
+
+    //drew  28 lines with   4x4  circle with precision of 150 0ms
+    //drew 132 lines with  25x14 circle with precision of 150 0ms
+    //drew 152 lines with 100x50 circle with precision of 150 3ms
+    const int prec = 27; // precision value; value of 1 will draw a diamond, 27 makes pretty smooth circles.
+    float theta = 0;     // angle that will be increased each loop
+
+    //starting point
+    int x  = (float)radiusX * cos(theta);//start point
+    int y  = (float)radiusY * sin(theta);//start point
+    int x1 = x;
+    int y1 = y;
+
+    //repeat until theta >= 90;
+    float step = pih/(float)prec; // amount to add to theta each time (degrees)
+    for(theta=step;  theta <= pih;  theta+=step)//step through only a 90 arc (1 quadrant)
+    {
+        //get new point location
+        x1 = (float)radiusX * cosf(theta) + 0.5; //new point (+.5 is a quick rounding method)
+        y1 = (float)radiusY * sinf(theta) + 0.5; //new point (+.5 is a quick rounding method)
+
+        //draw line from previous point to new point, ONLY if point incremented
+        if( (x != x1) || (y != y1) )//only draw if coordinate changed
+        {
+            SDL_RenderDrawLine(r, x0 + x, y0 - y,    x0 + x1, y0 - y1 );//quadrant TR
+            SDL_RenderDrawLine(r, x0 - x, y0 - y,    x0 - x1, y0 - y1 );//quadrant TL
+            SDL_RenderDrawLine(r, x0 - x, y0 + y,    x0 - x1, y0 + y1 );//quadrant BL
+            SDL_RenderDrawLine(r, x0 + x, y0 + y,    x0 + x1, y0 + y1 );//quadrant BR
+        }
+        //save previous points
+        x = x1;//save new previous point
+        y = y1;//save new previous point
+    }
+    //arc did not finish because of rounding, so finish the arc
+    if(x!=0)
+    {
+        x=0;
+        SDL_RenderDrawLine(r, x0 + x, y0 - y,    x0 + x1, y0 - y1 );//quadrant TR
+        SDL_RenderDrawLine(r, x0 - x, y0 - y,    x0 - x1, y0 - y1 );//quadrant TL
+        SDL_RenderDrawLine(r, x0 - x, y0 + y,    x0 - x1, y0 + y1 );//quadrant BL
+        SDL_RenderDrawLine(r, x0 + x, y0 + y,    x0 + x1, y0 + y1 );//quadrant BR
+    }
+}
+bool SDLB::Confirm(std::string text,std::string image,bool okonly){
+	//Print Menu once 
+	VOX.render_VOX({0,0,SCREEN_WIDTH,SCREEN_HEIGHT}, 0, 0, 0, 100);
+	
+	int NX=430,NY=256,NW=400,NH=200;
+	T_T.loadFromRenderedTextWrap(Arista_30, text, { 50, 50, 50 },NW-20);
+
+	VOX.render_VOX({NX-1,NY-1,NW+2,NH+2}, 50, 50, 50, 200);
+	VOX.render_VOX({NX,NY,NW,NH}, 200, 200, 200, 200);//
+	T_T.render(NX+(NW/2)-(T_T.getWidth()/2), NY+(NH/4*3)/2);
+	
+	VOX.render_VOX({NX,NY+(NH/4*3),NW,3}, 50, 50, 50, 200);
+	VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),3,(NH/4)}, 50, 50, 50, 200);
+	
+	B_A.render_T(NX+(NW/4)-50, NY+(NH/4*3)+6,"SI");
+	B_B.render_T(NX+(NW/4*3)-50, NY+(NH/4*3)+6,"NO");
+
+	sdl_ellipse(gRenderer, 32,132, 45, 80);
+	
+	
+	//Event handler
+	SDL_Event e;
+
+	//While application is running
+	while (JKMainLoop())
+	{
+		//Handle events on queue
+		while (SDL_PollEvent(&e))
+		{
+			
+			//User requests quit
+			if (e.type == SDL_QUIT)
+			{
+				cancelcurl = 1;
+				quit = true;
+				cout << "Saliendo" << endl;
+			}
+			GOD.GenState = statenow;
+			switch (e.type) {
+			case SDL_FINGERDOWN:
+				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+				if (GOD.MapT["EXIT"].SP()) e.jbutton.button = BT_P;
+				else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
+				else if (B_A.SP()) {e.jbutton.button = BT_A;}
+				else if (B_B.SP()) e.jbutton.button = BT_B;
+				GOD.TouchX = -1;
+				GOD.TouchY = -1;
+				break;
+			case SDL_JOYBUTTONDOWN:
+				if (e.jbutton.which == 0) {
+					if (e.jbutton.button == BT_P) {// (+) button down close to home menu
+						cancelcurl = 1;
+						quit = true;
+					}
+					if (e.jbutton.button == BT_M) {// (-) button down
+						SwapMusic();
+					}
+					if (e.jbutton.button == BT_A) {// (A) button down
+						return true;
+					}
+					if (e.jbutton.button == BT_B) {// (B) button down
+						return false;
+					}
+
+				}
+			}
+		}
+	}
+	return false;
+}
+void SDLB::PleaseWait(std::string text,bool render){
+	if (render) {
+		//Clear screen
+		SDL_SetRenderDrawColor(gRenderer, 0x55, 0x55, 0x55, 0xFF);
+		SDL_RenderClear(gRenderer);
+
+		//wallpaper
+		Farest.render((0), (0));
+	}
+
+	SDL_Rect fillRect = { 0, 720/2 - 25, 1280, 50 };
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(gRenderer, &fillRect);
+
+	TextBuffer.loadFromRenderedText(Arista_40, text.c_str(), { 50, 50, 50 });
+	TextBuffer.render(1280/2 - TextBuffer.getWidth()/2, 720/2 - TextBuffer.getHeight() / 2);
+	if (render) SDL_RenderPresent(gRenderer);
+}
 void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 //render images and map to memory for fast display
 	//Image of cap
@@ -205,24 +377,6 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 	if(key >= 0) {
 		if(MapT[KeyImage].SP()) {WorKey=KeyImage; MasKey=key;}
 	}
-}
-void SDLB::PleaseWait(std::string text,bool render){
-	if (render) {
-		//Clear screen
-		SDL_SetRenderDrawColor(gRenderer, 0x55, 0x55, 0x55, 0xFF);
-		SDL_RenderClear(gRenderer);
-
-		//wallpaper
-		Farest.render((0), (0));
-	}
-
-	SDL_Rect fillRect = { 0, 720/2 - 25, 1280, 50 };
-	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(gRenderer, &fillRect);
-
-	TextBuffer.loadFromRenderedText(gFont3, text.c_str(), { 50, 50, 50 });
-	TextBuffer.render(1280/2 - TextBuffer.getWidth()/2, 720/2 - TextBuffer.getHeight() / 2);
-	if (render) SDL_RenderPresent(gRenderer);
 }
 void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,int selected){
 //render images and map to memory for fast display
@@ -260,8 +414,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 			if (numhe.length() > 0) {
 				replace(Text, numhe, "");
 				replace(numhe, " #", ""); replace(numhe, "#", "");
-				TTF_Font* customFont = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
-				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
+				MapT[KeyTextH].loadFromRenderedText(digi_11, numhe, { 255,255,255 });
 			}
 
 			int kinsize =11;
@@ -317,8 +470,7 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 			if (numhe.length() > 0) {
 				replace(Text, numhe, "");
 				replace(numhe, " #", ""); replace(numhe, "#", "");
-				TTF_Font* customFont = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
-				MapT[KeyTextH].loadFromRenderedText(customFont, numhe, { 255,255,255 });
+				MapT[KeyTextH].loadFromRenderedText(digi_11, numhe, { 255,255,255 });
 			}
 			int kinsize =11;
 			if (WS < 115) {kinsize =10; Text=Text.substr(0,16);}//
@@ -504,13 +656,13 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 
 			if (x == selectindex) {
 				//draw Title
-				TextBuffer.loadFromRenderedText(gFont4, TEXTH, { 0, 0, 0 });
+				TextBuffer.loadFromRenderedText(Arista_30, TEXTH, { 0, 0, 0 });
 				TextBuffer.render(50, 9);
 				if(!Jlinks["date"].is_null()) {
 					//draw Title
 					int datesize = Jlinks["date"].size()-1;
 					if (x+outof < datesize) {
-						TextBuffer.loadFromRenderedText(GOD.digifont, Jlinks["date"][x+outof], { 0, 0, 0 });
+						TextBuffer.loadFromRenderedText(digi_16, Jlinks["date"][x+outof], { 0, 0, 0 });
 						TextBuffer.render(50, 37);
 					}
 				}
@@ -586,7 +738,7 @@ void SDLB::ListClassic(int& selectindex,json Jlinks) {
 	if (indexLsize > 0 ) {
 		VOX.render_VOX({0,0, 620, 670}, 150, 150, 150, 115);
 		if (indexLsize > 30) {
-			TextBuffer.loadFromRenderedText(gFont, std::to_string(selectindex+1)+"/"+std::to_string(indexLsize), {0,0,0});
+			TextBuffer.loadFromRenderedText(Comic_16, std::to_string(selectindex+1)+"/"+std::to_string(indexLsize), {0,0,0});
 			TextBuffer.render(400, 690);
 		}
 		int of = selectindex < 30 ? 0 : selectindex - 26;
@@ -595,14 +747,14 @@ void SDLB::ListClassic(int& selectindex,json Jlinks) {
 			NameOfLink(temptext);
 
 			if (x == selectindex) {
-				T_T.loadFromRenderedText(digifont, temptext.substr(0,58), { 255,255,255 });
+				T_T.loadFromRenderedText(digi_16, temptext.substr(0,58), { 255,255,255 });
 				VOX.render_VOX({20-2,10 + ((x-of) * 22), 590, T_T.getHeight()}, 0, 0, 0, 105);
 				T_T.render(20, 10 + ((x-of) * 22));
 				Heart.render(20 - 18, 10 + 3 + ((x-of) * 22));
 			}
 			else if((x-of) < 30)
 			{
-				TextBuffer.loadFromRenderedText(digifont, temptext.substr(0,58), { 50, 50, 50 });
+				TextBuffer.loadFromRenderedText(digi_16, temptext.substr(0,58), { 50, 50, 50 });
 				TextBuffer.render(20, 10 + ((x-of) * 22));
 			}
 		}
@@ -707,18 +859,18 @@ void SDLB::deint(){
 	//Clear Texture Map
 	MapT.clear();
 	//Free global font
-	TTF_CloseFont(gFont);
-	gFont = NULL;
-	TTF_CloseFont(digifont);
-	digifont = NULL;
-	digifontC = NULL;
+	TTF_CloseFont(Comic_16);
+	Comic_16 = NULL;
+	TTF_CloseFont(digi_16);
+	digi_16 = NULL;
+	digi_9 = NULL;
 
-	TTF_CloseFont(gFontcapit);
-	gFontcapit = NULL;
-	TTF_CloseFont(gFont2);
-	gFont2 = NULL;
-	TTF_CloseFont(gFont3);
-	gFont3 = NULL;
+	TTF_CloseFont(Arista_100);
+	Arista_100 = NULL;
+	TTF_CloseFont(Arista_150);
+	Arista_150 = NULL;
+	TTF_CloseFont(Arista_40);
+	Arista_40 = NULL;
 	//Destroy window
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
@@ -1017,7 +1169,7 @@ int LTexture::render_T(int x, int y, std::string text, bool presed){
 	//Render to screen
 	SDL_RenderCopy(GOD.gRenderer, mTexture, NULL, &renderQuad);
 	if (text.length()) {
-		SDL_Surface* textSurface = TTF_RenderText_Blended(GOD.B_O_F, text.c_str(), { 50, 50, 50 });
+		SDL_Surface* textSurface = TTF_RenderText_Blended(GOD.AF_19, text.c_str(), { 50, 50, 50 });
 		if (textSurface == NULL)
 		{
 			printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());

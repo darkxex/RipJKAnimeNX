@@ -98,24 +98,26 @@ std::map<std::string,LTexture> MapT {};
 SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 //Globally used font
-TTF_Font *B_O_F = NULL;
-TTF_Font *Arista = NULL;
-TTF_Font *gFont = NULL;
-TTF_Font *gFont2 = NULL;
-TTF_Font *gFont3 = NULL;
-TTF_Font *gFont4 = NULL;
-TTF_Font *gFont5 = NULL;
-TTF_Font *gFont6 = NULL;
-TTF_Font* digifont = NULL;
-TTF_Font* digifont2 = NULL;
-TTF_Font* digifontC = NULL;
-TTF_Font* digifontV = NULL;
-TTF_Font *gFontcapit = NULL;
+TTF_Font *AF_19 = NULL;
+TTF_Font* AF_35 = NULL;
+TTF_Font *Comic_16 = NULL;
+TTF_Font *Arista_20 = NULL;
+TTF_Font *Arista_27 = NULL;
+TTF_Font *Arista_30 = NULL;
+TTF_Font *Arista_40 = NULL;
+TTF_Font *Arista_50 = NULL;
+TTF_Font *Arista_100 = NULL;
+TTF_Font *Arista_150 = NULL;
+TTF_Font* digi_9 = NULL;
+TTF_Font* digi_11 = NULL;
+TTF_Font* digi_16 = NULL;
 Mix_Music* gMusic = NULL;
 
 //list vars
 int outof=0;
-
+int HR=200,HG=200,HB=200;
+//Music
+void SwapMusic(bool swap=true);
 //Touch cords
 bool fingerdown = false;
 bool fingermotion = false;
@@ -123,9 +125,6 @@ bool fingermotion_UP = false;
 bool fingermotion_DOWN = false;
 bool fingermotion_LEFT = false;
 bool fingermotion_RIGHT = false;
-
-int HR=200,HG=200,HB=200;
-
 int TouchX=-1;
 int TouchY=-1;
 int GenState=-1;
@@ -135,10 +134,12 @@ std::string WorKey="00";
 void loadSkin(string img="");
 void setSkin(string path="");
 void selectskin(string val="");
-
+//Main 
+bool JKMainLoop();
+bool Confirm(std::string text,std::string image,bool okonly = true);
+void PleaseWait(std::string text,bool render = true);
 void Image(std::string path,int X, int Y,int W, int H,int key);
 void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,int selected=0);
-void PleaseWait(std::string text,bool render = true);
 void ListCover(int& selectindex,json Jlinks, bool ongrid=false,int limit=0);
 void ListClassic(int& selectindex,json Jlinks);
 void Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render);
@@ -152,6 +153,7 @@ extern LTexture Farest;
 extern LTexture VOX;
 extern LTexture T_T;
 extern LTexture Heart;
+extern LTexture B_A, B_B, B_Y, B_X, B_L, B_R, B_ZR, B_ZL, B_M, B_P, B_RIGHT, B_LEFT, B_UP, B_DOWN;
 
 
 

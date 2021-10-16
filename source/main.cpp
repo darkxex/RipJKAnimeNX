@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 		//Handle forced exit
 		if (!AppletMode) appletLockExit(); 
 		//While application is running
-		while (!quit&&appletMainLoop())
+		while (GOD.JKMainLoop())
 		{
 			//get if console is dokked
 			AppletOperationMode stus=appletGetOperationMode();
@@ -384,35 +384,13 @@ int main(int argc, char **argv)
 							}
 						}
 						if (e.jbutton.button == BT_P) {// (+) button down close to home menu
-							cancelcurl = 1;
-							quit = true;
+							if (GOD.Confirm("Desea Salir?","")){
+								cancelcurl = 1;
+								quit = true;
+							}
 						}
 						if (e.jbutton.button == BT_M) {// (-) button down
-							if (Mix_PlayingMusic() == 0)
-							{
-								//Play the music
-								Mix_PlayMusic(GOD.gMusic, -1);
-								touch(rootdirectory+"play");
-							}
-							//If music is being played
-							else
-							{
-								//If the music is paused
-								if (Mix_PausedMusic() == 1)
-								{
-									//Resume the music
-									Mix_ResumeMusic();
-									touch(rootdirectory+"play");
-
-								}
-								//If the music is playing
-								else
-								{
-									//Pause the music
-									Mix_PauseMusic();
-									remove((rootdirectory+"play").c_str());
-								}
-							}
+							GOD.SwapMusic();
 						}
 						if (e.jbutton.button == BT_L) {// (L) button down
 							if (statenow == chapter_s) {
@@ -808,12 +786,12 @@ int main(int argc, char **argv)
 
 				/*
 				   //warning , only display in sxos ToDo
-				   gTextTexture.loadFromRenderedText(GOD.gFont, "(*En SXOS desactiva Stealth Mode*)", textColor);
+				   gTextTexture.loadFromRenderedText(GOD.Comic_16, "(*En SXOS desactiva Stealth Mode*)", textColor);
 				   gTextTexture.render(posxbase, 0 );
 				 */
 
 				//draw Title
-				gTextTexture.loadFromRenderedText(GOD.gFont3, temptext.substr(0,62)+ ":", textColor);
+				gTextTexture.loadFromRenderedText(GOD.Arista_40, temptext.substr(0,62)+ ":", textColor);
 				gTextTexture.render(posxbase, posybase);
 
 				{//draw preview image
@@ -826,7 +804,7 @@ int main(int argc, char **argv)
 					static string rese_prot = "..";
 					string rese_p = BD["com"]["sinopsis"];
 					if (rese_prot != rese_p) {//load texture on text change
-						T_R.loadFromRenderedTextWrap(GOD.gFont, rese_p, textColor, WG-20);
+						T_R.loadFromRenderedTextWrap(GOD.Comic_16, rese_p, textColor, WG-20);
 						rese_prot = rese_p;
 						//cout << "desc:" << T_R.getHeight()+60 << endl;
 					}
@@ -836,28 +814,28 @@ int main(int argc, char **argv)
 					VOX.render_VOX({XG, YG, WG, HG}, 255, 255, 255, 170);
 					T_R.render(XG+10, YG+10);
 
-					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["Emitido"], textColor,WG-20);
+					gTextTexture.loadFromRenderedTextWrap(GOD.Comic_16, BD["com"]["Emitido"], textColor,WG-20);
 					gTextTexture.render(XG+10, YG+HG-(gTextTexture.getHeight()*2)-5);
 
-					gTextTexture.loadFromRenderedTextWrap(GOD.gFont, BD["com"]["generos"], textColor,WG-20);
+					gTextTexture.loadFromRenderedTextWrap(GOD.Comic_16, BD["com"]["generos"], textColor,WG-20);
 					gTextTexture.render(XG+10, YG+HG-gTextTexture.getHeight()-5);
 				}
 				bool anend=false;
 				int sizefix = 0;
 				if (maxcapit >= 0) {
 					if (BD["com"]["nextdate"] == "Pelicula") {
-						gTextTexture.loadFromRenderedText(GOD.gFont3, "Pelicula", { 250,250,250 });
+						gTextTexture.loadFromRenderedText(GOD.Arista_40, "Pelicula", { 250,250,250 });
 						gTextTexture.render(posxbase + 855, posybase + 598);
 					} else {
 						if (BD["com"]["enemision"] == "true")
 						{
-							gTextTexture.loadFromRenderedText(GOD.gFont3, "En Emisión ", { 16,191,0 });
+							gTextTexture.loadFromRenderedText(GOD.Arista_40, "En EmisiÃ³n ", { 16,191,0 });
 							gTextTexture.render(posxbase + 855, posybase + 598);
 						} else {
-							gTextTexture.loadFromRenderedText(GOD.gFont3, "Concluido", { 140,0,0 });
+							gTextTexture.loadFromRenderedText(GOD.Arista_40, "Concluido", { 140,0,0 });
 							gTextTexture.render(posxbase + 855, posybase + 598);
 						}
-						gTextTexture.loadFromRenderedText(GOD.gFont, BD["com"]["nextdate"], { 255,255,255 });
+						gTextTexture.loadFromRenderedText(GOD.Comic_16, BD["com"]["nextdate"], { 255,255,255 });
 						gTextTexture.render(posxbase + 1040, posybase + 615);
 					}
 				}
@@ -873,11 +851,11 @@ int main(int argc, char **argv)
 							if (anend) {
 								for (int x = 0; x < (int)arrayservers.size(); x++) {
 									if (x == selectserver) {
-										T_T.loadFromRenderedText(GOD.gFont4, arrayservers[x], textWhite);
+										T_T.loadFromRenderedText(GOD.Arista_30, arrayservers[x], textWhite);
 										VOX.render_VOX({ posxbase+XD-10,YD + 5 - sizefix + (x * mwide), 170, T_T.getHeight()-5}, 50, 50, 50, 200);
 										T_T.render(posxbase+XD, YD - sizefix + (x * mwide));
 									} else {
-										gTextTexture.loadFromRenderedText(GOD.gFont4, arrayservers[x],textGray);
+										gTextTexture.loadFromRenderedText(GOD.Arista_30, arrayservers[x],textGray);
 										gTextTexture.render(posxbase+XD, YD - sizefix + (x * mwide));
 									}
 								}
@@ -896,23 +874,23 @@ int main(int argc, char **argv)
 						if (latest-2 >= mincapit) {
 							com=textGray;
 							if (latest-2 == latestcolor) com=textGrayGreen;
-							gTextTexture.loadFromRenderedText(GOD.digifont2,  to_string(latest-2), com);
+							gTextTexture.loadFromRenderedText(GOD.AF_35,  to_string(latest-2), com);
 							gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						if (latest-1 >= mincapit) {
 							com=textGray;
 							if (latest-1 == latestcolor) com=textGrayGreen;
-							gTextTexture.loadFromRenderedText(GOD.digifont2,  to_string(latest-1), com);
+							gTextTexture.loadFromRenderedText(GOD.AF_35,  to_string(latest-1), com);
 							gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						{
 							com=textBlue;
 							if (latest == latestcolor) com=textWhiteGreen;
 							if (serverpront) {
-								T_N.loadFromRenderedText(GOD.digifont2, to_string(latest), com);
+								T_N.loadFromRenderedText(GOD.AF_35, to_string(latest), com);
 								T_N.render(posxbase + 280+XS-T_N.getWidth()/2, posybase + 565+YS);
 							} else {
-								T_T.loadFromRenderedText(GOD.digifont2, to_string(latest), com);
+								T_T.loadFromRenderedText(GOD.AF_35, to_string(latest), com);
 								T_T.render(posxbase + 280+XS-T_T.getWidth()/2, posybase + 565+YS);
 							}
 						}
@@ -920,13 +898,13 @@ int main(int argc, char **argv)
 						if (latest+1 <= maxcapit) {
 							com=textGray;
 							if (latest+1 == latestcolor) com=textGrayGreen;
-							gTextTexture.loadFromRenderedText(GOD.digifont2,  to_string(latest+1), com);
+							gTextTexture.loadFromRenderedText(GOD.AF_35,  to_string(latest+1), com);
 							gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						if (latest+2 <= maxcapit) {
 							com=textGray;
 							if (latest+2 == latestcolor) com=textGrayGreen;
-							gTextTexture.loadFromRenderedText(GOD.digifont2,  to_string(latest+2), com);
+							gTextTexture.loadFromRenderedText(GOD.AF_35,  to_string(latest+2), com);
 							gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 
@@ -940,10 +918,10 @@ int main(int argc, char **argv)
 					} else {
 						VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
 						if (BD["com"]["nextdate"] == "Pelicula" || mincapit == maxcapit) {
-							T_T.loadFromRenderedText(GOD.gFont3, "Reproducir...", { 255, 255, 255 });
+							T_T.loadFromRenderedText(GOD.Arista_40, "Reproducir...", { 255, 255, 255 });
 							T_T.render(posxbase + 282+XS-T_T.getWidth()/2, posybase + 558+YS);
 						} else {
-							gTextTexture.loadFromRenderedText(GOD.gFont3, "Cargando...", { 255, 255, 255 });
+							gTextTexture.loadFromRenderedText(GOD.Arista_40, "Cargando...", { 255, 255, 255 });
 							gTextTexture.render(posxbase + 282+XS-gTextTexture.getWidth()/2, posybase + 558+YS);
 						}
 
@@ -957,7 +935,7 @@ int main(int argc, char **argv)
 					B_B.render_T(dist, 680,"Cerrar"); dist -= posdist;
 				} else {
 					B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
-					B_B.render_T(dist, 680,"Atrás"); dist -= posdist;
+					B_B.render_T(dist, 680,"AtrÃ¡s"); dist -= posdist;
 					B_X.render_T(dist, 680,"Descargar"); dist -= posdist;
 				}
 
@@ -1024,7 +1002,7 @@ int main(int argc, char **argv)
 						}
 
 						if (part > 0) {
-							gTextTexture.loadFromRenderedText(GOD.digifontC, to_string(ofall - part), {50,50,50});
+							gTextTexture.loadFromRenderedText(GOD.digi_9, to_string(ofall - part), {50,50,50});
 							gTextTexture.render(27 - (gTextTexture.getWidth()/2), 30);
 						}
 						REC.render(5, 15,NULL,angle);
@@ -1039,33 +1017,33 @@ int main(int argc, char **argv)
 					}
 
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.digifontV, ("(Ver "+DInfo()["App"].get<string>()+") #KASTXUPALO").c_str(), {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.digi_11, ("(Ver "+DInfo()["App"].get<string>()+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 3, 672);
 
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Recientes", {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.Comic_16, "Recientes", {100,0,0});
 					if(ongrid) {
 						gTextTexture.render(5, 1);
 					}else {
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 						if (imgNumbuffer > 0) {
-							gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
+							gTextTexture.loadFromRenderedText(GOD.Comic_16, "ImÃ¡genes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 							//Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
 						}
 						if (part > 0) {
-							gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+to_string(part)+"/"+to_string(ofall)+")", {0,100,0});
+							gTextTexture.loadFromRenderedText(GOD.Comic_16, "BÃºfer: ("+to_string(part)+"/"+to_string(ofall)+")", {0,100,0});
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 						}
 					}
 				} else {
-					string textpro="Cargando programación";
+					string textpro="Cargando programaciÃ³n";
 					if(imgNumbuffer>0) {textpro+=" "+to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
 					GOD.PleaseWait(textpro,false);
 				}
 					if (statenow==menu_s) {
 
 						{
-							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV"};
+							StatesList= {"BÃºsqueda","Historial","Favoritos","En EmisiÃ³n","Top Anime","Nuevos","AnimeFLV"};
 							if(isDownloading) {StatesList.push_back("Descargas");}
 							
 							int mwide = 60,XD=940,YD=120,W=1280-XD;
@@ -1073,18 +1051,18 @@ int main(int argc, char **argv)
 							VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);//head line
 							VOX.render_VOX({XD,668, W, 1}, 255, 255, 255, 235);//bottom line
 							VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);//line left
-							gTextTexture.loadFromRenderedText(GOD.gFont5, "Menú Primario",textColor);
+							gTextTexture.loadFromRenderedText(GOD.Arista_20, "MenÃº Primario",textColor);
 							gTextTexture.render(XD+20, 65);
 							if (imgNumbuffer > 0) {
-								gTextTexture.loadFromRenderedText(GOD.gFont, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
+								gTextTexture.loadFromRenderedText(GOD.Comic_16, "ImÃ¡genes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
 								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
 							}
 							if (part > 0) {
-								gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+to_string(part)+"/"+to_string(ofall)+")", {0,100,0});
+								gTextTexture.loadFromRenderedText(GOD.Comic_16, "BÃºfer: ("+to_string(part)+"/"+to_string(ofall)+")", {0,100,0});
 								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15,  70);
 							}
 							if (porcentajebufferF > 0) {
-								gTextTexture.loadFromRenderedText(GOD.gFont, "BúferFav: ("+to_string(porcentajebufferF)+"/"+to_string(porcentajebufferFF)+")", {0,100,0});
+								gTextTexture.loadFromRenderedText(GOD.Comic_16, "BÃºferFav: ("+to_string(porcentajebufferF)+"/"+to_string(porcentajebufferFF)+")", {0,100,0});
 								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
 							}
 							int indexLsize = StatesList.size();
@@ -1109,11 +1087,11 @@ int main(int argc, char **argv)
 								if(x == 8) {DOWB.render(XD+10, YD + (x * mwide)+5);}
 
 								if (x == selectelement) {
-									T_T.loadFromRenderedText(GOD.gFont6, StatesList[x], textWhite);
+									T_T.loadFromRenderedText(GOD.Arista_50, StatesList[x], textWhite);
 									VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-100, T_T.getHeight()-5}, 50, 50, 50, 100);
 									T_T.render(XD+80, YD + (x * mwide));
 								} else {
-									gTextTexture.loadFromRenderedText(GOD.gFont6, StatesList[x],textColor);
+									gTextTexture.loadFromRenderedText(GOD.Arista_50, StatesList[x],textColor);
 									gTextTexture.render(XD+80, YD + (x * mwide));
 								}
 
@@ -1149,7 +1127,7 @@ int main(int argc, char **argv)
 							}
 							
 							VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
-							gTextTexture.loadFromRenderedText(GOD.gFont4, temptext.substr(0,60)+ ":", textColor);
+							gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,60)+ ":", textColor);
 							gTextTexture.render(XF, YF-5);
 							
 							VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
@@ -1167,7 +1145,7 @@ int main(int argc, char **argv)
 						//Draw footer buttons
 						int dist = 1100,posdist = 170;
 						B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
-						B_B.render_T(dist, 680,"Atrás"); dist -= posdist;
+						B_B.render_T(dist, 680,"AtrÃ¡s"); dist -= posdist;
 						if (isHandheld) {CLEAR.render_T(dist, 680,"Cache"); dist -= posdist;}
 						break;
 					}
@@ -1176,7 +1154,7 @@ int main(int argc, char **argv)
 					B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
 					B_R.render_T(dist, 680,"Buscar"); dist -= posdist;
 					//B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
-					B_Y.render_T(dist, 680,"Menú"); dist -= posdist;
+					B_Y.render_T(dist, 680,"MenÃº"); dist -= posdist;
 					if(isDownloading) {B_X.render_T(dist, 680,"Descargas"); dist -= posdist-10;}
 
 
@@ -1209,17 +1187,17 @@ int main(int argc, char **argv)
 						NOP.render_T(230, 355,BD["searchtext"]);
 					}
 					//Draw Header
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Resultados de Búsqueda:", {100,0,0});
+					gTextTexture.loadFromRenderedText(GOD.Comic_16, "Resultados de BÃºsqueda:", {100,0,0});
 					if(ongrid) {
 						int distan = gTextTexture.getWidth()+10;
 						gTextTexture.render(5, 1);
-						gTextTexture.loadFromRenderedText(GOD.gFont, BD["searchtext"], {0,0,0});
+						gTextTexture.loadFromRenderedText(GOD.Comic_16, BD["searchtext"], {0,0,0});
 						VOX.render_VOX({distan-2,1, gTextTexture.getWidth()+4, gTextTexture.getHeight()}, 210, 210, 210, 155);
 						//T_D.getWidth()+4, T_D.getHeight()
 						gTextTexture.render(distan, 1);
 					}else {
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
-						gTextTexture.loadFromRenderedText(GOD.gFont, BD["searchtext"], {0,0,0});
+						gTextTexture.loadFromRenderedText(GOD.Comic_16, BD["searchtext"], {0,0,0});
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 					}
 					{//Draw footer buttons
@@ -1236,7 +1214,7 @@ int main(int argc, char **argv)
 						int persen = ((porcentajebufferF) * 100) / porcentajebufferFF;
 						added=" ("+to_string(persen)+"%)";
 					}
-					GOD.PleaseWait("Cargando búsqueda..."+added,false);
+					GOD.PleaseWait("Cargando bÃºsqueda..."+added,false);
 					Frames=1;
 				}
 				break;
@@ -1265,14 +1243,14 @@ int main(int argc, char **argv)
 				}
 
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Favoritos", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.Comic_16, "Favoritos", {100,0,0});
 				if(ongrid) {
 					gTextTexture.render(5, 1);
 				}else {
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 
 					if (porcentajebufferF > 0) {
-						gTextTexture.loadFromRenderedText(GOD.gFont, "Búfer: ("+to_string(porcentajebufferF)+"/"+to_string(porcentajebufferFF)+")", {0,100,0});
+						gTextTexture.loadFromRenderedText(GOD.Comic_16, "BÃºfer: ("+to_string(porcentajebufferF)+"/"+to_string(porcentajebufferFF)+")", {0,100,0});
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 30, 20);
 					}
 				}
@@ -1312,7 +1290,7 @@ int main(int argc, char **argv)
 				} else NOP.render_T(230, 355,"");
 
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "history", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.Comic_16, "history", {100,0,0});
 				if(ongrid) {
 					gTextTexture.render(5, 1);
 				}else {
@@ -1348,7 +1326,7 @@ int main(int argc, char **argv)
 				} else NOP.render_T(230, 355,"");
 
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Top Anime", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.Comic_16, "Top Anime", {100,0,0});
 				if(ongrid) {
 					gTextTexture.render(5, 1);
 				}else {
@@ -1384,7 +1362,7 @@ int main(int argc, char **argv)
 				} else NOP.render_T(230, 355,"");
 
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Ultimos Animes Agregados", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.Comic_16, "Ultimos Animes Agregados", {100,0,0});
 				if(ongrid) {
 					gTextTexture.render(5, 1);
 				}else {
@@ -1421,7 +1399,7 @@ int main(int argc, char **argv)
 				} else NOP.render_T(230, 355,"");
 
 				//Draw Header
-				gTextTexture.loadFromRenderedText(GOD.gFont, "En Emisión", {100,0,0});
+				gTextTexture.loadFromRenderedText(GOD.Comic_16, "En EmisiÃ³n", {100,0,0});
 				if(ongrid) {
 					gTextTexture.render(5, 1);
 				}else {
@@ -1443,31 +1421,31 @@ int main(int argc, char **argv)
 				VOX.render_VOX({0,0, 1280, 60},200, 200, 200, 130); //Head
 				VOX.render_VOX({16,65, 900, 162}, 210, 210, 210, 115);//Rectangle
 
-				gTextTexture.loadFromRenderedText(GOD.gFont, "Descargando Actualmente:", textColor);
+				gTextTexture.loadFromRenderedText(GOD.Comic_16, "Descargando Actualmente:", textColor);
 				gTextTexture.render(posxbase, posybase+15);
 
-				gTextTexture.loadFromRenderedText(GOD.gFont4, DownTitle, textColor);
+				gTextTexture.loadFromRenderedText(GOD.Arista_30, DownTitle, textColor);
 				VOX.render_VOX({17,65, gTextTexture.getWidth()+15, 45}, 210, 210, 210, 155);//Draw title back
 				gTextTexture.render(posxbase, posybase + 60);
 
 				if (serverenlace != "Error de descarga") {
-					gTextTexture.loadFromRenderedText(GOD.gFontcapit, to_string(porcendown) + "\%", textColor);
+					gTextTexture.loadFromRenderedText(GOD.Arista_100, to_string(porcendown) + "\%", textColor);
 					gTextTexture.render(posxbase + 280, posybase + 90);
 
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Peso estimado: " + to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
+					gTextTexture.loadFromRenderedText(GOD.Comic_16, "Peso estimado: " + to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
 					gTextTexture.render(posxbase, posybase + 160);
 
-					gTextTexture.loadFromRenderedText(GOD.gFont, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
+					gTextTexture.loadFromRenderedText(GOD.Comic_16, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
 					gTextTexture.render(posxbase, posybase + 200);
 
 					if (to_string(porcendown) == "100"&&!isDownloading) {
 						//Render red filled quad
 						VOX.render_VOX({ posxbase + 198, posybase + 500, 580, 50 }, 255, 255, 255, 195);
-						gTextTexture.loadFromRenderedText(GOD.gFont3, "¡Descarga Completada! Revisa tu SD.", textColor);
+						gTextTexture.loadFromRenderedText(GOD.Arista_40, "Â¡Descarga Completada! Revisa tu SD.", textColor);
 						gTextTexture.render(posxbase + 200, posybase + 500);
 						if(lcdoff) {lcdoff=false; appletSetLcdBacklightOffEnabled(lcdoff);}
 					}else{
-						gTextTexture.loadFromRenderedText(GOD.digifont, "Velocidad: " +speedD+" M/S", textColor);
+						gTextTexture.loadFromRenderedText(GOD.digi_16, "Velocidad: " +speedD+" M/S", textColor);
 						VOX.render_VOX({ posxbase, posybase + 180, gTextTexture.getWidth()+6, 20 }, 255, 255, 255, 145);
 						gTextTexture.render(posxbase + 2, posybase + 180);
 						if (isHandheld) {
@@ -1479,12 +1457,12 @@ int main(int argc, char **argv)
 					porcendown=0;
 				}
 
-				gTextTexture.loadFromRenderedText(GOD.gFont, serverenlace.substr(0,300), {168,0,0});
+				gTextTexture.loadFromRenderedText(GOD.Comic_16, serverenlace.substr(0,300), {168,0,0});
 				gTextTexture.render(posxbase, posybase + 220);
 
 				static int tatic = 850;
 				VOX.render_VOX({posxbase-5,posybase + 240, tatic, ((int)BD["arrays"]["downloads"]["log"].size() * 22)+33}, 200, 200, 200, 105);
-				gTextTexture.loadFromRenderedText(GOD.digifont, "Cola De Descarga :", textColor);
+				gTextTexture.loadFromRenderedText(GOD.digi_16, "Cola De Descarga :", textColor);
 				gTextTexture.render(posxbase, posybase+240);
 				for (u64 x = 0; x < BD["arrays"]["downloads"]["log"].size(); x++) {
 					string descarga = BD["arrays"]["downloads"]["log"][x];
@@ -1496,7 +1474,7 @@ int main(int argc, char **argv)
 					if(descarga.substr(0,3) == ">>>") {txtColor = { 0, 0, 0 }; replace(descarga,">>>>",">>"+to_string(porcendown)+"\%");}
 					if(descarga.substr(0,3) == "htt") {txtColor = { 100, 100, 100}; NameOfLink(descarga); descarga="En Cola: "+descarga;}
 
-					gTextTexture.loadFromRenderedText(GOD.digifont, descarga, txtColor);
+					gTextTexture.loadFromRenderedText(GOD.digi_16, descarga, txtColor);
 					if (tatic < gTextTexture.getWidth()) {tatic = gTextTexture.getWidth()+35;}
 					gTextTexture.render(posxbase, posybase+260 + ((x) * 22));
 
@@ -1510,7 +1488,7 @@ int main(int argc, char **argv)
 
 			//global render
 			if(isDownloading&& download_s != statenow) {
-				T_D.loadFromRenderedText(GOD.digifont, ""+DownTitle.substr(0,42)+"... ("+to_string(porcendown)+"\%)", {50,50,50});
+				T_D.loadFromRenderedText(GOD.digi_16, ""+DownTitle.substr(0,42)+"... ("+to_string(porcendown)+"\%)", {50,50,50});
 				VOX.render_VOX({SCREEN_WIDTH - T_D.getWidth() - 2, 671-T_D.getHeight()+4, T_D.getWidth()+4, T_D.getHeight()-5}, 255, 255, 255, 180);
 				T_D.render(SCREEN_WIDTH - T_D.getWidth() - 1, 671-T_D.getHeight());
 			}
@@ -1532,7 +1510,7 @@ int main(int argc, char **argv)
 				isConnected=Net::HasConnection();
 			}
 			if (!isConnected) {
-				gTextTexture.loadFromRenderedText(GOD.digifont, "Sin Internet", {255,0,0});
+				gTextTexture.loadFromRenderedText(GOD.digi_16, "Sin Internet", {255,0,0});
 				VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,671-gTextTexture.getHeight(), gTextTexture.getWidth()+4, gTextTexture.getHeight()}, 0, 0, 0, 180);
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 671-gTextTexture.getHeight() );
 			}
@@ -1546,12 +1524,6 @@ int main(int argc, char **argv)
 			if((programation_s == statenow && isHandheld)|quit) {
 				GOD.MapT["EXIT"].render_T(80, 680,"",quit);
 			}
-			
-			SDL_SetRenderDrawBlendMode(GOD.gRenderer, SDL_BLENDMODE_BLEND);//enable alpha blend
-
-			//Update screen
-			SDL_RenderPresent(GOD.gRenderer);
-
 
 			//Display the list
 			if (!quit&&!reloading&&!AppletMode&&Frames>2) {preview = true;}
