@@ -247,6 +247,8 @@ int main(int argc, char **argv)
 								GOD.PleaseWait("Borrando cache");
 								read_DB(AB,"romfs:/AnimeBase.json");
 								BD="{}"_json;
+								mount_theme("themes",false);
+								remove((rootdirectory+"theme.romfs").c_str());
 								remove((rootdirectory+"update.nsp.json").c_str());
 								remove((rootdirectory+"update.nsp").c_str());
 								remove((rootdirectory+"LOG.txt").c_str());
