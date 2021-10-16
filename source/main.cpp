@@ -111,11 +111,20 @@ int main(int argc, char **argv)
 		//Load images from Romfs
 		LoadImages();
 
+		if (isSXOS){
+			GOD.GenState = statenow;
+			SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+			SDL_RenderClear(GOD.gRenderer);
+			GOD.JKMainLoop();
+			Farest.render((0), (0));
+			GOD.Confirm("Esta App No funciona Correctamente En SXOS",true,3);
+		}
 		//Set main Thread get images and descriptions
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
-		
 		//Handle forced exit
-		if (!AppletMode) appletLockExit(); 
+		if (!AppletMode) appletLockExit();
+		
+		
 		//While application is running
 		while (GOD.JKMainLoop())
 		{
@@ -384,7 +393,7 @@ int main(int argc, char **argv)
 							}
 						}
 						if (e.jbutton.button == BT_P) {// (+) button down close to home menu
-							if (GOD.Confirm("Desea Salir?","")){
+							if (GOD.Confirm("Desea Salir?")){
 								cancelcurl = 1;
 								quit = true;
 							}

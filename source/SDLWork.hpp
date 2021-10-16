@@ -136,7 +136,7 @@ void setSkin(string path="");
 void selectskin(string val="");
 //Main 
 bool JKMainLoop();
-bool Confirm(std::string text,std::string image,bool okonly = true);
+bool Confirm(std::string text,bool okonly = false,int type=1);
 void PleaseWait(std::string text,bool render = true);
 void Image(std::string path,int X, int Y,int W, int H,int key);
 void Cover(std::string path,int X, int Y,std::string Text = "",int WS = 300,int key=-1,int selected=0);

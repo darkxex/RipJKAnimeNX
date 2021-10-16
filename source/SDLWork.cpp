@@ -261,24 +261,51 @@ void sdl_ellipse(SDL_Renderer* r, int x0, int y0, int radiusX, int radiusY) {
         SDL_RenderDrawLine(r, x0 + x, y0 + y,    x0 + x1, y0 + y1 );//quadrant BR
     }
 }
-bool SDLB::Confirm(std::string text,std::string image,bool okonly){
+bool SDLB::Confirm(std::string text,bool okonly,int type){
+
+	LTexture NAG,IMG;
 	//Print Menu once 
-	VOX.render_VOX({0,0,SCREEN_WIDTH,SCREEN_HEIGHT}, 0, 0, 0, 100);
+	VOX.render_VOX({0,0,SCREEN_WIDTH,SCREEN_HEIGHT}, 0, 0, 0, 150);
 	
-	int NX=430,NY=256,NW=400,NH=200;
+	int NX=430,NY=256,NW=400,NH=200,BR = 3;
 	T_T.loadFromRenderedTextWrap(Arista_30, text, { 50, 50, 50 },NW-20);
-
-	VOX.render_VOX({NX-1,NY-1,NW+2,NH+2}, 50, 50, 50, 200);
-	VOX.render_VOX({NX,NY,NW,NH}, 200, 200, 200, 200);//
-	T_T.render(NX+(NW/2)-(T_T.getWidth()/2), NY+(NH/4*3)/2);
 	
-	VOX.render_VOX({NX,NY+(NH/4*3),NW,3}, 50, 50, 50, 200);
-	VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),3,(NH/4)}, 50, 50, 50, 200);
+	//Draw black back
+	VOX.render_VOX({NX-BR,NY-BR,NW+(BR*2),NH+(BR*2)}, 50, 50, 50, 200);
+	//Draw Icon
+	std::string image = "";
+	switch(type){
+		case 1:
+			image = "romfs:/img/pop/ques.png";
+			break;
+		case 2:
+			image = "romfs:/img/pop/info.png";
+			break;
+		case 3:
+			image = "romfs:/img/pop/error.png";
+			break;
+	}
 	
-	B_A.render_T(NX+(NW/4)-50, NY+(NH/4*3)+6,"SI");
-	B_B.render_T(NX+(NW/4*3)-50, NY+(NH/4*3)+6,"NO");
+	if (image.length()>0){
+		IMG.loadFromFileCustom(image, 100,100);
+		IMG.render(NX+10, NY+10);
+	}
+	//Draw withe front
+	NAG.render_VOX({NX,NY,NW,NH}, 200, 200, 200, 200);//
+	T_T.render(NX+(NW/2)-(T_T.getWidth()/2), NY+((NH/4*3)/2)-(T_T.getHeight()/2));
+	
+	VOX.render_VOX({NX,NY+(NH/4*3),NW,BR}, 50, 50, 50, 200);
+	if(!okonly){
+		VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),BR,(NH/4)}, 50, 50, 50, 200);
+		B_A.render_T(NX+(NW/4)-45, NY+(NH/4*3)+6,"SI");
+		B_B.render_T(NX+(NW/4*3)-45, NY+(NH/4*3)+6,"NO");
+	} else {
+		B_A.render_T(NX+(NW/2)-55, NY+(NH/4*3)+6,"Aceptar");
+	}
+	
+	
 
-	sdl_ellipse(gRenderer, 32,132, 45, 80);
+	//sdl_ellipse(gRenderer, 32,32, 45, 80);
 	
 	
 	//Event handler
@@ -303,21 +330,26 @@ bool SDLB::Confirm(std::string text,std::string image,bool okonly){
 			case SDL_FINGERDOWN:
 				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+				break;
+			case SDL_FINGERUP:
+				e.jbutton.button = BT_B;
 				if (GOD.MapT["EXIT"].SP()) e.jbutton.button = BT_P;
 				else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
 				else if (B_A.SP()) {e.jbutton.button = BT_A;}
-				else if (B_B.SP()) e.jbutton.button = BT_B;
+				else if (B_B.SP()) {e.jbutton.button = BT_B;}
+				else if (NAG.SP()) {e.jbutton.button = -1;}
 				GOD.TouchX = -1;
 				GOD.TouchY = -1;
-				break;
 			case SDL_JOYBUTTONDOWN:
 				if (e.jbutton.which == 0) {
 					if (e.jbutton.button == BT_P) {// (+) button down close to home menu
 						cancelcurl = 1;
 						quit = true;
+						return false;
 					}
 					if (e.jbutton.button == BT_M) {// (-) button down
 						SwapMusic();
+						return false;
 					}
 					if (e.jbutton.button == BT_A) {// (A) button down
 						return true;
@@ -325,7 +357,6 @@ bool SDLB::Confirm(std::string text,std::string image,bool okonly){
 					if (e.jbutton.button == BT_B) {// (B) button down
 						return false;
 					}
-
 				}
 			}
 		}
@@ -1036,7 +1067,7 @@ bool LTexture::loadFromRenderedText(TTF_Font *fuente, std::string textureText, S
 	free();
 
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Blended(fuente, textureText.c_str(), textColor);
+	SDL_Surface* textSurface = TTF_RenderUTF8_Blended(fuente, textureText.c_str(), textColor);
 
 	if (textSurface == NULL)
 	{
@@ -1169,7 +1200,7 @@ int LTexture::render_T(int x, int y, std::string text, bool presed){
 	//Render to screen
 	SDL_RenderCopy(GOD.gRenderer, mTexture, NULL, &renderQuad);
 	if (text.length()) {
-		SDL_Surface* textSurface = TTF_RenderText_Blended(GOD.AF_19, text.c_str(), { 50, 50, 50 });
+		SDL_Surface* textSurface = TTF_RenderUTF8_Blended(GOD.AF_19, text.c_str(), { 50, 50, 50 });
 		if (textSurface == NULL)
 		{
 			printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
@@ -1267,7 +1298,8 @@ void LTexture::render_VOX(SDL_Rect Form,int R, int G, int B, int A){
 	SDL_SetRenderDrawColor(GOD.gRenderer, R, G, B, A);
 	SDL_RenderFillRect(GOD.gRenderer, &Form);
 	//tactil stuff
-	mX = Form.x; mY = Form.y;       SelIns = GOD.GenState;
+	mX = Form.x; mY = Form.y; mWidth = Form.w; mHeight = Form.h;
+	SelIns = GOD.GenState;
 }
 bool LTexture::SP(){
 	//return on negative touch
