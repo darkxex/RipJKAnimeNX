@@ -31,17 +31,30 @@ bool InstallNSP(std::string nsp){
 	std::cout << "Install: " << nsp << std::endl;
 	return mini::InstallSD(nsp);
 }
-
-bool ReloadDNS(){
-	static Service sfdnsresSrv;
-    // Call sfdnsres service to reload hosts file
-    smGetService(&sfdnsresSrv, "sfdnsres");
-    serviceDispatch(&sfdnsresSrv, 65000);
-    serviceClose(&sfdnsresSrv);
-	return true;
+bool IsRunning(string servname) {//check if service is running
+    auto srv_name = smEncodeName(servname.c_str());
+    Handle tmph = 0;
+    auto rc = smRegisterService(&tmph, srv_name, false, 1);
+    if(R_FAILED(rc)) {
+        return true;
+    }
+    smUnregisterService(srv_name);
+	return false;
 }
-
-FsFileSystem fst; FsFile rom;
+bool ReloadDNS(){
+	if (IsRunning("sfdnsres")){
+		static Service sfdnsresSrv;
+		// Call sfdnsres service to reload hosts file
+		smGetService(&sfdnsresSrv, "sfdnsres");
+		serviceDispatch(&sfdnsresSrv, 65000);
+		serviceClose(&sfdnsresSrv);
+		return true;
+	} else {
+		cout <<"AMS DNS not running" <<std::endl;
+		return false;
+	}
+}
+	
 bool mount_theme(string in,bool mount){
 	string file = rootdirectory+"theme.romfs";
 	if (mount){
@@ -50,28 +63,35 @@ bool mount_theme(string in,bool mount){
 			return true;
 		}
 		if(isFileExist(file)) {
-			if (R_FAILED(romfsMountFromFsdev(file.c_str(), 0, "themes")))
+			if (R_FAILED(romfsMountFromFsdev(file.c_str(), 0, "themes"))){
 				cout << "unable to mount  "+ in << endl;
-			else
+				return false;
+			}else{
 				cout << in+":/  now mounted" << endl;
-
-			//fsFileClose (&rom);
-			//fsFsClose(&fst);
-			//fsFsOpenFile(&fst, file.c_str(), FsOpenMode_Read, &rom);
-			
-			//romfsMountFromFile(rom, 0, "themes");
-			return true;
+				return true;
+			}
 		}
 	} else {
 		romfsUnmount (in.c_str());
-		fsFileClose (&rom);
-		fsFsClose(&fst);
 		cout << in+":/  now Closed" << endl;
 		return true;
 	}
 	cout << "unable to mount  "+ file << endl;
 	return false;
 }
+
+//Tx Part
+Result txStealthMode(uint64_t enable) {
+	Result rc=0x0;
+	if (IsRunning("tx")){
+		static Service g_txSrv;
+		rc = smGetService(&g_txSrv, "tx");
+		rc = serviceDispatchIn(&g_txSrv, 134, enable);
+		serviceClose(&g_txSrv);
+	}
+	return rc;
+}
+
 
 std::string FormatHex128(AccountUid Number){
 	auto ptr = reinterpret_cast<u8*>(Number.uid);
@@ -170,6 +190,7 @@ bool GetUserImage(){
 }
 bool GetAppletMode(){
 	//nxlinkStdio();
+	isSXOS=IsRunning("tx");
 	apmInitialize();
 	AppletType at = appletGetAppletType();
 	if (at != AppletType_Application && at != AppletType_SystemApplication)
