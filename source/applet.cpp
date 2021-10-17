@@ -101,9 +101,89 @@ std::string FormatHex128(AccountUid Number){
 	return strm.str();
 }
 
+NacpStruct TitleIDinfo(u64 tid)
+{
+	NacpStruct nacp;
+    uint64_t outSize = 0;
+    NsApplicationControlData *ctrlData = new NsApplicationControlData;
+    NacpLanguageEntry *ent;
+    Result ctrlRes = nsGetApplicationControlData(NsApplicationControlSource_Storage, tid, ctrlData, sizeof(NsApplicationControlData), &outSize);
+    Result nacpRes = nacpGetLanguageEntry(&ctrlData->nacp, &ent);
+    size_t iconSize = outSize - sizeof(ctrlData->nacp);
+
+    if(R_SUCCEEDED(ctrlRes) && !(outSize < sizeof(ctrlData->nacp)) && R_SUCCEEDED(nacpRes) && iconSize > 0)
+    {
+        //Copy nacp
+        memcpy(&nacp, &ctrlData->nacp, sizeof(NacpStruct));
+
+        //Setup 'shortcuts' to strings
+        NacpLanguageEntry *ent;
+        //nacpGetLanguageEntry(&nacp, &ent);
+        cout << "Gotted ncap of title: " << tid << endl;
+    }
+    else
+    {
+        memset(&nacp, 0, sizeof(NacpStruct));
+		cout << "Fail to get ncap of title: " << tid << endl;
+    }
+    delete ctrlData;
+	return nacp;
+}
+
+//createSaveData(FsSaveDataType_Account, tid, u->getUID());
+void createSaveData(uint64_t _tid, AccountUid _userID)
+{
+	nsInitialize();
+	hidInitialize();
+	setsysInitialize();
+	setInitialize();
+
+	NacpStruct nacp;
+	nacp = TitleIDinfo(_tid);
+
+    FsSaveDataAttribute attr;
+    memset(&attr, 0, sizeof(FsSaveDataAttribute));
+    attr.application_id = _tid;
+    attr.uid = _userID;
+    attr.system_save_data_id = 0;
+    attr.save_data_type = FsSaveDataType_Account;
+    attr.save_data_rank = 0;
+    attr.save_data_index = 0;
+
+    FsSaveDataCreationInfo svCreate;
+    memset(&svCreate, 0, sizeof(FsSaveDataCreationInfo));
+    int64_t saveSize = 0, journalSize = 0;
+
+    saveSize = nacp.user_account_save_data_size;
+    journalSize = nacp.user_account_save_data_journal_size;
+
+    svCreate.save_data_size = saveSize;
+    svCreate.journal_size = journalSize;
+    svCreate.available_size = 0x4000;
+    svCreate.owner_id = nacp.save_data_owner_id;
+    svCreate.flags = 0;
+    svCreate.save_data_space_id = FsSaveDataSpaceId_User;
+
+    FsSaveDataMetaInfo meta;
+    memset(&meta, 0, sizeof(FsSaveDataMetaInfo));
+	
+    meta.size = 0x40060;
+	meta.type = FsSaveDataMetaType_Thumbnail;
+
+    Result res = 0;
+    if(R_SUCCEEDED(res = fsCreateSaveDataFileSystem(&attr, &svCreate, &meta)))
+    {
+		cout << "Save Created" << endl;
+    }
+    else
+    {
+		cout << "Save Fail" << endl;
+    }
+}
+
 bool initUser(){
 	Result rc = 0;
-	rc =  accountInitialize(AccountServiceType_Application);
+	rc =  accountInitialize(AccountServiceType_Administrator);
 	if (R_SUCCEEDED(rc)) {
 		accountGetPreselectedUser(&uid);
 		cout <<"User Init OK" <<std::endl;
@@ -144,10 +224,18 @@ bool MountUserSave(FsFileSystem& acc){
 			GetUserImage();
 			return true;
 		} else {
-			rootsave = rootdirectory+AccountID;
-			GetUserImage();
-			cout << "Failied to Mount User Save" <<std::endl;
-			return false;
+			createSaveData(0x05B9DB505ABBE000,uid);
+			if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
+				fsdevMountDevice("save", acc);
+				rootsave = "save:/";
+				GetUserImage();
+				return true;
+			} else {
+				rootsave = rootdirectory+AccountID;
+				GetUserImage();
+				cout << "Failied to Mount User Save" <<std::endl;
+				return false;
+			}
 		}
 	} else {
 		cout << "Invalid User UID" <<std::endl;
