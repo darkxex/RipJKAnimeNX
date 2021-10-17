@@ -290,7 +290,9 @@ bool GetAppletMode(){
 		return true;
 	}
 	initUser();
-	__nx_applet_exit_mode = 1;
+	if (DInfo()["TID"] == "05B9DB505ABBE000"){
+		__nx_applet_exit_mode = 1;
+	}
 	return false;
 }
 AccountUid LaunchPlayerSelect() {
@@ -502,19 +504,21 @@ std::string KeyboardCall (std::string hint, std::string text){
 	SwkbdConfig swkbd;
 	static char input_string[256];
 
-	if (R_FAILED(ret = swkbdCreate(&swkbd, 0))) {
+	if (R_FAILED(ret = swkbdCreate(&swkbd, 64))) {
 		swkbdClose(&swkbd);
 		return "";
 	}
-
+	
 	swkbdConfigMakePresetDefault(&swkbd);
 	swkbdConfigSetInitialCursorPos (&swkbd, 0);
+	swkbdConfigSetOkButtonText(&swkbd,"Buscar");
+
 	if (strlen(hint.c_str()) != 0)
 		swkbdConfigSetGuideText(&swkbd, hint.c_str());
 
 	if (strlen(text.c_str()) != 0)
 		swkbdConfigSetInitialText(&swkbd, text.c_str());
-
+	
 	swkbdConfigSetTextCheckCallback(&swkbd, Keyboard_ValidateText);
 
 	if (R_FAILED(ret = swkbdShow(&swkbd, input_string, sizeof(input_string)))) {
