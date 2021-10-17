@@ -113,6 +113,7 @@ bool isChained=false;
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
+int hasError=0;
 bool ongrid=true;
 AccountUid uid;
 std::string AccountID="-.-";
@@ -223,6 +224,8 @@ void PlayerGet(FsFileSystem& acc){
 		}
 		Frames=1;
 	}
+	USER.offboom_size=3;
+	USER.TickerBomb();
 }
 
 //call states
