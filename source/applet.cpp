@@ -59,7 +59,7 @@ bool mount_theme(string in,bool mount){
 	string file = rootdirectory+"theme.romfs";
 	if (mount){
 		if(isFileExist(in+":/")) {
-			cout << in+":/  is mounted" << endl;
+			//cout << in+":/  is mounted" << endl;
 			return true;
 		}
 		if(isFileExist(file)) {
@@ -67,7 +67,7 @@ bool mount_theme(string in,bool mount){
 				cout << "unable to mount  "+ in << endl;
 				return false;
 			}else{
-				cout << in+":/  now mounted" << endl;
+				//cout << in+":/ mounted" << endl;
 				return true;
 			}
 		}
@@ -135,7 +135,7 @@ NacpStruct TitleIDinfo(u64 tid){
 void createSaveData(uint64_t _tid, AccountUid _userID) {
 	FsFileSystem abc;
 	if(R_SUCCEEDED(fsOpen_SaveData (&abc,0x05B9DB505ABBE000,_userID))) {
-		cout << "Save Exist" << endl;
+		//cout << "Save Exist" << endl;
 		fsFsClose(&abc);
 		return;
 	}
@@ -473,7 +473,7 @@ bool ChainManager(bool Chain,bool AndChaing){
 			appletSetAutoSleepDisabled(true);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
-			cout << "Chain App..." <<std::endl;
+			cout << "& Chain App >" <<std::endl;
 			return true;
 		} else return false;
 	} else {
@@ -483,7 +483,7 @@ bool ChainManager(bool Chain,bool AndChaing){
 			appletSetAutoSleepDisabled(false);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);
-			cout << "UnChain App..." <<std::endl;
+			cout << "& UnChain App >" <<std::endl;
 			return true;
 		} else return false;
 	}

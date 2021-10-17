@@ -107,7 +107,7 @@ int AnimeLoader(void* data){
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "<span>","</span>");
 
 		steep++;//Download All not existing images
-		cout << "# IMG Recent " << endl;
+		cout << "# Recent IMG " << endl;
 		CheckImgVector(ChapImag,imgNumbuffer);
 		
 		
@@ -152,13 +152,14 @@ int AnimeLoader(void* data){
 		}
 
  		steep++;//Get history
-		cout << "# IMG History " << endl;
+		cout << "# History IMG " << endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
 
 		steep++;//Agregados to Database
 		temp0=content.find("Listado de últimos agregados");
 		temp1=content.find("</section>",temp0);
 		temcont = content.substr(temp0,temp1-temp0);
+		
 		MkAGR(temcont);
 		
 		steep++;//banner to Database
@@ -176,31 +177,31 @@ int AnimeLoader(void* data){
 			getFavorite();
 			cout << "# Goted fav list " << endl;
 		}
-		cout << "# IMG favoritos " << endl;
+		cout << "# favoritos IMG ";
 		CheckImgVector(UD["favoritos"],porcentajebufferF);
 		
 		cout << "# End Image Download " << endl;
 
 
 		steep++;//Load to cache all Programation Chaps
-		cout << "# Cache Recent " << endl;
+		cout << "# Cache Recent ";
 		if (haschange) {
-			cout << "# Cache Recent, haschange " << endl;
+			cout << " , haschange " ;
 			if(DataMaker(BD["arrays"]["chapter"]["link"], part, ofall)) {
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
 		}
 
 		steep++;//Load to cache all Favorites Chaps
-		cout << "# Cache favoritos " << endl;
+		cout << "| favoritos ";
 		DataMaker(UD["favoritos"], part, ofall);
 
 		steep++;//Cache Top
-		cout << "# Cache Top " << endl;
+		cout << "| Top ";
 		DataMaker(BD["arrays"]["Top"]["link"], part, ofall);
 
 		steep++;//Cache Horario
-		cout << "# Cache HourGlass " << endl;
+		cout << "| HourGlass " <<endl;;
 		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
 
 		steep++;//Load Directory
@@ -263,7 +264,7 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 int MkTOP(){
 	//load Top
 	vector<string> TOPC={};
-	cout << "# Get Top " << endl;
+	cout << "# Top Get ";
 	string content=Net::GET("https://jkanime.net/top/");
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net///","");
@@ -271,19 +272,18 @@ int MkTOP(){
 	TOPC.erase(unique(TOPC.begin(),TOPC.end()),TOPC.end());
 	BD["arrays"]["Top"]["link"]=TOPC;
 	
-	cout << "# IMG Top " << endl;
+	cout << "IMG " << endl;
 	CheckImgVector(TOPC,imgNumbuffer);
 	return 0;
 }
-
 int MkBNR(string content){
 	//Get Latest added animes
-	cout << "# Get Banner " << endl;
+	cout << "# Banner Get ";
 	BD["arrays"]["Banner"]["link"]=scrapElementAll(content, "https://jkanime.net/");
 	BD["arrays"]["Banner"]["img"]=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/animes/video/image/");
 	BD["arrays"]["Banner"]["name"]=scrapElementAll(content, "<h2>","</h2>");
 	
-	cout << "# IMG Banner " << endl;
+	cout << "IMG " << endl;
 	vector<string> BannerFile;
 	int sizeI = BD["arrays"]["Banner"]["img"].size();
 	for (int i=0; i < sizeI; i++){
@@ -299,19 +299,18 @@ int MkBNR(string content){
 	//cout << setw(4) << BD["arrays"]["Banner"] << endl;
 	return 0;
 }
-
 int MkAGR(string content){
 	//Get Latest added animes
-	cout << "# Get Agregados " << endl;
+	cout << "# Agregados Get ";
 	BD["arrays"]["Agregados"]["link"]=scrapElementAll(content, "https://jkanime.net/");
 
-	cout << "# IMG Agregados " << endl;
+	cout << "IMG " << endl;
 	CheckImgVector(BD["arrays"]["Agregados"]["link"],part);
 	return 0;
 }
 int MkHOR(){
 	//load Horario
-	cout << "# Get HourGlass " << endl;
+	cout << "# HourGlass Get ";
 	string content=Net::GET("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
 	vector<string> STP={};
@@ -346,7 +345,7 @@ int MkHOR(){
 	//HORC.erase(unique(HORC.begin(),HORC.end()),HORC.end());
 	BD["arrays"]["HourGlass"]["link"]=HORC;
 	BD["arrays"]["HourGlass"]["Todos"]=HORC;
-	cout << "# IMG HourGlass " << endl;
+	cout << "IMG " << endl;
 	CheckImgVector(HORC,imgNumbuffer);
 	return 0;
 }
@@ -366,7 +365,7 @@ int MkDIR(){
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 			}
 
-			cout << "# Get Directory " << endl;
+			cout << "# Directory Get ";
 			vector<string> DIR={};
 			vector<string> TDIR={};
 

@@ -152,6 +152,7 @@ void mayus(std::string &s){
 	}
 }
 void RemoveAccents(std::string& word){
+/*
 	//std::cout << word << std::endl;
 	replace(word, "á","a");
 	replace(word, "é","e");
@@ -176,17 +177,17 @@ void RemoveAccents(std::string& word){
 	replace(word, "Ò","O");
 	replace(word, "Ù","U");
 	replace(word, "Ñ","N");
-
+	replace(word, "¡","");
+	replace(word, "!","");
+	replace(word, "?","");
+	replace(word, "¿","");
+*/
 	replace(word, "&amp;","");
 	replace(word, "#8230;","");
 	replace(word, "”","");
 	replace(word, "“","");
 	replace(word, "\n","");
 
-	replace(word, "¡","");
-	replace(word, "!","");
-	replace(word, "?","");
-	replace(word, "¿","");
 
 }
 void touch(std::string route){
