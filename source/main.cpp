@@ -448,17 +448,18 @@ int main(int argc, char **argv)
 								appletSetLcdBacklightOffEnabled(lcdoff);
 							}
 
-							switch (statenow)
-							{
+							switch (statenow) {
 							case programation_s:
-								PlayerGet(acc);
-								break;
 							case menu_s:
-								PlayerGet(acc);
-								cout << BD << endl;
-								cout << UD << endl;
-								break;
+							case chapter_s:
+							case search_s:
 							case favorites_s:
+							case history_s:
+							case hourglass_s:
+							case top_s:
+							case agregados_s:
+							case themas_s:
+								PlayerGet(acc);
 								break;
 							}
 						}
@@ -1551,6 +1552,7 @@ int main(int argc, char **argv)
 			}
 		}
 	} catch(...) {
+		hasError++;
 		led_on(2);
 		cout << "- Error Catched Main" << endl;
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
@@ -1613,7 +1615,11 @@ int main(int argc, char **argv)
 	//Free resources and close SDL
 	GOD.deint();
 	//LOG Save
-	LOG::SaveFile();
+	if (hasError > 0){
+		cout << "Errors: " << hasError << endl;
+		LOG::SaveFile();
+	}
+	
 	accountExit();
 	hidsysExit();
 	socketExit();

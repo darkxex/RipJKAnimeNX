@@ -68,7 +68,7 @@ extern std::string rootdirectory;
 extern std::string rootsave;
 extern std::string roottheme;
 
-
+extern int hasError;
 //Screen dimension constants
 extern const int SCREEN_WIDTH, SCREEN_HEIGHT;
 

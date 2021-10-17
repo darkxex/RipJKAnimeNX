@@ -226,6 +226,7 @@ namespace Net {
 						std::cout << std::setw(4) << data << std::endl;
 					
 					}catch(...){
+						hasError++;
 						std::cout << " CODE: " << http_code << std::endl;
 						std::cout << " Redirects: " << redirects << std::endl;
 						std::cout << " EURL: " << red << std::endl;
@@ -431,6 +432,7 @@ bool CheckUpdates(bool force){
 			}
 		}
 	} catch(...) {
+		hasError++;
 		led_on(2);
 		std::cout << "# Update Error catch" << std::endl;
 	}
