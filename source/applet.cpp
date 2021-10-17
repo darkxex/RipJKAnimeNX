@@ -100,6 +100,11 @@ std::string FormatHex128(AccountUid Number){
 	for(u32 i = 0; i < 16; i++) strm << (u32)ptr[i];
 	return strm.str();
 }
+std::string u64toHex(u64 Number){
+	char TID[0x9F];
+	sprintf(TID, "%016lX",Number);
+	return std::string(TID);
+}
 
 NacpStruct TitleIDinfo(u64 tid)
 {
@@ -117,26 +122,28 @@ NacpStruct TitleIDinfo(u64 tid)
         memcpy(&nacp, &ctrlData->nacp, sizeof(NacpStruct));
 
         //Setup 'shortcuts' to strings
-        NacpLanguageEntry *ent;
+//        NacpLanguageEntry *ent;
         //nacpGetLanguageEntry(&nacp, &ent);
-        cout << "Gotted ncap of title: " << tid << endl;
+        cout << "Gotted ncap of title: " << u64toHex(tid) << endl;
     }
     else
     {
         memset(&nacp, 0, sizeof(NacpStruct));
-		cout << "Fail to get ncap of title: " << tid << endl;
+		cout << "Fail to get ncap of title: " << u64toHex(tid) << endl;
     }
     delete ctrlData;
 	return nacp;
 }
 
 //createSaveData(FsSaveDataType_Account, tid, u->getUID());
-void createSaveData(uint64_t _tid, AccountUid _userID)
-{
+void createSaveData(uint64_t _tid, AccountUid _userID) {
+	FsFileSystem abc;
+	if(R_SUCCEEDED(fsOpen_SaveData (&abc,0x05B9DB505ABBE000,_userID))) {
+		cout << "Save Exist" << endl;
+		fsFsClose(&abc);
+		return;
+	}
 	nsInitialize();
-	hidInitialize();
-	setsysInitialize();
-	setInitialize();
 
 	NacpStruct nacp;
 	nacp = TitleIDinfo(_tid);
@@ -183,6 +190,10 @@ void createSaveData(uint64_t _tid, AccountUid _userID)
 
 bool initUser(){
 	Result rc = 0;
+	hidInitialize();
+	setsysInitialize();
+	setInitialize();
+
 	rc =  accountInitialize(AccountServiceType_Administrator);
 	if (R_SUCCEEDED(rc)) {
 		accountGetPreselectedUser(&uid);
@@ -218,24 +229,17 @@ bool MountUserSave(FsFileSystem& acc){
 	fsFsClose(&acc);
 	if(accountUidIsValid(&uid))
 	{
+		createSaveData(0x05B9DB505ABBE000,uid);
 		if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
 			fsdevMountDevice("save", acc);
 			rootsave = "save:/";
 			GetUserImage();
 			return true;
 		} else {
-			createSaveData(0x05B9DB505ABBE000,uid);
-			if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
-				fsdevMountDevice("save", acc);
-				rootsave = "save:/";
-				GetUserImage();
-				return true;
-			} else {
-				rootsave = rootdirectory+AccountID;
-				GetUserImage();
-				cout << "Failied to Mount User Save" <<std::endl;
-				return false;
-			}
+			rootsave = rootdirectory+AccountID;
+			GetUserImage();
+			cout << "Failied to Mount User Save" <<std::endl;
+			return false;
 		}
 	} else {
 		cout << "Invalid User UID" <<std::endl;

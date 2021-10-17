@@ -216,7 +216,7 @@ void PlayerGet(FsFileSystem& acc){
 		USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 		UD = "{}"_json;
 		read_DB(UD,rootsave+"UserData.json");
-
+		GOD.loadSkin();
 		if(statenow==chapter_s) {
 			capBuffer(BD["com"]["ActualLink"]);
 			gFAV = isFavorite(BD["com"]["ActualLink"]);
