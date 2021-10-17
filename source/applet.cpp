@@ -106,8 +106,8 @@ std::string u64toHex(u64 Number){
 	return std::string(TID);
 }
 
-NacpStruct TitleIDinfo(u64 tid)
-{
+//Get ncap Title Info
+NacpStruct TitleIDinfo(u64 tid){
 	NacpStruct nacp;
     uint64_t outSize = 0;
     NsApplicationControlData *ctrlData = new NsApplicationControlData;
@@ -120,10 +120,6 @@ NacpStruct TitleIDinfo(u64 tid)
     {
         //Copy nacp
         memcpy(&nacp, &ctrlData->nacp, sizeof(NacpStruct));
-
-        //Setup 'shortcuts' to strings
-//        NacpLanguageEntry *ent;
-        //nacpGetLanguageEntry(&nacp, &ent);
         cout << "Gotted ncap of title: " << u64toHex(tid) << endl;
     }
     else
@@ -135,7 +131,7 @@ NacpStruct TitleIDinfo(u64 tid)
 	return nacp;
 }
 
-//createSaveData(FsSaveDataType_Account, tid, u->getUID());
+//createSaveData For the actual user
 void createSaveData(uint64_t _tid, AccountUid _userID) {
 	FsFileSystem abc;
 	if(R_SUCCEEDED(fsOpen_SaveData (&abc,0x05B9DB505ABBE000,_userID))) {
@@ -208,6 +204,10 @@ bool SelectUser(){
 	AccountUid user = LaunchPlayerSelect();
 	if(accountUidIsValid(&user))
 	{
+		if (FormatHex128(user) == FormatHex128(uid)){
+			return false;
+		}
+
 		uid=user;
 		return GetUserID();
 	}

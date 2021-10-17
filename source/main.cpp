@@ -451,12 +451,12 @@ int main(int argc, char **argv)
 							switch (statenow)
 							{
 							case programation_s:
-								statenow=menu_s;
-								cout << BD << endl;
-								cout << UD << endl;
+								PlayerGet(acc);
 								break;
 							case menu_s:
-								statenow=programation_s;
+								PlayerGet(acc);
+								cout << BD << endl;
+								cout << UD << endl;
 								break;
 							case favorites_s:
 								break;
