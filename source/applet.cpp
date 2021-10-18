@@ -136,6 +136,24 @@ NacpStruct TitleIDinfo(u64 tid){
 
 
 namespace user {
+AccountUid uid;
+string AccountID;
+
+AccountUid g_uid(){return uid;}
+string g_ID(){return AccountID;}
+
+void recover(){
+	if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
+		if(!isFileExist(rootsave+"UserData.json")) {
+			if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
+				fsdevCommitDevice("save");
+				remove((rootdirectory+AccountID+"UserData.json").c_str());
+				remove((rootdirectory+AccountID+"User.jpg").c_str());
+			}
+		}
+	}
+}
+
 bool initUser(){
 	Result rc = 0;
 	hidInitialize();
@@ -264,6 +282,7 @@ bool MountUserSave(FsFileSystem& acc){
 		if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
 			fsdevMountDevice("save", acc);
 			rootsave = "save:/";
+			recover();
 			GetUserImage();
 			return true;
 		} else {
@@ -564,7 +583,7 @@ Result WebBrowserCall(std::string url,bool nag){
 	if (R_SUCCEEDED(rc)) {			
 		//mount user data to save logins and that stuff
 		printf("Try to save logins\n");//
-		webConfigSetUid(&config,uid);
+		webConfigSetUid(&config,user::uid);
 		
 		printf("SetMainConfigs\n");
 		webConfigSetJsExtension (&config, true);
