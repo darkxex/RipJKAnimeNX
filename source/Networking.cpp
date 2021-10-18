@@ -127,7 +127,7 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,do
 
 namespace Net {
 	string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
-	int DebugNet = 0;//0 no debug ,  1 some debug, 2 All debug
+	int DebugNet = 1;//0 no debug ,  1 some debug, 2 All debug
 	
 	//Simplification
 	string REDIRECT(string url,string POSTFIEL){
