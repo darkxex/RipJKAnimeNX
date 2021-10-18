@@ -572,8 +572,8 @@ namespace LOG {
 		if (MLOG()){
 			//Save log File
 			cout << "END>" << endl;
-			file.open(rootdirectory+"LOG.txt", ios::app);
-			//file.open(rootdirectory+"LOG.txt", ios::out);
+			//file.open(rootdirectory+"JK.log", ios::app);
+			file.open("sdmc:/JK.log", ios::app);
 			file << redirectStream.str();
 			file.close();
 		}
