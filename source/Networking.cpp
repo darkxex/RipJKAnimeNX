@@ -143,7 +143,7 @@ namespace Net {
 	json HEAD(string url){
 		json deb = REQUEST(url,"",true,true);
 		if ( DebugNet > 0){
-			cout << std::setw(4) << deb << std::endl;
+			cout << deb << std::endl;
 		}
 		return deb;
 	}
@@ -226,7 +226,7 @@ namespace Net {
 						std::cout << std::setw(4) << data << std::endl;
 					
 					}catch(...){
-						hasError++;
+						LOG::E(10);
 						std::cout << " CODE: " << http_code << std::endl;
 						std::cout << " Redirects: " << redirects << std::endl;
 						std::cout << " EURL: " << red << std::endl;
@@ -432,7 +432,7 @@ bool CheckUpdates(bool force){
 			}
 		}
 	} catch(...) {
-		hasError++;
+		LOG::E(11);
 		led_on(2);
 		std::cout << "# Update Error catch" << std::endl;
 	}

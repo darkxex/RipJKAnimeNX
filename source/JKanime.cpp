@@ -74,6 +74,7 @@ int AnimeLoader(void* data){
 			{
 				if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/theme.romfs",rootdirectory+"theme.romfs")){
 					mount_theme("themes",true);
+					GOD.ReloadSkin=true;
 				}
 			}
 			Mgate=false;
@@ -89,9 +90,10 @@ int AnimeLoader(void* data){
 
 		steep++;//Get main page
 		json MainPage=Net::REQUEST("https://jkanime.net/");
+		//std::cout << std::setw(4) << MainPage << std::endl;
 		//Check headers ToDo
 		string content = MainPage["BODY"];
-		if (content.length() < 2){
+		if (MainPage["CODE"] == 0){
 			cout << "- Error can't connect with Web" << endl;
 			throw "Error Connect";
 		}
@@ -143,6 +145,7 @@ int AnimeLoader(void* data){
 					if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
 					if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
 				}
+				GOD.PlayEffect(GOD.proc);
 				Frames=1;
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 				BD["arrays"]["chapter"]["images"]=ChapImag;
@@ -207,7 +210,7 @@ int AnimeLoader(void* data){
 		steep++;//Load Directory
 		MkDIR();
 	} catch(...) {
-		hasError++;
+		LOG::E(2);
 		led_on(2);
 		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
 		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
@@ -406,7 +409,7 @@ int MkDIR(){
 			write_DB(BD,rootdirectory+"DataBase.json");
 		}
 	} catch(...) {
-		hasError++;
+		LOG::E(3);
 		led_on(2);
 		cout << "- Thread Chain Error Catched, Get Dir Error" <<endl;
 		return 0;
@@ -422,7 +425,7 @@ int MkDIR(){
 				write_DB(AB,rootdirectory+"AnimeBase.json");
 			}
 		} catch(...) {
-			hasError++;
+			LOG::E(4);
 			led_on(2);
 			cout << "- Thread Chain Error Catched,Dir Error" <<endl;
 			//write_DB(BD,rootdirectory+"DataBase.json");
@@ -462,7 +465,7 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 	}
 	if(cancelcurl==0) led_on(3); else led_on(0);
 	} catch(...) {
-		hasError++;
+		LOG::E(5);
 		led_on(2);
 		cout << "- Thread Download Error Catched" <<endl;
 		cout << BD["arrays"]["downloads"] << endl;
@@ -541,7 +544,7 @@ int searchjk(void* data) {//Search Thread
 		returnnow = programation_s;
 	}
 	} catch(...) {
-		hasError++;
+		LOG::E(6);
 		led_on(2);
 		cout << "- Thread Search Error Catched" <<endl;
 		cout << BD["arrays"]["search"] << endl;
@@ -573,7 +576,7 @@ int capit(void* data) {//Get chap thread
 			CheckImgNet(image,AB["AnimeBase"][name]["Image"]);
 		}
 	}catch(...) {
-		hasError++;
+		LOG::E(7);
 		led_on(2);
 		cout << "- Error "+name <<endl;
 	}
@@ -615,7 +618,7 @@ int capBuffer (string Tlink) {//anime manager
 			maxcapit = AB["AnimeBase"][name]["maxcapit"];
 			mincapit = AB["AnimeBase"][name]["mincapit"];
 			//check For latest cap seend
-			if (UD["chapter"][name].is_null()||UD["chapter"][name]["latest"].is_null()) {
+			if (!isset(UD["chapter"],name) || !isset(UD["chapter"][name],"latest")) {
 				//UD["chapter"].erase(name);
 				//get position to the latest cap if in emision
 				if (BD["com"]["enemision"] == "true") {
@@ -640,7 +643,7 @@ int capBuffer (string Tlink) {//anime manager
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 			}
 		}catch(...) {
-			hasError++;
+			LOG::E(8);
 			led_on(2);
 			cout << "- Error buff"+name << endl;
 		}
@@ -801,7 +804,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		AB["AnimeBase"][name]=AnimeINF;
 		cout << "Saved: " << name << endl;
 	} catch(...) {
-		hasError++;
+		LOG::E(9);
 		led_on(2);
 		cout << "Anime Problemático: "<< name << endl;
 		cout << strm.str() << endl;
@@ -812,7 +815,6 @@ void DataUpdate(string Link) {//Get info off chapter
 void addFavorite(string text) {
 	if(!isFavorite(text)) {
 		UD["favoritos"].push_back(text);
-		write_DB(UD,rootsave+"UserData.json");
 	}
 }
 void getFavorite() {
@@ -832,7 +834,6 @@ void getFavorite() {
 			file.close();
 			rename((rootdirectory+"favoritos.txt").c_str(), (rootdirectory+"favoritos.bak").c_str());
 			remove((rootdirectory+"favoritos.txt").c_str());
-			write_DB(UD,rootsave+"UserData.json");
 		}
 	}
 }
@@ -849,7 +850,6 @@ void delFavorite(int inst){
 	if (!UD["favoritos"].is_null()) {
 		if (GOD.Confirm("Desea Borrarlo?")){
 			UD["favoritos"].erase(inst);
-			write_DB(UD,rootsave+"UserData.json");
 		}
 	}
 }

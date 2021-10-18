@@ -24,7 +24,7 @@ bool inTimeN(u64 sec,int framesdelay = 100);
 void TickerName(int& color,int sec,int min,int max);
 void RemoveAccents(std::string& word);
 std::string string_to_hex(const std::string& in);
-bool isset(json data);
+bool isset(json& data,string key);
 void NameOfLink(std::string& word);
 std::string KeyOfLink(std::string word);
 
@@ -33,6 +33,7 @@ namespace LOG {
 	void SaveFile();
 	void Mem();
 	void Screen();
+	int E(int r);
 }
 
 typedef enum {

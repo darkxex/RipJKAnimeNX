@@ -60,6 +60,10 @@ void SDLB::intA(){
 			{
 				//Initialize renderer color
 				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				SDL_RenderClear(gRenderer);
+
+				//enable alpha blend
+				SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -80,6 +84,22 @@ void SDLB::intA(){
 				{
 					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 
+				}
+			    //Load sound effects
+				aree = Mix_LoadWAV( "romfs:/audio/are.ogg" );
+				if( aree == NULL)
+				{
+					printf( "Failed to load are.ogg sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+				}
+				proc = Mix_LoadWAV( "romfs:/audio/processing.ogg" );
+				if( proc == NULL)
+				{
+					printf( "Failed to load processing.ogg sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+				}
+				gtemp = Mix_LoadWAV( "romfs:/audio/processing.ogg" );
+				if(gtemp == NULL)
+				{
+					printf( "Failed to load processing.ogg sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
 				}
 			}
 		}
@@ -102,42 +122,78 @@ void SDLB::intA(){
 	digi_11 = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
 
 }
-void SDLB::SwapMusic(bool swap){
-	if(!swap){
-		if (gMusic == NULL)
-		{
-			printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
-			return;
-		} else {
-			//get Music State
-			if(!isFileExist(rootdirectory+"play")){
-				return;
-			}
+bool SDLB::JKMainLoop(){
+	try{
+		//Main Pool events
+		if (PlayF){
+			if (gtemp == NULL)
+				cout << "Play-Effect is null" << endl;
+			else
+				Mix_PlayChannel(-1, gtemp, 0);
+			PlayF=false;
 		}
+
+		if (ReloadSkin){loadSkin();ReloadSkin=false;}
+
+		//Update screen
+		SDL_RenderPresent(gRenderer);
+		GOD.FrameState++;
+	}catch(...){
+		LOG::E(12);
+		led_on(2);
+		cout << "- Error Catched Main Pool" << endl;		
+	}
+	//if get false once then collapse
+	static bool killer = true;
+	if (killer){
+		killer=!quit && appletMainLoop();
+	}
+	return killer;
+}
+bool SDLB::PlayEffect(Mix_Chunk* efect){
+	try{
+	memcpy(gtemp, efect, sizeof(Mix_Chunk));
+	PlayF = true;
+
+	return true;
+	}catch(...){
+		LOG::E(13);
+		led_on(2);
+		cout << "- Error Play Effect" << endl;		
+	}
+	return false;
+}
+
+void SDLB::SwapMusic(bool swap){
+	if (gMusic == NULL)
+	{
+		printf("Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError());
+		return;
 	}
 
 	if (Mix_PlayingMusic() == 0)
 	{
 		//Play the music
 		Mix_PlayMusic(gMusic, -1);
-		touch(rootdirectory+"play");
+		UD["Themes"]["play"]=1;
 	}
 	//If music is being played
 	else if (swap)
 	{
+	PlayEffect(aree);
 		//If the music is paused
 		if (Mix_PausedMusic() == 1)
 		{
 			//Resume the music
 			Mix_ResumeMusic();
-			touch(rootdirectory+"play");
+			UD["Themes"]["play"]=1;
 		}
 		//If the music is playing
 		else
 		{
 			//Pause the music
 			Mix_PauseMusic();
-			remove((rootdirectory+"play").c_str());
+			UD["Themes"]["play"]=0;
 		}
 	}
 }
@@ -165,6 +221,11 @@ void SDLB::loadSkin(string img){
 	if (UD["Themes"]["use"].is_null()){
 		UD["Themes"]["use"]=defcord;
 	}
+	//get Music State
+	if(UD["Themes"]["play"].is_null()){
+		UD["Themes"]["play"]=0;
+	}
+
 	SkinMaster = UD["Themes"]["use"];
 	UD["Themes"]["name"] = NameOfTheme(SkinMaster);
 	cout << std::setw(4) << UD["Themes"] << std::endl;
@@ -175,16 +236,17 @@ void SDLB::loadSkin(string img){
 	Heart.free();
 	Heart.loadFromFile(theme("/heart.png"));
 	
+	
 	//Load music
 	Mix_FreeMusic(gMusic);
 	gMusic = Mix_LoadMUS(theme("/wada.ogg").c_str());
-
-	SwapMusic(false);
+	if(UD["Themes"]["play"] == 1){
+		SwapMusic(false);	
+	}
 }
 void SDLB::setSkin(string path){
 	UD["Themes"]["use"] = path;
-	write_DB(UD,rootsave+"UserData.json");
-	loadSkin();
+	ReloadSkin=true;
 }
 void SDLB::selectskin(string val) {
 	static int them = 0;
@@ -205,19 +267,6 @@ void SDLB::selectskin(string val) {
 	int allp = temas.size()-1;
 	them++;
 	if (them > allp) them=0;
-}
-bool SDLB::JKMainLoop(){
-	//enable alpha blend
-	SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
-	//Update screen
-	SDL_RenderPresent(gRenderer);
-	
-	//if get false once then collapse
-	static bool killer = true;
-	if (killer){
-		killer=!quit && appletMainLoop();
-	}
-	return killer;
 }
 //draw one quadrant arc, and mirror the other 4 quadrants
 void sdl_ellipse(SDL_Renderer* r, int x0, int y0, int radiusX, int radiusY) {
@@ -917,6 +966,8 @@ void SDLB::deint(){
 	//Free the music
 	Mix_FreeMusic(gMusic);
 	gMusic = NULL;
+	aree = NULL;
+	proc = NULL;
 	Mix_Quit();
 	//Quit SDL subsystems
 	TTF_Quit();
@@ -933,7 +984,6 @@ LTexture::LTexture(){
 	mHeight = 0;
 	mX = 0;
 	mY = 0;
-	SelIns = -1;
 	mark=true;
 }
 LTexture::~LTexture(){
@@ -1147,7 +1197,6 @@ void LTexture::free(){
 		mY = 0;
 		offW = 0;
 		offH = 0;
-		SelIns = -1;
 	}
 }
 void LTexture::setColor(Uint8 red, Uint8 green, Uint8 blue){
@@ -1192,7 +1241,7 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 	//Render to screen
 	SDL_RenderCopyEx(GOD.gRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 	//tactil stuff
-	mX = x; mY = y;  SelIns = GOD.GenState;
+	mX = x; mY = y;  SelIns = GOD.FrameState; Selstate = GOD.GenState;
 }
 int LTexture::render_T(int x, int y, std::string text, bool presed){
 	int TMPW = 0;
@@ -1225,13 +1274,14 @@ int LTexture::render_T(int x, int y, std::string text, bool presed){
 		SDL_FreeSurface(textSurface);
 	}
 	//tactil stuff
-	mX = x; mY = y;  SelIns = GOD.GenState;
+	mX = x; mY = y;  SelIns = GOD.FrameState; Selstate = GOD.GenState;
 	return mWidth + TMPW;
 }
 bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 	//tactil stuff
 	mX = x; mY = y;
-	SelIns = GOD.GenState;
+	SelIns = GOD.FrameState;
+	Selstate = GOD.GenState;
 	int sizeH = 0;
 	int HP = h < 0 ? h * -1 : h;
 	if(type) {
@@ -1306,16 +1356,21 @@ void LTexture::render_VOX(SDL_Rect Form,int R, int G, int B, int A){
 	SDL_RenderFillRect(GOD.gRenderer, &Form);
 	//tactil stuff
 	mX = Form.x; mY = Form.y; mWidth = Form.w; mHeight = Form.h;
-	SelIns = GOD.GenState;
+	SelIns = GOD.FrameState;
+	Selstate = GOD.GenState;
 }
 bool LTexture::SP(){
 	//return on negative touch
 	if (GOD.TouchX < 0||GOD.TouchY < 0||getWidth() < 0||getHeight() < 0) return false;
-	if (SelIns != GOD.GenState) return false;
+	
+	//printf("State %d : %d \n",Selstate,GOD.GenState);
+//	if (SelIns == GOD.FrameState-1) return false;
+	if (Selstate != GOD.GenState) return false;
 	if (!mark) return false;
 
 	//check if touched
 	if(GOD.TouchX > mX-3 && GOD.TouchX < mX + getWidth() +3 && GOD.TouchY > mY-3 && GOD.TouchY < mY + getHeight() +3) {
+	printf("Frame %d : %d \n",SelIns,GOD.FrameState-1);
 		//printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
 		return true;
 	}
@@ -1323,11 +1378,16 @@ bool LTexture::SP(){
 }
 //is press relesed
 bool LTexture::SPr(){
-	if (SP()) {
-		if (!isRe) isRe = true;
-	} else if (isRe) {
-		isRe=false;
-		if (!GOD.fingerdown) return true;
+	//return on negative touch
+	if (Selstate != GOD.GenState) return false;
+	if (!mark) return false;
+	//check if touched
+	if(GOD.TouchXU > mX-3 && GOD.TouchXU < mX + getWidth() +3 && GOD.TouchYU > mY-3 && GOD.TouchYU < mY + getHeight() +3) {
+		printf("FrameUP %d : %d \n",SelIns,GOD.FrameState-1);
+		GOD.TouchXU=-1;
+		GOD.TouchYU=-1;
+		//printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
+		return true;
 	}
 	return false;
 }

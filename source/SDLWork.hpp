@@ -80,6 +80,7 @@ int offboom=0;
 int offboom_min=0, offboom_size=11;
 //W H overwrite
 int offW=0, offH=0;
+int SelIns=-1, Selstate=-1;
 private:
 //The actual hardware texture
 SDL_Texture* mTexture;
@@ -87,7 +88,7 @@ SDL_Texture* mTexture;
 bool isRe = false;
 
 //Image dimensions
-int mWidth, mHeight, mX, mY, SelIns;
+int mWidth, mHeight, mX, mY;
 };
 
 
@@ -112,7 +113,9 @@ TTF_Font* digi_9 = NULL;
 TTF_Font* digi_11 = NULL;
 TTF_Font* digi_16 = NULL;
 Mix_Music* gMusic = NULL;
-
+Mix_Chunk *aree = NULL;
+Mix_Chunk *proc = NULL;
+Mix_Chunk *gtemp = NULL;
 //list vars
 int outof=0;
 int HR=200,HG=200,HB=200;
@@ -127,15 +130,21 @@ bool fingermotion_LEFT = false;
 bool fingermotion_RIGHT = false;
 int TouchX=-1;
 int TouchY=-1;
+int TouchXU=-1;
+int TouchYU=-1;
 int GenState=-1;
+int FrameState=0;
 int MasKey=-1;
 std::string WorKey="00";
 //Skin manager
+bool ReloadSkin=false;
 void loadSkin(string img="");
 void setSkin(string path="");
 void selectskin(string val="");
 //Main 
 bool JKMainLoop();
+bool PlayF=false;
+bool PlayEffect(Mix_Chunk* efect);
 bool Confirm(std::string text,bool okonly = false,int type=1);
 void PleaseWait(std::string text,bool render = true);
 void Image(std::string path,int X, int Y,int W, int H,int key);

@@ -255,7 +255,7 @@ bool write_DB(json base,std::string path){
 		if (type == "save") fsdevCommitDevice("save");
 		if (type == "user") fsdevCommitDevice("user");
 	} catch(...) {
-		hasError++;
+		LOG::E(14);
 		led_on(2);
 		std::cout << "Json: write Error... "<< path << std::endl; 
 		return false;
@@ -513,12 +513,7 @@ std::string string_to_hex(const std::string& in) {
     }
     return ss.str(); 
 }
-bool isset(json data){
-	if (data.is_null()) {
-		return false;
-	}
-	return true;
-}
+
 void NameOfLink(std::string& word){
 	replace(word, "https://jkanime.net/", "");
 	word = word.substr(0, word.length() - 1);
@@ -543,12 +538,29 @@ void map_erase_if(Map& m, F pred){
 	     m.erase(i++));
 }
 
+bool isset(json& data,string key){
+	if (data[key].is_null()) {
+		data.erase(key);
+		return false;
+	}
+	return true;
+}
+
 namespace LOG {
 	streambuf* stream_buffer_cout;
 	streambuf* stream_buffer_cin;
 	std::stringstream redirectStream;
 	fstream file;
 	
+	int E(int r){
+		GOD.PlayEffect(GOD.aree);
+		int result = 1;
+		for(int i=1; i < r;i++){
+			result = result*10;
+		}
+		hasError+=result;
+		return result;
+	}
 	bool MLOG(){
 //		return true;
 //		return (DInfo()["TID"] == "05B80C7D3B860000");
@@ -563,7 +575,7 @@ namespace LOG {
 			
 			Mem();
 			cout << "HEAD>" << endl;
-			cout << std::setw(4) << DInfo() << std::endl;
+			cout << DInfo() << std::endl;
 		}
 	}
 

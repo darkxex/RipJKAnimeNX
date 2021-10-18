@@ -45,15 +45,14 @@ int main(int argc, char **argv)
 	read_DB(BD,rootdirectory+"DataBase.json");
 	
 	BD["com"] = "{}"_json;
-	if(!BD["USER"].is_null()) {
-		UD=BD["USER"];
-	}
-	BD.erase("USER");
-	if(!BD["DataBase"].is_null()) {
+	if (isset(BD,"DataBase")){
 		BD.erase("DataBase");
 	}
-	
-	read_DB(UD,rootsave+"UserData.json");
+	if (isset(BD,"USER")){
+		UD = BD["USER"];
+		BD.erase("USER");
+	}
+	read_DB(UD,rootsave+"UserData.json");	
 
 	GOD.intA();//init the SDL
 
@@ -95,8 +94,6 @@ int main(int argc, char **argv)
 
 		if (isSXOS){
 			GOD.GenState = statenow;
-			SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-			SDL_RenderClear(GOD.gRenderer);
 			GOD.JKMainLoop();
 			Farest.render((0), (0));
 			GOD.Confirm("Esta App No funciona Correctamente En SXOS",true,3);
@@ -131,7 +128,7 @@ int main(int argc, char **argv)
 				case SDL_FINGERDOWN:
 					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
 					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-					if (!GOD.fingerdown) {GOD.fingerdown = true;}
+					if (!GOD.fingerdown) {GOD.fingerdown = true; printf("F Down\n");}
 					break;
 				case SDL_FINGERMOTION:
 					if(e.tfinger.dy * SCREEN_HEIGHT > 30 || e.tfinger.dy * SCREEN_HEIGHT < -30 || e.tfinger.dx * SCREEN_WIDTH > 30 || e.tfinger.dx * SCREEN_WIDTH < -30) {
@@ -175,16 +172,24 @@ int main(int argc, char **argv)
 							lcdoff=false;
 							appletSetLcdBacklightOffEnabled(lcdoff);
 						} else{
+							printf("F UP\n");
+
+
 							GOD.fingerdown = false;
+							if(GOD.fingermotion){
+								GOD.TouchXU=-1;
+								GOD.TouchYU=-1;
+							} else {
+								GOD.TouchXU = e.tfinger.x * SCREEN_WIDTH;
+								GOD.TouchYU = e.tfinger.y * SCREEN_HEIGHT;
+							}
 							GOD.fingermotion=false;
-							GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
-							GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
 							e.jbutton.button=-1;
-							if (BUSB.SP()) {callsearch();}
-							else if (FAVB.SP()) {callfavs();}
-							else if (AFLV.SP()) {callAflv();}
-							else if (HISB.SP()) {callhistory();}
-							else if (NFAV.SP() && !gFAV) {
+							if (BUSB.SPr()) {callsearch();}
+							else if (FAVB.SPr()) {callfavs();}
+							else if (AFLV.SPr()) {callAflv();}
+							else if (HISB.SPr()) {callhistory();}
+							else if (NFAV.SPr() && !gFAV) {
 								GOD.WorKey="0"; GOD.MasKey=-1;
 								{//AGREGAR A FAVORITOS
 									addFavorite(BD["com"]["ActualLink"]);
@@ -201,42 +206,41 @@ int main(int argc, char **argv)
 								}
 								GOD.WorKey="0"; GOD.MasKey=-1;
 							}
-							else if (GOD.MapT["EXIT"].SP()) e.jbutton.button = BT_P;
-							else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
+							else if (GOD.MapT["EXIT"].SPr()) e.jbutton.button = BT_P;
+							else if (GOD.MapT["MUSIC"].SPr()) e.jbutton.button = BT_M;
 							
-							else if (USER.SP()) {PlayerGet(acc);}
-							else if (B_A.SP()) {e.jbutton.button = BT_A; B_A.TickerBomb();}
-							else if (T_T.SP() ) e.jbutton.button = BT_A;
-							else if (B_B.SP()) e.jbutton.button = BT_B;
-							else if (BACK.SP()) e.jbutton.button = BT_B;
-							else if (B_X.SP()) e.jbutton.button = BT_X;
-							else if (B_Y.SP()) e.jbutton.button = BT_Y;
-							else if (B_L.SP()) e.jbutton.button = BT_L;
-							else if (B_R.SP()) e.jbutton.button = BT_R;
-							else if (B_ZR.SP()) e.jbutton.button = BT_ZR;
-							else if (B_ZL.SP()) e.jbutton.button = BT_ZL;
-							else if (B_P.SP()) e.jbutton.button = BT_P;
-							else if (B_M.SP()) e.jbutton.button = BT_M;
-							else if (B_LEFT.SP()) e.jbutton.button = BT_LEFT;
-							else if (B_RIGHT.SP()) e.jbutton.button = BT_RIGHT;
-							else if (B_UP.SP()) e.jbutton.button = BT_UP;
-							else if (B_DOWN.SP()) e.jbutton.button = BT_DOWN;
-							else if (T_D.SP()&&isDownloading) statenow = download_s;
-							else if (SCREEN.SP()) e.jbutton.button = BT_ZR;
-							else if (CLEAR.SP()) {
-								preview = false;
-								quit = true;
-								cancelcurl = 1;
-								GOD.PleaseWait("Borrando cache");
-								read_DB(AB,"romfs:/AnimeBase.json");
-								BD="{}"_json;
-								mount_theme("themes",false);
-								remove((rootdirectory+"theme.romfs").c_str());
-								remove((rootdirectory+"update.nsp.json").c_str());
-								remove((rootdirectory+"update.nsp").c_str());
-								remove((rootdirectory+"LOG.txt").c_str());
-								fsdevDeleteDirectoryRecursively((rootdirectory+"DATA").c_str());
-								statenow=99;
+							else if (USER.SPr()) {PlayerGet(acc);}
+							else if (B_A.SPr()) {e.jbutton.button = BT_A; B_A.TickerBomb();}
+							else if (T_T.SPr() ) e.jbutton.button = BT_A;
+							else if (B_B.SPr()) e.jbutton.button = BT_B;
+							else if (BACK.SPr()) e.jbutton.button = BT_B;
+							else if (B_X.SPr()) e.jbutton.button = BT_X;
+							else if (B_Y.SPr()) e.jbutton.button = BT_Y;
+							else if (B_L.SPr()) e.jbutton.button = BT_L;
+							else if (B_R.SPr()) e.jbutton.button = BT_R;
+							else if (B_ZR.SPr()) e.jbutton.button = BT_ZR;
+							else if (B_ZL.SPr()) e.jbutton.button = BT_ZL;
+							else if (B_P.SPr()) e.jbutton.button = BT_P;
+							else if (B_M.SPr()) e.jbutton.button = BT_M;
+							else if (B_LEFT.SPr()) e.jbutton.button = BT_LEFT;
+							else if (B_RIGHT.SPr()) e.jbutton.button = BT_RIGHT;
+							else if (B_UP.SPr()) e.jbutton.button = BT_UP;
+							else if (B_DOWN.SPr()) e.jbutton.button = BT_DOWN;
+							else if (T_D.SPr()&&isDownloading) statenow = download_s;
+							else if (SCREEN.SPr()) e.jbutton.button = BT_ZR;
+							else if (CLEAR.SPr()) {
+								if (GOD.Confirm("Desea Borrar todos los datos que usa esta App, excepto los datos por usuario")){
+									preview = false;
+									quit = true;
+									cancelcurl = 1;
+									GOD.PleaseWait("Borrando cache");
+									read_DB(AB,"romfs:/AnimeBase.json");
+									BD="{}"_json;
+									mount_theme("themes",false);
+									fsdevDeleteDirectoryRecursively((rootdirectory).c_str());
+									statenow=99;
+								}
+
 								break;
 							}
 							SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
@@ -368,7 +372,6 @@ int main(int argc, char **argv)
 										} else {
 											UD["history"].push_back(tempurl);
 										}
-										write_DB(UD,rootsave+"UserData.json");
 									}
 								} else {
 									if (isConnected) serverpront = true;
@@ -386,7 +389,7 @@ int main(int argc, char **argv)
 						}
 						if (e.jbutton.button == BT_L) {// (L) button down
 							if (statenow == chapter_s) {
-								if(!AB["AnimeBase"][KeyName]["Precuela"].is_null()) {
+								if (isset(AB["AnimeBase"][KeyName],"Precuela")) {
 									if (!serverpront) {
 										capBuffer(AB["AnimeBase"][KeyName]["Precuela"]);
 										gFAV = isFavorite(BD["com"]["ActualLink"]);
@@ -590,7 +593,7 @@ int main(int argc, char **argv)
 							switch (statenow)
 							{
 							case chapter_s:
-								if(!AB["AnimeBase"][KeyName]["Secuela"].is_null()&&!serverpront) {
+								if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
 									if (!serverpront) {
 										capBuffer(AB["AnimeBase"][KeyName]["Secuela"]);
 										gFAV = isFavorite(BD["com"]["ActualLink"]);
@@ -938,15 +941,15 @@ int main(int argc, char **argv)
 					NFAV.render_T(1225, 70,"");
 					B_Y.render_T(dist, 680,"Favorito"); dist -= posdist;
 				}
-
-				if(!AB["AnimeBase"][KeyName]["Secuela"].is_null()) {
+				
+				if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
 					if(!serverpront) {CheckImgNet(imagelocal); B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
 					GOD.Cover(imagelocal,160,456,"Secuela",120,BT_R);
 				}
-				if(!AB["AnimeBase"][KeyName]["Precuela"].is_null()) {
+				if (isset(AB["AnimeBase"][KeyName],"Precuela")) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
@@ -1126,12 +1129,12 @@ int main(int argc, char **argv)
 							VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
 							B_RIGHT.render_T(XF+5, YF+HF-40,"Ver Ahora");
 							
-							if (!UD["Themes"]["name"].is_null()){
+							
+							if (isset(UD["Themes"],"name")){
 								//Thema temporal
 								static int WT = 190;
 								VOX.render_VOX({XF, YF+HF+10, WT+15, 45}, 255, 255, 255, 185);
 								WT = B_ZL.render_T(XF+5, YF+HF+15,"Tema: "+UD["Themes"]["name"].get<string>());
-								
 							}						
 						}
 
@@ -1535,7 +1538,7 @@ int main(int argc, char **argv)
 			}
 		}
 	} catch(...) {
-		hasError++;
+		LOG::E(1);
 		led_on(2);
 		cout << "- Error Catched Main" << endl;
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
@@ -1554,7 +1557,7 @@ int main(int argc, char **argv)
 	// write prettified JSON
 	write_DB(BD,rootdirectory+"DataBase.json");
 	write_DB(AB,rootdirectory+"AnimeBase.json");
-//	write_DB(UD,rootsave+"UserData.json");
+	write_DB(UD,rootsave+"UserData.json");
 
 	if (NULL == capithread) {printf("capithread Not in use\n");} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
 	if (NULL == downloadthread) {printf("downloadthread Not in use\n");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
@@ -1596,7 +1599,7 @@ int main(int argc, char **argv)
 	GOD.deint();
 	//LOG Save
 	if (hasError > 0){
-		cout << "Errors: " << hasError << endl;
+		cout << "ErrorSession: " << hasError << endl;
 	}
 	LOG::SaveFile();
 	
