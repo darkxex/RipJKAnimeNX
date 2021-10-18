@@ -199,6 +199,8 @@ void LoadImages(){
 }
 void PlayerGet(FsFileSystem& acc){
 	if (user::SelectUser()) {
+		//if select a new user save old user data
+		write_DB(UD,rootsave+"UserData.json");
 		user::MountUserSave(acc);
 		USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 		UD = "{}"_json;
@@ -223,7 +225,7 @@ void callsearch(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	if (!reloadingsearch)
 	{
-		if (BD["searchtext"].is_null()) {BD["searchtext"]="";}
+		if (!isset(BD,"searchtext")) {BD["searchtext"]="";}
 		BD["searchtext"] = KeyboardCall("Buscar el Anime",BD["searchtext"]);
 		if ((BD["searchtext"].get<std::string>()).length() > 0) {
 			searchchapter = 0;

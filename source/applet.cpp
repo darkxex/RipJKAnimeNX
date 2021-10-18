@@ -172,6 +172,11 @@ bool initUser(){
 			cout <<"U:3" <<std::endl;
 			accountGetLastOpenedUser (&uid);
 		}
+		
+		if(!accountUidIsValid(&uid)) {
+			cout <<"U:4" <<std::endl;
+			accountGetLastOpenedUser (&uid);
+		}
 
 		cout <<"User Init OK" <<std::endl;
 		return GetUserID();
