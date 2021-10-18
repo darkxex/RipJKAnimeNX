@@ -11,12 +11,14 @@ bool ReloadDNS();
 bool IsRunning(string servname);
 Result txStealthMode(uint64_t enable);
 bool mount_theme(string in,bool mount=false);
-bool GetAppletMode();
-AccountUid LaunchPlayerSelect();
-bool SelectUser();
+namespace user {
+bool initUser();
 bool GetUserID();
+bool SelectUser();
 bool MountUserSave(FsFileSystem& acc);
 bool GetUserImage();
+}
+bool GetAppletMode();
 json DInfo(string ver="");
 bool ChainManager(bool Chain,bool AndChaing);
 std::string KeyboardCall (std::string hint="", std::string text="");

@@ -108,6 +108,7 @@ std::string u64toHex(u64 Number){
 
 //Get ncap Title Info
 NacpStruct TitleIDinfo(u64 tid){
+	nsInitialize();
 	NacpStruct nacp;
     uint64_t outSize = 0;
     NsApplicationControlData *ctrlData = new NsApplicationControlData;
@@ -131,15 +132,86 @@ NacpStruct TitleIDinfo(u64 tid){
 	return nacp;
 }
 
+
+
+
+namespace user {
+bool initUser(){
+	Result rc = 0;
+	hidInitialize();
+	setsysInitialize();
+	setInitialize();
+
+	rc =  accountInitialize(AccountServiceType_Administrator);
+	if (R_SUCCEEDED(rc)) {
+		accountGetPreselectedUser(&uid);
+		if(!accountUidIsValid(&uid)) {
+			cout <<"U:2" <<std::endl;
+			accountTrySelectUserWithoutInteraction (&uid, false);
+		}
+		
+		if(!accountUidIsValid(&uid)) {
+			cout <<"U:3" <<std::endl;
+			accountGetLastOpenedUser (&uid);
+		}
+
+		cout <<"User Init OK" <<std::endl;
+		return GetUserID();
+	} else {
+		cout << "Failied to init User" <<std::endl;
+		return false;
+	}
+}
+bool GetUserID(){
+	if(accountUidIsValid(&uid))
+	{
+		AccountID=FormatHex128(uid);
+		cout << "Gotted user uid:"<< AccountID.c_str() <<std::endl;
+		return true;
+	}
+	cout << "Failied to get user ID" <<std::endl;
+	return false;
+}
+bool SelectUser(){
+	AccountUid s_uids;
+	s32 max_uids=10,actual_total;
+	accountListAllUsers(&s_uids,max_uids,&actual_total);
+	//std::cout << "# accountListAllUsers: " << actual_total << std::endl;
+	AccountUid user = {};
+	if(actual_total > 1) {
+		LibAppletArgs args;
+		libappletArgsCreate(&args, 0x10000);
+		u8 st_in[0xA0] = {0};
+		u8 st_out[0x18] = {0};
+		size_t repsz;
+		auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
+		if(R_SUCCEEDED(res))
+		{
+			u64 lres = *(u64*)st_out;
+			AccountUid *uid_ptr = (AccountUid*)&st_out[8];
+			if(lres == 0) memcpy(&user, uid_ptr, sizeof(user));
+		}
+	}
+	
+	if(accountUidIsValid(&user))
+	{
+		if (FormatHex128(user) == FormatHex128(uid)){
+			return false;
+		}
+
+		uid=user;
+		return GetUserID();
+	}
+	return false;
+}
+bool createSaveData(uint64_t _tid, AccountUid _userID) {
 //createSaveData For the actual user
-void createSaveData(uint64_t _tid, AccountUid _userID) {
 	FsFileSystem abc;
 	if(R_SUCCEEDED(fsOpen_SaveData (&abc,0x05B9DB505ABBE000,_userID))) {
 		//cout << "Save Exist" << endl;
 		fsFsClose(&abc);
-		return;
+		return true;
 	}
-	nsInitialize();
 
 	NacpStruct nacp;
 	nacp = TitleIDinfo(_tid);
@@ -174,53 +246,12 @@ void createSaveData(uint64_t _tid, AccountUid _userID) {
 	meta.type = FsSaveDataMetaType_Thumbnail;
 
     Result res = 0;
-    if(R_SUCCEEDED(res = fsCreateSaveDataFileSystem(&attr, &svCreate, &meta)))
-    {
+    if(R_SUCCEEDED(res = fsCreateSaveDataFileSystem(&attr, &svCreate, &meta))) {
 		cout << "Save Created" << endl;
-    }
-    else
-    {
+		return true;
+    } else {
 		cout << "Save Fail" << endl;
     }
-}
-
-bool initUser(){
-	Result rc = 0;
-	hidInitialize();
-	setsysInitialize();
-	setInitialize();
-
-	rc =  accountInitialize(AccountServiceType_Administrator);
-	if (R_SUCCEEDED(rc)) {
-		accountGetPreselectedUser(&uid);
-		cout <<"User Init OK" <<std::endl;
-		return GetUserID();
-	} else {
-		cout << "Failied to init User" <<std::endl;
-		return false;
-	}
-}
-bool SelectUser(){
-	AccountUid user = LaunchPlayerSelect();
-	if(accountUidIsValid(&user))
-	{
-		if (FormatHex128(user) == FormatHex128(uid)){
-			return false;
-		}
-
-		uid=user;
-		return GetUserID();
-	}
-	return false;
-}
-bool GetUserID(){
-	if(accountUidIsValid(&uid))
-	{
-		AccountID=FormatHex128(uid);
-		cout << "Gotted user uid:"<< AccountID.c_str() <<std::endl;
-		return true;
-	}
-	cout << "Failied to get user ID" <<std::endl;
 	return false;
 }
 bool MountUserSave(FsFileSystem& acc){
@@ -264,7 +295,7 @@ bool GetUserImage(){
 				if(f)
 				{
 					fwrite(icon, 1, iconsize, f);
-					cout << "Saved user image: "+rootsave+"User.jpg" <<std::endl;
+					//cout << "Saved user image: "+rootsave+"User.jpg" <<std::endl;
 					fclose(f);
 				} else {
 					cout << "Failied to open output file image" <<std::endl;
@@ -280,6 +311,8 @@ bool GetUserImage(){
 	cout << "Failied user image" <<std::endl;
 	return false;
 }
+}
+
 bool GetAppletMode(){
 	//nxlinkStdio();
 	isSXOS=IsRunning("tx");
@@ -289,35 +322,13 @@ bool GetAppletMode(){
 	{
 		return true;
 	}
-	initUser();
 	//if (DInfo()["TID"] == "05B9DB505ABBE000")
 	{
 		__nx_applet_exit_mode = 1;
 	}
 	return false;
 }
-AccountUid LaunchPlayerSelect() {
-	AccountUid uids;
-	s32 max_uids=10,actual_total;
-	accountListAllUsers(&uids,max_uids,&actual_total);
-	//std::cout << "# accountListAllUsers: " << actual_total << std::endl;
-	AccountUid out_id = {};
-	if(actual_total > 1) {
-		LibAppletArgs args;
-		libappletArgsCreate(&args, 0x10000);
-		u8 st_in[0xA0] = {0};
-		u8 st_out[0x18] = {0};
-		size_t repsz;
-		auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
-		if(R_SUCCEEDED(res))
-		{
-			u64 lres = *(u64*)st_out;
-			AccountUid *uid_ptr = (AccountUid*)&st_out[8];
-			if(lres == 0) memcpy(&out_id, uid_ptr, sizeof(out_id));
-		}
-	}
-	return out_id;
-}
+
 
 json DInfo(string ver){
 	static json info;
@@ -548,14 +559,13 @@ Result WebBrowserCall(std::string url,bool nag){
 	WebExitReason exitReason = (WebExitReason)0;
 	// Create the config. There's a number of web*Create() funcs, see libnx web.h.
 	// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
-	rc = webPageCreate(&config, url.c_str());
+	rc = webNewsCreate(&config, url.c_str());
 	printf("webPageCreate(): 0x%x\n", rc);
-	if (R_SUCCEEDED(rc)) {
-		if (nag) {
-			printf("Try to save logins\n");//
-			//mount user data to save logins and that stuff
-			webConfigSetUid(&config,uid);
-		}
+	if (R_SUCCEEDED(rc)) {			
+		//mount user data to save logins and that stuff
+		printf("Try to save logins\n");//
+		webConfigSetUid(&config,uid);
+		
 		printf("SetMainConfigs\n");
 		webConfigSetJsExtension (&config, true);
 		webConfigSetScreenShot (&config, true);
@@ -566,11 +576,13 @@ Result WebBrowserCall(std::string url,bool nag){
 		webConfigSetMediaPlayerSpeedControl (&config, true);
 		webConfigSetMediaAutoPlay (&config, true);
 		//webConfigSetTransferMemory (&config, true);
+		
+		//Player section
 		if (!nag) {
 			bool Direct=false;
 			printf("SetCapConfigs\n");
 			//webConfigSetDisplayUrlKind (&config, false);
-			//webConfigSetPlayReport(&config, false);
+			webConfigSetPlayReport(&config, false);
 			//webConfigSetFooter(&config, false);
 			
 			//Ignore for direct play

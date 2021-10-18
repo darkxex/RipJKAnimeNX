@@ -201,8 +201,8 @@ void LoadImages(){
 	isLoaded=true;
 }
 void PlayerGet(FsFileSystem& acc){
-	if (SelectUser()) {
-		if (MountUserSave(acc)) {
+	if (user::SelectUser()) {
+		if (user::MountUserSave(acc)) {
 			rootsave = "save:/";
 			if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
 				if(!isFileExist(rootsave+"UserData.json")) {

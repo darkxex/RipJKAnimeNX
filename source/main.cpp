@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 
 	//LOG Init
 	LOG::init();
-	
+	user::initUser();
 	AppletMode=GetAppletMode();
 	ChainManager(true,true);
 	isConnected=Net::HasConnection();
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	
 	//Mount Save Data
 	FsFileSystem acc;
-	if (MountUserSave(acc) & !AppletMode) {
+	if (user::MountUserSave(acc) & !AppletMode) {
 		if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
 			if(!isFileExist(rootsave+"UserData.json")) {
 				if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
@@ -122,7 +122,8 @@ int main(int argc, char **argv)
 		//Set main Thread get images and descriptions
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 		//Handle forced exit
-		if (!AppletMode) appletLockExit();
+		//if (!AppletMode)
+			appletLockExit();
 		
 		
 		//While application is running
@@ -1577,9 +1578,6 @@ int main(int argc, char **argv)
 	if (NULL == downloadthread) {printf("downloadthread Not in use\n");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
 	if (NULL == searchthread) {printf("searchthread Not in use\n");} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
 	if (NULL == Loaderthread) {printf("Loaderthread Not in use\n");}else {printf("Loaderthread in use: %s\n", SDL_GetError()); SDL_WaitThread(Loaderthread, NULL);}
-	if (AppletMode) {
-		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
-	}
 
 
 
@@ -1617,8 +1615,8 @@ int main(int argc, char **argv)
 	//LOG Save
 	if (hasError > 0){
 		cout << "Errors: " << hasError << endl;
-		LOG::SaveFile();
 	}
+	LOG::SaveFile();
 	
 	accountExit();
 	hidsysExit();
@@ -1640,6 +1638,9 @@ int main(int argc, char **argv)
 
 	accountExit();
 	appletUnlockExit ();
+	if (AppletMode) {
+		appletRequestLaunchApplication (0x05B9DB505ABBE000, NULL);
+	}
 	//if (!isConnected) appletRequestToSleep();
 	return 0;
 }
