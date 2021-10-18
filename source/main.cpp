@@ -29,25 +29,7 @@ int main(int argc, char **argv)
 	
 	//Mount Save Data
 	FsFileSystem acc;
-	if (user::MountUserSave(acc) & !AppletMode) {
-		if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
-			if(!isFileExist(rootsave+"UserData.json")) {
-				if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
-					fsdevCommitDevice("save");
-					remove((rootdirectory+AccountID+"UserData.json").c_str());
-					remove((rootdirectory+AccountID+"User.jpg").c_str());
-				}
-			}
-		}
-		if(isFileExist(rootdirectory+"UserData.json")) {
-			if(!isFileExist(rootsave+"UserData.json")) {
-				if (copy_me(rootdirectory+"UserData.json", rootsave+"UserData.json")) {
-					fsdevCommitDevice("save");
-					remove((rootdirectory+"UserData.json").c_str());
-				}
-			}
-		}
-	}
+	user::MountUserSave(acc);
 
 	struct stat st = { 0 };
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {

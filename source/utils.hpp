@@ -61,9 +61,6 @@ typedef enum {
 } SDL_Keys;
 
 //extern to all
-extern AccountUid uid;
-extern std::string AccountID;
-
 extern std::string rootdirectory;
 extern std::string rootsave;
 extern std::string roottheme;

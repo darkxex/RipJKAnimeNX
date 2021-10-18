@@ -115,9 +115,6 @@ bool isSXOS=false;
 bool hasStealth=false;
 int hasError=0;
 bool ongrid=true;
-AccountUid uid;
-std::string AccountID="-.-";
-
 //
 bool isLoaded=false;
 
@@ -202,18 +199,7 @@ void LoadImages(){
 }
 void PlayerGet(FsFileSystem& acc){
 	if (user::SelectUser()) {
-		if (user::MountUserSave(acc)) {
-			rootsave = "save:/";
-			if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
-				if(!isFileExist(rootsave+"UserData.json")) {
-					if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
-						fsdevCommitDevice("save");
-						remove((rootdirectory+AccountID+"UserData.json").c_str());
-						remove((rootdirectory+AccountID+"User.jpg").c_str());
-					}
-				}
-			}
-		}
+		user::MountUserSave(acc);
 		USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 		UD = "{}"_json;
 		read_DB(UD,rootsave+"UserData.json");
