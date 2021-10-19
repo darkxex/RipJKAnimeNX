@@ -32,7 +32,7 @@
 #include "Link.hpp"
 
 //use the nand of the switch
-string rootdirectory = "user:/RipJKAnime_NX/";
+string rootdirectory = "emmc:/RipJKAnime_NX/";
 string rootsave = "save:/";
 string roottheme = "themes:/";
 string oldroot = "sdmc:/switch/RipJKAnimeNX/";
@@ -197,11 +197,11 @@ void LoadImages(){
 	AFLV.loadFromFileCustom("romfs:/img/AF.png",55, 55);
 	isLoaded=true;
 }
-void PlayerGet(FsFileSystem& acc){
+void PlayerGet(){
 	if (user::SelectUser()) {
 		//if select a new user save old user data
 		write_DB(UD,rootsave+"UserData.json");
-		user::MountUserSave(acc);
+		user::MountUserSave();
 		USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 		UD = "{}"_json;
 		read_DB(UD,rootsave+"UserData.json");

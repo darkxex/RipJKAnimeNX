@@ -95,7 +95,7 @@
 							else if (GOD.MapT["EXIT"].SPr()) e.jbutton.button = BT_P;
 							else if (GOD.MapT["MUSIC"].SPr()) e.jbutton.button = BT_M;
 							
-							else if (USER.SPr()) {PlayerGet(acc);}
+							else if (USER.SPr()) {PlayerGet();}
 							else if (B_A.SPr()) {e.jbutton.button = BT_A; B_A.TickerBomb();}
 							else if (T_T.SPr() ) e.jbutton.button = BT_A;
 							else if (B_B.SPr()) e.jbutton.button = BT_B;
@@ -331,7 +331,7 @@
 							case top_s:
 							case agregados_s:
 							case themas_s:
-								PlayerGet(acc);
+								PlayerGet();
 								break;
 							}
 						}

@@ -17,8 +17,9 @@ string g_ID();
 bool initUser();
 bool GetUserID();
 bool SelectUser();
-bool MountUserSave(FsFileSystem& acc);
+bool MountUserSave();
 bool GetUserImage();
+bool deinitUser();
 }
 bool GetAppletMode();
 json DInfo(string ver="");

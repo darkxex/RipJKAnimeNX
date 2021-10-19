@@ -253,7 +253,7 @@ bool write_DB(json base,std::string path){
 
 		//commit
 		if (type == "save") fsdevCommitDevice("save");
-		if (type == "user") fsdevCommitDevice("user");
+		if (type == "emmc") fsdevCommitDevice("emmc");
 	} catch(...) {
 		LOG::E(14);
 		led_on(2);

@@ -132,209 +132,210 @@ NacpStruct TitleIDinfo(u64 tid){
 	return nacp;
 }
 
-
-
-
 namespace user {
-AccountUid uid;
-string AccountID;
+	AccountUid uid;
+	string AccountID;
+	FsFileSystem acc;
 
-AccountUid g_uid(){return uid;}
-string g_ID(){return AccountID;}
+	AccountUid g_uid(){return uid;}
+	string g_ID(){return AccountID;}
 
-void recover(){
-	if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
-		if(!isFileExist(rootsave+"UserData.json")) {
-			if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
-				fsdevCommitDevice("save");
-				remove((rootdirectory+AccountID+"UserData.json").c_str());
-				remove((rootdirectory+AccountID+"User.jpg").c_str());
-			}
-		}
-	}
-}
-
-bool initUser(){
-	Result rc = 0;
-	hidInitialize();
-	setsysInitialize();
-	setInitialize();
-
-	rc =  accountInitialize(AccountServiceType_Administrator);
-	if (R_SUCCEEDED(rc)) {
-		accountGetPreselectedUser(&uid);
-		if(!accountUidIsValid(&uid)) {
-			cout <<"U:2" <<std::endl;
-			accountTrySelectUserWithoutInteraction (&uid, false);
-		}
-		
-		if(!accountUidIsValid(&uid)) {
-			cout <<"U:3" <<std::endl;
-			accountGetLastOpenedUser (&uid);
-		}
-		
-		if(!accountUidIsValid(&uid)) {
-			cout <<"U:4" <<std::endl;
-			accountGetLastOpenedUser (&uid);
-		}
-
-		cout <<"User Init OK" <<std::endl;
-		return GetUserID();
-	} else {
-		cout << "Failied to init User" <<std::endl;
-		return false;
-	}
-}
-bool GetUserID(){
-	if(accountUidIsValid(&uid))
-	{
-		AccountID=FormatHex128(uid);
-		cout << "Gotted user uid:"<< AccountID.c_str() <<std::endl;
-		return true;
-	}
-	cout << "Failied to get user ID" <<std::endl;
-	return false;
-}
-bool SelectUser(){
-	AccountUid s_uids;
-	s32 max_uids=10,actual_total;
-	accountListAllUsers(&s_uids,max_uids,&actual_total);
-	//std::cout << "# accountListAllUsers: " << actual_total << std::endl;
-	AccountUid user = {};
-	if(actual_total > 1) {
-		LibAppletArgs args;
-		libappletArgsCreate(&args, 0x10000);
-		u8 st_in[0xA0] = {0};
-		u8 st_out[0x18] = {0};
-		size_t repsz;
-		auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
-		if(R_SUCCEEDED(res))
-		{
-			u64 lres = *(u64*)st_out;
-			AccountUid *uid_ptr = (AccountUid*)&st_out[8];
-			if(lres == 0) memcpy(&user, uid_ptr, sizeof(user));
-		}
-	}
-	
-	if(accountUidIsValid(&user))
-	{
-		if (FormatHex128(user) == FormatHex128(uid)){
-			return false;
-		}
-
-		uid=user;
-		return GetUserID();
-	}
-	return false;
-}
-bool createSaveData(uint64_t _tid, AccountUid _userID) {
-//createSaveData For the actual user
-	FsFileSystem abc;
-	if(R_SUCCEEDED(fsOpen_SaveData (&abc,0x05B9DB505ABBE000,_userID))) {
-		//cout << "Save Exist" << endl;
-		fsFsClose(&abc);
-		return true;
-	}
-
-	NacpStruct nacp;
-	nacp = TitleIDinfo(_tid);
-
-    FsSaveDataAttribute attr;
-    memset(&attr, 0, sizeof(FsSaveDataAttribute));
-    attr.application_id = _tid;
-    attr.uid = _userID;
-    attr.system_save_data_id = 0;
-    attr.save_data_type = FsSaveDataType_Account;
-    attr.save_data_rank = 0;
-    attr.save_data_index = 0;
-
-    FsSaveDataCreationInfo svCreate;
-    memset(&svCreate, 0, sizeof(FsSaveDataCreationInfo));
-    int64_t saveSize = 0, journalSize = 0;
-
-    saveSize = nacp.user_account_save_data_size;
-    journalSize = nacp.user_account_save_data_journal_size;
-
-    svCreate.save_data_size = saveSize;
-    svCreate.journal_size = journalSize;
-    svCreate.available_size = 0x4000;
-    svCreate.owner_id = nacp.save_data_owner_id;
-    svCreate.flags = 0;
-    svCreate.save_data_space_id = FsSaveDataSpaceId_User;
-
-    FsSaveDataMetaInfo meta;
-    memset(&meta, 0, sizeof(FsSaveDataMetaInfo));
-	
-    meta.size = 0x40060;
-	meta.type = FsSaveDataMetaType_Thumbnail;
-
-    Result res = 0;
-    if(R_SUCCEEDED(res = fsCreateSaveDataFileSystem(&attr, &svCreate, &meta))) {
-		cout << "Save Created" << endl;
-		return true;
-    } else {
-		cout << "Save Fail" << endl;
-    }
-	return false;
-}
-bool MountUserSave(FsFileSystem& acc){
-	fsdevCommitDevice("save");
-	fsdevUnmountDevice("save");
-	fsFsClose(&acc);
-	if(accountUidIsValid(&uid))
-	{
-		createSaveData(0x05B9DB505ABBE000,uid);
-		if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
-			fsdevMountDevice("save", acc);
-			rootsave = "save:/";
-			recover();
-			GetUserImage();
-			return true;
-		} else {
-			rootsave = rootdirectory+AccountID;
-			GetUserImage();
-			cout << "Failied to Mount User Save" <<std::endl;
-			return false;
-		}
-	} else {
-		cout << "Invalid User UID" <<std::endl;
-	}
-	return false;
-}
-bool GetUserImage(){
-	AccountProfile prof;
-	auto res = accountGetProfile(&prof, uid);
-	if(res == 0)
-	{
-		u32 iconsize = 0;
-		accountProfileGetImageSize(&prof, &iconsize);
-		if(iconsize > 0)
-		{
-			u8 *icon = new u8[iconsize]();
-			u32 tmpsz;
-			res = accountProfileLoadImage(&prof, icon, iconsize, &tmpsz);
-			if(res == 0)
-			{
-				FILE *f = fopen((rootsave+"User.jpg").c_str(), "wb");
-				if(f)
-				{
-					fwrite(icon, 1, iconsize, f);
-					//cout << "Saved user image: "+rootsave+"User.jpg" <<std::endl;
-					fclose(f);
-				} else {
-					cout << "Failied to open output file image" <<std::endl;
+	void recover(){
+		if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
+			if(!isFileExist(rootsave+"UserData.json")) {
+				if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
+					fsdevCommitDevice("save");
+					remove((rootdirectory+AccountID+"UserData.json").c_str());
+					remove((rootdirectory+AccountID+"User.jpg").c_str());
 				}
 			}
-			delete[] icon;
-		} else
-			cout << "Failied user image size" <<std::endl;
-
-		accountProfileClose(&prof);
-		return true;
+		}
 	}
-	cout << "Failied user image" <<std::endl;
-	return false;
-}
+
+	bool initUser(){
+		Result rc = 0;
+		hidInitialize();
+		setsysInitialize();
+		setInitialize();
+
+		rc =  accountInitialize(AccountServiceType_Administrator);
+		if (R_SUCCEEDED(rc)) {
+			accountGetPreselectedUser(&uid);
+			if(!accountUidIsValid(&uid)) {
+				cout <<"U:2" <<std::endl;
+				accountTrySelectUserWithoutInteraction (&uid, false);
+			}
+			
+			if(!accountUidIsValid(&uid)) {
+				cout <<"U:3" <<std::endl;
+				accountGetLastOpenedUser (&uid);
+			}
+			
+			if(!accountUidIsValid(&uid)) {
+				cout <<"U:4" <<std::endl;
+				accountGetLastOpenedUser (&uid);
+			}
+
+			cout <<"User Init OK" <<std::endl;
+			return GetUserID();
+		} else {
+			cout << "Failied to init User" <<std::endl;
+			return false;
+		}
+	}
+	bool GetUserID(){
+		if(accountUidIsValid(&uid))
+		{
+			AccountID=FormatHex128(uid);
+			cout << "Gotted user uid:"<< AccountID.c_str() <<std::endl;
+			return true;
+		}
+		cout << "Failied to get user ID" <<std::endl;
+		return false;
+	}
+	bool SelectUser(){
+		AccountUid s_uids;
+		s32 max_uids=10,actual_total;
+		accountListAllUsers(&s_uids,max_uids,&actual_total);
+		//std::cout << "# accountListAllUsers: " << actual_total << std::endl;
+		AccountUid user = {};
+		if(actual_total > 1) {
+			LibAppletArgs args;
+			libappletArgsCreate(&args, 0x10000);
+			u8 st_in[0xA0] = {0};
+			u8 st_out[0x18] = {0};
+			size_t repsz;
+			auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
+			if(R_SUCCEEDED(res))
+			{
+				u64 lres = *(u64*)st_out;
+				AccountUid *uid_ptr = (AccountUid*)&st_out[8];
+				if(lres == 0) memcpy(&user, uid_ptr, sizeof(user));
+			}
+		}
+		
+		if(accountUidIsValid(&user))
+		{
+			if (FormatHex128(user) == FormatHex128(uid)){
+				return false;
+			}
+
+			uid=user;
+			return GetUserID();
+		}
+		return false;
+	}
+	bool createSaveData(uint64_t _tid, AccountUid _userID) {
+	//createSaveData For the actual user
+		FsFileSystem abc;
+		if(R_SUCCEEDED(fsOpen_SaveData (&abc,0x05B9DB505ABBE000,_userID))) {
+			//cout << "Save Exist" << endl;
+			fsFsClose(&abc);
+			return true;
+		}
+
+		NacpStruct nacp;
+		nacp = TitleIDinfo(_tid);
+
+		FsSaveDataAttribute attr;
+		memset(&attr, 0, sizeof(FsSaveDataAttribute));
+		attr.application_id = _tid;
+		attr.uid = _userID;
+		attr.system_save_data_id = 0;
+		attr.save_data_type = FsSaveDataType_Account;
+		attr.save_data_rank = 0;
+		attr.save_data_index = 0;
+
+		FsSaveDataCreationInfo svCreate;
+		memset(&svCreate, 0, sizeof(FsSaveDataCreationInfo));
+		int64_t saveSize = 0, journalSize = 0;
+
+		saveSize = nacp.user_account_save_data_size;
+		journalSize = nacp.user_account_save_data_journal_size;
+
+		svCreate.save_data_size = saveSize;
+		svCreate.journal_size = journalSize;
+		svCreate.available_size = 0x4000;
+		svCreate.owner_id = nacp.save_data_owner_id;
+		svCreate.flags = 0;
+		svCreate.save_data_space_id = FsSaveDataSpaceId_User;
+
+		FsSaveDataMetaInfo meta;
+		memset(&meta, 0, sizeof(FsSaveDataMetaInfo));
+		
+		meta.size = 0x40060;
+		meta.type = FsSaveDataMetaType_Thumbnail;
+
+		Result res = 0;
+		if(R_SUCCEEDED(res = fsCreateSaveDataFileSystem(&attr, &svCreate, &meta))) {
+			cout << "Save Created" << endl;
+			return true;
+		} else {
+			cout << "Save Fail" << endl;
+		}
+		return false;
+	}
+	bool MountUserSave(){
+		if(accountUidIsValid(&uid))
+		{
+			deinitUser();
+			createSaveData(0x05B9DB505ABBE000,uid);
+			if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
+				fsdevMountDevice("save", acc);
+				rootsave = "save:/";
+				recover();
+				GetUserImage();
+				return true;
+			} else {
+				rootsave = rootdirectory+AccountID;
+				GetUserImage();
+				cout << "Failied to Mount User Save" <<std::endl;
+				return false;
+			}
+		} else {
+			cout << "Invalid User UID" <<std::endl;
+		}
+		return false;
+	}
+	bool GetUserImage(){
+		AccountProfile prof;
+		auto res = accountGetProfile(&prof, uid);
+		if(res == 0)
+		{
+			u32 iconsize = 0;
+			accountProfileGetImageSize(&prof, &iconsize);
+			if(iconsize > 0)
+			{
+				u8 *icon = new u8[iconsize]();
+				u32 tmpsz;
+				res = accountProfileLoadImage(&prof, icon, iconsize, &tmpsz);
+				if(res == 0)
+				{
+					FILE *f = fopen((rootsave+"User.jpg").c_str(), "wb");
+					if(f)
+					{
+						fwrite(icon, 1, iconsize, f);
+						//cout << "Saved user image: "+rootsave+"User.jpg" <<std::endl;
+						fclose(f);
+					} else {
+						cout << "Failied to open output file image" <<std::endl;
+					}
+				}
+				delete[] icon;
+			} else
+				cout << "Failied user image size" <<std::endl;
+
+			accountProfileClose(&prof);
+			return true;
+		}
+		cout << "Failied user image" <<std::endl;
+		return false;
+	}
+	bool deinitUser(){
+		fsdevCommitDevice("save");
+		fsdevUnmountDevice("save");
+		fsFsClose(&acc);
+	}
 }
 
 bool GetAppletMode(){
