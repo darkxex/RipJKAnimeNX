@@ -848,8 +848,6 @@ bool isFavorite(string fav){
 }
 void delFavorite(int inst){
 	if (!UD["favoritos"].is_null()) {
-		if (GOD.Confirm("Desea Borrarlo?")){
-			UD["favoritos"].erase(inst);
-		}
+		UD["favoritos"].erase(inst);
 	}
 }

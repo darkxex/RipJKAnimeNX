@@ -238,12 +238,13 @@ void callsearch(){
 }
 void callfavs(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
-	if (!reloading)
-	{
-		getFavorite();
-		returnnow = favorites_s;
-		statenow = favorites_s;
-		Frames=1;
+	if (!reloading) {
+		if (UD["favoritos"].size()>0) {
+			getFavorite();
+			returnnow = favorites_s;
+			statenow = favorites_s;
+			Frames=1;
+		}
 	}
 }
 void callAflv(){
