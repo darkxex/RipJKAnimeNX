@@ -15,8 +15,11 @@ int main(int argc, char **argv)
 
 	//Mount user
 	FsFileSystem data;
-	fsOpenBisFileSystem(&data, FsBisPartitionId_User, "");
-	fsdevMountDevice("user", data);
+	if(R_SUCCEEDED(fsOpenBisFileSystem(&data, FsBisPartitionId_User, ""))){
+		fsdevMountDevice("emmc", data);
+	} else {
+		rootdirectory = oldroot;
+	}
 
 	//LOG Init
 	LOG::init();
@@ -28,8 +31,7 @@ int main(int argc, char **argv)
 	mount_theme("themes",true);
 	
 	//Mount Save Data
-	FsFileSystem acc;
-	user::MountUserSave(acc);
+	user::MountUserSave();
 
 	struct stat st = { 0 };
 	if (stat("sdmc:/RipJKAnime", &st) != -1) {
@@ -971,12 +973,11 @@ int main(int argc, char **argv)
 	
 	//unmount and commit
 	mount_theme("themes",false);
-	fsdevCommitDevice("save");
-	fsdevUnmountDevice("save");
-	fsFsClose(&acc);
 
-	fsdevCommitDevice("user");
-	fsdevUnmountDevice("user");
+	user::deinitUser();
+
+	fsdevCommitDevice("emmc");
+	fsdevUnmountDevice("emmc");
 	fsFsClose(&data);
 	
 
