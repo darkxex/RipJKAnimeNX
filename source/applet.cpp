@@ -135,7 +135,7 @@ NacpStruct TitleIDinfo(u64 tid){
 namespace user {
 	AccountUid uid;
 	string AccountID;
-	FsFileSystem acc;
+	FsFileSystem savedata;
 
 	AccountUid g_uid(){return uid;}
 	string g_ID(){return AccountID;}
@@ -280,8 +280,8 @@ namespace user {
 		{
 			deinitUser();
 			createSaveData(0x05B9DB505ABBE000,uid);
-			if(R_SUCCEEDED(fsOpen_SaveData (&acc,0x05B9DB505ABBE000,uid))) {
-				fsdevMountDevice("save", acc);
+			if(R_SUCCEEDED(fsOpen_SaveData (&savedata,0x05B9DB505ABBE000,uid))) {
+				fsdevMountDevice("save", savedata);
 				rootsave = "save:/";
 				recover();
 				GetUserImage();
@@ -334,7 +334,8 @@ namespace user {
 	bool deinitUser(){
 		fsdevCommitDevice("save");
 		fsdevUnmountDevice("save");
-		fsFsClose(&acc);
+		fsFsClose(&savedata);
+		return true;
 	}
 }
 
