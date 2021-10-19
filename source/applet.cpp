@@ -548,6 +548,15 @@ std::string KeyboardCall (std::string hint, std::string text){
 	swkbdConfigMakePresetDefault(&swkbd);
 	swkbdConfigSetInitialCursorPos (&swkbd, 0);
 	swkbdConfigSetOkButtonText(&swkbd,"Buscar");
+	if (hint=="Buscar el Anime"){
+		swkbdConfigSetHeaderText(&swkbd, "Buscador de Anime");
+		swkbdConfigSetSubText(&swkbd, "Escribe el Nombre del Anime que Deseas Buscar");
+		swkbdConfigSetStringLenMax(&swkbd, 32);
+	} else if (hint == "Escribir URL http://") {
+		swkbdConfigSetHeaderText(&swkbd, "Navegador Integrado");
+		swkbdConfigSetSubText(&swkbd, "Escribe la URL que quieres visitar");
+		swkbdConfigSetStringLenMax(&swkbd, 32);
+	}
 
 	if (strlen(hint.c_str()) != 0)
 		swkbdConfigSetGuideText(&swkbd, hint.c_str());
