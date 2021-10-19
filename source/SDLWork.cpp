@@ -59,7 +59,7 @@ void SDLB::intA(){
 			else
 			{
 				//Initialize renderer color
-				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
 				SDL_RenderClear(gRenderer);
 
 				//enable alpha blend
@@ -163,7 +163,6 @@ bool SDLB::PlayEffect(Mix_Chunk* efect){
 	}
 	return false;
 }
-
 void SDLB::SwapMusic(bool swap){
 	if (gMusic == NULL)
 	{
@@ -180,7 +179,6 @@ void SDLB::SwapMusic(bool swap){
 	//If music is being played
 	else if (swap)
 	{
-	PlayEffect(aree);
 		//If the music is paused
 		if (Mix_PausedMusic() == 1)
 		{
@@ -268,60 +266,13 @@ void SDLB::selectskin(string val) {
 	them++;
 	if (them > allp) them=0;
 }
-//draw one quadrant arc, and mirror the other 4 quadrants
-void sdl_ellipse(SDL_Renderer* r, int x0, int y0, int radiusX, int radiusY) {
-    float pi  = 3.14159265358979323846264338327950288419716939937510;
-    float pih = pi / 2.0; //half of pi
-
-    //drew  28 lines with   4x4  circle with precision of 150 0ms
-    //drew 132 lines with  25x14 circle with precision of 150 0ms
-    //drew 152 lines with 100x50 circle with precision of 150 3ms
-    const int prec = 27; // precision value; value of 1 will draw a diamond, 27 makes pretty smooth circles.
-    float theta = 0;     // angle that will be increased each loop
-
-    //starting point
-    int x  = (float)radiusX * cos(theta);//start point
-    int y  = (float)radiusY * sin(theta);//start point
-    int x1 = x;
-    int y1 = y;
-
-    //repeat until theta >= 90;
-    float step = pih/(float)prec; // amount to add to theta each time (degrees)
-    for(theta=step;  theta <= pih;  theta+=step)//step through only a 90 arc (1 quadrant)
-    {
-        //get new point location
-        x1 = (float)radiusX * cosf(theta) + 0.5; //new point (+.5 is a quick rounding method)
-        y1 = (float)radiusY * sinf(theta) + 0.5; //new point (+.5 is a quick rounding method)
-
-        //draw line from previous point to new point, ONLY if point incremented
-        if( (x != x1) || (y != y1) )//only draw if coordinate changed
-        {
-            SDL_RenderDrawLine(r, x0 + x, y0 - y,    x0 + x1, y0 - y1 );//quadrant TR
-            SDL_RenderDrawLine(r, x0 - x, y0 - y,    x0 - x1, y0 - y1 );//quadrant TL
-            SDL_RenderDrawLine(r, x0 - x, y0 + y,    x0 - x1, y0 + y1 );//quadrant BL
-            SDL_RenderDrawLine(r, x0 + x, y0 + y,    x0 + x1, y0 + y1 );//quadrant BR
-        }
-        //save previous points
-        x = x1;//save new previous point
-        y = y1;//save new previous point
-    }
-    //arc did not finish because of rounding, so finish the arc
-    if(x!=0)
-    {
-        x=0;
-        SDL_RenderDrawLine(r, x0 + x, y0 - y,    x0 + x1, y0 - y1 );//quadrant TR
-        SDL_RenderDrawLine(r, x0 - x, y0 - y,    x0 - x1, y0 - y1 );//quadrant TL
-        SDL_RenderDrawLine(r, x0 - x, y0 + y,    x0 - x1, y0 + y1 );//quadrant BL
-        SDL_RenderDrawLine(r, x0 + x, y0 + y,    x0 + x1, y0 + y1 );//quadrant BR
-    }
-}
 bool SDLB::Confirm(std::string text,bool okonly,int type){
 
 	LTexture NAG,IMG;
 	//Print Menu once 
 	VOX.render_VOX({0,0,SCREEN_WIDTH,SCREEN_HEIGHT}, 0, 0, 0, 150);
 	
-	int NX=430,NY=256,NW=400,NH=200,BR = 3;
+	int NX=255,NY=200,NW=770,NH=330,BR = 2;
 	T_T.loadFromRenderedTextWrap(Arista_30, text, { 50, 50, 50 },NW-20);
 	
 	//Draw black back
@@ -341,7 +292,7 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 	}
 	
 	if (image.length()>0){
-		IMG.loadFromFileCustom(image, 100,100);
+		IMG.loadFromFileCustom(image, 190,190);
 		IMG.render(NX+10, NY+10);
 	}
 	//Draw withe front
@@ -350,23 +301,20 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 	
 	VOX.render_VOX({NX,NY+(NH/4*3),NW,BR}, 50, 50, 50, 200);
 	if(!okonly){
-		VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),BR,(NH/4)}, 50, 50, 50, 200);
-		B_A.render_T(NX+(NW/4)-45, NY+(NH/4*3)+6,"SI");
-		B_B.render_T(NX+(NW/4*3)-45, NY+(NH/4*3)+6,"NO");
+		VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),BR,(NH/4)+2}, 50, 50, 50, 200);
+		B_A.render_T(NX+(NW/4)-45, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"SI");
+		B_B.render_T(NX+(NW/4*3)-45, NY+(NH/4*3)+((NH/4)/2)-(B_B.getHeight()/2),"NO");
 	} else {
-		B_A.render_T(NX+(NW/2)-55, NY+(NH/4*3)+6,"Aceptar");
+		B_A.render_T(NX+(NW/2)-55, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"Aceptar");
 	}
 	
-	
-
-	//sdl_ellipse(gRenderer, 32,32, 45, 80);
-	
+	bool breaker = true;
+	bool result = false;
 	
 	//Event handler
 	SDL_Event e;
-
 	//While application is running
-	while (JKMainLoop())
+	while (JKMainLoop()&breaker)
 	{
 		//Handle events on queue
 		while (SDL_PollEvent(&e))
@@ -393,22 +341,32 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 					else if (NAG.SP()) {e.jbutton.button = -1;}
 					GOD.TouchX = -1;
 					GOD.TouchY = -1;
+					GOD.TouchXU = -1;
+					GOD.TouchYU = -1;
 				case SDL_JOYBUTTONDOWN:
 					if (e.jbutton.which == 0) {
 						if (e.jbutton.button == BT_P) {// (+) button down close to home menu
 							cancelcurl = 1;
 							quit = true;
-							return false;
+							result = false;
+							breaker = false;
+							break;
 						}
 						if (e.jbutton.button == BT_M) {// (-) button down
 							SwapMusic();
-							return false;
+							result = false;
+							breaker = false;
+							break;
 						}
 						if (e.jbutton.button == BT_A) {// (A) button down
-							return true;
+							result = true;
+							breaker = false;
+							break;
 						}
 						if (e.jbutton.button == BT_B) {// (B) button down
-							return false;
+							result = false;
+							breaker = false;
+							break;
 						}
 					}
 					break;
@@ -417,7 +375,11 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 			}
 		}
 	}
-	return false;
+	GOD.TouchX = -1;
+	GOD.TouchY = -1;
+	GOD.TouchXU = -1;
+	GOD.TouchYU = -1;
+	return result;
 }
 void SDLB::PleaseWait(std::string text,bool render){
 	if (render) {
@@ -521,7 +483,9 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
 	if (GenState == menu_s){return;}
-	if(MapT[KeyImage].SP()) {WorKey=KeyImage; MasKey=key;}
+	if(key >= 0) {
+		if(MapT[KeyImage].SP()) {WorKey=KeyImage; MasKey=key;}
+	}
 }
 void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render){
 //render images and map to memory for fast display
@@ -580,15 +544,19 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	}
 
 	if (GenState == menu_s){return;}
+	if(MapT[KeyImage].SPr()) {
+		select = index;
+	}
 
-	//How not to handle a touch input, wala, yolo
+	/*
+	//How not to handle a touch input, wala, yolo	
 	static int findex = -1;
 	if (findex >= 0 && !fingerdown) {
 		//printf("relea %d to %d %s\n",select,index,KeyImage.c_str());
 		select=findex;
 		findex=-1;
 	} else {
-		if(MapT[KeyImage].SP()) {
+		if(MapT[KeyImage].SPr()) {
 			//printf("touch %d to %d %s\n",select,index,KeyImage.c_str());
 			findex = index;
 		}
@@ -597,6 +565,7 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 			findex=-1;
 		}
 	}
+	*/
 }
 void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 	std::vector<std::string> vec = Jlinks["link"];
@@ -1370,7 +1339,7 @@ bool LTexture::SP(){
 
 	//check if touched
 	if(GOD.TouchX > mX-3 && GOD.TouchX < mX + getWidth() +3 && GOD.TouchY > mY-3 && GOD.TouchY < mY + getHeight() +3) {
-	printf("Frame %d : %d \n",SelIns,GOD.FrameState-1);
+	printf("Frame %d : %d \n",SelIns,GOD.FrameState);
 		//printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
 		return true;
 	}
@@ -1379,11 +1348,12 @@ bool LTexture::SP(){
 //is press relesed
 bool LTexture::SPr(){
 	//return on negative touch
+	if (SelIns != GOD.FrameState) return false;
 	if (Selstate != GOD.GenState) return false;
 	if (!mark) return false;
 	//check if touched
 	if(GOD.TouchXU > mX-3 && GOD.TouchXU < mX + getWidth() +3 && GOD.TouchYU > mY-3 && GOD.TouchYU < mY + getHeight() +3) {
-		printf("FrameUP %d : %d \n",SelIns,GOD.FrameState-1);
+		printf("FrameUP %d : %d \n",SelIns,GOD.FrameState);
 		GOD.TouchXU=-1;
 		GOD.TouchYU=-1;
 		//printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
