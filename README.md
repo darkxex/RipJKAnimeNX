@@ -3,8 +3,9 @@
 ----------------------------------------
 Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo Switch.
 
+<img src="ScreenShots/ScreenShots_1.jpg" width="23%"></img> <img src="ScreenShots/ScreenShots_2.jpg" width="23%"></img> <img src="ScreenShots/ScreenShots_3.jpg" width="23%"></img> <img src="ScreenShots/ScreenShots_4.jpg" width="23%"></img> <img src="ScreenShots/ScreenShots_5.jpg" width="23%"></img> <img src="ScreenShots/ScreenShots_6.jpg" width="23%"></img> <img src="ScreenShots/ScreenShots_7.jpg" width="23%"></img> <img src="ScreenShots/ScreenShots_8.jpg" width="23%"></img>
 
-<img style="display:inline" src="ScreenShots/ScreenShots_2.jpg" width="232"/> <img style="display:inline" src="ScreenShots/ScreenShots_3.jpg" width="232"/> <img style="display:inline" src="ScreenShots/ScreenShots_4.jpg" width="232"/>
+
 
 ### Para instalarlo Solo deberás de:
 * Copiar [RipJKAnimeNX.nro](/out/RipJKAnimeNX.nro?raw=true)  en /switch/ y abrirlo una vez desde el Álbum esto instalara el icono en el Home.
