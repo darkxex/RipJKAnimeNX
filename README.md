@@ -59,7 +59,7 @@ make NSP
   <summary>ToDo</summary>
  
 ## ToDo
-- [ ] **Gestor de Pieles**
+- [x] **Gestor de Pieles**
 - [ ] **Gestionar la UI de forma mas simple**
 - [ ] **Sección de ajustes**
 - [ ] **Abrir PPLAY desde la app**
