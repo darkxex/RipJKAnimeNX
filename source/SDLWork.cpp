@@ -195,7 +195,7 @@ void SDLB::SwapMusic(bool swap){
 		}
 	}
 }
-string defcord = "romfs:/theme/Asriel";
+string defcord = "romfs:/theme/default";
 string SkinMaster = defcord;
 string theme(string file){
 	if (SkinMaster == defcord){
@@ -258,7 +258,8 @@ void SDLB::selectskin(string val) {
 		roottheme+"Megalovania",
 		roottheme+"TocToc",
 		roottheme+"TrueHero",
-		"romfs:/theme/Asriel"
+		roottheme+"Asriel",
+		"romfs:/theme/default"
 	};
 
 	GOD.setSkin(temas[them]);
