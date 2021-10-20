@@ -120,7 +120,7 @@ vector<string> split (string s, string delimiter) {// for string delimiter
 
 bool erase(string file) {
 	if(isFileExist(file)){
-		remove((file).c_srt());
+		remove((file).c_str());
 		return true;
 	}
 	return false;
