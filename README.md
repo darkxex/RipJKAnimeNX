@@ -27,7 +27,7 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 * * (A menos que se desactive deliberadamente)
 # A tener en cuenta
 * Esta app no funciona correctamente en modo applet (desde el album) porque requiere mas memoria y del uso del navegador 
-* Debes usar lo básico antibaneo (dns, incógnito ,host de atmosphere,etc)
+* Debes usar lo básico antibaneo (dns, incógnito ,[host](https://github.com/darkxex/RipJKAnimeNX/raw/master/romfs/default.txt) de atmosphere,etc)
 * Necesita Si o Si Internet 
 * Para ver Animes descargados puedes usar [PPlay](https://github.com/Cpasjuste/pplay/) se guardan en la Raíz de la sd /Videos/
 
@@ -59,7 +59,7 @@ make NSP
   <summary>ToDo</summary>
  
 ## ToDo
-- [ ] **Gestor de Pieles**
+- [x] **Gestor de Pieles**
 - [ ] **Gestionar la UI de forma mas simple**
 - [ ] **Sección de ajustes**
 - [ ] **Abrir PPLAY desde la app**
