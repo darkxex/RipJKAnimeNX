@@ -453,7 +453,7 @@ int main(int argc, char **argv)
 								}
 							}
 						}
-						{//Draw Banner
+						if (BD["arrays"]["Banner"]["files"].size() > 0){//Draw Banner
 							int XF=10, YF=65, WF=760, HF=427;
 							bannersize = BD["arrays"]["Banner"]["files"].size()-1;
 							//clock cicle 5s
