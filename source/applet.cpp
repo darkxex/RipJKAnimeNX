@@ -177,6 +177,15 @@ namespace user {
 				cout <<"U:4" <<std::endl;
 				accountGetLastOpenedUser (&uid);
 			}
+			/*
+			//may crash some times
+			if(!accountUidIsValid(&uid)) {
+				cout <<"U:5" <<std::endl;
+				s32 actual_total;
+				accountListAllUsers(&uid,1,&actual_total);
+			}
+			
+			*/
 
 			cout <<"User Init OK" <<std::endl;
 			return GetUserID();
@@ -333,6 +342,11 @@ namespace user {
 		cout << "Failied user image" <<std::endl;
 		return false;
 	}
+	bool commit(){
+		fsdevCommitDevice("save");
+		return true;
+	}
+
 	bool deinitUser(){
 		fsdevCommitDevice("save");
 		fsdevUnmountDevice("save");
@@ -340,6 +354,39 @@ namespace user {
 		return true;
 	}
 }
+
+
+namespace emmc {
+	FsFileSystem appdata;
+	bool isMounted=false;
+	//Mount user
+	bool init(){
+		if(R_SUCCEEDED(fsOpenBisFileSystem(&appdata, FsBisPartitionId_User, ""))){
+			fsdevMountDevice("emmc", appdata);
+			isMounted=true;
+		} else {
+			rootdirectory = oldroot;
+			isMounted=false;
+			fsFsClose(&appdata);
+		}
+		return isMounted;
+	}
+	bool commit(){
+		if (isMounted){
+			fsdevCommitDevice("emmc");
+		}
+		return isMounted;
+	}
+	bool deinit(){
+		if (isMounted){
+			fsdevCommitDevice("emmc");
+			fsdevUnmountDevice("emmc");
+			fsFsClose(&appdata);
+		}
+		return isMounted;
+	}
+}
+
 
 bool GetAppletMode(){
 	//nxlinkStdio();

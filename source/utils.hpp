@@ -64,6 +64,7 @@ typedef enum {
 
 //extern to all
 extern string rootdirectory;
+extern string oldroot;
 extern string rootsave;
 extern string roottheme;
 

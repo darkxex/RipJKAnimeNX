@@ -12,15 +12,22 @@ bool IsRunning(string servname);
 Result txStealthMode(uint64_t enable);
 bool mount_theme(string in,bool mount=false);
 namespace user {
-AccountUid g_uid();
-string g_ID();
-bool initUser();
-bool GetUserID();
-bool SelectUser();
-bool MountUserSave();
-bool GetUserImage();
-bool deinitUser();
+	AccountUid g_uid();
+	string g_ID();
+	bool initUser();
+	bool GetUserID();
+	bool SelectUser();
+	bool MountUserSave();
+	bool GetUserImage();
+	bool commit();
+	bool deinitUser();
 }
+namespace emmc {
+	bool init();
+	bool commit();
+	bool deinit();
+}
+
 bool GetAppletMode();
 json DInfo(string ver="");
 bool ChainManager(bool Chain,bool AndChaing);

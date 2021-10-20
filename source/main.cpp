@@ -14,12 +14,7 @@ int main(int argc, char **argv)
 	printf("Nxlink server Conected\n");
 
 	//Mount user
-	FsFileSystem data;
-	if(R_SUCCEEDED(fsOpenBisFileSystem(&data, FsBisPartitionId_User, ""))){
-		fsdevMountDevice("emmc", data);
-	} else {
-		rootdirectory = oldroot;
-	}
+	emmc::init();
 
 	//LOG Init
 	LOG::init();
@@ -976,10 +971,7 @@ int main(int argc, char **argv)
 
 	user::deinitUser();
 
-	fsdevCommitDevice("emmc");
-	fsdevUnmountDevice("emmc");
-	fsFsClose(&data);
-	
+	emmc::deinit();
 
 	accountExit();
 	appletUnlockExit ();

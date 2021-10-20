@@ -258,8 +258,8 @@ bool write_DB(json base,std::string path){
 		rename(pathtemp.c_str(),path.c_str());
 
 		//commit
-		if (type == "save") fsdevCommitDevice("save");
-		if (type == "emmc") fsdevCommitDevice("emmc");
+		if (type == "save") user::commit();
+		if (type == "emmc") emmc::commit();
 	} catch(...) {
 		LOG::E(14);
 		led_on(2);
