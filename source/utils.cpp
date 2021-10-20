@@ -118,7 +118,13 @@ vector<string> split (string s, string delimiter) {// for string delimiter
 	return res;
 }
 
-
+bool erase(string file) {
+	if(isFileExist(file)){
+		remove((file).c_srt());
+		return true;
+	}
+	return false;
+}
 bool isFileExist(std::string file){
 	struct stat st = { 0 };
 

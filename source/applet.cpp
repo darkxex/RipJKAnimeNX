@@ -56,7 +56,9 @@ bool ReloadDNS(){
 }
 	
 bool mount_theme(string in,bool mount){
-	string file = rootdirectory+"theme.romfs";
+	string file = rootdirectory+"themes.romfs";
+	erase(rootdirectory+"theme.romfs");
+	
 	if (mount){
 		if(isFileExist(in+":/")) {
 			//cout << in+":/  is mounted" << endl;

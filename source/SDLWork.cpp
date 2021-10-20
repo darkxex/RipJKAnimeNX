@@ -230,14 +230,14 @@ void SDLB::loadSkin(string img){
 	
 	//images
 	Farest.free();
-	Farest.loadFromFile(theme("/background.png"));
+	Farest.loadFromFile(theme("/background.jpg"));
 	Heart.free();
 	Heart.loadFromFile(theme("/heart.png"));
 	
 	
 	//Load music
 	Mix_FreeMusic(gMusic);
-	gMusic = Mix_LoadMUS(theme("/wada.ogg").c_str());
+	gMusic = Mix_LoadMUS(theme("/music.ogg").c_str());
 	if(UD["Themes"]["play"] == 1){
 		SwapMusic(false);	
 	}
@@ -252,6 +252,7 @@ void SDLB::selectskin(string val) {
 		roottheme+"Devilovania",
 		roottheme+"Digimon",
 		roottheme+"Miku",
+		roottheme+"NeonDrive",
 		roottheme+"NoBulletsFly",
 		roottheme+"Velvet-sad",
 		roottheme+"Megalovania",
