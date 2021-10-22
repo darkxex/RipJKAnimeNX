@@ -419,6 +419,10 @@ bool CheckUpdates(bool force){
 						if(UP["update"] == New){
 							needDown = false;
 						}
+
+					}
+					if (!isFileExist(fileU)) {
+						needDown = true;
 					}
 					std::cout << Ver << " -> " << New <<std::endl;
 					
