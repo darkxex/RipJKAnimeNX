@@ -322,6 +322,7 @@ void CheckImgVector(json List,int& index){
 	{
 		index = x+1;
 		std::string tempima = List[x];
+		if (tempima.length() == 0) continue;
 		replace(tempima,"\"","");
 		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
 		replace(tempima,"https://jkanime.net/", "");

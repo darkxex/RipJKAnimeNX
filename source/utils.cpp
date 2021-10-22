@@ -23,7 +23,7 @@
 using namespace std;
 
 std::string scrapElement(std::string content, std::string get,std::string delim){
-	std::string Element = "";
+	std::string Element = " ";
 	if(content.length() <= 0)
 	{return Element;}
 

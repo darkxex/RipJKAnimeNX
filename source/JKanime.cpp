@@ -358,9 +358,10 @@ int MkDIR(){
 	if (BD["arrays"]["Directory"]["TimeStamp"].is_null()){BD["arrays"]["Directory"]["TimeStamp"]=0;}
 	if (BD["arrays"]["Directory"]["InTime"].is_null()){BD["arrays"]["Directory"]["InTime"]=0;}
 	if (BD["arrays"]["Directory"]["page"].is_null()){BD["arrays"]["Directory"]["page"]=1;}
+	if (BD["arrays"]["Directory"]["link"].is_null()){BD["arrays"]["Directory"]["link"]={};}
 	try{
 	
-		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_week){
+		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_week || BD["arrays"]["Directory"]["link"].size() == 0){
 			
 			//Flush Resents by week
 			vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
@@ -382,7 +383,12 @@ int MkDIR(){
 				TDIR=scrapElementAll(content,"https://jkanime.net/");
 				
 
-				if (TDIR.size() > voidd){
+				if (TDIR.size() > 0){
+					if (TDIR.size() == 1){
+						if (TDIR[0] == ""){
+							break;
+						}
+					}
 					DIR.insert(DIR.end(), TDIR.begin(), TDIR.end());
 				} else 
 					break;//just in case
@@ -601,11 +607,11 @@ int capBuffer (string Tlink) {//anime manager
 
 	if (AB["AnimeBase"][name]["TimeStamp"].is_null())
 	{
-		BD["com"]["sinopsis"] = "......";
-		BD["com"]["nextdate"] = "......";
-		BD["com"]["generos"] = "......";
-		BD["com"]["Emitido"] = "......";
-		BD["com"]["Estado"] = "......";
+		BD["com"]["sinopsis"] = " ";
+		BD["com"]["nextdate"] = " ";
+		BD["com"]["generos"] = " ";
+		BD["com"]["Emitido"] = " ";
+		BD["com"]["Estado"] = " ";
 		maxcapit = -1;
 		mincapit = 1;
 		latest = 1;
@@ -713,7 +719,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	}
 
 	//find next date
-	TMP = "...";
+	TMP = " ";
 	if ((int)a.find("<span>Tipo:</span> Pelicula</li>") != -1)
 	{
 		//es una peli ?
@@ -725,7 +731,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		if(re1 > 1) {
 			re1 += 25;
 			re2 = a.find("<i class", re1);
-			TMP = "."+a.substr(re1, re2 - re1);
+			TMP = " "+a.substr(re1, re2 - re1);
 			RemoveAccents(TMP);
 		}
 	}
@@ -746,7 +752,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		}
 		RemoveAccents(TMP);
 
-		if (TMP.length() == 0) TMP +="-.-";
+		if (TMP.length() == 0) TMP +=" ";
 		AnimeINF["generos"] = TMP;
 	}
 
