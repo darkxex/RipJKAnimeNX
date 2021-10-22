@@ -424,6 +424,10 @@ json DInfo(string ver){
 				std::cout  << "- Fail Config" <<std::endl;
 			}
 		}
+		if(config["AutoUpdate"].is_null()){config["AutoUpdate"]=1;}
+		if(config["Beta"].is_null()){config["Beta"]=0;}
+		if(config["author"].is_null()){config["author"]="darkxex";}
+		if(config["repo"].is_null()){config["repo"]="RipJKAnimeNX";}
 		info["config"]=config;
 		
 		info["UNIX"]=time(0);

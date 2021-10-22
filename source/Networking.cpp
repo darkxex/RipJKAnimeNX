@@ -364,7 +364,7 @@ bool CheckUpdates(bool force){
 			return false;
 		}
 		string reurl="https://api.github.com/repos/"+config["author"].get<string>()+"/"+config["repo"].get<string>()+"/releases";
-
+		
 		std::string APIJ = Net::GET(reurl);
 		if(json::accept(APIJ))
 		{
@@ -386,8 +386,12 @@ bool CheckUpdates(bool force){
 							return false;
 					}
 
-					//check if URl is ok
 					string Nurl= asset[0]["browser_download_url"];
+					if (config["Beta"] == 1){
+						Nurl="https://github.com/"+config["author"].get<string>()+"/"+config["repo"].get<string>()+"/raw/master/out/RipJKAnimeNX%5B05B9DB505ABBE000%5D%5Bv0%5D.nsp";
+					}
+
+					//check if URl is ok
 					if (Nurl.find(".nsp") == string::npos) {
 						std::cout  << "- NO " << Nurl <<std::endl;
 						for (u64 i=0; i<asset.size(); i++ ){
@@ -436,7 +440,6 @@ bool CheckUpdates(bool force){
 					if (InstallNSP(fileU)){
 						DInfo(New);
 						std::cout << Ver << " ---> " << New <<std::endl;
-						remove((rootdirectory+"LOG.txt").c_str());
 						return true;
 					}
 				}
