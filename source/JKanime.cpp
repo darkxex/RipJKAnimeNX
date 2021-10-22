@@ -565,6 +565,7 @@ int capit(void* data) {//Get chap thread
 		BD["com"]["generos"] = AB["AnimeBase"][name]["generos"];//"......";
 		BD["com"]["Emitido"] = AB["AnimeBase"][name]["Emitido"];
 		BD["com"]["enemision"] = AB["AnimeBase"][name]["enemision"];
+		BD["com"]["Estado"] = AB["AnimeBase"][name]["Estado"];
 		mincapit = AB["AnimeBase"][name]["mincapit"];//1;
 		maxcapit = AB["AnimeBase"][name]["maxcapit"];//-1;
 		//write json
@@ -604,6 +605,7 @@ int capBuffer (string Tlink) {//anime manager
 		BD["com"]["nextdate"] = "......";
 		BD["com"]["generos"] = "......";
 		BD["com"]["Emitido"] = "......";
+		BD["com"]["Estado"] = "......";
 		maxcapit = -1;
 		mincapit = 1;
 		latest = 1;
@@ -615,6 +617,7 @@ int capBuffer (string Tlink) {//anime manager
 			BD["com"]["generos"] = AB["AnimeBase"][name]["generos"];//"......";
 			BD["com"]["Emitido"] = AB["AnimeBase"][name]["Emitido"];
 			BD["com"]["enemision"] = AB["AnimeBase"][name]["enemision"];
+			BD["com"]["Estado"] = AB["AnimeBase"][name]["Estado"];
 			maxcapit = AB["AnimeBase"][name]["maxcapit"];
 			mincapit = AB["AnimeBase"][name]["mincapit"];
 			//check For latest cap seend
@@ -748,9 +751,23 @@ void DataUpdate(string Link) {//Get info off chapter
 	}
 
 	//Esta en emision?
-	if ((int)a.find("En emision") != -1)
-	{AnimeINF["enemision"] = "true";} else {AnimeINF["enemision"] = "false";}
+	if (a.find(">Concluido<") != string::npos) {
+		AnimeINF["enemision"] = "false";
+		AnimeINF["Estado"] = "Concluido";
+	} else {
+		AnimeINF["enemision"] = "true";
+		AnimeINF["Estado"] = "En Emisión";
+		if (a.find(">Por estrenar<") != string::npos){
+			AnimeINF["Estado"] = "Por estrenar";
+		}
+		if (a.find(">En espera<") != string::npos){
+			AnimeINF["Estado"] = "En espera";
+		}
+	}
+	/*
 
+	
+	*/
 	//Get Caps number
 	int val0, val1, val2, val3;
 	val0 = a.rfind("href=\"#pag");
