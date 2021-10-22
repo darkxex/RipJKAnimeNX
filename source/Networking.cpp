@@ -22,26 +22,35 @@ struct MemoryStruct
 	char *memory;
 	size_t size;
 	int mode;
+	FILE *fp;
 };
 
-static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, void *userdata)
-{
-	size_t realsize = size * nmemb;
-	struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
+static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, void *userdata) {
+  size_t realsize = size * nmemb;
+  struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
 
-	char *ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
-	if (ptr == NULL)
-	{
-		cout << "Failed to realloc mem" << endl;
-		return 0;
-	}
+  char *ptr;
 
-	mem->memory = ptr;
-	memcpy(&(mem->memory[mem->size]), contents, realsize);
-	mem->size += realsize;
-	mem->memory[mem->size] = 0;
+  ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
 
-	return realsize;
+  if (ptr == NULL)//handle memory overflow
+  {
+      printf("Failed to realloc mem\n");
+	  printf("Writing... %luMb To file\n",mem->size / 1000000 + 1);
+	  fwrite(mem->memory, 1, mem->size, mem->fp);
+	  free(mem->memory);
+	  mem->memory = (char*)malloc(1);
+	  mem->size = 0;
+	  ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
+	  if (ptr == NULL) return 0;
+  }
+ 
+  mem->memory = ptr;
+  memcpy(&(mem->memory[mem->size]), contents, realsize);
+  mem->size += realsize;
+  mem->memory[mem->size] = 0;
+
+  return realsize;
 }
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -249,8 +258,9 @@ namespace Net {
 		bool allok=false;
 		if (curl) {
 			struct MemoryStruct chunk;
-			FILE *fp = fopen(path.c_str(), "wb");;
-			if(fp) {
+			remove(path.c_str());
+			chunk.fp = fopen(path.c_str(), "a");
+			if(chunk.fp) {
 				chunk.memory = (char*)malloc(1);
 				chunk.size = 0;
 				curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -276,7 +286,7 @@ namespace Net {
 						cout << "####size:" << chunk.size << " found:" << path.find(".mp4") << " in:" << path.c_str() << endl;
 						allok=false;//
 					} else {
-						fwrite(chunk.memory, 1, chunk.size, fp);// write from mem to file
+						fwrite(chunk.memory, 1, chunk.size, chunk.fp);// write from mem to file
 						allok=true;
 					}
 				}else{
@@ -287,7 +297,7 @@ namespace Net {
 				curl_easy_cleanup(curl);
 				free(chunk.memory);
 			}
-			fclose(fp);
+			fclose(chunk.fp);
 			if (!allok) {remove(path.c_str());}
 		}
 		return allok;
