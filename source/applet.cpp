@@ -700,7 +700,8 @@ Result WebBrowserCall(std::string url,bool nag){
 		Event *out_event;
 		rc = webSessionStart (&session, &out_event);
 		printf("Running session... 0x%x ", rc);
-		if (nag) {
+//		if (nag)
+		{
 			rc = webSessionWaitForExit (&session, &reply);
 			if (R_SUCCEEDED(rc)) printf(", 0x%x", rc);
 
@@ -709,9 +710,12 @@ Result WebBrowserCall(std::string url,bool nag){
 				printf("webReplyGetExitReason(): 0x%x", rc);
 				if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
 			}
-		} else {
+		}
+/*
+		else {
 			sleep(3);
 		}
+		*/
 		printf("\n");
 	}
 	return rc;

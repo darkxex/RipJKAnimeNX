@@ -122,7 +122,8 @@ string Nozomi_player(string Link){
 	//Get SecondKey
 	string data = "data=" + FirstKey;
 	string SecondKey = Net::REDIRECT("https://jkanime.net/gsplay/redirect_post.php",data);
-	
+	//Use CustomPlayer
+	replace(SecondKey,"https://jkanime.net/gsplay/player.html#","https://stardustcfw.github.io/player.html#");
 	return SecondKey;
 }
 string Fembed_Link(string Link) {
