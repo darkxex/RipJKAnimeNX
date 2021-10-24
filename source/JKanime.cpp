@@ -384,20 +384,16 @@ int MkDIR(){
 				
 
 				if (TDIR.size() > 0){
-					if (TDIR.size() == 1){
-						if (TDIR[0] == ""){
-							break;
-						}
-					}
 					DIR.insert(DIR.end(), TDIR.begin(), TDIR.end());
 				} else 
 					break;//just in case
 				
-				string scrap = scrapElement(content, "Resultados Siguientes");
 				//cout << scrap << "  # " << to_string(BD["arrays"]["Directory"]["page"]) << endl;
-				if (scrap.length() > 0) {
+				if (content.find("Resultados Siguientes »") != string::npos) {
+					cout << "  #" << to_string(ofall);
 					//some code here soon
 				} else {
+					cout << "  #" << to_string(ofall) << endl;
 					break;
 				}
 				BD["arrays"]["Directory"]["page"]=BD["arrays"]["Directory"]["page"].get<int>()+1;
@@ -498,18 +494,17 @@ int searchjk(void* data) {//Search Thread
 	if (texts.length() > 0) {
 		cout << "# Search: " << texts << endl;
 		string content = "";
-		int page = 1;
-		while (!quit) {
-			string tempCont=Net::GET("https://jkanime.net/buscar/" + texts + "/"+to_string(page)+"/");
+		for (int c=1;c < 10 && !quit; c++) {
+			string tempCont=Net::GET("https://jkanime.net/buscar/" + texts + "/"+to_string(c)+"/");
 			content += tempCont;
-			string scrap = scrapElement(tempCont, "Resultados Siguientes");
-			cout << scrap << "  # " << to_string(page) << endl;
-			if (scrap.length() > 0) {
+			
+			if (tempCont.find("Resultados Siguientes »") != string::npos) {
+				cout << "  #" << to_string(c);
 				//some code here soon
 			} else {
+				cout << "  #" << to_string(c) << endl;
 				break;
 			}
-			page++;
 		}
 
 		int val0 = 0,val1 = 1,val2,val3, val4;

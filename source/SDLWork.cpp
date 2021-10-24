@@ -1093,7 +1093,7 @@ bool LTexture::loadFromFileCustom(std::string path, int h, int w){
 bool LTexture::loadFromRenderedText(TTF_Font *fuente, std::string textureText, SDL_Color textColor){
 	//Get rid of preexisting texture
 	free();
-
+	if(textureText.length() == 0) textureText=" ";
 	//Render text surface
 	SDL_Surface* textSurface = TTF_RenderUTF8_Blended(fuente, textureText.c_str(), textColor);
 
@@ -1126,7 +1126,7 @@ bool LTexture::loadFromRenderedText(TTF_Font *fuente, std::string textureText, S
 bool LTexture::loadFromRenderedTextWrap(TTF_Font *fuente, std::string textureText, SDL_Color textColor, Uint32 size){
 	//Get rid of preexisting texture
 	free();
-
+	if(textureText.length() == 0) textureText=" ";
 	//Render text surface
 	SDL_Surface* textSurface = TTF_RenderUTF8_Blended_Wrapped(fuente, textureText.c_str(), textColor, size);
 
@@ -1216,6 +1216,7 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 }
 int LTexture::render_T(int x, int y, std::string text, bool presed){
 	int TMPW = 0;
+	if(text.length() == 0) text=" ";
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 

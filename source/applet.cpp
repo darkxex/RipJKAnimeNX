@@ -355,7 +355,6 @@ namespace user {
 	}
 }
 
-
 namespace emmc {
 	FsFileSystem appdata;
 	bool isMounted=false;
@@ -387,7 +386,6 @@ namespace emmc {
 	}
 }
 
-
 bool GetAppletMode(){
 	//nxlinkStdio();
 	isSXOS=IsRunning("tx");
@@ -403,7 +401,6 @@ bool GetAppletMode(){
 	}
 	return false;
 }
-
 
 json DInfo(string ver){
 	static json info;

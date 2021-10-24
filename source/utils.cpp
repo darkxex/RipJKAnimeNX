@@ -23,7 +23,7 @@
 using namespace std;
 
 std::string scrapElement(std::string content, std::string get,std::string delim){
-	std::string Element = " ";
+	std::string Element = "";
 	if(content.length() <= 0)
 	{return Element;}
 
@@ -93,8 +93,7 @@ vector<string> scrapElementAll(std::string content, std::string get,std::string 
 
 			res.push_back (Element+addend);
 		} else {
-			if (res.size() == 0)
-				res.push_back ("");
+
 			break;
 		}
 	}
