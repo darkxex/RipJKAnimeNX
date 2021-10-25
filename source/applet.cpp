@@ -414,13 +414,14 @@ json DInfo(string ver){
 
 		Result ret = 0;
 
-		//Get Config file
+		//Get Config file , order sdmc - Nand - hardcoded
 		json config;
-		if (!read_DB(config,rootdirectory+"config.json")){
-			if (!read_DB(config,"romfs:/config.json")){
-				std::cout  << "- Fail Config" <<std::endl;
+		if (!read_DB(config,"sdmc:/JK.config")){
+			if (!read_DB(config,rootdirectory+"JK.config")){
+				std::cout  << "# Using default Config" <<std::endl;
 			}
 		}
+		//If not exist use default config
 		if(config["AutoUpdate"].is_null()){config["AutoUpdate"]=1;}
 		if(config["Beta"].is_null()){config["Beta"]=0;}
 		if(config["author"].is_null()){config["author"]="darkxex";}
