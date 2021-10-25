@@ -13,13 +13,13 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 <details>
   <summary>Metodo Alternativo</summary>
  <li> Copiar el archivo <a href="/out/RipJKAnimeNX[05B9DB505ABBE000][v0].nsp?raw=true">RipJKAnimeNX[05B9DB505ABBE000][v0].nsp</a>  en la SD.</li>
- <li> Instalar el RipJKAnime NX[05B9DB505ABBE000][v0].nsp Con GoldLeaf o Awoo-installer</li>
+ <li> Instalar el RipJKAnimeNX[05B9DB505ABBE000][v0].nsp Con GoldLeaf o Awoo-installer</li>
 </details>
 
 ## Actualizar la app
 * Esta Aplicacion se Actualiza de forma automática para que tengas siempre la ultima versión
 * Si tienes 2.2.8 o superior es simple resiviras el update de forma automatica solo debes abrir la app con internet
-<img style="display:inline" src="https://user-images.githubusercontent.com/36446521/137326527-f382c107-b441-4c92-a697-5f937eddb1c0.png" width="232"/>
+<img style="display:inline" src="ScreenShots/ScreenShots_3.jpg" width="232"/>
 
 * * veras la version aumentar luego que la flecha deje de girar , deberas abrirla de nuevo para ver los cambios
 * Si usas una version inferior deberas o bien instalar el nsp o abrir el nro desde el album para obtener la ultima
