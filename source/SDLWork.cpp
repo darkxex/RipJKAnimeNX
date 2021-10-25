@@ -226,7 +226,7 @@ void SDLB::loadSkin(string img){
 
 	SkinMaster = UD["Themes"]["use"];
 	UD["Themes"]["name"] = NameOfTheme(SkinMaster);
-	cout << std::setw(4) << UD["Themes"] << std::endl;
+	cout << "# Theme: " << UD["Themes"]["use"] << std::endl;
 	
 	//images
 	Farest.free();

@@ -187,7 +187,7 @@ namespace user {
 			
 			*/
 
-			cout <<"User Init OK" <<std::endl;
+			//cout <<"User Init OK" <<std::endl;
 			return GetUserID();
 		} else {
 			cout << "Failied to init User" <<std::endl;

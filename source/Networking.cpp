@@ -152,7 +152,7 @@ namespace Net {
 	json HEAD(string url){
 		json deb = REQUEST(url,"",true,true);
 		if ( DebugNet > 0){
-			cout << "Nintendo Web : " << deb["CODE"] << std::endl;
+			cout << "# Nintendo Web : " << deb["CODE"] << std::endl;
 		}
 		return deb;
 	}
