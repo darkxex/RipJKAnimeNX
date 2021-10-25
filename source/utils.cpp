@@ -579,7 +579,7 @@ namespace LOG {
 			stream_buffer_cin = cin.rdbuf();
 			
 			Mem();
-			cout << "HEAD>" << endl;
+			cout << "HEAD> < " << time(0) << " >" << endl;
 			cout << DInfo() << std::endl;
 		}
 	}
@@ -588,7 +588,7 @@ namespace LOG {
 	void SaveFile(){
 		if (MLOG()){
 			//Save log File
-			cout << "END>" << endl;
+			cout << "END> < " << time(0) << " >" << endl;
 			//file.open(rootdirectory+"JK.log", ios::app);
 			file.open("sdmc:/JK.log", ios::app);
 			file << redirectStream.str();

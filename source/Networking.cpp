@@ -152,7 +152,7 @@ namespace Net {
 	json HEAD(string url){
 		json deb = REQUEST(url,"",true,true);
 		if ( DebugNet > 0){
-			cout << deb << std::endl;
+			cout << "Nintendo Web : " << deb["CODE"] << std::endl;
 		}
 		return deb;
 	}
@@ -460,9 +460,10 @@ bool CheckUpdates(bool force){
 /*
 
 Spected:
-config.json
+JK.config
 	{
 		"AutoUpdate": 1,
+		"Beta": 1,
 		"author":"??"
 		"repo": "??"
 	}
