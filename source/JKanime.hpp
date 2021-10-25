@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <fstream>
 #include <thread>
+#include <random>
 
 int AnimeLoader(void* data);
 int downloadjkanimevideo(void* data);

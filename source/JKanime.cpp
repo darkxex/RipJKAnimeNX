@@ -10,7 +10,9 @@ enum UnixT {U_day=86400, U_week=604800};
 u32 voidd =0;
 
 //Private Functions
-bool DataMaker(json LinkList,int& part, int& ofall);
+bool DataMaker(json LinkList, int& part, int& ofall);
+bool DataGeter(json LinkList,int& part, int& ofall);
+void DataMakerT(json LinkList);
 int MkTOP();
 int MkHOR();
 int MkAGR(string content);
@@ -190,22 +192,22 @@ int AnimeLoader(void* data){
 		cout << "# Cache Recent ";
 		if (haschange) {
 			cout << " , haschange " ;
-			if(DataMaker(BD["arrays"]["chapter"]["link"], part, ofall)) {
+			if(DataGeter(BD["arrays"]["chapter"]["link"], part, ofall)) {
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
 		}
 
 		steep++;//Load to cache all Favorites Chaps
 		cout << "| favoritos ";
-		DataMaker(UD["favoritos"], part, ofall);
+		DataGeter(UD["favoritos"], part, ofall);
 
 		steep++;//Cache Top
 		cout << "| Top ";
-		DataMaker(BD["arrays"]["Top"]["link"], part, ofall);
+		DataGeter(BD["arrays"]["Top"]["link"], part, ofall);
 
 		steep++;//Cache Horario
 		cout << "| HourGlass " <<endl;;
-		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
+		DataGeter(BD["arrays"]["HourGlass"]["link"], part, ofall);
 
 		steep++;//Load Directory
 		MkDIR();
@@ -224,6 +226,49 @@ int AnimeLoader(void* data){
 	if (AppletMode) quit=true;
 	return 0;
 
+}
+
+bool DataGeter(json LinkList,int& part, int& ofall){
+
+	vector<string> chain1 = LinkList;
+	vector<string> chain2 = LinkList;
+	
+	std::reverse(chain1.begin(), chain1.end());
+	
+	std::default_random_engine e(time(0));
+	std::shuffle(std::begin(chain2), std::end(chain2), e);
+	
+	
+	std::thread chaps1(DataMakerT,chain1);
+	std::thread chaps2(DataMakerT,chain2);
+
+	bool mik = DataMaker(LinkList,part, ofall);
+	
+	if (chaps1.joinable()) {chaps1.join();}
+	if (chaps2.joinable()) {chaps2.join();}
+	return mik;
+}
+void DataMakerT(json LinkList) {
+	int mytotal;
+	string a = "";
+	//int sep=0;
+	mytotal=LinkList.size();
+	if (mytotal <= 0){return ;}
+	for (int x = 0; x < mytotal&& !quit; x++)
+	{
+		if (!isConnected) while (!Net::HasConnection()) {SDL_Delay(2000); if(quit) return; }
+		string link = LinkList[x];
+		string name = KeyOfLink(link);
+		if (AB["AnimeBase"][name]["TimeStamp"] != BD["TimeStamp"] ) {
+			if (AB["AnimeBase"][name]["TimeStamp"].is_null() || AB["AnimeBase"][name]["enemision"]=="true") {
+				DataUpdate(link);
+			} else {
+
+			}
+		}
+	}
+	if(quit) return;
+	return ;
 }
 bool DataMaker(json LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
@@ -389,25 +434,27 @@ int MkDIR(){
 					break;//just in case
 				
 				//cout << scrap << "  # " << to_string(BD["arrays"]["Directory"]["page"]) << endl;
-				if (content.find("Resultados Siguientes »") != string::npos) {
+				if (content.find("Resultados Siguientes &raquo;") != string::npos) {
 					cout << "  #" << to_string(ofall);
 					//some code here soon
 				} else {
-					cout << "  #" << to_string(ofall) << endl;
+					cout << "end  #" << to_string(ofall) << endl;
 					break;
 				}
 				BD["arrays"]["Directory"]["page"]=BD["arrays"]["Directory"]["page"].get<int>()+1;
 				ofall++;
 			}
-			ofall=0;
-			if(quit) return false;
+			if(quit) { ofall=0; return false;}
 			BD["arrays"]["Directory"]["pageT"]=BD["arrays"]["Directory"]["page"];
 			BD["arrays"]["Directory"]["page"]=1;
 			DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());
-			BD["arrays"]["Directory"]["TimeStamp"]=TimeNow();
+			if (ofall != 0 && DIR.size() != 0){
+				BD["arrays"]["Directory"]["TimeStamp"]=TimeNow();
+			}
 			BD["arrays"]["Directory"]["link"]=DIR;
 			//cout << BD["arrays"]["Directory"] << endl;
 			BD["arrays"]["Directory"]["InTime"]=0;
+			ofall=0;
 			write_DB(BD,rootdirectory+"DataBase.json");
 		}
 	} catch(...) {
@@ -422,7 +469,7 @@ int MkDIR(){
 	{
 		cout << "# Cache Directory " << endl;
 		try{
-			if (DataMaker(BD["arrays"]["Directory"]["link"], part, ofall)){
+			if (DataGeter(BD["arrays"]["Directory"]["link"], part, ofall)){
 				BD["arrays"]["Directory"]["InTime"]=1;
 				write_DB(AB,rootdirectory+"AnimeBase.json");
 			}
@@ -498,7 +545,7 @@ int searchjk(void* data) {//Search Thread
 			string tempCont=Net::GET("https://jkanime.net/buscar/" + texts + "/"+to_string(c)+"/");
 			content += tempCont;
 			
-			if (tempCont.find("Resultados Siguientes »") != string::npos) {
+			if (tempCont.find("Resultados Siguientes &raquo;") != string::npos) {
 				cout << "  #" << to_string(c);
 				//some code here soon
 			} else {
@@ -551,7 +598,7 @@ int searchjk(void* data) {//Search Thread
 		cout << BD["arrays"]["search"] << endl;
 	}
 	reloadingsearch = false;
-	DataMaker(BD["arrays"]["search"]["link"], porcentajebufferS, porcentajebufferAllS);
+	DataGeter(BD["arrays"]["search"]["link"], porcentajebufferS, porcentajebufferAllS);
 	return 0;
 }
 int capit(void* data) {//Get chap thread
