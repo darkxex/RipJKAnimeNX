@@ -34,6 +34,25 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 
 <details>
   <summary>Como Compilar, Devs</summary>
+# Configuracion
+	* * AutoUpdate: Define si la app se actualizara automáticamente
+	* * author y repo: se utilizan para calcular el link de descarga, ej "github.com/"+author+"/"+repo+"/releases"
+	* * Beta: cuando esta activa descarga los updates de out en vez de la release
+
+* JK.config deberá estar ubicado en la raiz de la SD para que sobrescriba la configuración por defecto
+````json
+{
+	"AutoUpdate": 1,
+	"Beta":0,
+	"author":"darkxex",
+	"repo": "RipJKAnimeNX"
+}
+
+```
+
+# LOGS
+* La app crea automaticamente un ficchero JK.log en la SD solo si es abierta desde su nsp 
+* * de Lo contrario los logs van la consola de NxLink
 
 # Compilar 
 esta app hace uso de [nspmini](https://github.com/StarDustCFW/nspmini) como librería
@@ -64,10 +83,10 @@ make NSP
 - [ ] **Sección de ajustes**
 - [ ] **Abrir PPLAY desde la app**
 - [ ] **Integrar un reproductor interno**
-- [ ] **Crear Salvas de Usuario si no existen**
 - [ ] **Utilizar OpenGL**
+- [ ] **Que la app no se congele al usar el navegador**
 ### Done 
-- [x] **Que la app no se congele al usar el navegador**
+- [x] **Crear Salvas de Usuario si no existen**
 - [x] **Agregar slideshow**
 - [x] **Agregar sección de recomendados**
 - [x] **Gestionar la interfaz de decargas**
