@@ -34,13 +34,14 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 
 <details>
   <summary>Como Compilar, Devs</summary>
-# Configuracion
-	* * AutoUpdate: Define si la app se actualizara automáticamente
-	* * author y repo: se utilizan para calcular el link de descarga, ej "github.com/"+author+"/"+repo+"/releases"
-	* * Beta: cuando esta activa descarga los updates de out en vez de la release
+
+## Configuracion
+* * AutoUpdate: Define si la app se actualizara automáticamente
+* * author y repo: se utilizan para calcular el link de descarga, ej "github.com/"+author+"/"+repo+"/releases"
+* * Beta: cuando esta activa descarga los updates de out en vez de la release
 
 * JK.config deberá estar ubicado en la raiz de la SD para que sobrescriba la configuración por defecto
-````json
+```json
 {
 	"AutoUpdate": 1,
 	"Beta":0,
@@ -50,11 +51,11 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 
 ```
 
-# LOGS
+## LOGS
 * La app crea automaticamente un ficchero JK.log en la SD solo si es abierta desde su nsp 
 * * de Lo contrario los logs van la consola de NxLink
 
-# Compilar 
+## Compilar 
 esta app hace uso de [nspmini](https://github.com/StarDustCFW/nspmini) como librería
 ```sh
 # Deberás usar los siguientes comandos para instalar nspmini en devkitpro
