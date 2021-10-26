@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 			if (stus == AppletOperationMode_Console) {isHandheld=false;}
 
 			//Clear screen
-			SDL_SetRenderDrawColor(GOD.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+			SDL_SetRenderDrawColor(GOD.gRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderClear(GOD.gRenderer);
 
 			//wallpaper
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 			//render states
 			switch (statenow)
 			{
-			case chapter_s:                   {
+			case chapter_s: {
 				//Draw a background to a nice view
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 				VOX.render_VOX({0,0, SCREEN_WIDTH, 670},170, 170, 170, 100);

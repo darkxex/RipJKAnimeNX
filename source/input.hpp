@@ -543,6 +543,14 @@
 									latest = mincapit;
 								}
 								break;
+							case menu_s:
+								if (BD["arrays"]["Banner"]["link"].size()>0)
+								{
+									string path = BD["arrays"]["Banner"]["files"][bannersel];
+									Farest.free();
+									Farest.loadFromFileCustom(path,720,1280);
+								}
+								break;
 							}
 						}
 						if (e.jbutton.button == BT_RIGHT || e.jbutton.button == BT_LS_RIGHT) {// (right) button down
