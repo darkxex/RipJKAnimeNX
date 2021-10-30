@@ -144,9 +144,10 @@ int AnimeLoader(void* data){
 					ChapLink.insert(ChapLink.end(), OChapLink.begin(), OChapLink.end());
 					ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
 
-					if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
-					if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
+					//if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
+					//if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
 				}
+				DoubleKill(ChapLink);
 				GOD.PlayEffect(GOD.proc);
 				Frames=1;
 				BD["arrays"]["chapter"]["link"]=ChapLink;
@@ -236,6 +237,7 @@ bool DataGeter(json LinkList,int& part, int& ofall){
 	std::reverse(chain1.begin(), chain1.end());
 	
 	std::default_random_engine e(time(0));
+	std::shuffle(std::begin(chain1), std::end(chain1), e);
 	std::shuffle(std::begin(chain2), std::end(chain2), e);
 	
 	

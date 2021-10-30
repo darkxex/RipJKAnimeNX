@@ -250,7 +250,7 @@
 
 										string item=BD["com"]["ActualLink"].get<string>();
 										int hsize = UD["history"].size();
-										if (hsize > 49) {UD["history"].erase(UD["history"].end());}//limit history
+//										if (hsize > 49) {UD["history"].erase(UD["history"].end());}//limit history
 										if (hsize > 0) {
 											UD["history"] = eraseVec(UD["history"],item);
 											//UD["history"].erase(remove(UD["history"].begin(), UD["history"].end(), item), UD["history"].end());
