@@ -399,6 +399,32 @@ void led_on(int inter){
 
 }
 
+bool DoubleKill(vector<string>& data) {
+	vector<string> chap = data;
+	u64 sizecap = chap.size();
+	if (sizecap == 0) {return false;}
+	vector<string> next;
+	u64 i=0;
+	//for(i=0; i < sizecap; i++){
+	while(chap.size() > 0 && !quit){
+		string anime = chap[i];
+		/*
+		https://jkanime.net/lupin-iii-part-6/
+		https://cdn.jkanime.net/assets/images/animes/image/lupin-iii-part-6.jpg
+		*/
+		int v2 = anime.find("/", 20);
+		string serie = anime.substr(0, v2 + 1);
+		chap = eraseVec(chap,serie);
+		next.push_back(anime);
+		sizecap = chap.size();
+		//cout << " "+serie+" - size: "<< chap.size() << endl;
+	}
+	if (sizecap == next.size()) {return false;}
+	data = next;
+	return true;
+}
+
+
 std::vector<std::string> eraseVec(std::vector<std::string> array,std::string patther){
 	std::vector<std::string> array2={};
 	for (int x=0; x < (int)array.size(); x++) {

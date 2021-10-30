@@ -28,6 +28,7 @@ string string_to_hex(const string& in);
 bool isset(json& data,string key);
 void NameOfLink(string& word);
 string KeyOfLink(string word);
+bool DoubleKill(vector<string>& data);
 
 namespace LOG {
 	void init();
