@@ -1,7 +1,7 @@
 #include <string>
 #include "JKanime.hpp"
 #include "extra.hpp"
-
+#include "input.hpp"
 //make some includes to clean a little the main
 string urlc = "https://myrincon.duckdns.org";
 
@@ -74,17 +74,8 @@ int main(int argc, char **argv)
 	int posxbase = 20;
 	int posybase = 10;
 
-	//Event handler
-	SDL_Event e;
-
-	for (int i = 0; i < 2; i++) {
-		if (SDL_JoystickOpen(i) == NULL) {
-			SDL_Log("SDL_JoystickOpen: %s\n", SDL_GetError());
-			SDL_Quit();
-			return -1;
-		}
-	}
-
+	Inputinit();
+	
 	try{
 		//Load images from Romfs
 		LoadImages();
@@ -99,7 +90,7 @@ int main(int argc, char **argv)
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 		//Handle forced exit
 		//if (!AppletMode)
-			appletLockExit();
+		appletLockExit();
 		
 		
 		//While application is running
@@ -322,7 +313,7 @@ int main(int argc, char **argv)
 						USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 						if (GOD.fingermotion_LEFT & (GOD.TouchX > 1100)) {
 							GOD.fingermotion_LEFT = false;
-							callmenuslide();
+							statenow=menu_s;
 						}
 						if (GOD.fingermotion_RIGHT & (GOD.TouchX > 850)) {
 							GOD.fingermotion_RIGHT = false;
@@ -894,7 +885,12 @@ int main(int argc, char **argv)
 				}
 			}
 			//HID Events
-			#include "input.hpp"
+			//#include "input.hpp"
+			InputHandle();
+			if(quit){
+				//wallpaper
+				Farest.render((0), (0));
+			}
 		}
 	} catch(...) {
 		LOG::E(1);
