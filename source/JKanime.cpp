@@ -71,6 +71,12 @@ int AnimeLoader(void* data){
 				break;
 				
 			}
+		}
+		//Check for app Updates
+		CheckUpdates(AppletMode);
+		steep++;
+		
+		if (Mgate){
 			//Download themes
 			if (!mount_theme("themes",true))
 			{
@@ -81,8 +87,6 @@ int AnimeLoader(void* data){
 			}
 			Mgate=false;
 		}
-		//Check for app Updates
-		CheckUpdates(AppletMode);
 
 		steep++;
 		if(!reloading) {
@@ -98,6 +102,10 @@ int AnimeLoader(void* data){
 		if (MainPage["CODE"] == 0){
 			cout << "- Error can't connect with Web" << endl;
 			throw "Error Connect";
+		}
+		if (MainPage["CODE"] == 403){
+			cout << "- Error cloudflare active in Web" << endl;
+			throw "Error cloudflare active";
 		}
 
 		steep++;//Get Programation list, Links and Images
