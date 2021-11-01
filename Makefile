@@ -67,10 +67,6 @@ CFLAGS	:=	-g -O3 -ffunction-sections \
 CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 
 #CFLAGS	+=	-DTITLE='"$(APP_TITLE)"' -DVERSION='"$(APP_VERSION)"'
 
-ifneq ($(strip $(ISDEBUG)),)
-CFLAGS	+= -DISDEBUG
-endif
-#
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17 -fexceptions
 
 ASFLAGS	:=	-g $(ARCH)

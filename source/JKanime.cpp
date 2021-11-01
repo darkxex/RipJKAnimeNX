@@ -49,7 +49,7 @@ int AnimeLoader(void* data){
 		//execute this once, or if Mgate is true
 		static bool Mgate=true;
 		if (Mgate){
-			#ifdef ISDEBUG
+			#if __has_include("Debug.h")
 				#include "Debug.h"
 			#endif
 			int Req = Net::HEAD("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0")["CODE"];
