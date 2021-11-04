@@ -5,8 +5,8 @@
 #include <stdio.h>
 
 #define DEFAULT_NRO "sdmc:/hbmenu.nro"
-#define LOC1 "sdmc:/switch/RipJKAnime_NX/RipJKAnime_NX.nro"
-#define LOC2 "sdmc:/switch/RipJKAnime_NX.nro"
+#define LOC1 "sdmc:/switch/RipJKAnimeNX.nro"
+#define LOC2 "sdmc:/switch/RipJKAnimeNX/RipJKAnimeNX.nro"
 
 const char g_noticeText[] =
     TITLE " " VERSION "\0"
