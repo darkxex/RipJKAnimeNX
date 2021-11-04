@@ -65,6 +65,7 @@ int AnimeLoader(void* data){
 					cout << "# Reload DNS" << endl;
 					ReloadDNS();
 				} else{
+					if (AppletMode) InstallNSP("romfs:/05B9DB505ABBE000.nsp");
 					//Disable Stealth mode
 					//txStealthMode(0);
 				}
