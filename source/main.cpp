@@ -894,7 +894,6 @@ int main(int argc, char **argv)
 		}
 	} catch(...) {
 		LOG::E(1);
-		led_on(2);
 		cout << "- Error Catched Main" << endl;
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
 		cout << "com: " << BD["com"] << endl;
@@ -955,8 +954,9 @@ int main(int argc, char **argv)
 	//LOG Save
 	if (hasError > 0){
 		cout << "ErrorSession: " << hasError << endl;
+		LOG::SaveFile();
 	}
-	LOG::SaveFile();
+	
 	
 	accountExit();
 	hidsysExit();

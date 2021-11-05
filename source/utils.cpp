@@ -261,7 +261,6 @@ bool write_DB(json base,std::string path){
 		if (type == "emmc") emmc::commit();
 	} catch(...) {
 		LOG::E(14);
-		led_on(2);
 		std::cout << "Json: write Error... "<< path << std::endl; 
 		return false;
 	}
@@ -585,6 +584,7 @@ namespace LOG {
 	
 	int E(int r){
 		GOD.PlayEffect(GOD.aree);
+		led_on(2);
 		int result = 1;
 		for(int i=1; i < r;i++){
 			result = result*10;

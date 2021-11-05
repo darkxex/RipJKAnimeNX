@@ -223,7 +223,6 @@ int AnimeLoader(void* data){
 		MkDIR();
 	} catch(...) {
 		LOG::E(2);
-		led_on(2);
 		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
 		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
@@ -470,7 +469,6 @@ int MkDIR(){
 		}
 	} catch(...) {
 		LOG::E(3);
-		led_on(2);
 		cout << "- Thread Chain Error Catched, Get Dir Error" <<endl;
 		return 0;
 	}
@@ -486,7 +484,6 @@ int MkDIR(){
 			}
 		} catch(...) {
 			LOG::E(4);
-			led_on(2);
 			cout << "- Thread Chain Error Catched,Dir Error" <<endl;
 			//write_DB(BD,rootdirectory+"DataBase.json");
 			return 0;
@@ -526,7 +523,6 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 	if(cancelcurl==0) led_on(3); else led_on(0);
 	} catch(...) {
 		LOG::E(5);
-		led_on(2);
 		cout << "- Thread Download Error Catched" <<endl;
 		cout << BD["arrays"]["downloads"] << endl;
 	}
@@ -604,7 +600,6 @@ int searchjk(void* data) {//Search Thread
 	}
 	} catch(...) {
 		LOG::E(6);
-		led_on(2);
 		cout << "- Thread Search Error Catched" <<endl;
 		cout << BD["arrays"]["search"] << endl;
 	}
@@ -637,7 +632,6 @@ int capit(void* data) {//Get chap thread
 		}
 	}catch(...) {
 		LOG::E(7);
-		led_on(2);
 		cout << "- Error "+name <<endl;
 	}
 	return 0;
@@ -706,7 +700,6 @@ int capBuffer (string Tlink) {//anime manager
 			}
 		}catch(...) {
 			LOG::E(8);
-			led_on(2);
 			cout << "- Error buff"+name << endl;
 		}
 	}
@@ -881,7 +874,6 @@ void DataUpdate(string Link) {//Get info off chapter
 		cout << "Saved: " << name << endl;
 	} catch(...) {
 		LOG::E(9);
-		led_on(2);
 		cout << "Anime Problemático: "<< name << endl;
 		cout << strm.str() << endl;
 	}

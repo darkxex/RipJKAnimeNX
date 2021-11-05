@@ -140,7 +140,6 @@ bool SDLB::JKMainLoop(){
 		GOD.FrameState++;
 	}catch(...){
 		LOG::E(12);
-		led_on(2);
 		cout << "- Error Catched Main Pool" << endl;		
 	}
 	//if get false once then collapse
@@ -158,7 +157,6 @@ bool SDLB::PlayEffect(Mix_Chunk* efect){
 	return true;
 	}catch(...){
 		LOG::E(13);
-		led_on(2);
 		cout << "- Error Play Effect" << endl;		
 	}
 	return false;

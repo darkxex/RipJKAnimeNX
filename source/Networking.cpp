@@ -451,7 +451,6 @@ bool CheckUpdates(bool force){
 		}
 	} catch(...) {
 		LOG::E(11);
-		led_on(2);
 		std::cout << "# Update Error catch" << std::endl;
 	}
 	return false;
