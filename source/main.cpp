@@ -954,8 +954,11 @@ int main(int argc, char **argv)
 	//LOG Save
 	if (hasError > 0){
 		cout << "ErrorSession: " << hasError << endl;
+		LOG::SaveFile(true);
+	} else {
 		LOG::SaveFile();
 	}
+		
 	
 	
 	accountExit();

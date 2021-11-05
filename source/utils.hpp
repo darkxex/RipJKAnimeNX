@@ -32,7 +32,7 @@ bool DoubleKill(vector<string>& data);
 
 namespace LOG {
 	void init();
-	void SaveFile();
+	void SaveFile(bool error=false);
 	void Mem();
 	void Screen();
 	int E(int r);

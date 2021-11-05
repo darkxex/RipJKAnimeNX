@@ -611,12 +611,17 @@ namespace LOG {
 	}
 
 	
-	void SaveFile(){
+	void SaveFile(bool error){
 		if (MLOG()){
 			//Save log File
 			cout << "END> < " << time(0) << " >" << endl;
 			//file.open(rootdirectory+"JK.log", ios::app);
-			file.open("sdmc:/JK.log", ios::app);
+			if(error){
+				file.open("sdmc:/JK_e.log", ios::app);
+			} else {
+				file.open("sdmc:/JK.log");
+			}
+			
 			file << redirectStream.str();
 			file.close();
 		}
