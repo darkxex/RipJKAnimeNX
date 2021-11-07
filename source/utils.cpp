@@ -606,7 +606,7 @@ namespace LOG {
 			
 			Mem();
 			cout << "HEAD> < " << time(0) << " >" << endl;
-			cout << DInfo() << std::endl;
+			cout << std::setw(4) << DInfo() << std::endl;
 		}
 	}
 
@@ -619,7 +619,7 @@ namespace LOG {
 			if(error){
 				file.open("sdmc:/JK_e.log", ios::app);
 			} else {
-				file.open("sdmc:/JK.log");
+				file.open("sdmc:/JK.log",std::fstream::out);
 			}
 			
 			file << redirectStream.str();

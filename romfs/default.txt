@@ -59,3 +59,9 @@
 127.0.0.1 *culturedischargenarcotic*
 127.0.0.1 *google-analytics*
 
+127.0.0.1 *rndskittytor.com*
+127.0.0.1 *soaheeme.net*
+127.0.0.1 *odhwfjrwlcq.xyz*
+127.0.0.1 *ptewauta.net*
+127.0.0.1 *whoutsog.net*
+
