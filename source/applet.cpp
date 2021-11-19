@@ -487,28 +487,28 @@ json DInfo(string ver){
 		if (R_FAILED(ret = setsysGetProductModel(&modelo))) {
 			printf("setsysGetProductModel() Failied: 0x%x.\n\n", ret);
 		} else {
-			string a="Unknow Model";
+			string a="UM";//"Unknow Model";
 			switch(modelo) {
 			case SetSysProductModel_Invalid:
-				a="Invalid Model";
+				a="IM";//"Invalid Model";
 				break;
 			case SetSysProductModel_Nx:
-				a="Erista Model";
+				a="ERM";//Erista Model
 				break;
 			case SetSysProductModel_Copper:
-				a="Erista Simulation Model";
+				a="ESM";//"Erista Simulation Model";
 				break;
 			case SetSysProductModel_Iowa:
-				a="Mariko Model";
+				a="MKM";//"Mariko Model";
 				break;
 			case SetSysProductModel_Hoag:
-				a="Mariko Lite Model";
+				a="MLM";//"Mariko Lite Model";
 				break;
 			case SetSysProductModel_Calcio:
-				a="Mariko Simulation Model";
+				a="MSM";//"Mariko Simulation Model";
 				break;
 			case SetSysProductModel_Aula:
-				a="Mariko Pro Model(?) ";
+				a="MOM";//"Mariko Pro Model(?) ";
 				break;
 			}
 			info["Model"]=a;
@@ -522,22 +522,22 @@ json DInfo(string ver){
 			string a="Wut?";
 			switch(region) {
 			case SetRegion_JPN:
-				a="Japan";
+				a="JPN";//Japan
 				break;
 			case SetRegion_USA:
-				a="The Americas";
+				a="USA";//The Americas
 				break;
 			case SetRegion_EUR:
-				a="Europe";
+				a="EUR";//Europe
 				break;
 			case SetRegion_AUS:
-				a="Australia/New Zealand";
+				a="AUS";//Australia/New Zealand
 				break;
 			case SetRegion_HTK:
-				a="Hong Kong/Taiwan/Korea";
+				a="HTK";//Hong Kong/Taiwan/Korea
 				break;
 			case SetRegion_CHN:
-				a="China";
+				a="CHN";//China
 				break;
 			}
 			info["Region"]=a;
