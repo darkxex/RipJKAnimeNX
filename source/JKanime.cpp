@@ -161,6 +161,7 @@ int AnimeLoader(void* data){
 				Frames=1;
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 				BD["arrays"]["chapter"]["images"]=ChapImag;
+				haschange = true;
 			} 
 		} else {
 			cout << "# TimeStamp: " << BD["TimeStamp"] << endl;
@@ -178,13 +179,16 @@ int AnimeLoader(void* data){
 		MkAGR(temcont);
 		
 		steep++;//banner to Database
-		temp0=content.find("<section class=\"hero\">");
-		temp1=content.find("<div class=\"solopc\">",temp0);
-		temcont = content.substr(temp0,temp1-temp0);
-		MkBNR(temcont);
+		if (haschange) {
+			temp0=content.find("<section class=\"hero\">");
+			temp1=content.find("<div class=\"solopc\">",temp0);
+			temcont = content.substr(temp0,temp1-temp0);
+			MkBNR(temcont);
+			MkHOR();
+		}
 		steep++;//Top, Hour to Database
 		MkTOP();
-		MkHOR();
+		
 
 		steep++;//Download All not existing images of Favorites
 		if(UD["favoritos"].is_null()) {
@@ -372,8 +376,11 @@ int MkHOR(){
 	cout << "# HourGlass Get ";
 	string content=Net::GET("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
-	vector<string> STP={};
+	replace(content,"https://cdn.jkanime.net/assets/images/animes/image/","https://jkanime.net/");
+	replace(content,".jpg","/");
+	replace(content,".png","/");
 
+	vector<string> STP={};
 	STP=split(content,"<div class='box semana'>");
 	BD["arrays"]["HourGlass"]["Lunes"]=scrapElementAll(STP[1],"https://jkanime.net/","\"","Lunes");
 	BD["arrays"]["HourGlass"]["Martes"]=scrapElementAll(STP[2],"https://jkanime.net/","\"","Martes");
