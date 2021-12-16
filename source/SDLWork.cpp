@@ -249,6 +249,7 @@ void SDLB::selectskin(string val) {
 	std::vector<std::string> temas = {
 		roottheme+"Devilovania",
 		roottheme+"Digimon",
+		roottheme+"Kurumi",
 		roottheme+"Miku",
 		roottheme+"NeonDrive",
 		roottheme+"NoBulletsFly",
