@@ -242,7 +242,9 @@ int AnimeLoader(void* data){
 }
 
 bool DataGeter(json LinkList,int& part, int& ofall){
-
+	if(LinkList.is_null()) {
+		return false;
+	}
 	vector<string> chain1 = LinkList;
 	vector<string> chain2 = LinkList;
 	
