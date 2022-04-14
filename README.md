@@ -54,13 +54,15 @@ make NSP
 ## Configuracion
 * ``AutoUpdate``: Define si la app se actualizara automáticamente
 * ``author`` y ``repo``: se utilizan para calcular el link de descarga, ej ``"github.com/"+author+"/"+repo+"/releases"``
-* ``Beta``: cuando esta activa descarga los updates de out en vez de la release
+* ``Beta``: cuando esta activa descarga los updates de Beta_URL en vez de la release
+* ``Beta_URL``: URL de la versión beta
 
 * ``JK.config`` deberá estar ubicado en la raiz de la SD para que sobrescriba la configuración por defecto
 ```json
 {
  "AutoUpdate": 1,
  "Beta":0,
+ "Beta_URL": "https://mysitio.blabla/beta.nsp",
  "author":"darkxex",
  "repo": "RipJKAnimeNX"
 }
