@@ -159,6 +159,7 @@ std::vector<std::string> arrayserversbak = {
 std::vector<std::string> arrayservers = arrayserversbak;
 
 bool onlinejkanimevideo(string onlineenlace,string server){
+	if (!Net::HasConnection()){return false;}
 	string videourl = "";
 	string content = "";
 	string tempcon = "";
@@ -212,6 +213,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	return false;
 }
 bool linktodownoadjkanime(string urltodownload,string directorydownload) {
+	if (!Net::HasConnection()){return false;}
 	string videourl = "";
 	string content = "";
 	content = Net::GET(urltodownload);
