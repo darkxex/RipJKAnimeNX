@@ -6,7 +6,7 @@
 #include "Link.hpp"
 
 extern SDL_Thread* capithread;
-enum UnixT {U_day=86400, U_week=604800};
+enum UnixT {U_day=86400, U_week=604800, U_Month=2419200};
 u32 voidd =0;
 
 //Private Functions
@@ -425,12 +425,12 @@ int MkDIR(){
 	if (BD["arrays"]["Directory"]["link"].is_null()){BD["arrays"]["Directory"]["link"]={};}
 	try{
 	
-		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_week || BD["arrays"]["Directory"]["link"].size() == 0){
+		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_Month || BD["arrays"]["Directory"]["link"].size() == 0){
 			
 			//Flush Resents by week
 			vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
-			if (ChapLink.size() > 30){
-				ChapLink.erase(ChapLink.begin()+30,ChapLink.end());
+			if (ChapLink.size() > 60){
+				ChapLink.erase(ChapLink.begin()+60,ChapLink.end());
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 			}
 

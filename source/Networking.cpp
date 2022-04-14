@@ -388,7 +388,7 @@ bool CheckUpdates(bool force){
 
 					string Nurl= asset[0]["browser_download_url"];
 					if (config["Beta"] == 1){
-						Nurl="https://github.com/"+config["author"].get<string>()+"/"+config["repo"].get<string>()+"/raw/master/out/RipJKAnimeNX%5B05B9DB505ABBE000%5D%5Bv0%5D.nsp";
+						Nurl= config["Beta_URL"].get<string>();
 					}
 
 					//check if URl is ok
@@ -463,9 +463,12 @@ JK.config
 	{
 		"AutoUpdate": 1,
 		"Beta": 1,
+		"Beta_URL": "https://mysitio.blabla/beta.nsp",
 		"author":"??"
 		"repo": "??"
 	}
 
-On romfs or on the root dir of the app
+On sd card root on the root dir of the app
+sdmc:/JK.config
+User:/RipJKAnime/JK.config
 */

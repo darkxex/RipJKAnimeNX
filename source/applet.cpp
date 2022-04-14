@@ -425,6 +425,7 @@ json DInfo(string ver){
 		//If not exist use default config
 		if(config["AutoUpdate"].is_null()){config["AutoUpdate"]=1;}
 		if(config["Beta"].is_null()){config["Beta"]=0;}
+		if(config["Beta_URL"].is_null()){config["Beta_URL"]="";}
 		if(config["author"].is_null()){config["author"]="darkxex";}
 		if(config["repo"].is_null()){config["repo"]="RipJKAnimeNX";}
 		info["config"]=config;
