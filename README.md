@@ -26,11 +26,11 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 
 * * (A menos que se desactive deliberadamente)
 # A tener en cuenta
-* Esta app no funciona correctamente en modo applet (desde el album) porque requiere mas memoria y del uso del navegador 
+* Esta app no funciona correctamente en modo applet (desde el album) porque requiere mas memoria y del uso del navegador
 * Debes usar lo básico antibaneo (dns, incógnito ,[host](https://github.com/darkxex/RipJKAnimeNX/raw/master/romfs/default.txt) de atmosphere,etc)
 * Necesita Si o Si Internet 
 * Para ver Animes descargados puedes usar [PPlay](https://github.com/Cpasjuste/pplay/) se guardan en la Raíz de la sd /Videos/
-
+* No mover la app a la memoria de la consola porque podria dar problemas al momento de actualizarse
 
 <details>
   <summary>Como Compilar, Devs</summary>
@@ -70,7 +70,7 @@ make NSP
 ```
 
 ## LOGS
-* La app crea automaticamente un ficchero JK.log en la SD solo si es abierta desde su nsp
+* La app crea automaticamente un fichero JK.log en la SD solo si es abierta desde su nsp
 * * de Lo contrario los logs van la consola de NxLink
 * * si hay un error se creara un fichero JK_e.log
 
