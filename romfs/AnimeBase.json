@@ -705,9 +705,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, ",
-            "maxcapit": 2,
+            "maxcapit": 9,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "Reina Aharen, una estudiante pequeña y linda con una voz tranquila, es bastante mala para determinar la distancia y el espacio personal. A veces está a centímetros de tu cara y, en otras ocasiones, ¡a kilómetros de distancia! El único que trata de entender sus payasadas es Raidou Matsuboshi, quien está sentado a su lado en clase. Tiene un rostro amenazante, pero en realidad, es un chico amable con una imaginación que puede volverse loca a veces.\n\nAharen-san wa Hakarenai sigue a la peculiar pareja mientras su extraña amistad comienza a florecer cuando Raidou toma el borrador de Aharen para ella. Ella malinterpreta su gesto y ahora cree que son los mejores amigos, mostrando cómo las cosas más simples pueden convertirse en los desafíos más complicados para ellos."
         },
         "ahiru-no-sora": {
@@ -2238,9 +2238,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Deportes, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Ashito Aoi, un estudiante de tercer año de preparatoria de Ehime, conoce a Tatsuya Fukuda, un entrenador de la “Liga Juvenil J”. A pesar de que todavía es brusco, Ashito tiene un potencial tan asombroso que el entrenador Fukuda lo invita a participar en las pruebas de su equipo en Tokio. Empieza a desarrollarse la historia del chico que revolucionará el fútbol en Japón."
         },
         "ao-haru-ride": {
@@ -2971,7 +2971,25 @@
             "maxcapit": 79,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Ashita no Joe nos cuenta la historia de un boxeador, Joe Yabuki. Joe no es un boxeador como otros: es un huérfano que pasaba su vida en la calle hasta el día en el que encuentra a un viejo borracho llamado Danpei Tange. Danpei, boxeador profesional retirado, se queda asombrado porla fuerza bruta de Joe y decide hacer de él un gran boxeador. Joe no le hace caso y sus fechorias finalmente le llevan aun reformatorio para jovenes delicuentes. Ese es el lugar en el que conoce a Toru Rikiishi,una joven promesa del boxeo injustamente recluido . Joe decide entonces dedicarse al boxeo con el fin de derrotar a este gran rival."
+            "sinopsis": "Ashita no Joe nos cuenta la historia de un boxeador, Joe Yabuki. Joe no es un boxeador como otros: es un huérfano que pasaba su vida en la calle hasta el día en el que encuentra a un viejo borracho llamado Danpei Tange. Danpei, boxeador profesional retirado, se queda asombrado porla fuerza bruta de Joe y decide hacer de él un gran boxeador. Joe no le hace caso y sus fechorias finalmente le llevan aun reformatorio para jovenes delicuentes. Ese es el lugar en el que conoce a Toru Rikiishi,una joven promesa del boxeo injustamente recluido . Joe decide entonces dedicarse al boxeo con el fin de derrotar a este gran rival.",
+            "Secuela": "https://jkanime.net/ashita-no-joe-2/"
+        },
+        "ashita-no-joe-2": {
+            "Duracion": "24 min",
+            "Emitido": "Oct 12 de 1980 a Ago 30 de 1981",
+            "Episodios": "47",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/ashita-no-joe-2.jpg",
+            "Precuela": "https://jkanime.net/ashita-no-joe/",
+            "TimeStamp": "-.-",
+            "Tipo": "Serie",
+            "enemision": "false",
+            "generos": "Accion, Drama, Deportes, Cosas de la vida, ",
+            "maxcapit": 47,
+            "mincapit": 1,
+            "nextdate": " ",
+            "sinopsis": "Yabuki Joe queda desanimado y sin esperanza después de cierto evento trágico. En un intento por dejar atrás el pasado, Joe deja atrás el gimnasio y comienza a deambular. En sus viajes se encuentra con gente como Wolf Kanagushi y Goromaki Gondo, hombres que involuntariamente avivan las brasas agonizantes dentro de él, lo que lo lleva a poner fin a sus vagabundeos. Su regreso a casa vuelve a poner a Joe en el camino del boxeo, pero sin que él ni su entrenador lo supieran, ahora sufre problemas profundos que le impiden pelear. En un intento por solucionar esos problemas, Carlos Rivera, un boxeador de renombre mundial, es invitado desde Venezuela para ayudar a Joe a recuperarse."
         },
         "ashita-no-nadja": {
             "Duracion": "24 min. por episodio",
@@ -3830,9 +3848,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Drama, Sobrenatural, ",
-            "maxcapit": 13,
+            "maxcapit": 19,
             "mincapit": 1,
-            "nextdate": " Domingo 17 Abril ",
+            "nextdate": " Domingo 29 Mayo ",
             "sinopsis": "La corona de Inglaterra siempre ha sido un motivo de guerra en la historia, y durante la edad media, una serie de guerras civiles se conocieron como La guerra de las rosas. El duque de York está reclamando su derecho al trono, y desea destronar a Enrique VI para convertirse en rey.\n\nUna noche oscura llena de malos augurios, el duque tiene un hijo: Richard Plantagenet, el tercero de su nombre. Pero sus órganos no le asignan un sexo, y su madre lo rechaza inmediatamente. Ese odio define toda su infancia, y esto lo llevará a sentir un profundo desdén por su propio cuerpo y una reacción adversa a ser llamado demonio.\n\nRichard crece con visiones de Juana de Arco, la antigua gran enemiga de Inglaterra, diciéndole que le traerá la ruina a todos quienes le rodean. No obstante, él cree que puede salvarse si ayuda a su padre a convertirse en rey. ¿Está realmente destinado a lograr la grandeza, o su destino es tan oscuro como lo auguran esas visiones?"
         },
         "basilisk-kouga-ninpou-chou": {
@@ -4354,9 +4372,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Deportes, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Martes 31 Mayo ",
             "sinopsis": "Birdie Wing: Golf Girls&#039; Story es una historia juvenil centrada en dos golfistas. Dos niñas, Eve y Aoi, que crecieron en circunstancias completamente diferentes y tienen diferentes estilos de juego, se ven atrapadas en el mundo de las mujeres en el golf."
         },
         "birthday-wonderland": {
@@ -4620,9 +4638,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Drama, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Martes 19 Abril ",
+            "nextdate": " Martes 31 Mayo ",
             "sinopsis": "Es el año 2062, dos décadas después del fracaso de un proyecto de automatización masiva de la mano de obra. Sin embargo, Artemis, la inteligencia artificial que formaba el núcleo de ese proyecto, decidió atacar a la humanidad, y la guerra resultante asoló la Tierra. Una chica solitaria, Empress, se despierta en un instituto de investigación subterráneo de la base. Es una de las tres guardianas supervivientes de la humanidad. Sin embargo, no tiene recuerdos de lo que ocurrió antes. Todo lo que sabe es lo que le dice un coronel de la fuerza de paz. Artemisa está construyendo un ascensor orbital para unir la Luna y la Tierra, y Empress recibe la orden de destruir el ascensor orbital antes de que se complete"
         },
         "blackrock-shooter-ova": {
@@ -5486,9 +5504,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Super Poderes, Shounen, Artes Marciales, Aventura, Accion, ",
-            "maxcapit": 244,
+            "maxcapit": 250,
             "mincapit": 1,
-            "nextdate": " Domingo 17 Abril ",
+            "nextdate": " Domingo 29 Mayo ",
             "sinopsis": "Esta es una secuela de las series de Naruto, la cual sigue la historia de Boruto el hijo de Naruto.\n\nLa aldea oculta de la hoja ha continuado su moderinización pero siempre manateniendo la paz. Carros eléctricos recorren toda la ciudad conectada por distritos llenos de rascacielos con enormes monitores mostrando todo tipo de imágenes. En esta era, la aldea oculta de la hoja es ahora una cuidad ninja solo en nombre ya que ahora muchas personas normales han venido a vivir aquí. También el estilo de vida de los ninjas ha cambiado...\n\nBoruto, el hijo del séptimo Hokage y el actual lider de la aldea, se ha matriculado en la academia ninja para aprender todo sobre lo que necesita saber en las artes ninjas. Los estudiantes que rodean a Boruto se refieren a él como el hijo del Hokage, pero Boruto con su peculiar personalidad se hará un nombre por él mismo.\n\nBoruto encontrá nuevos amigos y aliados, pero ¿cómo podrá lidear con todos esos misteriorsos incidentes que se le presentarán? Es así como comienza la historia de Boruto Uzumaki. "
         },
         "boruto-naruto-the-movie": {
@@ -5720,6 +5738,22 @@
             "nextdate": " ",
             "sinopsis": "La segunda temporada de esta serie salio bajo el título de B&#039;t X Neo; aunque sea la continuación de la primera. Y es aquí donde se da a conocer el final de B&#039;t X."
         },
+        "bubble": {
+            "Duracion": "1 hr 40 min",
+            "Emitido": "Abr 27 de 2022 ",
+            "Episodios": "1",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/bubble.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "Pelicula",
+            "enemision": "false",
+            "generos": "Fantasìa, ",
+            "maxcapit": 1,
+            "mincapit": 1,
+            "nextdate": "Pelicula",
+            "sinopsis": "Algo ha pasado en Tokio que la gravedad se ha roto. Tras la lluvia de unas extrañas burbujas, el mundo entero ha visto trastocada la ley de la gravedad. Tolkio se ha aislado del resto del mundo y allí sobreviven sus supervivientes, tomando ciudad como un enorme campo de atracciones sin gravedad en la que desarrollan batallas de parkour saltando de un edificio a otro.\n"
+        },
         "bubuki-buranki": {
             "Duracion": "24 min por episodio.",
             "Emitido": "Ene 2 de 2016 a Mar 26 de 2016",
@@ -5817,9 +5851,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Fantasìa, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Segunda temporada de Build Divide"
         },
         "buki-yo-saraba": {
@@ -7772,9 +7806,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": " ",
-            "maxcapit": 13,
+            "maxcapit": 20,
             "mincapit": 1,
-            "nextdate": " Viernes 15 Abril ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "Anime sobre entrenamiento de actores y actrices de voz en Japón, conocidos como seiyuu."
         },
         "cuticle-tantei-inaba": {
@@ -8138,7 +8172,25 @@
             "maxcapit": 13,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Takato Saijyo es un veterano actor que durante cinco años consecutivos ha sido elegido como Soltero más deseado. Junta Azumaya es un actor novato que le ha arrebatado el trono tras tanto tiempo. En la competitiva industria del entretenimiento, ambos apuestos solteros se verán envueltos en un gran escándalo. ¡Da comienzo el mayor escándalo de 2018!"
+            "sinopsis": "Takato Saijyo es un veterano actor que durante cinco años consecutivos ha sido elegido como Soltero más deseado. Junta Azumaya es un actor novato que le ha arrebatado el trono tras tanto tiempo. En la competitiva industria del entretenimiento, ambos apuestos solteros se verán envueltos en un gran escándalo. ¡Da comienzo el mayor escándalo de 2018!",
+            "Secuela": "https://jkanime.net/dakaretai-otoko-1-i-ni-odosarete-imasu-movie-spain-hen/"
+        },
+        "dakaretai-otoko-1-i-ni-odosarete-imasu-movie-spain-hen": {
+            "Duracion": "1 hr 18 min",
+            "Emitido": "Oct 8 de 2021 ",
+            "Episodios": "1",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/dakaretai-otoko-1-i-ni-odosarete-imasu-movie-spain-hen.jpg",
+            "Precuela": "https://jkanime.net/dakaretai-otoko-1-i-ni-odosarete-imasu/",
+            "TimeStamp": "-.-",
+            "Tipo": "Pelicula",
+            "enemision": "false",
+            "generos": "Shounen Ai, Romance, Drama, Comedia, ",
+            "maxcapit": 1,
+            "mincapit": 1,
+            "nextdate": "Pelicula",
+            "sinopsis": "Cubre el arco español del manga.\n\n"
         },
         "dame-x-prince-anime-caravan": {
             "Duracion": "24 min.",
@@ -8167,9 +8219,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Drama, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "La historia se centra en Junpei Murao, quien estaba fascinado con el ballet cuando era niño, pero en su segundo año de secundaria su padre falleció y decidió que necesitaba volverse más “masculino”, por lo que renunció a sus sueños. Aunque todavía tiene apego por el ballet, toma la práctica del arte marcial del Jeet Kune Do y se vuelve popular en su clase. Entonces, un día, una nueva estudiante transferida llamada Miyako Godai llega a la clase de Junpei, cuya madre dirige un estudio de ballet. Miyako se da cuenta de que Junpei está interesado en el ballet y lo invita a bailar juntos."
         },
         "dance-in-the-vampire-bund": {
@@ -8535,9 +8587,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Romance, Sci-Fi, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "Cuarta temporada de Date A Live ."
         },
         "date-a-live-movie-mayuri-judgment": {
@@ -8635,9 +8687,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Cosas de la vida, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Miercoles 20 Abril ",
+            "nextdate": " Miercoles 01 Junio ",
             "sinopsis": "Tras recibir la noticia de que su padre ha caído enfermo y ha tenido que ir al hospital, Nagomu, el hijo pródigo de una familia de confiteros de Kioto, regresa a su hogar tras 10 años para hacerse cargo del negocio familiar. Nagomu está preparado para ello, pero cuando llega le piden que se convierta en la figura paterna de Itsuka, una chica que trabaja en el local y a la que todo el mundo considera la heredera del negocio"
         },
         "dear-boys": {
@@ -8812,7 +8864,7 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Fantasìa, ",
-            "maxcapit": 5,
+            "maxcapit": 12,
             "mincapit": 1,
             "nextdate": "  ",
             "sinopsis": "Delicious Party Precure"
@@ -9382,9 +9434,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Aventura, Comedia, Fantasìa, ",
-            "maxcapit": 21,
+            "maxcapit": 27,
             "mincapit": 1,
-            "nextdate": " Sábado 12 Marzo ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Me ayudas con la sinopsis?"
         },
         "digimon-tamers": {
@@ -10302,9 +10354,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Aventura, Fantasìa, Shounen, ",
-            "maxcapit": 72,
+            "maxcapit": 79,
             "mincapit": 1,
-            "nextdate": " Sábado 05 Marzo ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "El mundo estuvo una vez a merced de Hadlar, el Señor Oscuro, pero recuperó la paz gracias a un espadachín conocido como el héroe y su grupo de compañeros. Han pasado los años y en la Isla Delmurin, una isla perdida en el oceáno del sur, acabaron viviendo todos los monstruos que en su día sirvieron al Señor Oscuro. Dai es el único humano de la isla y aspira a ser un héroe, viviendo en paz con los monstruos. Sin embargo, su vida cambia por completo cuando el Señor Oscuro Hadlar resucita. Promesas de sus maestros, encuentros con nuevos amigos y un destino del que no puede escapar.."
         },
         "dramatical-murder": {
@@ -11036,9 +11088,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Sci-Fi, ",
-            "maxcapit": 5,
+            "maxcapit": 11,
             "mincapit": 1,
-            "nextdate": " Miercoles 20 Abril ",
+            "nextdate": " Miercoles 01 Junio ",
             "sinopsis": "La historia se sitúa en un futuro lejano en el que la población mundial ha empezado a reducirse tras alcanzar su máximo nivel. El “Proyecto de Renovación Sobrenatural” divide a Tokio, con imponentes muros, en varios barrios de Clusters, cada uno con su propia y única población genéticamente modificada, gobernada por una inteligencia artificial. La mayoría de la gente vive su vida en sus propios Clusters únicos, felizmente despreocupados de la vida más allá. Sin embargo, hay algunos que intentan escapar a los otros clusters. Un equipo ayuda a los que desean escapar."
         },
         "etotama": {
@@ -12930,9 +12982,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Fantasìa, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Jueves 02 Junio ",
             "sinopsis": "Un día, un jugador jugó videojuegos hasta que se quedó dormido y cuando se despertó, se encontró en el mundo del juego en el que estaba jugando y ¡como un esqueleto! Equipado con las poderosas armas y la armadura de su avatar, pero atascado con su aterradora apariencia esquelética, Arc tiene que encontrar un lugar para sí mismo en esta nueva y fantástica tierra. Todas sus esperanzas de una vida tranquila se desvanecen cuando se cruza con una hermosa guerrera elfa, lo que lo pone en un viaje lleno de conflictos y aventuras."
         },
         "gaikotsu-shotenin-honda-san": {
@@ -13858,6 +13910,22 @@
             "mincapit": 1,
             "nextdate": " ",
             "sinopsis": "La serie se enfoca en una chica de 16 años llamada Tasuza Sakurano que practica patinaje artístico sobre hielo y que es candidata para ir a las Olimpiadas como representante de Japón. Tazusa se cae durante una presentación en Montreal, Canadá y pierde el conocimiento. Al mismo tiempo, un piloto de acrobacias canadiense de 16 años llamado Pete Pumps muere cuando su avión se estrella en medio de una presentación. Poco tiempo después de despertar, Tazusa se da cuenta de que está escuchando una voz que le dice que es un fantasma llamado Pete y que tiene que habitar su cuerpo por 100 días."
+        },
+        "ginga-eiyuu-densetsu-die-neue-these-gekitotsu": {
+            "Duracion": "25 min per ep",
+            "Emitido": "Mar 3 de 2022 a May 12 de 2022",
+            "Episodios": "12",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/ginga-eiyuu-densetsu-die-neue-these-gekitotsu.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "Pelicula",
+            "enemision": "false",
+            "generos": "Sci-Fi, Drama, Accion, ",
+            "maxcapit": 10,
+            "mincapit": 1,
+            "nextdate": "Pelicula",
+            "sinopsis": "Continuación de la serie Ginga Eiyuu Densetsu: Die Neue These ."
         },
         "ginga-eiyuu-densetsu-die-neue-these-kaikou": {
             "Duracion": "24 min.",
@@ -15406,9 +15474,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Deportes, ",
-            "maxcapit": 2,
+            "maxcapit": 9,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "La historia sigue a tres chicos de 15 años que van a una prestigiosa academia de carreras de caballos para convertirse en jinetes. La academia de tres años es de 10 a 20 veces más difícil de ingresar que la mayoría de las escuelas, y quien desee ingresar debe aprobar una prueba académica, física y de aptitud física.\n\nAnteriormente miembro de un grupo de ídolos que ganó fanáticos y fama, Yuu Arimura se propone cumplir lo que su corazón desea después de enamorarse de las carreras de caballos. Habiendo crecido en una isla, Shun Kanami siempre ha anhelado montar a caballo. Amane Grace nació en Inglaterra y se pierde en el camino que sus padres le trazaron, pero aún así emprende su sueño."
         },
         "gunjou-no-magmel": {
@@ -16788,9 +16856,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Musica, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Lunes 18 Abril ",
+            "nextdate": " Lunes 30 Mayo ",
             "sinopsis": "La historia seguirá a cuatro chicas que buscan usar sus canciones para sanar y calmar a las personas de su mundo. El lema dice: Canciones bondadosas y poderosas curan el mundo. Estos son hermosos milagros cantados por la humanidad."
         },
         "heavy-object": {
@@ -16981,9 +17049,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Musica, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Jueves 02 Junio ",
             "sinopsis": "Hiyori Suzumi, quien dejó su ciudad natal para seguir persiguiendo su pasión por el atletismo, se matricula en la escuela secundaria Sakuragaoka de Tokio. En busca de un trabajo de medio tiempo, Hiyori termina convirtiéndose en aprendiz de gerente para sus compañeros de clase Yuujirou Someya y Aizou Shibasaki, quienes los miembros del grupo ídolo LIPxLIP. La historia sigue las luchas que enfrenta Hiyori con la escuela, las actividades extracurriculares y su trabajo de administración, así como el grupo ídolo LIPxLIP mientras actúan en el escenario."
         },
         "heroman": {
@@ -18057,9 +18125,9 @@
             "sinopsis": "Motosu Urano, una estudiante universitaria amante de los libros que acaba de obtener su certificación de Bibliotecaria y se suponía que debía ingresar al trabajo de sus sueños después de la graduación, fue asesinada durante un terremoto masivo que la aplastó debajo de una pila de su propia colección masiva de libros.\n\nDeseando reencarnarse para leer aún más, se reencarnó en un mundo con un bajo nivel de alfabetización y muy pocos libros, limitados solo a la nobleza del mundo. Mientras se reencarnaba como la hija de 5 años de un humilde soldado, Maine, no importa cuánto quiera leer, no hay forma de que haya libros. Si no hay libros, ¿qué haces? Los haces tú mismo, por supuesto ... Cuál es su objetivo, convertirse en bibliotecaria sin importar qué, y vivir una vida rodeada de libros. Para empezar, ella comienza a hacerlos."
         },
         "honzuki-no-gekokujou-shisho-ni-naru-tame-ni-wa-shudan-wo-erandeiraremasen-3rd-season": {
-            "Duracion": "24 min",
+            "Duracion": "23 min per ep",
             "Emitido": "Abr 11 de 2022 ",
-            "Episodios": "Desconocido",
+            "Episodios": "10",
             "Estado": "En Emisión",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/honzuki-no-gekokujou-shisho-ni-naru-tame-ni-wa-shudan-wo-erandeiraremasen-3rd-season.jpg",
@@ -18067,9 +18135,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Cosas de la vida, Fantasìa, ",
-            "maxcapit": 1,
+            "maxcapit": 7,
             "mincapit": 1,
-            "nextdate": " Lunes 18 Abril ",
+            "nextdate": " Lunes 30 Mayo ",
             "sinopsis": "Tercera temporada de Honzuki no Gekokujou: Shisho ni Naru Tame ni wa Shudan wo Erandeiraremasen .\n\n"
         },
         "hoozuki-no-reitetsu": {
@@ -20112,9 +20180,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": " ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 0,
-            "nextdate": "  ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "aun falta sinopsis"
         },
         "jewelpet-twinkle": {
@@ -21093,9 +21161,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Cosas de la vida, ",
-            "maxcapit": 1,
+            "maxcapit": 7,
             "mincapit": 1,
-            "nextdate": " Martes 19 Abril ",
+            "nextdate": " Martes 31 Mayo ",
             "sinopsis": "Segunda temporada de Kaginado ."
         },
         "kaguya-sama-wa-kokurasetai-tensai-tachi-no-renai-zunousen": {
@@ -21161,9 +21229,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Romance, Comedia, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 0,
-            "nextdate": "  ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "Tercera temporada de Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen .\n\n"
         },
         "kai-byoui-ramune": {
@@ -21416,6 +21484,22 @@
             "mincapit": 1,
             "nextdate": " ",
             "sinopsis": "Esta es la segunda temporada de Kakegurui.\nEl juego es mi razón de ser.\n\nLa famosa Academia Privada Hyakkaou tiene un sistema de clases sociales. La parte superior de la escuela, el Consejo Escolar, está controlada por el juego. Si ganas entras al cielo, si pierdes, infierno. En esta academia de locos, los que juegan bien son la envidia de todos y los que no sufren.\n\nUn día, una niña se traslada a esta academia. Una chica llamada Yumeko Jabami..."
+        },
+        "kakkou-no-iinazuke": {
+            "Duracion": "24 min",
+            "Emitido": "Abr 23 de 2022 ",
+            "Episodios": "24",
+            "Estado": "En Emisión",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/kakkou-no-iinazuke.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "Serie",
+            "enemision": "true",
+            "generos": "Comedia, Romance, ",
+            "maxcapit": 6,
+            "mincapit": 1,
+            "nextdate": " Sábado 04 Junio ",
+            "sinopsis": "La súper estudiante de 16 años Nagi Umino, estudiante de segundo año en la escuela secundaria Meguro River Academy, fue cambiada al nacer. De camino a una cena para conocer a sus padres biológicos, accidentalmente se encuentra con la descarada y franca Erika Amano, quien está decidida a convertir a Nagi en su novio falso, ya que en realidad nunca quiere casarse. Pero una vez que Nagi llega a cenar, descubre que sus padres han decidido resolver el cambio de hospital convenientemente haciendo que se case con la hija que criaron sus padres biológicos... ¡que resulta ser nada menos que Erika!"
         },
         "kakumeiki-valvrave": {
             "Duracion": "24 min. por episodio",
@@ -22455,9 +22539,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Romance, Cosas de la vida, ",
-            "maxcapit": 1,
+            "maxcapit": 7,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Shikimori parece ser la novia perfecta: linda, divertida y dulce como nadie... pero en realidad tiene cierto lado más oscuro que sale a la luz bajo ciertas circunstancias. ¡Pero eso no es un problema para Izumi, su novio, quien adora ver ese lado de su pareja! Una comedia romántica con cierta peculiaridad."
         },
         "kawaikereba-hentai-demo-suki-ni-natte-kuremasu-ka": {
@@ -23358,9 +23442,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Cuarta temporada de Kingdom."
         },
         "kings-raid-ishi-wo-tsugumono-tachi": {
@@ -23894,9 +23978,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Romance, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "Un día de primavera, una pareja joven e inocente se sienta en un campo. Sus nombres son Fudo Aikawa y Desumi Magahara… pero en realidad son «Red Gelato», el líder de la heroica fuerza de combate Gelato 5, y «Reaper Princess», ¡un miembro de la fuerza de combate de la malvada organización secreta Gekko! Se supone que estos dos son enemigos, por lo que la gente no puede saber que están saliendo pase lo que pase. Todo lo que pueden hacer es verse en secreto entre peleas."
         },
         "koisuru-asteroid": {
@@ -23994,9 +24078,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Drama, Cosas de la vida, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Miercoles 20 Abril ",
+            "nextdate": " Miercoles 01 Junio ",
             "sinopsis": "Segunda temporada de Komi-san wa, Comyushou desu .."
         },
         "komori-san-wa-kotowarenai": {
@@ -24154,9 +24238,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Aventura, Comedia, Fantasìa, ",
-            "maxcapit": 1,
+            "maxcapit": 7,
             "mincapit": 1,
-            "nextdate": " Domingo 17 Abril ",
+            "nextdate": " Domingo 29 Mayo ",
             "sinopsis": "Una comedia de fantasía y aventuras protagonizada por Karla, una clériga elfa oscura que invirtió demasiado en sus habilidades para insultar, y Alvin, un espadachín que tiene que aguantar sus payasadas."
         },
         "kono-naka-ni-hitori-imouto-ga-iru": {
@@ -24759,9 +24843,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "El aislacionista Clan Akane, compuesto por un escuadrón de chicas formado principalmente por jóvenes kunoichi en formación, tiene un código al que todas deben adherirse: Como los hombres son seres peligrosos, está prohibido relacionarse con ellos. Kunoichi Tsubaki, la líder del denominado Dog Squad, es una excelente aprendiz con un futuro prometedor, pero ha empezado a experimentar una extraña sensación en su corazón… siempre que se saca a colación el tema de los chicos."
         },
         "kurenai": {
@@ -25406,9 +25490,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Sci-Fi, Accion, ",
-            "maxcapit": 1,
+            "maxcapit": 7,
             "mincapit": 1,
-            "nextdate": " Lunes 18 Abril ",
+            "nextdate": " Lunes 30 Mayo ",
             "sinopsis": "Segunda parte de Kyoukai Senki .\n\n"
         },
         "kyousou-giga-tv": {
@@ -25966,9 +26050,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Deportes, ",
-            "maxcapit": 2,
+            "maxcapit": 9,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Ryou Mizushima se inscribe en la secundaria y se une al club de bádminton con gran vigor. Aunque el club no tenía un entrenador adecuado, Mizushima mejoró sus habilidades con su propia fuerza física cuando participó en el torneo de la prefectura. Posteriormente, se le acerca el entrenador de bádminton de la escuela secundaria Yokohama Minato, Ebihara.\n\nIndeciso y tímido, Mizushima duda en asistir a una escuela tan prestigiosa. Sin embargo, con su hermana mayor Rika dándole un fuerte empujón, decide ir a Yokohama Minato. Ahora bendecido con un entrenador y compañeros de equipo idiosincrásicos, Mizushima ganará la experiencia que le faltaba hasta ahora y apunta a ganar el torneo inter-high."
         },
         "love-hina": {
@@ -26116,9 +26200,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Cosas de la vida, ",
-            "maxcapit": 2,
+            "maxcapit": 9,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Segunda temporada de Love Live! Ídolo de la escuela Nijigasaki Gakuen Doukoukai ."
         },
         "love-live-school-idol-project": {
@@ -26476,17 +26560,17 @@
             "Duracion": "24 min.",
             "Emitido": "Oct 16 de 2021 ",
             "Episodios": "24",
-            "Estado": "En Emisión",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/lupin-iii-part-6.jpg",
             "Precuela": "https://jkanime.net/lupin-iii-part-v/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
-            "enemision": "true",
+            "enemision": "false",
             "generos": "Accion, Aventura, Comedia, Misterio, ",
             "maxcapit": 24,
             "mincapit": 0,
-            "nextdate": " Sábado 02 Abril ",
+            "nextdate": " ",
             "sinopsis": "Su nombre es Lupin III. Es un caballero ladron cuyo abuelo fue el renombrado ladrón fantasma Arsene Lupin.\nCuando se trata del arte del robo, no hay nada que Lupin III no pueda robar; ya sean joyas, obras de arte, tesoros escondidos, el secreto de la inmortalidad o el corazón de una niña bonita.\nLos socios de Lupin son Daisuke Jigen, un gran pistolero; Goemon Ishikawa, un maestro espadachín; Fujiko Mine, una mujer fatal diabólicamente inteligente. Está el inspector Zenigata, un implacable oficial de la OIPC, consumido por un deseo obsesivo de aprehender al ladrón magistral."
         },
         "lupin-iii-part-v": {
@@ -26584,9 +26668,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Cosas de la vida, ",
-            "maxcapit": 1,
+            "maxcapit": 7,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Jueves 02 Junio ",
             "sinopsis": "Segunda temporada de Machikado Mazoku ."
         },
         "machine-doll-wa-kizutsukanai": {
@@ -27539,9 +27623,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Aventura, Comedia, Fantasìa, ",
-            "maxcapit": 1,
+            "maxcapit": 7,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Jueves 02 Junio ",
             "sinopsis": "La guerra que se desató entre la Iglesia y las brujas durante cinco siglos finalmente terminó en paz, pero hace unos pocos años, sin embargo, en los lugares sombríos del mundo, las brasas de ese antiguo conflicto aún arden. Magic of the Kingdom of Wenias es un estudiante en apuros llamado Sable, que no tiene recuerdos de su tiempo antes de ser inscrito. A las órdenes del director Albus, dejó el reino para viajar al extremo sur del continente, donde los insurgentes antimagia Lo acompaña un grupo de individuos fuertes tanto en habilidad como en personalidad; está la conocida como la Bruja del Amanecer, Roux Cristasse, que busca el conocimiento prohibido y sigue siendo una fuerza a tener en cuenta, como parte de un régimen de entrenamiento especial. de la magia primigenia en el &#039;Grimorio de Zero&#039;, la chica genio Holtz, así como la única bestia de la escuela, Kudd"
         },
         "maiko-san-chi-no-makanai-san": {
@@ -28508,18 +28592,18 @@
         },
         "meitantei-conan-zero-no-tea-time": {
             "Duracion": "15 min",
-            "Emitido": "Abr 4 de 2022 ",
-            "Episodios": "Desconocido",
-            "Estado": "En Emisión",
+            "Emitido": "Abr 4 de 2022 a May 12 de 2022",
+            "Episodios": "6",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/meitantei-conan-zero-no-tea-time.jpg",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
-            "enemision": "true",
+            "enemision": "false",
             "generos": "Cosas de la vida, ",
-            "maxcapit": 1,
+            "maxcapit": 6,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " ",
             "sinopsis": "Adaptación al anime del manga derivado Meitantei Conan: Zero no Tea Time que se centra en la vida del agente triple mientras intenta mantener todos sus diferentes roles bajo control."
         },
         "mekakucity-actors": {
@@ -28583,7 +28667,7 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Aventura, Fantasìa, Niños, Magia, Shoujo, ",
-            "maxcapit": 7,
+            "maxcapit": 9,
             "mincapit": 1,
             "nextdate": "  ",
             "sinopsis": "Segunda temporada de Mewkledreamy."
@@ -29887,6 +29971,22 @@
             "mincapit": 1,
             "nextdate": " ",
             "sinopsis": "La historia nos traslada a un futuro cercano en el que espíritus y monstruos son algo común. Un chico llamado Haruhiko Ichijou lidera un grupo de adolescentes con habilidades especiales que se enfrentarán a una enorme organización que saca ventaja de cierto incidente y, con el tiempo, eso les llevará a descubrir la verdad que oculta su propio mundo."
+        },
+        "musaigen-no-phantom-world-limitless-phantom-world": {
+            "Duracion": "6 min per ep",
+            "Emitido": "Abr 5 de 2016 a Oct 4 de 2016",
+            "Episodios": "6",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/musaigen-no-phantom-world-limitless-phantom-world.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "Especial",
+            "enemision": "false",
+            "generos": "Comedia, Fantasìa, ",
+            "maxcapit": 6,
+            "mincapit": 1,
+            "nextdate": " ",
+            "sinopsis": "Especiales de Musaigen no Phantom World."
         },
         "musaigen-no-phantom-world-special": {
             "Duracion": "24 min por episodio",
@@ -32577,16 +32677,16 @@
             "Duracion": "24 min. por episodio",
             "Emitido": "Oct 20 de 1999 ",
             "Episodios": "Desconocido",
-            "Estado": "En espera",
+            "Estado": "En Emisión",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/one-piece.jpg",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Super Poderes, Shounen, Fantasìa, Comedia, Aventura, Accion, ",
-            "maxcapit": 1013,
+            "maxcapit": 1019,
             "mincapit": 1,
-            "nextdate": " Sábado 19 Marzo ",
+            "nextdate": " Domingo 05 Junio ",
             "sinopsis": "Una historia épica de piratas, donde narra la historia de Monkey D. Luffy quien cuando tenia 7 años, comió accidentalmente una Akuma no mi(Fruta del diablo) la cual le convirtió en un hombre de goma. Por otra parte Gol D. Roger conocido como El rey de los Piratas quien fuera ejecutado por la Marine, habló antes de morir, acerca de su mayor tesoro,el One Piece escondido en la Gran line. Esta noticia desató la gran era de los piratas lanzando a incontables piratas a ese lugar, en busca del One Piece el tesoro perdido. Diez años después, Luffy inspirado en Gol D. Roger y un pirata de nombre Akagami no Shanks (Shanks el pelirrojo) se convierte en pirata deseando ser el próximo Rey de los Piratas y zarpar para conocer amigos y tener aventuras con ellos, teniendo como meta encontrar el One Piece."
         },
         "one-piece-3d2y-ace-no-shi-wo-koete-luffy-nakama-tono-chikai": {
@@ -33163,6 +33263,22 @@
             "mincapit": 1,
             "nextdate": " ",
             "sinopsis": "Especiales cortos incluidos en el BD DVD de Onii-chan Dakedo Ai Sae Areba Kankeinai Yo Ne "
+        },
+        "onipan": {
+            "Duracion": "Desconocido",
+            "Emitido": "Abr 10 de 2022 ",
+            "Episodios": "Desconocido",
+            "Estado": "En Emisión",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/onipan.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "Serie",
+            "enemision": "true",
+            "generos": "Comedia, Fantasìa, ",
+            "maxcapit": 7,
+            "mincapit": 1,
+            "nextdate": " Jueves 02 Junio ",
+            "sinopsis": "Tres niños oni que, a través del poder del onipan (una combinación de oni y pantsu), se vuelven humanos para ayudar a arreglar la relación entre los humanos y los oni. Las tres chicas se transfieren a una escuela secundaria normal de Tokio para ayudar en su tarea y ayudar a arreglar su imagen revitalizando la ciudad, a veces saltando de cabeza a los eventos escolares y otras veces... ¡convirtiéndose en ídolos!"
         },
         "onsen-yousei-hakone-chan": {
             "Duracion": "5 min. por episodio",
@@ -33779,9 +33895,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Fantasìa, Romance, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Domingo 17 Abril ",
+            "nextdate": " Domingo 29 Mayo ",
             "sinopsis": "El oficinista Leon se reencarna en un videojuego de simulación de citas particularmente duro, donde las mujeres son las reinas supremas y solo los hombres hermosos tienen un asiento en la mesa. Pero Leon tiene un arma secreta: recuerda todo de su vida pasada, que incluye un juego completo del mismo juego en el que ahora está atrapado."
         },
         "otome-youkai-zakuro": {
@@ -34292,9 +34408,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, ",
-            "maxcapit": 2,
+            "maxcapit": 9,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Jueves 02 Junio ",
             "sinopsis": "General de los Tres Reinos, Kongming había luchado toda su vida, enfrentándose a innumerables batallas que lo convirtieron en el estratega consumado que era. Entonces, en su lecho de muerte, solo deseaba renacer en un mundo pacífico... ¡y fue enviado directamente a la central de fiestas moderna, Tokio! ¿Puede incluso un estratega brillante como Kongming adaptarse a los ritmos salvajes y a los fiesteros aún más salvajes?"
         },
         "pastel-memories": {
@@ -34951,9 +35067,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Aventura, Comedia, Fantasìa, Niños, ",
-            "maxcapit": 105,
+            "maxcapit": 112,
             "mincapit": 1,
-            "nextdate": " Viernes 15 Abril ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "Nueva temporada de Pokemon, titulada como la serie original de 1997.\nLa nueva serie contara con todas las regiones cubiertas en la franquicia hasta el momento, desde la region de Kanto hasta la region de Galar.\n"
         },
         "pokemon-advance": {
@@ -36633,9 +36749,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Romance, ",
-            "maxcapit": 2,
+            "maxcapit": 9,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "Segunda temporada de Rikei ga Koi ni Ochita no de Shoumei shitemita."
         },
         "rinshi-ekoda-chan": {
@@ -37059,9 +37175,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Fantasìa, Cosas de la vida, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Miercoles 20 Abril ",
+            "nextdate": " Miercoles 01 Junio ",
             "sinopsis": "La historia comienza 15 años después de que el rey demonio fuera derrotado y el mundo se volviera pacífico. Kotone, que se graduó de la escuela y se convirtió en mago, preguntó por RPG Real Estate, afiliado al reino, para encontrar un nuevo hogar. En realidad, RPG Real Estate era el lugar de trabajo de Kotone, y junto con Fa, un semihumano, el sacerdote Rufuria y el soldado Rakira, ayudan a respaldar la búsqueda de nuevos hogares para los clientes con diversas circunstancias."
         },
         "rs-keikaku-rebirth-storage": {
@@ -37149,20 +37265,36 @@
             "sinopsis": "Un joven niño llamado Shinta es salvado por Hiko Seijuro y dado el nombre de Kenshin. Él entrena a Kenshin en el camino de Hiten Mitsurugi Ryuu, una técnica de espada sin rival. Como la guerra civil se intensifica, el joven Kenshin siente que su deber es ayudar a salvar personas. Lo que hace convertirse en el más temido Hitokiri Battousai."
         },
         "rymans-club": {
-            "Duracion": "Desconocido",
-            "Emitido": "Ene 30 de 2022 ",
-            "Episodios": "Desconocido",
-            "Estado": "En Emisión",
+            "Duracion": "24 min",
+            "Emitido": "Ene 30 de 2022 a Abr 16 de 2022",
+            "Episodios": "12",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/rymans-club.jpg",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
-            "enemision": "true",
+            "enemision": "false",
             "generos": "Deportes, ",
-            "maxcapit": 11,
+            "maxcapit": 12,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " ",
             "sinopsis": "Esta historia sigue a un equipo de bádminton formado por adultos asalariados. La serie seguirá las peripecias diarias de estos personajes como adultos empresarios, mientras se enfrentan en partidos importantes en su club deportivo."
+        },
+        "ryuu-to-sobakasu-no-hime": {
+            "Duracion": "2 hr 2 min",
+            "Emitido": "Jul 15 de 2021 ",
+            "Episodios": "1",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/ryuu-to-sobakasu-no-hime.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "Pelicula",
+            "enemision": "false",
+            "generos": "Drama, Fantasìa, ",
+            "maxcapit": 1,
+            "mincapit": 1,
+            "nextdate": "Pelicula",
+            "sinopsis": "Suzu, es una estudiante de preparatoria de 17 años, que vive en el campo de la Prefectura de Kochi con su padre, después de perder a su madre a una edad temprana. Le encantaba cantar con su madre más que cualquier otra cosa, pero como resultado de su muerte ya no puede cantar. No pasó mucho tiempo antes de que ella y su padre se distanciaran cada vez más el uno del otro, y Suzu cerró su corazón al resto del mundo.\n\nCuando Suzu sintió que escribir música era el único propósito que le quedaba en la vida, descubre el enorme espacio en línea conocido como “U”, donde asume su personalidad, Belle. Otra yo, otra realidad, ya no estamos limitados a un solo mundo. Suzu se da cuenta rápidamente de que cuando está dentro de “U” como su avatar, Belle, puede cantar con bastante naturalidad. Mientras continúa mostrando su propia música en el mundo virtual, rápidamente se convierte en la estrella en ascenso de “U”. Sin embargo, esa sorpresa es de corta duración"
         },
         "ryuugajou-nanana-no-maizoukin": {
             "Duracion": "Desconocido",
@@ -37458,7 +37590,41 @@
             "maxcapit": 24,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Para la persona promedio, las habilidades psiquicas pueden parecer una bendiciin; para Kusuo Saiki, sin embargo, esto no podria estar mas lejos de la verdad. Dotado de una gran variedad de habilidades sobrenaturales que van desde la telepatia hasta la vision de rayos X, encuentra que esta llamada bendición no es mas que una maldicion. Como todos los inconvenientes que sus poderes causan constantemente se acumulan, todo lo que Kusuo busca es una vida ordinaria y sin complicaciones: una vida donde la ignorancia es dicha. Desafortunadamente, la vida de un psiquico esta lejos de ser silenciosa. . Aunque Kusuo trata de mantenerse fuera del centro de atencion al mantener sus poderes en secreto de sus compañeros de clase, termina inadvertidamente atrayendo la atencion de muchos personajes extraños, como el Riki Nendou con la cabeza vacia y el delirante Shun Kaidou. Obligado a lidiar con la locura de las personas que lo rodean, Kusuo descubre que la vida ordinaria por la que ha estado luchando es mucho más dificil de lo que esperaba"
+            "sinopsis": "Para la persona promedio, las habilidades psiquicas pueden parecer una bendiciin; para Kusuo Saiki, sin embargo, esto no podria estar mas lejos de la verdad. Dotado de una gran variedad de habilidades sobrenaturales que van desde la telepatia hasta la vision de rayos X, encuentra que esta llamada bendición no es mas que una maldicion. Como todos los inconvenientes que sus poderes causan constantemente se acumulan, todo lo que Kusuo busca es una vida ordinaria y sin complicaciones: una vida donde la ignorancia es dicha. Desafortunadamente, la vida de un psiquico esta lejos de ser silenciosa. . Aunque Kusuo trata de mantenerse fuera del centro de atencion al mantener sus poderes en secreto de sus compañeros de clase, termina inadvertidamente atrayendo la atencion de muchos personajes extraños, como el Riki Nendou con la cabeza vacia y el delirante Shun Kaidou. Obligado a lidiar con la locura de las personas que lo rodean, Kusuo descubre que la vida ordinaria por la que ha estado luchando es mucho más dificil de lo que esperaba",
+            "Secuela": "https://jkanime.net/saiki-kusuo-no-nan-2/"
+        },
+        "saiki-kusuo-no-nan-2": {
+            "Duracion": "24 min per ep",
+            "Emitido": "Ene 16 de 2018 a Jun 26 de 2018",
+            "Episodios": "Desconocido",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/saiki-kusuo-no-nan-2.jpg",
+            "Precuela": "https://jkanime.net/saiki-kusuo-no-nan/",
+            "TimeStamp": "-.-",
+            "Tipo": "Serie",
+            "enemision": "false",
+            "generos": "Sobrenatural, Comedia, ",
+            "maxcapit": 24,
+            "mincapit": 1,
+            "nextdate": " ",
+            "sinopsis": "La vida desastrosa del dotado psíquico Kusuo Saiki continúa, a pesar de su máximo esfuerzo por vivir una vida ordinaria. Aunque ciertamente se ha acostumbrado a lidiar con sus amigos problemáticos, que son su mayor obstáculo para lograr una vida pacífica, todavía tiene un largo camino por recorrer. También se unen a los bichos raros habituales algunas caras nuevas cuyas travesuras se suman a la miseria de Saiki, convirtiendo sus sueños de una vida sin problemas en una fantasía lejana."
+        },
+        "saiki-kusuo-no-nan-shidou-hen": {
+            "Duracion": "22 min per ep",
+            "Emitido": "Dic 29 de 2019 ",
+            "Episodios": "6",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/saiki-kusuo-no-nan-shidou-hen.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "ONA",
+            "enemision": "false",
+            "generos": "Sobrenatural, Comedia, ",
+            "maxcapit": 6,
+            "mincapit": 1,
+            "nextdate": " ",
+            "sinopsis": "tercera temporada de Saiki Kusuo no Sainan Saishidou-hen"
         },
         "saikin-imouto-no-yousu-ga-chotto-okashiinda-ga": {
             "Duracion": "24 min. por episodio",
@@ -39696,9 +39862,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Sobrenatural, Cosas de la vida, Comedia, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Jueves 02 Junio ",
             "sinopsis": "Una pequeña niña fantasma se preocupa cuando la Sra. Fushihara, una esclava corporativa, trabaja hasta la medianoche e intenta que se vaya a casa. Mientras dice Vete ahora ~, la chica fantasma ayuda y le trae refrescos, curando el corazón de la Sra. Fushihara con su preciosidad. Sé curado por la conmovedora vida diaria del pequeño y lindo fantasma y la esclava corporativa, la Sra. Fushihara."
         },
         "shachou-battle-no-jikan-desu": {
@@ -39744,9 +39910,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Fantasìa, ",
-            "maxcapit": 2,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Viernes 29 Abril ",
             "sinopsis": "Hiiro Ryugasaki es un estudiante de la Academia Tensei que un día se encuentra un misterioso smartphone que ya tiene instalado el popular juego de cartas Shadowverse, ¡ese al que juegan todos sus compañeros y él estaba deseando poder probar! Hiiro conocerá a rivales, forjará vínculos, participará en torneos, y vivirá todo tipo de experiencias gracias a Shadowverse para evolucionar.\n\n"
         },
         "shadowverse-tv": {
@@ -39917,18 +40083,18 @@
         },
         "shaman-king-2021": {
             "Duracion": "24 min.",
-            "Emitido": "Abr 1 de 2021 ",
+            "Emitido": "Abr 1 de 2021 a Abr 21 de 2022",
             "Episodios": "52",
-            "Estado": "En Emisión",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/shaman-king-2021.jpg",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
-            "enemision": "true",
+            "enemision": "false",
             "generos": "Accion, Aventura, Comedia, Shounen, Super Poderes, Sobrenatural, ",
-            "maxcapit": 50,
+            "maxcapit": 52,
             "mincapit": 1,
-            "nextdate": " Jueves 14 Abril ",
+            "nextdate": " ",
             "sinopsis": "Los chamanes son individuos extraordinarios con la capacidad de comunicarse con fantasmas, espíritus y dioses, que son invisibles para la gente común. El Shaman Fight, un prestigioso torneo que enfrenta a chamanes de todo el mundo entre sí, se lleva a cabo cada quinientos años, donde el ganador es coronado como Shaman King. Este título permite al titular actual invocar al Gran Espíritu y dar forma al mundo como mejor le parezca."
         },
         "shangri-la": {
@@ -40070,9 +40236,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Fantasìa, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Miercoles 20 Abril ",
+            "nextdate": " Miercoles 01 Junio ",
             "sinopsis": "Como la entidad más poderosa de todos los tiempos, Demon Lord Varvatos piensa que la vida es muy aburrida. Cuando toma el asunto en sus propias manos y decide reencarnarse, calibra su fuerza mágica para que sea perfectamente promedio. ¡Pero no hay forma de que pudiera haber predicho que todos en el mundo moderno serían débiles como el infierno, lo que significa que está totalmente dominado una vez más! Renacido bajo el nombre de Ard, tiene damas que lo adulan, la familia real le ruega que se convierta en el próximo rey y un ex-esbirro que insiste en matarlo. ¡Pero Ard tiene una mente única y no se detendrá ante nada para lograr su objetivo final!"
         },
         "shiki": {
@@ -40172,6 +40338,22 @@
             "mincapit": 1,
             "nextdate": " ",
             "sinopsis": "segunda temporada de True Cooking Master Boy"
+        },
+        "shin-ikkitousen": {
+            "Duracion": "26 min",
+            "Emitido": "Mar 26 de 2022 a May 30 de 2022",
+            "Episodios": "3",
+            "Estado": "En Emisión",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/shin-ikkitousen.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "Serie",
+            "enemision": "true",
+            "generos": "Ecchi, Accion, ",
+            "maxcapit": 1,
+            "mincapit": 1,
+            "nextdate": "  ",
+            "sinopsis": "volvieron :O"
         },
         "shin-mazinger-shougeki-z-hen": {
             "Duracion": "23 min. por episodio",
@@ -40909,9 +41091,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Aventura, Fantasìa, ",
-            "maxcapit": 2,
+            "maxcapit": 9,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Viernes 03 Junio ",
             "sinopsis": "Los Perdidos son vagabundos que vienen aquí desde un mundo lejano conocido como Japón. Nadie sabe cómo ni por qué abandonan sus hogares. Lo único cierto es que traen desastres y calamidades. El deber de exterminarlos sin remordimientos recae en Menou, un joven Verdugo. Cuando conoce a Akari, parece un trabajo más... ¡hasta que descubre que es imposible matar a esta chica! Y cuando Menou comienza a buscar una manera de derrotar a esta inmortalidad, ¡Akari está más que feliz de acompañarlo! Así comienza un viaje que cambiará a Menou para siempre..."
         },
         "shokugeki-no-souma": {
@@ -42508,7 +42690,25 @@
             "maxcapit": 12,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Tras perder a sus padres, el exorcista Keika You se ve sumido en la pobreza, teniendo que sobrevivir como adivino ambulante y recogiendo piezas de ordenador. Y es tan mísera su suerte que se ve envuelto en un accidente de tráfico y acaba convirtiéndose en un fantasma. Será entonces cuando se encuentre con el también exorcista Ki Tanmoku, quien le propondrá luchar juntos contra los espíritus malignos."
+            "sinopsis": "Tras perder a sus padres, el exorcista Keika You se ve sumido en la pobreza, teniendo que sobrevivir como adivino ambulante y recogiendo piezas de ordenador. Y es tan mísera su suerte que se ve envuelto en un accidente de tráfico y acaba convirtiéndose en un fantasma. Será entonces cuando se encuentre con el también exorcista Ki Tanmoku, quien le propondrá luchar juntos contra los espíritus malignos.",
+            "Secuela": "https://jkanime.net/spiritpact-2/"
+        },
+        "spiritpact-2": {
+            "Duracion": "24 min.",
+            "Emitido": "Feb 22 de 2018 a May 10 de 2018",
+            "Episodios": "12",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/spiritpact-2.jpg",
+            "Precuela": "https://jkanime.net/spiritpact/",
+            "TimeStamp": "-.-",
+            "Tipo": "Serie",
+            "enemision": "false",
+            "generos": "Sobrenatural, Shounen Ai, Comedia, Accion, ",
+            "maxcapit": 12,
+            "mincapit": 1,
+            "nextdate": " ",
+            "sinopsis": "En esta nueva temporada, descubriremos la historia de fondo de Tanmoki y quién aprenderá a través de sus recuerdos quién fue su antepasado Rakugetsu.\n"
         },
         "spy-x-family": {
             "Duracion": "24 min",
@@ -42521,9 +42721,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Comedia, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Para el agente conocido como “Twilight”, ninguna orden es demasiado alta si es por el bien de la paz. Operando como el espía maestro de Westalis, Twilight trabaja incansablemente para evitar que los extremistas desaten una guerra con el vecino país Ostania. Para su última misión, debe investigar al político de Ostania Donovan Desmond infiltrándose en la escuela de su hijo: la prestigiosa Academia Eden. Así, el agente afronta la tarea más difícil de su carrera: casarse, tener un hijo y jugar a la familia.\n\nTwilight, o “Loid Forger”, adopta rápidamente a la humilde huérfana Anya para interpretar el papel de una hija de seis años y una posible estudiante de la Academia Eden. Como esposa, se encuentra con Yor Briar, una oficinista distraída que necesita una pareja fingida para impresionar a sus amigos. Sin embargo, Loid no es el único con una naturaleza oculta. Yor en realidad es la asesina letal “Thorn Princess” y, para ella, casarse con Loid crea la tapadera perfecta. Mientras tanto, Anya no es la chica corriente que parece ser; ella es una Esper, el producto de experimentos secretos que le permiten leer la mente. Aunque descubre sus verdaderas identidades, ¡Anya está encantada de que sus nuevos padres sean agentes secretos geniales! Ella nunca les diría, por supuesto. Eso arruinaría la diversión."
         },
         "ssssdynazenon": {
@@ -43162,6 +43362,22 @@
             "mincapit": 1,
             "nextdate": " ",
             "sinopsis": "Mei Tachibana ha gastado 16 años sin hacer ningún amigo y sin tener novio. Un día, ella golpea a uno de los chicos más populares del instituto, Yamato Kurosawa, por un malentendido, aunque parece que a partir de ahí, a él comienza a gustarle. Por suerte, él protege a Mei de un hombre que la sigue a todas partes...¿con un beso?"
+        },
+        "summertime-render": {
+            "Duracion": "24 min",
+            "Emitido": "Abr 14 de 2022 ",
+            "Episodios": "25",
+            "Estado": "En Emisión",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/summertime-render.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "Serie",
+            "enemision": "true",
+            "generos": "Misterio, Sobrenatural, ",
+            "maxcapit": 7,
+            "mincapit": 1,
+            "nextdate": " Jueves 02 Junio ",
+            "sinopsis": "Después de la muerte de sus padres, Shinpei Ajiro vivió con las hermanas Kofune, Mio y Ushio, pero desde entonces se mudó a vivir solo a Tokio. Pero después de que Ushio se ahoga mientras intenta salvar a la joven Shiori Kobayakawa, regresa a casa para llorar su partida. Sin embargo, los moretones alrededor del cuello de Ushio ponen en duda la causa de su muerte.\n\nDando un paso atrás, Shinpei se convence de que debe haber otra explicación. Entidades peligrosas deambulan entre los isleños, y una visión del difunto Ushio le pide que salve a Mio como su pedido final. Está seguro de que algo está pasando, y la muerte de Ushio es solo una pieza del rompecabezas."
         },
         "sunohara-sou-no-kanrinin-san": {
             "Duracion": "24 min. por episodio.",
@@ -44236,9 +44452,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Aventura, Drama, Fantasìa, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Miercoles 20 Abril ",
+            "nextdate": " Miercoles 01 Junio ",
             "sinopsis": "Segunda temporada de Tate no Yuusha no Nariagari ."
         },
         "tatoeba-last-dungeon-mae-no-mura-no-shounen-ga-joban-no-machi-de-kurasu-youna-monogatari": {
@@ -45880,9 +46096,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Psicologico, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Martes 19 Abril ",
+            "nextdate": " Martes 31 Mayo ",
             "sinopsis": "¿Qué es más importante, la amistad o el dinero? Yuuichi Katagiri no tiene duda alguna de que sus amigos son lo más importante para él, sin embargo, bien conoce las dificultades de no tener dinero. Trabaja muy duro para pagarse el viaje de estudios y poder compartir la experiencia con su pandilla. Pero algo terrible sucede: Yuichi y sus amigos son secuestrados y despiertan en medio de una habitación junto a un extraño personaje que les obliga a participar en una extraña competición. Al parecer, uno de ellos ha entrado en un peligroso juego para pagar una deuda y ha involucrado al resto del grupo… ¿Quién es el culpable de esta locura? En medio de mentiras, engaños, traiciones y bizarras pruebas, Yuichi deberá enfrentarse a sus amigos en una lucha donde el dinero pondrá a prueba el lazo de amistad entre los jóvenes."
         },
         "tonari-no-kaibutsu-kun": {
@@ -46289,18 +46505,18 @@
         },
         "tropical-rouge-precure": {
             "Duracion": "24 min.",
-            "Emitido": "Feb 28 de 2021 ",
-            "Episodios": "Desconocido",
-            "Estado": "En Emisión",
+            "Emitido": "Feb 28 de 2021 a Ene 30 de 2022",
+            "Episodios": "46",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/tropical-rouge-precure.jpg",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
-            "enemision": "true",
+            "enemision": "false",
             "generos": "Accion, Fantasìa, Magia, Shoujo, ",
             "maxcapit": 46,
             "mincapit": 1,
-            "nextdate": " Sábado 05 Febrero ",
+            "nextdate": " ",
             "sinopsis": "El anime se centra en Manatsu, quien se muda de su pequeña isla natal a una ciudad y comienza la escuela secundaria. El día que se muda, conoce a una chica sirena llamada Laura, que busca a las guerreras legendarias, las Precures. La ciudad natal de Laura, el país de las sirenas del Gran Océano, ha sido atacada por la bruja de la procrastinación, que ha robado el poder de motivación del país."
         },
         "true-tears": {
@@ -46818,15 +47034,15 @@
             "sinopsis": "Esta historia intergaláctica de primer amor se desarrolla en Ogikubo, nombre de la zona especial designada en la Vía Láctea en la que los terrícolas y los alienígenas pueden vivir juntos. Luluco es una estudiante de secundaria que vive con su padre, y vaya a donde vaya, Luluco es una chica de lo más corriente y vulgar. Mientras vive su corriente vida, se encuentra con un chico nuevo en la escuela, ΑΩ Nova, y eso le cambia por completo la vida."
         },
         "uchuu-senkan-tiramis": {
-            "Duracion": "24 min.",
-            "Emitido": "",
-            "Episodios": "Desconocido",
-            "Estado": "Por estrenar",
+            "Duracion": "7 min per ep",
+            "Emitido": "Abr 2 de 2018 a Jun 25 de 2018",
+            "Episodios": "13",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/uchuu-senkan-tiramis.jpg",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
-            "enemision": "true",
+            "enemision": "false",
             "generos": "Seinen, Cosas de la vida, Space, Sci-Fi, Mecha, Comedia, ",
             "maxcapit": 1,
             "mincapit": 1,
@@ -47856,9 +48072,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": " ",
-            "maxcapit": 25,
+            "maxcapit": 32,
             "mincapit": 1,
-            "nextdate": " Sábado 09 Abril ",
+            "nextdate": " Sábado 28 Mayo ",
             "sinopsis": "La nueva serie continúa los motivos conceptuales de la canción, la danza y la moda de Pretty Series, y también agrega el tema de la magia. La estudiante de primer año de secundaria Matsuri Hinoya ama los festivales y sueña con poder protagonizar PriMagi, una forma mágica de entretenimiento escénico que nace de la canción, el baile y la moda. Ese día llega cuando Myamu, el mago hiperactivo y problemático, llega del reino mágico y explora a Matsuri en busca de PriMagi. Juntos, los dos compiten con rivales para llegar a la cima de PriMagi."
         },
         "wagamama-high-spec": {
@@ -48302,19 +48518,19 @@
             "sinopsis": "OVA de Witch Craft Works incluida con el volumen 8 del manga.  "
         },
         "witch-craft-works-specials": {
-            "Duracion": "7 min. por episodio",
-            "Emitido": "Mar 26 de 2014 ",
-            "Episodios": "Desconocido",
-            "Estado": "En espera",
+            "Duracion": "5 min per ep",
+            "Emitido": "Mar 25 de 2014 a Ago 26 de 2014",
+            "Episodios": "6",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/witch-craft-works-specials.jpg",
             "TimeStamp": "-.-",
             "Tipo": "Especial",
-            "enemision": "true",
+            "enemision": "false",
             "generos": "Comedia, ",
             "maxcapit": 2,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " ",
             "sinopsis": "Especiales incluidos en los Blu-rays/DVDs de Witch Craft Works."
         },
         "witchblade": {
@@ -49273,9 +49489,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Comedia, Cosas de la vida, ",
-            "maxcapit": 1,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Sábado 16 Abril ",
+            "nextdate": " Sábado 04 Junio ",
             "sinopsis": "Cuarta temporada de Yatogame-chan Kansatsu Nikki ."
         },
         "yatogame-chan-kansatsu-nikki-nisatsume": {
@@ -50271,9 +50487,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Fantasìa, Comedia, Aventura, Accion, ",
-            "maxcapit": 2,
+            "maxcapit": 8,
             "mincapit": 1,
-            "nextdate": " Martes 19 Abril ",
+            "nextdate": " Martes 31 Mayo ",
             "sinopsis": "Después de salvar el mundo, el héroe más fuerte, Leo, se convirtió en alguien que no es querido en el pacífico mundo humano. Era demasiado fuerte. Exiliado, busca un trabajo en el Ejército del Rey Demonio, al que había derrotado y que necesita ser reconstruido. El Ejército tenía muchos problemas: demasiado trabajo, problemas financieros, etc. Leo comienza a mejorar las cosas utilizando su poder. Leo se encuentra de nuevo con Echidna y le pregunta por qué invadió el mundo humano. Una historia inesperada…"
         },
         "yuyushiki": {
@@ -50526,17 +50742,17 @@
         "zetsumetsu-kigu-shoujo-amazing-twins": {
             "Duracion": "30 min. por episodio",
             "Emitido": "Dic 29 de 2013 ",
-            "Episodios": "Desconocido",
-            "Estado": "En espera",
+            "Episodios": "2",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkanime.net/assets/images/animes/image/zetsumetsu-kigu-shoujo-amazing-twins.jpg",
             "TimeStamp": "-.-",
             "Tipo": "OVA",
-            "enemision": "true",
+            "enemision": "false",
             "generos": "Sobrenatural, Cosas de la vida, ",
             "maxcapit": 2,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " ",
             "sinopsis": "La historia gira entorno a Amane Todoroki, una chica cuyo lema es: “Por mucho que me pregunten si puedo hacer algo, no lo sé. ¡Pero quiero creer que sí! ¡Porque si no creo en algo, no puedo empezar nada“. Es una chica muy directa, sincera, aunque algo tontorrona, que se mete de lleno en todos los problemas que encuentra. Suele sacar conclusiones precipitadas, llora con facilidad y se pone emocional con cualquier cosa."
         },
         "zettai-bouei-leviathan": {
@@ -50720,6 +50936,22 @@
             "mincapit": 1,
             "nextdate": " ",
             "sinopsis": "Segunda temporada de Zombieland Saga."
+        },
+        "zuihou-de-zhaohuan-shi": {
+            "Duracion": "24 min per ep",
+            "Emitido": "Abr 25 de 2022 ",
+            "Episodios": "12",
+            "Estado": "En Emisión",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkanime.net/assets/images/animes/image/zuihou-de-zhaohuan-shi.jpg",
+            "TimeStamp": "-.-",
+            "Tipo": "ONA",
+            "enemision": "true",
+            "generos": "Aventura, Accion, Drama, Fantasìa, ",
+            "maxcapit": 6,
+            "mincapit": 1,
+            "nextdate": " Lunes 30 Mayo ",
+            "sinopsis": "Todo tiene su propio espíritu, y aquellos que pueden invocar esos espíritus son los Invocadores. Pueden invocar a la tierra, a los muertos, las estrellas, a las almas... Las leyendas de los Invocadores siempre han formado parte de la cara oculta de la historia. A lo largo de los años se han librado innumerables guerras entre los Invocadores humanos por el origen de los espíritus de todos los seres: la diosa Pandora. Con el tiempo, los Invocadores se han dividido en dos facciones: los Guardianes y los Destructores. Incapaces de ver a los humanos perecer en un baño de sangre, los líderes de ambos bandos sellaron a Pandora y pusieron fin a la edad de oro de los Invocadores... Varios siglos después, Ah Jie, quien se esfuerza por convertirse en el rey del ramen, convoca sin querer a la diosa Dora y de repente se ve inmerso en el mundo de los Invocadores. Durante su viaje se encuentra con otros Invocadores y unen fuerzas con los Guardianes para enfrentarse a sus mayores enemigos: los Destructores."
         },
         "zutto-mae-kara-suki-deshita-kokuhaku-jikkou-iinkai": {
             "Duracion": "1 hr. 3 min.",
