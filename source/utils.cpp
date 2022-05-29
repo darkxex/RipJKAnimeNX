@@ -109,7 +109,7 @@ vector<string> split (string s, string delimiter) {// for string delimiter
 		token = s.substr (pos_start, pos_end - pos_start);
 		pos_start = pos_end + delim_len;
 		if(token.length() > 0)
-		res.push_back (token);
+			res.push_back (token);
 	}
 	string token2 = (s.substr (pos_start));
 	if(token2.length() > 0)
@@ -118,7 +118,7 @@ vector<string> split (string s, string delimiter) {// for string delimiter
 }
 
 bool erase(string file) {
-	if(isFileExist(file)){
+	if(isFileExist(file)) {
 		remove((file).c_str());
 		return true;
 	}
@@ -158,35 +158,35 @@ void mayus(std::string &s){
 }
 void RemoveAccents(std::string& word){
 /*
-	//std::cout << word << std::endl;
-	replace(word, "á","a");
-	replace(word, "é","e");
-	replace(word, "í","i");
-	replace(word, "ó","o");
-	replace(word, "ú","u");
-	replace(word, "à","a");
-	replace(word, "è","e");
-	replace(word, "ì","i");
-	replace(word, "ò","o");
-	replace(word, "ù","u");
-	replace(word, "ñ","n");
+        //std::cout << word << std::endl;
+        replace(word, "á","a");
+        replace(word, "é","e");
+        replace(word, "í","i");
+        replace(word, "ó","o");
+        replace(word, "ú","u");
+        replace(word, "à","a");
+        replace(word, "è","e");
+        replace(word, "ì","i");
+        replace(word, "ò","o");
+        replace(word, "ù","u");
+        replace(word, "ñ","n");
 
-	replace(word, "Á","A");
-	replace(word, "É","E");
-	replace(word, "Í","I");
-	replace(word, "Ó","O");
-	replace(word, "Ú","U");
-	replace(word, "À","A");
-	replace(word, "È","E");
-	replace(word, "Ì","I");
-	replace(word, "Ò","O");
-	replace(word, "Ù","U");
-	replace(word, "Ñ","N");
-	replace(word, "¡","");
-	replace(word, "!","");
-	replace(word, "?","");
-	replace(word, "¿","");
-*/
+        replace(word, "Á","A");
+        replace(word, "É","E");
+        replace(word, "Í","I");
+        replace(word, "Ó","O");
+        replace(word, "Ú","U");
+        replace(word, "À","A");
+        replace(word, "È","E");
+        replace(word, "Ì","I");
+        replace(word, "Ò","O");
+        replace(word, "Ù","U");
+        replace(word, "Ñ","N");
+        replace(word, "¡","");
+        replace(word, "!","");
+        replace(word, "?","");
+        replace(word, "¿","");
+ */
 	replace(word, "&amp;","");
 	replace(word, "#8230;","");
 	replace(word, "”","");
@@ -261,7 +261,7 @@ bool write_DB(json base,std::string path){
 		if (type == "emmc") emmc::commit();
 	} catch(...) {
 		LOG::E(14);
-		std::cout << "Json: write Error... "<< path << std::endl; 
+		std::cout << "Json: write Error... "<< path << std::endl;
 		return false;
 	}
 	std::cout << "Json: writhen... "<< path << std::endl;
@@ -405,12 +405,12 @@ bool DoubleKill(vector<string>& data) {
 	vector<string> next;
 	u64 i=0;
 	//for(i=0; i < sizecap; i++){
-	while(chap.size() > 0 && !quit){
+	while(chap.size() > 0 && !quit) {
 		string anime = chap[i];
 		/*
-		https://jkanime.net/lupin-iii-part-6/
-		https://cdn.jkanime.net/assets/images/animes/image/lupin-iii-part-6.jpg
-		*/
+		   https://jkanime.net/lupin-iii-part-6/
+		   https://cdn.jkanime.net/assets/images/animes/image/lupin-iii-part-6.jpg
+		 */
 		int v2 = anime.find("/", 20);
 		string serie = anime.substr(0, v2 + 1);
 		chap = eraseVec(chap,serie);
@@ -451,22 +451,22 @@ bool onTimeC(u64 sec,u64& time8){
 bool inTimeN(u64 sec,int framesdelay){
 	static json data;
 	string name = to_string(sec);
-	
-	if (data[name]["frames"].is_null()){
+
+	if (data[name]["frames"].is_null()) {
 		data[name]["frames"]=0;
 	}
 
 	//frames delay
 	//uncoment to debug
-	if (framesdelay == 0 || data[name]["frames"].get<int>() > framesdelay){
+	if (framesdelay == 0 || data[name]["frames"].get<int>() > framesdelay) {
 		data[name]["frames"]=0;
-	
+
 		struct timeval time_now {};
 		gettimeofday(&time_now, nullptr);
 		time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
-		
 
-		if (data[name]["time"].is_null()){
+
+		if (data[name]["time"].is_null()) {
 			data[name]["time"]=msecs_time;
 		} else{
 			u64 time1 = msecs_time;
@@ -535,13 +535,13 @@ void TickerName(int& color,int sec,int min,int max){
  */
 }
 std::string string_to_hex(const std::string& in) {
-    std::stringstream ss;
+	std::stringstream ss;
 
-    ss << std::hex << std::setfill('0');
-    for (size_t i = 0; in.length() > i; ++i) {
-        ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
-    }
-    return ss.str(); 
+	ss << std::hex << std::setfill('0');
+	for (size_t i = 0; in.length() > i; ++i) {
+		ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
+	}
+	return ss.str();
 }
 
 void NameOfLink(std::string& word){
@@ -553,7 +553,7 @@ void NameOfLink(std::string& word){
 }
 std::string KeyOfLink(std::string word){
 	int v2 = word.find("/", 20);
-	if (v2){
+	if (v2) {
 		word = word.substr(0, v2 + 1);
 		replace(word, "https://jkanime.net/", "");
 		replace(word, "/", "");
@@ -577,70 +577,70 @@ bool isset(json& data,string key){
 }
 
 namespace LOG {
-	streambuf* stream_buffer_cout;
-	streambuf* stream_buffer_cin;
-	std::stringstream redirectStream;
-	fstream file;
-	
-	int E(int r){
-		GOD.PlayEffect(GOD.aree);
-		led_on(2);
-		int result = 1;
-		for(int i=1; i < r;i++){
-			result = result*10;
-		}
-		hasError+=result;
-		return result;
+streambuf* stream_buffer_cout;
+streambuf* stream_buffer_cin;
+std::stringstream redirectStream;
+fstream file;
+
+int E(int r){
+	GOD.PlayEffect(GOD.aree);
+	led_on(2);
+	int result = 1;
+	for(int i=1; i < r; i++) {
+		result = result*10;
 	}
-	bool MLOG(){
+	hasError+=result;
+	return result;
+}
+bool MLOG(){
 //		return true;
 //		return (DInfo()["TID"] == "05B80C7D3B860000");
-		return (DInfo()["TID"] == "05B9DB505ABBE000");
-	}
-	
-	void init(){
-		if (MLOG()){
-			// Backup streambuffers of  cout
-			stream_buffer_cout = cout.rdbuf();
-			stream_buffer_cin = cin.rdbuf();
-			
-			Mem();
-			cout << "HEAD> < " << time(0) << " >" << endl;
-			cout << std::setw(4) << DInfo() << std::endl;
-		}
-	}
+	return (DInfo()["TID"] == "05B9DB505ABBE000");
+}
 
-	
-	void SaveFile(bool error){
-		if (MLOG()){
-			//Save log File
-			cout << "END> < " << time(0) << " >" << endl;
-			//file.open(rootdirectory+"JK.log", ios::app);
-			if(error){
-				file.open("sdmc:/JK_e.log", ios::app);
-			} else {
-				file.open("sdmc:/JK.log",std::fstream::out);
-			}
-			
-			file << redirectStream.str();
-			file.close();
-		}
+void init(){
+	if (MLOG()) {
+		// Backup streambuffers of  cout
+		stream_buffer_cout = cout.rdbuf();
+		stream_buffer_cin = cin.rdbuf();
+
+		Mem();
+		cout << "HEAD> < " << time(0) << " >" << endl;
+		cout << std::setw(4) << DInfo() << std::endl;
 	}
-	
-	void Mem(){
-		if (MLOG()){
-			cout << "Log to Mem >" << endl;
-			// Redirect cout to Mem
-			cout.rdbuf(redirectStream.rdbuf());
+}
+
+
+void SaveFile(bool error){
+	if (MLOG()) {
+		//Save log File
+		cout << "END> < " << time(0) << " >" << endl;
+		//file.open(rootdirectory+"JK.log", ios::app);
+		if(error) {
+			file.open("sdmc:/JK_e.log", ios::app);
+		} else {
+			file.open("sdmc:/JK.log",std::fstream::out);
 		}
+
+		file << redirectStream.str();
+		file.close();
 	}
-	void Screen(){
-		if (MLOG()){
-			// Redirect cout back to screen
-			cout.rdbuf(stream_buffer_cout);
-			cout << "Log to screen >" << endl;
-		}
+}
+
+void Mem(){
+	if (MLOG()) {
+		cout << "Log to Mem >" << endl;
+		// Redirect cout to Mem
+		cout.rdbuf(redirectStream.rdbuf());
 	}
+}
+void Screen(){
+	if (MLOG()) {
+		// Redirect cout back to screen
+		cout.rdbuf(stream_buffer_cout);
+		cout << "Log to screen >" << endl;
+	}
+}
 }
 
 

@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	isConnected=Net::HasConnection();
 
 	mount_theme("themes",true);
-	
+
 	//Mount Save Data
 	user::MountUserSave();
 
@@ -38,18 +38,18 @@ int main(int argc, char **argv)
 	{
 		read_DB(AB,"romfs:/AnimeBase.json");
 	}
-	
+
 	read_DB(BD,rootdirectory+"DataBase.json");
-	
+
 	BD["com"] = "{}"_json;
-	if (isset(BD,"DataBase")){
+	if (isset(BD,"DataBase")) {
 		BD.erase("DataBase");
 	}
-	if (isset(BD,"USER")){
+	if (isset(BD,"USER")) {
 		UD = BD["USER"];
 		BD.erase("USER");
 	}
-	read_DB(UD,rootsave+"UserData.json");	
+	read_DB(UD,rootsave+"UserData.json");
 
 	GOD.intA();//init the SDL
 
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 		mkdir(rootdirectory.c_str(), 0777);
 		mkdir((rootdirectory+"DATA").c_str(), 0777);
 	}
-	
+
 	GOD.loadSkin();//Esto carga la skin guardada y la musica
 
 	gTextTexture.mark=false;
@@ -75,12 +75,12 @@ int main(int argc, char **argv)
 	int posybase = 10;
 
 	Inputinit();
-	
+
 	try{
 		//Load images from Romfs
 		LoadImages();
 
-		if (isSXOS){
+		if (isSXOS) {
 			GOD.GenState = statenow;
 			GOD.JKMainLoop();
 			Farest.render((0), (0));
@@ -91,8 +91,8 @@ int main(int argc, char **argv)
 		//Handle forced exit
 		//if (!AppletMode)
 		appletLockExit();
-		
-		
+
+
 		//While application is running
 		while (GOD.JKMainLoop())
 		{
@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 					}
 					HG = T_R.getHeight()+60;
 					HG = HG < 340 ? 340 : HG;
-					
+
 					VOX.render_VOX({XG, YG, WG, HG}, 255, 255, 255, 170);
 					T_R.render(XG+10, YG+10);
 
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
 					} else {
 						if (BD["com"]["enemision"] == "true")
 						{
-							if(BD["com"]["Estado"].is_null()){
+							if(BD["com"]["Estado"].is_null()) {
 								BD["com"]["Estado"] = "En Emisión";
 							}
 							gTextTexture.loadFromRenderedText(GOD.Arista_40, BD["com"]["Estado"], { 16,191,0 });
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 					NFAV.render_T(1225, 70,"");
 					B_Y.render_T(dist, 680,"Favorito"); dist -= posdist;
 				}
-				
+
 				if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
@@ -382,122 +382,122 @@ int main(int argc, char **argv)
 					if(imgNumbuffer>0) {textpro+=" "+to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
 					GOD.PleaseWait(textpro,false);
 				}
-					if (statenow==menu_s) {
+				if (statenow==menu_s) {
 
-						{
-							StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV"};
-							if(isDownloading) {StatesList.push_back("Descargas");}
-							
-							int mwide = 60,XD=940,YD=120,W=1280-XD;
-							VOX.render_VOX({XD,61, 1280, 608}, 160, 160, 160, 220);//draw area
-							VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);//head line
-							VOX.render_VOX({XD,668, W, 1}, 255, 255, 255, 235);//bottom line
-							VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);//line left
-							gTextTexture.loadFromRenderedText(GOD.Arista_20, "Menú Primario",textColor);
-							gTextTexture.render(XD+20, 65);
-							if (imgNumbuffer > 0) {
-								gTextTexture.loadFromRenderedText(GOD.Comic_16, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
-								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
-							}
-							if (part > 0) {
-								gTextTexture.loadFromRenderedText(GOD.Comic_16, "Búfer: ("+to_string(part)+"/"+to_string(ofall)+")", {0,100,0});
-								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15,  70);
-							}
-							if (porcentajebufferF > 0) {
-								gTextTexture.loadFromRenderedText(GOD.Comic_16, "BúferFav: ("+to_string(porcentajebufferF)+"/"+to_string(porcentajebufferFF)+")", {0,100,0});
-								gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
-							}
-							int indexLsize = StatesList.size();
-							int Ymaxsize = indexLsize*mwide;
-							if(GOD.TouchX < 1280 && GOD.TouchY < Ymaxsize+YD && GOD.TouchY > YD && GOD.TouchX > XD+100) {
-								int sel=(GOD.TouchY-YD) / mwide;
-								VOX.render_VOX({XD+80-10,YD+(sel*mwide)+5, W-100, mwide-5}, 0, 0, 255, 235);
-								if (sel >= 0 && sel < indexLsize) {
-									selectelement = sel;
-								}
-							}
+					{
+						StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV"};
+						if(isDownloading) {StatesList.push_back("Descargas");}
 
-							for (int x = 0; x < indexLsize; x++) {
-								if(x == 0) {BUSB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 1) {HISB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 2) {FAVB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 3) {HORB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 4) {TOPB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 5) {GOD.MapT["ULTB"].render(XD+10, YD + (x * mwide)+5);}
-								if(x == 6) {AFLV.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 7) {DOWB.render(XD+10, YD + (x * mwide)+5);}
-								if(x == 8) {DOWB.render(XD+10, YD + (x * mwide)+5);}
-
-								if (x == selectelement) {
-									T_T.loadFromRenderedText(GOD.Arista_50, StatesList[x], textWhite);
-									VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-100, T_T.getHeight()-5}, 50, 50, 50, 100);
-									T_T.render(XD+80, YD + (x * mwide));
-								} else {
-									gTextTexture.loadFromRenderedText(GOD.Arista_50, StatesList[x],textColor);
-									gTextTexture.render(XD+80, YD + (x * mwide));
-								}
-
-								if (x < indexLsize-1) {
-									VOX.render_VOX({XD+80,YD + (x * mwide)+mwide+2, W-130, 1}, 255, 255, 255, 235);
-								}
+						int mwide = 60,XD=940,YD=120,W=1280-XD;
+						VOX.render_VOX({XD,61, 1280, 608}, 160, 160, 160, 220);        //draw area
+						VOX.render_VOX({XD,61, W, 1}, 255, 255, 255, 235);        //head line
+						VOX.render_VOX({XD,668, W, 1}, 255, 255, 255, 235);        //bottom line
+						VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);        //line left
+						gTextTexture.loadFromRenderedText(GOD.Arista_20, "Menú Primario",textColor);
+						gTextTexture.render(XD+20, 65);
+						if (imgNumbuffer > 0) {
+							gTextTexture.loadFromRenderedText(GOD.Comic_16, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
+							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
+						}
+						if (part > 0) {
+							gTextTexture.loadFromRenderedText(GOD.Comic_16, "Búfer: ("+to_string(part)+"/"+to_string(ofall)+")", {0,100,0});
+							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15,  70);
+						}
+						if (porcentajebufferF > 0) {
+							gTextTexture.loadFromRenderedText(GOD.Comic_16, "BúferFav: ("+to_string(porcentajebufferF)+"/"+to_string(porcentajebufferFF)+")", {0,100,0});
+							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
+						}
+						int indexLsize = StatesList.size();
+						int Ymaxsize = indexLsize*mwide;
+						if(GOD.TouchX < 1280 && GOD.TouchY < Ymaxsize+YD && GOD.TouchY > YD && GOD.TouchX > XD+100) {
+							int sel=(GOD.TouchY-YD) / mwide;
+							VOX.render_VOX({XD+80-10,YD+(sel*mwide)+5, W-100, mwide-5}, 0, 0, 255, 235);
+							if (sel >= 0 && sel < indexLsize) {
+								selectelement = sel;
 							}
 						}
-						if (BD["arrays"]["Banner"]["files"].size() > 0){//Draw Banner
-							int XF=10, YF=65, WF=760, HF=427;
-							bannersize = BD["arrays"]["Banner"]["files"].size()-1;
-							//clock cicle 5s
-							bool makebomb = false;
-							if (inTimeN(5001)) {
-								if (Btimer){
-									makebomb = true;
-									bannersel++;
-									if (bannersel>bannersize) bannersel=0;
-								} else
-									Btimer=true;
-							}
-							//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
-							//NameOfLink(temptext);
-							string path = BD["arrays"]["Banner"]["files"][bannersel];
-							string temptext = BD["arrays"]["Banner"]["name"][bannersel];
-						
-							VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
-							GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);
-							if (makebomb) {
-								GOD.MapT[path.substr(25)].offboom_size=2;
-								GOD.MapT[path.substr(25)].TickerBomb();
-								makebomb = false;
-							}
-							
-							VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
-							gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,60)+ ":", textColor);
-							gTextTexture.render(XF, YF-5);
-							
-							VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
-							B_RIGHT.render_T(XF+5, YF+HF-40,"Ver Ahora");
-							
-							
-							if (isset(UD["Themes"],"name")){
-								//Thema temporal
-								static int WT = 190;
-								VOX.render_VOX({XF, YF+HF+10, WT+15, 45}, 255, 255, 255, 185);
-								WT = B_ZL.render_T(XF+5, YF+HF+15,"Tema: "+UD["Themes"]["name"].get<string>());
-							}						
-						}
 
-						//Draw footer buttons
-						int dist = 1100,posdist = 170;
-						B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
-						B_B.render_T(dist, 680,"Atrás"); dist -= posdist;
-						if (isHandheld) {CLEAR.render_T(dist, 680,"Cache"); dist -= posdist;}
-						break;
+						for (int x = 0; x < indexLsize; x++) {
+							if(x == 0) {BUSB.render(XD+10, YD + (x * mwide)+5);}
+							if(x == 1) {HISB.render(XD+10, YD + (x * mwide)+5);}
+							if(x == 2) {FAVB.render(XD+10, YD + (x * mwide)+5);}
+							if(x == 3) {HORB.render(XD+10, YD + (x * mwide)+5);}
+							if(x == 4) {TOPB.render(XD+10, YD + (x * mwide)+5);}
+							if(x == 5) {GOD.MapT["ULTB"].render(XD+10, YD + (x * mwide)+5);}
+							if(x == 6) {AFLV.render(XD+10, YD + (x * mwide)+5);}
+							if(x == 7) {DOWB.render(XD+10, YD + (x * mwide)+5);}
+							if(x == 8) {DOWB.render(XD+10, YD + (x * mwide)+5);}
+
+							if (x == selectelement) {
+								T_T.loadFromRenderedText(GOD.Arista_50, StatesList[x], textWhite);
+								VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-100, T_T.getHeight()-5}, 50, 50, 50, 100);
+								T_T.render(XD+80, YD + (x * mwide));
+							} else {
+								gTextTexture.loadFromRenderedText(GOD.Arista_50, StatesList[x],textColor);
+								gTextTexture.render(XD+80, YD + (x * mwide));
+							}
+
+							if (x < indexLsize-1) {
+								VOX.render_VOX({XD+80,YD + (x * mwide)+mwide+2, W-130, 1}, 255, 255, 255, 235);
+							}
+						}
 					}
+					if (BD["arrays"]["Banner"]["files"].size() > 0) {       //Draw Banner
+						int XF=10, YF=65, WF=760, HF=427;
+						bannersize = BD["arrays"]["Banner"]["files"].size()-1;
+						//clock cicle 5s
+						bool makebomb = false;
+						if (inTimeN(5001)) {
+							if (Btimer) {
+								makebomb = true;
+								bannersel++;
+								if (bannersel>bannersize) bannersel=0;
+							} else
+								Btimer=true;
+						}
+						//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
+						//NameOfLink(temptext);
+						string path = BD["arrays"]["Banner"]["files"][bannersel];
+						string temptext = BD["arrays"]["Banner"]["name"][bannersel];
+
+						VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
+						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);
+						if (makebomb) {
+							GOD.MapT[path.substr(25)].offboom_size=2;
+							GOD.MapT[path.substr(25)].TickerBomb();
+							makebomb = false;
+						}
+
+						VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
+						gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,60)+ ":", textColor);
+						gTextTexture.render(XF, YF-5);
+
+						VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
+						B_RIGHT.render_T(XF+5, YF+HF-40,"Ver Ahora");
+
+
+						if (isset(UD["Themes"],"name")) {
+							//Thema temporal
+							static int WT = 190;
+							VOX.render_VOX({XF, YF+HF+10, WT+15, 45}, 255, 255, 255, 185);
+							WT = B_ZL.render_T(XF+5, YF+HF+15,"Tema: "+UD["Themes"]["name"].get<string>());
+						}
+					}
+
 					//Draw footer buttons
 					int dist = 1100,posdist = 170;
 					B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
-					B_R.render_T(dist, 680,"Buscar"); dist -= posdist;
-					//B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
-					B_Y.render_T(dist, 680,"Menú"); dist -= posdist;
-					if(isDownloading) {B_X.render_T(dist, 680,"Descargas"); dist -= posdist-10;}
+					B_B.render_T(dist, 680,"Atrás"); dist -= posdist;
+					if (isHandheld) {CLEAR.render_T(dist, 680,"Cache"); dist -= posdist;}
+					break;
+				}
+				//Draw footer buttons
+				int dist = 1100,posdist = 170;
+				B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
+				B_R.render_T(dist, 680,"Buscar"); dist -= posdist;
+				//B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
+				B_Y.render_T(dist, 680,"Menú"); dist -= posdist;
+				if(isDownloading) {B_X.render_T(dist, 680,"Descargas"); dist -= posdist-10;}
 
 
 				break;
@@ -754,7 +754,7 @@ int main(int argc, char **argv)
 					int dist = 1100,posdist = 180;
 					B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
 					B_B.render_T(dist, 680,"Volver"); dist -= posdist;
-					
+
 					dist = B_L.render_T(550,680," "+Wday[WdayG]+" ");
 					B_R.render_T(550+dist,680);
 				}
@@ -837,7 +837,7 @@ int main(int argc, char **argv)
 				T_D.render(SCREEN_WIDTH - T_D.getWidth() - 1, 671-T_D.getHeight());
 			}
 			if (AppletMode) GOD.PleaseWait("Esta App No funciona en Modo Applet. Instalando NSP, Espere...",false);
-			
+
 			//presice clock cicle 1s
 			if (inTimeN(1000,0)) {
 				if (Frames>0) {
@@ -848,7 +848,7 @@ int main(int argc, char **argv)
 				}
 				if (!isConnected) {isConnected=Net::HasConnection();}
 			}
-			
+
 			//clock cicle 15s
 			if (inTimeN(15000)) {
 				isConnected=Net::HasConnection();
@@ -862,9 +862,9 @@ int main(int argc, char **argv)
 			if(programation_s != statenow && isHandheld) {
 				BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);
 			}
-			
+
 			GOD.MapT["MUSIC"].render_T(10, 680,"",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
-			
+
 			if((programation_s == statenow && isHandheld)|quit) {
 				GOD.MapT["EXIT"].render_T(80, 680,"",quit);
 			}
@@ -887,7 +887,7 @@ int main(int argc, char **argv)
 			//HID Events
 			//#include "input.hpp"
 			InputHandle();
-			if(quit){
+			if(quit) {
 				//wallpaper
 				Farest.render((0), (0));
 			}
@@ -952,22 +952,22 @@ int main(int argc, char **argv)
 	//Free resources and close SDL
 	GOD.deint();
 	//LOG Save
-	if (hasError > 0){
+	if (hasError > 0) {
 		cout << "ErrorSession: " << hasError << endl;
 		LOG::SaveFile(true);
 	} else {
 		LOG::SaveFile();
 	}
-		
-	
-	
+
+
+
 	accountExit();
 	hidsysExit();
 	socketExit();
 	romfsExit();
 	socketExit();
 
-	
+
 	//unmount and commit
 	mount_theme("themes",false);
 

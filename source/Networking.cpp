@@ -26,31 +26,31 @@ struct MemoryStruct
 };
 
 static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, void *userdata) {
-  size_t realsize = size * nmemb;
-  struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
+	size_t realsize = size * nmemb;
+	struct MemoryStruct *mem = (struct MemoryStruct *)userdata;
 
-  char *ptr;
+	char *ptr;
 
-  ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
+	ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
 
-  if (ptr == NULL)//handle memory overflow
-  {
-      printf("Failed to realloc mem\n");
-	  printf("Writing... %luMb To file\n",mem->size / 1000000 + 1);
-	  fwrite(mem->memory, 1, mem->size, mem->fp);
-	  free(mem->memory);
-	  mem->memory = (char*)malloc(1);
-	  mem->size = 0;
-	  ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
-	  if (ptr == NULL) return 0;
-  }
- 
-  mem->memory = ptr;
-  memcpy(&(mem->memory[mem->size]), contents, realsize);
-  mem->size += realsize;
-  mem->memory[mem->size] = 0;
+	if (ptr == NULL)//handle memory overflow
+	{
+		printf("Failed to realloc mem\n");
+		printf("Writing... %luMb To file\n",mem->size / 1000000 + 1);
+		fwrite(mem->memory, 1, mem->size, mem->fp);
+		free(mem->memory);
+		mem->memory = (char*)malloc(1);
+		mem->size = 0;
+		ptr = (char*)realloc(mem->memory, mem->size + realsize + 1);
+		if (ptr == NULL) return 0;
+	}
 
-  return realsize;
+	mem->memory = ptr;
+	memcpy(&(mem->memory[mem->size]), contents, realsize);
+	mem->size += realsize;
+	mem->memory[mem->size] = 0;
+
+	return realsize;
 }
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -135,183 +135,183 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,do
 
 
 namespace Net {
-	string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
-	int DebugNet = 1;//0 no debug ,  1 some debug, 2 All debug
-	
-	//Simplification
-	string REDIRECT(string url,string POSTFIEL){
-		return REQUEST(url,POSTFIEL)["RED"];
-	}
-	string POST(string url,string POSTFIEL){
-		if (POSTFIEL.length() == 0) {POSTFIEL="0";}
-		return REQUEST(url,POSTFIEL)["BODY"];
-	}
-	string GET(string url){
-		return REQUEST(url)["BODY"];
-	}
-	json HEAD(string url){
-		json deb = REQUEST(url,"",true,true);
-		if ( DebugNet > 0){
-			cout << "# Nintendo Web : " << deb["CODE"] << std::endl;
-		}
-		return deb;
-	}
-	
-	//General Request
-	json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
-		replace(url," ","%20");
-		CURL *curl;
-		CURLcode res = CURLE_OK;
-		std::string Buffer;
-		json data="{}"_json;
-		data["URL"] = url;
-		char *red = "";
-		long http_code=0;
-		long redirects=0;
-		u64 sizeh=1;
-		data["RED"] = "";
+string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+int DebugNet = 1;        //0 no debug ,  1 some debug, 2 All debug
 
-		curl = curl_easy_init();
-		if (curl) {
+//Simplification
+string REDIRECT(string url,string POSTFIEL){
+	return REQUEST(url,POSTFIEL)["RED"];
+}
+string POST(string url,string POSTFIEL){
+	if (POSTFIEL.length() == 0) {POSTFIEL="0";}
+	return REQUEST(url,POSTFIEL)["BODY"];
+}
+string GET(string url){
+	return REQUEST(url)["BODY"];
+}
+json HEAD(string url){
+	json deb = REQUEST(url,"",true,true);
+	if ( DebugNet > 0) {
+		cout << "# Nintendo Web : " << deb["CODE"] << std::endl;
+	}
+	return deb;
+}
+
+//General Request
+json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
+	replace(url," ","%20");
+	CURL *curl;
+	CURLcode res = CURLE_OK;
+	std::string Buffer;
+	json data="{}"_json;
+	data["URL"] = url;
+	char *red = "";
+	long http_code=0;
+	long redirects=0;
+	u64 sizeh=1;
+	data["RED"] = "";
+
+	curl = curl_easy_init();
+	if (curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, UserAgent.c_str());
+		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+
+		if (HEADR) {
+			curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+		} else if (POSTFIEL.length()>0) {
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
+			data["POST"] = POSTFIEL;
+		}
+		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
+		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIES.txt").c_str());
+		curl_easy_setopt(curl, CURLOPT_REFERER, url.c_str());
+		if (Verify) {
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1L);
+		} else {
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		}
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Buffer);
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK) {
+			data["ERROR"] = curl_easy_strerror(res);
+		} else {
+			//Get Info
+			curl_easy_getinfo(curl, CURLINFO_HEADER_SIZE, &sizeh);
+			curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+			curl_easy_getinfo(curl, CURLINFO_REDIRECT_COUNT, &redirects);
+
+			if (redirects > 0) {
+				curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &red);
+			}
+			data["RED"] = red;
+			if (DebugNet > 0 && redirects > 0) {
+				std::cout << " EURL: " << red << std::endl;
+			}
+		}
+		curl_easy_cleanup(curl);
+	}
+	//data["RAW"] = Buffer;
+	data["CODE"] = http_code;
+	data["COUNT"] = redirects;
+	data["SIZE"] = sizeh;
+	if (HEADR) {
+		data["HEAD"] = split(Buffer.substr(0,sizeh), "\r\n");
+	} else {
+		data["HEAD"].push_back(Buffer.substr(0,sizeh));         //split(Buffer.substr(0,sizeh), "\r\n");
+		data["BODY"] = Buffer.substr(sizeh);
+	}
+
+	if (DebugNet > 1) {
+		if (url.find("https://jkanime.net/gsplay") != string::npos|| DebugNet > 2)
+		{
+			std::cout << " ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " << std::endl;
+			try {
+				std::cout << std::setw(4) << data << std::endl;
+
+			}catch(...) {
+				LOG::E(10);
+				std::cout << " CODE: " << http_code << std::endl;
+				std::cout << " Redirects: " << redirects << std::endl;
+				std::cout << " EURL: " << red << std::endl;
+				std::cout << " error display info " << std::endl;
+				data["RED"]="";
+			}
+
+
+		}
+	}
+	return data;
+}
+
+bool DOWNLOAD(string url,string path,bool progress){
+	if(!Net::HasConnection()) {return false;}
+	replace(url," ","%20");
+	CURL *curl;
+	CURLcode res = CURLE_OK;
+	curl = curl_easy_init();
+	bool allok=false;
+	if (curl) {
+		struct MemoryStruct chunk;
+		remove(path.c_str());
+		chunk.fp = fopen(path.c_str(), "a");
+		if(chunk.fp) {
+			chunk.memory = (char*)malloc(1);
+			chunk.size = 0;
 			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 			curl_easy_setopt(curl, CURLOPT_USERAGENT, UserAgent.c_str());
-			curl_easy_setopt(curl, CURLOPT_HEADER, 1);
-			
-			if (HEADR){
-				curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
-			} else if (POSTFIEL.length()>0) {
-				curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
-				data["POST"] = POSTFIEL;
-			}
-			curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
-			curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIES.txt").c_str()); 
-			curl_easy_setopt(curl, CURLOPT_REFERER, url.c_str());
-			if (Verify){
-				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
-				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1L);
-			} else {
-				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-			}
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Buffer);
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+			// Install the callback function
+			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+			if (progress) {
+				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
+			} else {
+				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func_str);
+			}
+
 			res = curl_easy_perform(curl);
-			if (res != CURLE_OK) {
-				data["ERROR"] = curl_easy_strerror(res);
-			} else {
-				//Get Info
-				curl_easy_getinfo(curl, CURLINFO_HEADER_SIZE, &sizeh);
-				curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
-				curl_easy_getinfo(curl, CURLINFO_REDIRECT_COUNT, &redirects);
-				
-				if (redirects > 0){
-					curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &red);
-				}
-				data["RED"] = red;
-				if (DebugNet > 0 && redirects > 0){
-					std::cout << " EURL: " << red << std::endl;
-				}
-			}			
-			curl_easy_cleanup(curl);
-		}
-		//data["RAW"] = Buffer;
-		data["CODE"] = http_code;
-		data["COUNT"] = redirects;
-		data["SIZE"] = sizeh;
-		if (HEADR){
-			data["HEAD"] = split(Buffer.substr(0,sizeh), "\r\n");
-		} else {
-			data["HEAD"].push_back(Buffer.substr(0,sizeh)); //split(Buffer.substr(0,sizeh), "\r\n");
-			data["BODY"] = Buffer.substr(sizeh);
-		}
-		
-		if (DebugNet > 1){
-			if (url.find("https://jkanime.net/gsplay") != string::npos|| DebugNet > 2)
-			{
-				std::cout << " ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " << std::endl;
-					try {
-						std::cout << std::setw(4) << data << std::endl;
-					
-					}catch(...){
-						LOG::E(10);
-						std::cout << " CODE: " << http_code << std::endl;
-						std::cout << " Redirects: " << redirects << std::endl;
-						std::cout << " EURL: " << red << std::endl;
-						std::cout << " error display info " << std::endl;
-						data["RED"]="";
-					}
-
-				
-			}
-		}
-		return data;
-	}
-
-	bool DOWNLOAD(string url,string path,bool progress){
-		if(!Net::HasConnection()) {return false;}
-		replace(url," ","%20");
-		CURL *curl;
-		CURLcode res = CURLE_OK;
-		curl = curl_easy_init();
-		bool allok=false;
-		if (curl) {
-			struct MemoryStruct chunk;
-			remove(path.c_str());
-			chunk.fp = fopen(path.c_str(), "a");
-			if(chunk.fp) {
-				chunk.memory = (char*)malloc(1);
-				chunk.size = 0;
-				curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-				curl_easy_setopt(curl, CURLOPT_USERAGENT, UserAgent.c_str());
-				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-				
-				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
-				curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
-				// Install the callback function
-				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-				if (progress) {
-					curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
+			if ((res == CURLE_OK)) {
+				cout << "#size:" << chunk.size << " found:" << path.find(".mp4") << " in:" << path.c_str() << endl;
+				if (chunk.size < 1000000  && path.find(".mp4") != string::npos) {
+					cout << "####size:" << chunk.size << " found:" << path.find(".mp4") << " in:" << path.c_str() << endl;
+					allok=false;        //
 				} else {
-					curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func_str);
+					fwrite(chunk.memory, 1, chunk.size, chunk.fp);        // write from mem to file
+					allok=true;
 				}
-
-				res = curl_easy_perform(curl);
-				if ((res == CURLE_OK)) {
-					cout << "#size:" << chunk.size << " found:" << path.find(".mp4") << " in:" << path.c_str() << endl;
-					if (chunk.size < 1000000  && path.find(".mp4") != string::npos) {
-						cout << "####size:" << chunk.size << " found:" << path.find(".mp4") << " in:" << path.c_str() << endl;
-						allok=false;//
-					} else {
-						fwrite(chunk.memory, 1, chunk.size, chunk.fp);// write from mem to file
-						allok=true;
-					}
-				}else{
-					allok=false;
-					cout << curl_easy_strerror(res) << endl;
-				}
-				/* always cleanup */
-				curl_easy_cleanup(curl);
-				free(chunk.memory);
+			}else{
+				allok=false;
+				cout << curl_easy_strerror(res) << endl;
 			}
-			fclose(chunk.fp);
-			if (!allok) {remove(path.c_str());}
+			/* always cleanup */
+			curl_easy_cleanup(curl);
+			free(chunk.memory);
 		}
-		return allok;
+		fclose(chunk.fp);
+		if (!allok) {remove(path.c_str());}
 	}
-	
-	bool HasConnection(){
-		NifmInternetConnectionType connectionType;
-		NifmInternetConnectionStatus connectionStatus;
-		u32 strg = 0;
-		nifmInitialize(NifmServiceType_System);
-		nifmGetInternetConnectionStatus(&connectionType, &strg, &connectionStatus);
-		if (connectionStatus == NifmInternetConnectionStatus_Connected) return true;
-		return (strg > 0);
-	}
+	return allok;
+}
+
+bool HasConnection(){
+	NifmInternetConnectionType connectionType;
+	NifmInternetConnectionStatus connectionStatus;
+	u32 strg = 0;
+	nifmInitialize(NifmServiceType_System);
+	nifmGetInternetConnectionStatus(&connectionType, &strg, &connectionStatus);
+	if (connectionStatus == NifmInternetConnectionStatus_Connected) return true;
+	return (strg > 0);
+}
 }
 
 void CheckImgVector(json List,int& index){
@@ -353,70 +353,70 @@ bool CheckUpdates(bool force){
 		string Ver = DInfo()["App"];
 		//Get Config
 		json config = DInfo()["config"];
-		if (config["AutoUpdate"].is_null()){
-			std::cout  << "- Config empty " <<std::endl;
+		if (config["AutoUpdate"].is_null()) {
+			std::cout << "- Config empty " <<std::endl;
 			return false;
 		}
-		
+
 		//Get AutoUpdate state use 0 to disable
-		if (config["AutoUpdate"].get<int>() != 1){
-			std::cout  << "- AutoUpdate Disabled" <<std::endl;
+		if (config["AutoUpdate"].get<int>() != 1) {
+			std::cout << "- AutoUpdate Disabled" <<std::endl;
 			return false;
 		}
 		string reurl="https://api.github.com/repos/"+config["author"].get<string>()+"/"+config["repo"].get<string>()+"/releases";
-		
+
 		std::string APIJ = Net::GET(reurl);
 		if(json::accept(APIJ))
 		{
 			//Parse and use the JSON data
 			json base = json::parse(APIJ);
 			//main vars
-			if (!base[0]["tag_name"].is_null()){
-				
+			if (!base[0]["tag_name"].is_null()) {
+
 				//New ver
 				string New = base[0]["tag_name"];
-				if (New.length() > 5) New = New.substr(0,5);//Tomar Major, Minor, y Micro solamente
+				if (New.length() > 5) New = New.substr(0,5); //Tomar Major, Minor, y Micro solamente
 
 				//Check for new updates
-				if (Ver != New || force){
+				if (Ver != New || force) {
 					//get assets
 					json asset = base[0]["assets"];
-					if (asset.size() <= 0){
-							std::cout  << "- NO assets " <<std::endl;
-							return false;
+					if (asset.size() <= 0) {
+						std::cout << "- NO assets " <<std::endl;
+						return false;
 					}
 
 					string Nurl= asset[0]["browser_download_url"];
-					if (config["Beta"] == 1){
+					if (config["Beta"] == 1) {
 						Nurl= config["Beta_URL"].get<string>();
 					}
 
 					//check if URl is ok
 					if (Nurl.find(".nsp") == string::npos) {
-						std::cout  << "- NO " << Nurl <<std::endl;
-						for (u64 i=0; i<asset.size(); i++ ){
+						std::cout << "- NO " << Nurl <<std::endl;
+						for (u64 i=0; i<asset.size(); i++ ) {
 							Nurl= asset[i]["browser_download_url"];
 							if (Nurl.find(".nsp") != string::npos) {
 								break;
 							}
 						}
 						if (Nurl.find(".nsp") == string::npos) {
-							std::cout  << "- NO, bad " << Nurl <<std::endl;
+							std::cout << "- NO, bad " << Nurl <<std::endl;
 							return false;
 
 						}
 					}
-					std::cout  << "- OK " << Nurl <<std::endl;
-					
-					
-					
+					std::cout << "- OK " << Nurl <<std::endl;
+
+
+
 					string fileU=rootdirectory+"update.nsp";
-					
+
 					//Have the update?
 					json UP;
 					bool needDown = true;
-					if (read_DB(UP,fileU+".json")){
-						if(UP["update"] == New){
+					if (read_DB(UP,fileU+".json")) {
+						if(UP["update"] == New) {
 							needDown = false;
 						}
 
@@ -425,12 +425,12 @@ bool CheckUpdates(bool force){
 						needDown = true;
 					}
 					std::cout << Ver << " -> " << New <<std::endl;
-					
-					if (needDown){
-					//Download New Update
+
+					if (needDown) {
+						//Download New Update
 						if (!Net::DOWNLOAD(Nurl, fileU,false))
 						{
-							std::cout << "Download error" << New <<std::endl; 
+							std::cout << "Download error" << New <<std::endl;
 							return false;
 						} else {
 							//Store update data
@@ -439,9 +439,9 @@ bool CheckUpdates(bool force){
 							std::cout << Ver << " --> " << New <<std::endl;
 						}
 					}
-						
+
 					//Install New Update nsp
-					if (InstallNSP(fileU)){
+					if (InstallNSP(fileU)) {
 						DInfo(New);
 						std::cout << Ver << " ---> " << New <<std::endl;
 						return true;
@@ -458,17 +458,17 @@ bool CheckUpdates(bool force){
 
 /*
 
-Spected:
-JK.config
-	{
-		"AutoUpdate": 1,
-		"Beta": 1,
-		"Beta_URL": "https://mysitio.blabla/beta.nsp",
-		"author":"??"
-		"repo": "??"
-	}
+   Spected:
+   JK.config
+        {
+                "AutoUpdate": 1,
+                "Beta": 1,
+                "Beta_URL": "https://mysitio.blabla/beta.nsp",
+                "author":"??"
+                "repo": "??"
+        }
 
-On sd card root on the root dir of the app
-sdmc:/JK.config
-User:/RipJKAnime/JK.config
-*/
+   On sd card root on the root dir of the app
+   sdmc:/JK.config
+   User:/RipJKAnime/JK.config
+ */

@@ -90,7 +90,7 @@ string Nozomi_Link(string Link){
 	for (int i=1; i<5; i++) {
 		cout << "-----------------------------------------> "+to_string(i) << endl;
 		codetemp = Net::POST("https://jkanime.net/gsplay/api.php",second);
-		
+
 		//decode json
 		json data;
 		if(json::accept(codetemp))
@@ -129,7 +129,7 @@ string Nozomi_player(string Link){
 string Fembed_Link(string Link) {
 	string codetemp = "";
 	replace(Link, "https://jkanime.net/jkfembed.php?u=", "https://www.fembed.com/api/source/");
-	
+
 	cout << "enlace: " << Link << endl;
 
 	//POST to api
@@ -143,8 +143,8 @@ string Fembed_Link(string Link) {
 		data = json::parse(videojson);
 		int sz = data["data"].size()-1;
 		cout << "num: " << sz << endl;
-		if(sz > 0){
-			if (!data["data"][sz]["file"].is_null()){
+		if(sz > 0) {
+			if (!data["data"][sz]["file"].is_null()) {
 				codetemp = data["data"][sz]["file"];
 			}
 		}
@@ -159,30 +159,30 @@ std::vector<std::string> arrayserversbak = {
 std::vector<std::string> arrayservers = arrayserversbak;
 
 bool onlinejkanimevideo(string onlineenlace,string server){
-	if (!Net::HasConnection()){return false;}
+	if (!Net::HasConnection()) {return false;}
 	string videourl = "";
 	string content = "";
 	string tempcon = "";
 	content = Net::GET(onlineenlace);
 	if (server == "Fembed 2.0") {
 		videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
-		if(videourl.length()){
+		if(videourl.length()) {
 			tempcon = Fembed_Link(videourl);
-			if(tempcon.length()){videourl=tempcon;}
+			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "Nozomi") {
 		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
-		if(videourl.length()){
+		if(videourl.length()) {
 			tempcon = Nozomi_player(videourl);
-			if(tempcon.length()){videourl=tempcon;}
+			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "MixDrop") {
 		videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
-		if(videourl.length()){
+		if(videourl.length()) {
 			tempcon=MD_s(videourl);
-			if(tempcon.length()){videourl=tempcon;}
+			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "Okru") {
@@ -213,7 +213,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	return false;
 }
 bool linktodownoadjkanime(string urltodownload,string directorydownload) {
-	if (!Net::HasConnection()){return false;}
+	if (!Net::HasConnection()) {return false;}
 	string videourl = "";
 	string content = "";
 	content = Net::GET(urltodownload);

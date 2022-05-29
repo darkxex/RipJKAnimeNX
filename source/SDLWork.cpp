@@ -85,7 +85,7 @@ void SDLB::intA(){
 					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 
 				}
-			    //Load sound effects
+				//Load sound effects
 				aree = Mix_LoadWAV( "romfs:/audio/are.ogg" );
 				if( aree == NULL)
 				{
@@ -125,7 +125,7 @@ void SDLB::intA(){
 bool SDLB::JKMainLoop(){
 	try{
 		//Main Pool events
-		if (PlayF){
+		if (PlayF) {
 			if (gtemp == NULL)
 				cout << "Play-Effect is null" << endl;
 			else
@@ -133,31 +133,31 @@ bool SDLB::JKMainLoop(){
 			PlayF=false;
 		}
 
-		if (ReloadSkin){loadSkin();ReloadSkin=false;}
+		if (ReloadSkin) {loadSkin(); ReloadSkin=false;}
 
 		//Update screen
 		SDL_RenderPresent(gRenderer);
 		GOD.FrameState++;
-	}catch(...){
+	}catch(...) {
 		LOG::E(12);
-		cout << "- Error Catched Main Pool" << endl;		
+		cout << "- Error Catched Main Pool" << endl;
 	}
 	//if get false once then collapse
 	static bool killer = true;
-	if (killer){
+	if (killer) {
 		killer=!quit && appletMainLoop();
 	}
 	return killer;
 }
 bool SDLB::PlayEffect(Mix_Chunk* efect){
 	try{
-	memcpy(gtemp, efect, sizeof(Mix_Chunk));
-	PlayF = true;
+		memcpy(gtemp, efect, sizeof(Mix_Chunk));
+		PlayF = true;
 
-	return true;
-	}catch(...){
+		return true;
+	}catch(...) {
 		LOG::E(13);
-		cout << "- Error Play Effect" << endl;		
+		cout << "- Error Play Effect" << endl;
 	}
 	return false;
 }
@@ -196,48 +196,48 @@ void SDLB::SwapMusic(bool swap){
 string defcord = "romfs:/theme/default";
 string SkinMaster = defcord;
 string theme(string file){
-	if (SkinMaster == defcord){
-		if (isFileExist(rootdirectory+file)){
+	if (SkinMaster == defcord) {
+		if (isFileExist(rootdirectory+file)) {
 			return rootdirectory+file;
 		}
 	}
-	if (!isFileExist(SkinMaster+file)){
+	if (!isFileExist(SkinMaster+file)) {
 		return defcord+file;
 	}
 	return SkinMaster+file;
 }
 string NameOfTheme(string path){
 	u64 v2 = path.rfind("/");
-	if (v2 != string::npos){
+	if (v2 != string::npos) {
 		path = path.substr(v2 + 1);
 	}
 	return path;
 }
 void SDLB::loadSkin(string img){
-	if (UD["Themes"]["use"].is_null()){
+	if (UD["Themes"]["use"].is_null()) {
 		UD["Themes"]["use"]=defcord;
 	}
 	//get Music State
-	if(UD["Themes"]["play"].is_null()){
+	if(UD["Themes"]["play"].is_null()) {
 		UD["Themes"]["play"]=0;
 	}
 
 	SkinMaster = UD["Themes"]["use"];
 	UD["Themes"]["name"] = NameOfTheme(SkinMaster);
 	cout << "# Theme: " << UD["Themes"]["use"] << std::endl;
-	
+
 	//images
 	Farest.free();
 	Farest.loadFromFile(theme("/background.jpg"));
 	Heart.free();
 	Heart.loadFromFile(theme("/heart.png"));
-	
-	
+
+
 	//Load music
 	Mix_FreeMusic(gMusic);
 	gMusic = Mix_LoadMUS(theme("/music.ogg").c_str());
-	if(UD["Themes"]["play"] == 1){
-		SwapMusic(false);	
+	if(UD["Themes"]["play"] == 1) {
+		SwapMusic(false);
 	}
 }
 void SDLB::setSkin(string path){
@@ -270,48 +270,48 @@ void SDLB::selectskin(string val) {
 bool SDLB::Confirm(std::string text,bool okonly,int type){
 
 	LTexture NAG,IMG;
-	//Print Menu once 
+	//Print Menu once
 	VOX.render_VOX({0,0,SCREEN_WIDTH,SCREEN_HEIGHT}, 0, 0, 0, 150);
-	
+
 	int NX=255,NY=200,NW=770,NH=330,BR = 2;
 	T_T.loadFromRenderedTextWrap(Arista_30, text, { 50, 50, 50 },NW-20);
-	
+
 	//Draw black back
 	VOX.render_VOX({NX-BR,NY-BR,NW+(BR*2),NH+(BR*2)}, 50, 50, 50, 200);
 	//Draw Icon
 	std::string image = "";
-	switch(type){
-		case 1:
-			image = "romfs:/img/pop/ques.png";
-			break;
-		case 2:
-			image = "romfs:/img/pop/info.png";
-			break;
-		case 3:
-			image = "romfs:/img/pop/error.png";
-			break;
+	switch(type) {
+	case 1:
+		image = "romfs:/img/pop/ques.png";
+		break;
+	case 2:
+		image = "romfs:/img/pop/info.png";
+		break;
+	case 3:
+		image = "romfs:/img/pop/error.png";
+		break;
 	}
-	
-	if (image.length()>0){
+
+	if (image.length()>0) {
 		IMG.loadFromFileCustom(image, 190,190);
 		IMG.render(NX+10, NY+10);
 	}
 	//Draw withe front
 	NAG.render_VOX({NX,NY,NW,NH}, 200, 200, 200, 200);//
 	T_T.render(NX+(NW/2)-(T_T.getWidth()/2), NY+((NH/4*3)/2)-(T_T.getHeight()/2));
-	
+
 	VOX.render_VOX({NX,NY+(NH/4*3),NW,BR}, 50, 50, 50, 200);
-	if(!okonly){
+	if(!okonly) {
 		VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),BR,(NH/4)+2}, 50, 50, 50, 200);
 		B_A.render_T(NX+(NW/4)-45, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"SI");
 		B_B.render_T(NX+(NW/4*3)-45, NY+(NH/4*3)+((NH/4)/2)-(B_B.getHeight()/2),"NO");
 	} else {
 		B_A.render_T(NX+(NW/2)-55, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"Aceptar");
 	}
-	
+
 	bool breaker = true;
 	bool result = false;
-	
+
 	//Event handler
 	SDL_Event e;
 	//While application is running
@@ -329,50 +329,50 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 			}
 			GOD.GenState = statenow;
 			switch (e.type) {
-				case SDL_FINGERDOWN:
-					GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
-					GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
-					break;
-				case SDL_FINGERUP:
-					e.jbutton.button = BT_B;
-					if (GOD.MapT["EXIT"].SP()) e.jbutton.button = BT_P;
-					else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
-					else if (B_A.SP()) {e.jbutton.button = BT_A;}
-					else if (B_B.SP()) {e.jbutton.button = BT_B;}
-					else if (NAG.SP()) {e.jbutton.button = -1;}
-					GOD.TouchX = -1;
-					GOD.TouchY = -1;
-					GOD.TouchXU = -1;
-					GOD.TouchYU = -1;
-				case SDL_JOYBUTTONDOWN:
-					if (e.jbutton.which == 0) {
-						if (e.jbutton.button == BT_P) {// (+) button down close to home menu
-							cancelcurl = 1;
-							quit = true;
-							result = false;
-							breaker = false;
-							break;
-						}
-						if (e.jbutton.button == BT_M) {// (-) button down
-							SwapMusic();
-							result = false;
-							breaker = false;
-							break;
-						}
-						if (e.jbutton.button == BT_A) {// (A) button down
-							result = true;
-							breaker = false;
-							break;
-						}
-						if (e.jbutton.button == BT_B) {// (B) button down
-							result = false;
-							breaker = false;
-							break;
-						}
+			case SDL_FINGERDOWN:
+				GOD.TouchX = e.tfinger.x * SCREEN_WIDTH;
+				GOD.TouchY = e.tfinger.y * SCREEN_HEIGHT;
+				break;
+			case SDL_FINGERUP:
+				e.jbutton.button = BT_B;
+				if (GOD.MapT["EXIT"].SP()) e.jbutton.button = BT_P;
+				else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
+				else if (B_A.SP()) {e.jbutton.button = BT_A;}
+				else if (B_B.SP()) {e.jbutton.button = BT_B;}
+				else if (NAG.SP()) {e.jbutton.button = -1;}
+				GOD.TouchX = -1;
+				GOD.TouchY = -1;
+				GOD.TouchXU = -1;
+				GOD.TouchYU = -1;
+			case SDL_JOYBUTTONDOWN:
+				if (e.jbutton.which == 0) {
+					if (e.jbutton.button == BT_P) {        // (+) button down close to home menu
+						cancelcurl = 1;
+						quit = true;
+						result = false;
+						breaker = false;
+						break;
 					}
-					break;
-				default:
-					break;
+					if (e.jbutton.button == BT_M) {        // (-) button down
+						SwapMusic();
+						result = false;
+						breaker = false;
+						break;
+					}
+					if (e.jbutton.button == BT_A) {        // (A) button down
+						result = true;
+						breaker = false;
+						break;
+					}
+					if (e.jbutton.button == BT_B) {        // (B) button down
+						result = false;
+						breaker = false;
+						break;
+					}
+				}
+				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -416,7 +416,7 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 		path = "romfs:/img/nop.png";
 	}
 
-	
+
 	if (MapT.find(KeyImage) == MapT.end() || MapT[KeyImage].isZero()) {
 		cout << "Loaded to mem :"+KeyImage+"<--"<< endl;
 		MapT[KeyImage].loadFromFile(path.c_str());
@@ -443,7 +443,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 	if (MapT.find(KeyImage) == MapT.end() || MapT[KeyImage].isZero()) {
 		MapT[KeyImage].loadFromFile(path.c_str());
 	}
-	
+
 	//make the math
 	static int blue=255;
 	if(selected > 0) {
@@ -452,9 +452,9 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 		HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
 	} else{
 		blue=0;
-	} 
+	}
 	MapT[KeyImage].ScaleA(HS,WS);
-	
+
 	std::string KeyText=Text+"-"+std::to_string(WS);
 	std::string KeyTextH=Text+"-"+std::to_string(WS)+"-Head";
 
@@ -483,7 +483,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 		VOX.render_VOX({ X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() - 4, Y, MapT[KeyTextH].getWidth() + 4, MapT[KeyTextH].getHeight()}, 0, 0, 0, 200);
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
-	if (GenState == menu_s){return;}
+	if (GenState == menu_s) {return;}
 	if(key >= 0) {
 		if(MapT[KeyImage].SP()) {WorKey=KeyImage; MasKey=key;}
 	}
@@ -502,20 +502,20 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 	int sizeportraity =424;
 	//make the math
 	bool needload = false;
-	
+
 
 	if ( MapT.find(KeyImage) == MapT.end() || MapT[KeyImage].isZero()) {
 		needload = true;
 	}
-	
+
 	static int HS=0;
-	if (needload || HS==0){HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);}
-	if (needload){
+	if (needload || HS==0) {HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);}
+	if (needload) {
 		MapT[KeyImage].loadFromFile(path.c_str());
 	}
 	MapT[KeyImage].ScaleA(HS,WS);
 
-	
+
 	if (Text.length()) {
 		if ( MapT.find(KeyText) == MapT.end() ) {
 			std::string numhe=scrapElement(Text, "#");
@@ -544,29 +544,29 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 		MapT[KeyTextH].render(X + MapT[KeyImage].getWidth() - MapT[KeyTextH].getWidth() -2, Y);
 	}
 
-	if (GenState == menu_s){return;}
+	if (GenState == menu_s) {return;}
 	if(MapT[KeyImage].SPr()) {
 		select = index;
 	}
 
 	/*
-	//How not to handle a touch input, wala, yolo	
-	static int findex = -1;
-	if (findex >= 0 && !fingerdown) {
-		//printf("relea %d to %d %s\n",select,index,KeyImage.c_str());
-		select=findex;
-		findex=-1;
-	} else {
-		if(MapT[KeyImage].SPr()) {
-			//printf("touch %d to %d %s\n",select,index,KeyImage.c_str());
-			findex = index;
-		}
-		if(fingermotion&&fingerdown) {
-			//printf("reset %d to %d %s\n",select,index,KeyImage.c_str());
-			findex=-1;
-		}
-	}
-	*/
+	   //How not to handle a touch input, wala, yolo
+	   static int findex = -1;
+	   if (findex >= 0 && !fingerdown) {
+	        //printf("relea %d to %d %s\n",select,index,KeyImage.c_str());
+	        select=findex;
+	        findex=-1;
+	   } else {
+	        if(MapT[KeyImage].SPr()) {
+	                //printf("touch %d to %d %s\n",select,index,KeyImage.c_str());
+	                findex = index;
+	        }
+	        if(fingermotion&&fingerdown) {
+	                //printf("reset %d to %d %s\n",select,index,KeyImage.c_str());
+	                findex=-1;
+	        }
+	   }
+	 */
 }
 void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 	std::vector<std::string> vec = Jlinks["link"];
@@ -575,7 +575,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 	static int statte = GenState;
 	if (statte != GenState) {statte = GenState; outof=0;}
 	if(JlinksSize < 30) {outof=0;}
-		
+
 	JlinksSize=vec.size();
 	if(ongrid) {
 		if(JlinksSize > 30) {
@@ -741,7 +741,7 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				HO = 470;
 				offset3++;
 			}
-			if (GenState == menu_s){
+			if (GenState == menu_s) {
 				if (x < 6) continue;
 				if (x > 9 && x < 16) continue;
 			}
@@ -1265,7 +1265,7 @@ bool LTexture::render_AH(int x, int y, int w, int h, bool type){
 			sizeH = h;
 			//delayp = h;
 		}
-		{   
+		{
 			//SIDE
 			SDL_SetRenderDrawColor(GOD.gRenderer, 0, 0, 0, 220);
 			SDL_Rect HeaderRect = {x+w,y, 2, sizeH*-1};
@@ -1333,7 +1333,7 @@ void LTexture::render_VOX(SDL_Rect Form,int R, int G, int B, int A){
 bool LTexture::SP(){
 	//return on negative touch
 	if (GOD.TouchX < 0||GOD.TouchY < 0||getWidth() < 0||getHeight() < 0) return false;
-	
+
 	//printf("State %d : %d \n",Selstate,GOD.GenState);
 //	if (SelIns == GOD.FrameState-1) return false;
 	if (Selstate != GOD.GenState) return false;
@@ -1341,7 +1341,7 @@ bool LTexture::SP(){
 
 	//check if touched
 	if(GOD.TouchX > mX-3 && GOD.TouchX < mX + getWidth() +3 && GOD.TouchY > mY-3 && GOD.TouchY < mY + getHeight() +3) {
-	printf("Frame %d : %d \n",SelIns,GOD.FrameState);
+		printf("Frame %d : %d \n",SelIns,GOD.FrameState);
 		//printf("TouchX:%d  TouchY:%d\nB_X:%d  B_Y:%d\nB_W:%d  B_H:%d  \n",GOD.TouchX,GOD.TouchY,mX,mY,mWidth,mHeight);
 		return true;
 	}

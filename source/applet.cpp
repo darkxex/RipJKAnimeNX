@@ -32,17 +32,17 @@ bool InstallNSP(std::string nsp){
 	return mini::InstallSD(nsp);
 }
 bool IsRunning(string servname) {//check if service is running
-    auto srv_name = smEncodeName(servname.c_str());
-    Handle tmph = 0;
-    auto rc = smRegisterService(&tmph, srv_name, false, 1);
-    if(R_FAILED(rc)) {
-        return true;
-    }
-    smUnregisterService(srv_name);
+	auto srv_name = smEncodeName(servname.c_str());
+	Handle tmph = 0;
+	auto rc = smRegisterService(&tmph, srv_name, false, 1);
+	if(R_FAILED(rc)) {
+		return true;
+	}
+	smUnregisterService(srv_name);
 	return false;
 }
 bool ReloadDNS(){
-	if (IsRunning("sfdnsres")){
+	if (IsRunning("sfdnsres")) {
 		static Service sfdnsresSrv;
 		// Call sfdnsres service to reload hosts file
 		smGetService(&sfdnsresSrv, "sfdnsres");
@@ -54,19 +54,19 @@ bool ReloadDNS(){
 		return false;
 	}
 }
-	
+
 bool mount_theme(string in,bool mount){
 	string file = rootdirectory+"themes00.romfs";
 	erase(rootdirectory+"theme.romfs");
 	erase(rootdirectory+"themes.romfs");
-	
-	if (mount){
+
+	if (mount) {
 		if(isFileExist(in+":/")) {
 			//cout << in+":/  is mounted" << endl;
 			return true;
 		}
 		if(isFileExist(file)) {
-			if (R_FAILED(romfsMountFromFsdev(file.c_str(), 0, "themes"))){
+			if (R_FAILED(romfsMountFromFsdev(file.c_str(), 0, "themes"))) {
 				cout << "unable to mount  "+ in << endl;
 				return false;
 			}else{
@@ -86,7 +86,7 @@ bool mount_theme(string in,bool mount){
 //Tx Part
 Result txStealthMode(uint64_t enable) {
 	Result rc=0x0;
-	if (IsRunning("tx")){
+	if (IsRunning("tx")) {
 		static Service g_txSrv;
 		rc = smGetService(&g_txSrv, "tx");
 		rc = serviceDispatchIn(&g_txSrv, 134, enable);
@@ -113,278 +113,282 @@ std::string u64toHex(u64 Number){
 NacpStruct TitleIDinfo(u64 tid){
 	nsInitialize();
 	NacpStruct nacp;
-    uint64_t outSize = 0;
-    NsApplicationControlData *ctrlData = new NsApplicationControlData;
-    NacpLanguageEntry *ent;
-    Result ctrlRes = nsGetApplicationControlData(NsApplicationControlSource_Storage, tid, ctrlData, sizeof(NsApplicationControlData), &outSize);
-    Result nacpRes = nacpGetLanguageEntry(&ctrlData->nacp, &ent);
-    size_t iconSize = outSize - sizeof(ctrlData->nacp);
+	uint64_t outSize = 0;
+	NsApplicationControlData *ctrlData = new NsApplicationControlData;
+	NacpLanguageEntry *ent;
+	Result ctrlRes = nsGetApplicationControlData(NsApplicationControlSource_Storage, tid, ctrlData, sizeof(NsApplicationControlData), &outSize);
+	Result nacpRes = nacpGetLanguageEntry(&ctrlData->nacp, &ent);
+	size_t iconSize = outSize - sizeof(ctrlData->nacp);
 
-    if(R_SUCCEEDED(ctrlRes) && !(outSize < sizeof(ctrlData->nacp)) && R_SUCCEEDED(nacpRes) && iconSize > 0)
-    {
-        //Copy nacp
-        memcpy(&nacp, &ctrlData->nacp, sizeof(NacpStruct));
-        cout << "Gotted ncap of title: " << u64toHex(tid) << endl;
-    }
-    else
-    {
-        memset(&nacp, 0, sizeof(NacpStruct));
+	if(R_SUCCEEDED(ctrlRes) && !(outSize < sizeof(ctrlData->nacp)) && R_SUCCEEDED(nacpRes) && iconSize > 0)
+	{
+		//Copy nacp
+		memcpy(&nacp, &ctrlData->nacp, sizeof(NacpStruct));
+		cout << "Gotted ncap of title: " << u64toHex(tid) << endl;
+	}
+	else
+	{
+		memset(&nacp, 0, sizeof(NacpStruct));
 		cout << "Fail to get ncap of title: " << u64toHex(tid) << endl;
-    }
-    delete ctrlData;
+	}
+	delete ctrlData;
 	return nacp;
 }
 
 namespace user {
-	AccountUid uid;
-	string AccountID;
-	FsFileSystem savedata;
+AccountUid uid;
+string AccountID;
+FsFileSystem savedata;
 
-	AccountUid g_uid(){return uid;}
-	string g_ID(){return AccountID;}
+AccountUid g_uid(){
+	return uid;
+}
+string g_ID(){
+	return AccountID;
+}
 
-	void recover(){
-		if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
-			if(!isFileExist(rootsave+"UserData.json")) {
-				if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
-					fsdevCommitDevice("save");
-					remove((rootdirectory+AccountID+"UserData.json").c_str());
-					remove((rootdirectory+AccountID+"User.jpg").c_str());
-				}
+void recover(){
+	if(isFileExist(rootdirectory+AccountID+"UserData.json")) {
+		if(!isFileExist(rootsave+"UserData.json")) {
+			if (copy_me(rootdirectory+AccountID+"UserData.json", rootsave+"UserData.json")) {
+				fsdevCommitDevice("save");
+				remove((rootdirectory+AccountID+"UserData.json").c_str());
+				remove((rootdirectory+AccountID+"User.jpg").c_str());
 			}
 		}
-	}
-
-	bool initUser(){
-		Result rc = 0;
-		hidInitialize();
-		setsysInitialize();
-		setInitialize();
-
-		rc =  accountInitialize(AccountServiceType_Administrator);
-		if (R_SUCCEEDED(rc)) {
-			accountGetPreselectedUser(&uid);
-			if(!accountUidIsValid(&uid)) {
-				cout <<"U:2" <<std::endl;
-				accountTrySelectUserWithoutInteraction (&uid, false);
-			}
-			
-			if(!accountUidIsValid(&uid)) {
-				cout <<"U:3" <<std::endl;
-				accountGetLastOpenedUser (&uid);
-			}
-			
-			if(!accountUidIsValid(&uid)) {
-				cout <<"U:4" <<std::endl;
-				accountGetLastOpenedUser (&uid);
-			}
-			/*
-			//may crash some times
-			if(!accountUidIsValid(&uid)) {
-				cout <<"U:5" <<std::endl;
-				s32 actual_total;
-				accountListAllUsers(&uid,1,&actual_total);
-			}
-			
-			*/
-
-			//cout <<"User Init OK" <<std::endl;
-			return GetUserID();
-		} else {
-			cout << "Failied to init User" <<std::endl;
-			return false;
-		}
-	}
-	bool GetUserID(){
-		if(accountUidIsValid(&uid))
-		{
-			AccountID=FormatHex128(uid);
-			cout << "Gotted user uid:"<< AccountID.c_str() <<std::endl;
-			return true;
-		}
-		cout << "Failied to get user ID" <<std::endl;
-		return false;
-	}
-	bool SelectUser(){
-		AccountUid s_uids;
-		s32 max_uids=10,actual_total;
-		accountListAllUsers(&s_uids,max_uids,&actual_total);
-		//std::cout << "# accountListAllUsers: " << actual_total << std::endl;
-		AccountUid user = {};
-		if(actual_total > 1) {
-			LibAppletArgs args;
-			libappletArgsCreate(&args, 0x10000);
-			u8 st_in[0xA0] = {0};
-			u8 st_out[0x18] = {0};
-			size_t repsz;
-			auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
-			if(R_SUCCEEDED(res))
-			{
-				u64 lres = *(u64*)st_out;
-				AccountUid *uid_ptr = (AccountUid*)&st_out[8];
-				if(lres == 0) memcpy(&user, uid_ptr, sizeof(user));
-			}
-		}
-		
-		if(accountUidIsValid(&user))
-		{
-			if (FormatHex128(user) == FormatHex128(uid)){
-				return false;
-			}
-
-			uid=user;
-			return GetUserID();
-		}
-		return false;
-	}
-	bool createSaveData(uint64_t _tid, AccountUid _userID) {
-	//createSaveData For the actual user
-		FsFileSystem abc;
-		if(R_SUCCEEDED(fsOpen_SaveData (&abc,0x05B9DB505ABBE000,_userID))) {
-			//cout << "Save Exist" << endl;
-			fsFsClose(&abc);
-			return true;
-		}
-
-		NacpStruct nacp;
-		nacp = TitleIDinfo(_tid);
-
-		FsSaveDataAttribute attr;
-		memset(&attr, 0, sizeof(FsSaveDataAttribute));
-		attr.application_id = _tid;
-		attr.uid = _userID;
-		attr.system_save_data_id = 0;
-		attr.save_data_type = FsSaveDataType_Account;
-		attr.save_data_rank = 0;
-		attr.save_data_index = 0;
-
-		FsSaveDataCreationInfo svCreate;
-		memset(&svCreate, 0, sizeof(FsSaveDataCreationInfo));
-		int64_t saveSize = 0, journalSize = 0;
-
-		saveSize = nacp.user_account_save_data_size;
-		journalSize = nacp.user_account_save_data_journal_size;
-
-		svCreate.save_data_size = saveSize;
-		svCreate.journal_size = journalSize;
-		svCreate.available_size = 0x4000;
-		svCreate.owner_id = nacp.save_data_owner_id;
-		svCreate.flags = 0;
-		svCreate.save_data_space_id = FsSaveDataSpaceId_User;
-
-		FsSaveDataMetaInfo meta;
-		memset(&meta, 0, sizeof(FsSaveDataMetaInfo));
-		
-		meta.size = 0x40060;
-		meta.type = FsSaveDataMetaType_Thumbnail;
-
-		Result res = 0;
-		if(R_SUCCEEDED(res = fsCreateSaveDataFileSystem(&attr, &svCreate, &meta))) {
-			cout << "Save Created" << endl;
-			return true;
-		} else {
-			cout << "Save Fail" << endl;
-		}
-		return false;
-	}
-	bool MountUserSave(){
-		if(accountUidIsValid(&uid))
-		{
-			deinitUser();
-			createSaveData(0x05B9DB505ABBE000,uid);
-			if(R_SUCCEEDED(fsOpen_SaveData (&savedata,0x05B9DB505ABBE000,uid))) {
-				fsdevMountDevice("save", savedata);
-				rootsave = "save:/";
-				recover();
-				GetUserImage();
-				return true;
-			} else {
-				rootsave = rootdirectory+AccountID;
-				GetUserImage();
-				cout << "Failied to Mount User Save" <<std::endl;
-				return false;
-			}
-		} else {
-			cout << "Invalid User UID" <<std::endl;
-		}
-		return false;
-	}
-	bool GetUserImage(){
-		AccountProfile prof;
-		auto res = accountGetProfile(&prof, uid);
-		if(res == 0)
-		{
-			u32 iconsize = 0;
-			accountProfileGetImageSize(&prof, &iconsize);
-			if(iconsize > 0)
-			{
-				u8 *icon = new u8[iconsize]();
-				u32 tmpsz;
-				res = accountProfileLoadImage(&prof, icon, iconsize, &tmpsz);
-				if(res == 0)
-				{
-					FILE *f = fopen((rootsave+"User.jpg").c_str(), "wb");
-					if(f)
-					{
-						fwrite(icon, 1, iconsize, f);
-						//cout << "Saved user image: "+rootsave+"User.jpg" <<std::endl;
-						fclose(f);
-					} else {
-						cout << "Failied to open output file image" <<std::endl;
-					}
-				}
-				delete[] icon;
-			} else
-				cout << "Failied user image size" <<std::endl;
-
-			accountProfileClose(&prof);
-			return true;
-		}
-		cout << "Failied user image" <<std::endl;
-		return false;
-	}
-	bool commit(){
-		fsdevCommitDevice("save");
-		return true;
-	}
-
-	bool deinitUser(){
-		fsdevCommitDevice("save");
-		fsdevUnmountDevice("save");
-		fsFsClose(&savedata);
-		return true;
 	}
 }
 
-namespace emmc {
-	FsFileSystem appdata;
-	bool isMounted=false;
-	//Mount user
-	bool init(){
-		if(R_SUCCEEDED(fsOpenBisFileSystem(&appdata, FsBisPartitionId_User, ""))){
-			fsdevMountDevice("emmc", appdata);
-			isMounted=true;
+bool initUser(){
+	Result rc = 0;
+	hidInitialize();
+	setsysInitialize();
+	setInitialize();
+
+	rc =  accountInitialize(AccountServiceType_Administrator);
+	if (R_SUCCEEDED(rc)) {
+		accountGetPreselectedUser(&uid);
+		if(!accountUidIsValid(&uid)) {
+			cout <<"U:2" <<std::endl;
+			accountTrySelectUserWithoutInteraction (&uid, false);
+		}
+
+		if(!accountUidIsValid(&uid)) {
+			cout <<"U:3" <<std::endl;
+			accountGetLastOpenedUser (&uid);
+		}
+
+		if(!accountUidIsValid(&uid)) {
+			cout <<"U:4" <<std::endl;
+			accountGetLastOpenedUser (&uid);
+		}
+		/*
+		   //may crash some times
+		   if(!accountUidIsValid(&uid)) {
+		        cout <<"U:5" <<std::endl;
+		        s32 actual_total;
+		        accountListAllUsers(&uid,1,&actual_total);
+		   }
+
+		 */
+
+		//cout <<"User Init OK" <<std::endl;
+		return GetUserID();
+	} else {
+		cout << "Failied to init User" <<std::endl;
+		return false;
+	}
+}
+bool GetUserID(){
+	if(accountUidIsValid(&uid))
+	{
+		AccountID=FormatHex128(uid);
+		cout << "Gotted user uid:"<< AccountID.c_str() <<std::endl;
+		return true;
+	}
+	cout << "Failied to get user ID" <<std::endl;
+	return false;
+}
+bool SelectUser(){
+	AccountUid s_uids;
+	s32 max_uids=10,actual_total;
+	accountListAllUsers(&s_uids,max_uids,&actual_total);
+	//std::cout << "# accountListAllUsers: " << actual_total << std::endl;
+	AccountUid user = {};
+	if(actual_total > 1) {
+		LibAppletArgs args;
+		libappletArgsCreate(&args, 0x10000);
+		u8 st_in[0xA0] = {0};
+		u8 st_out[0x18] = {0};
+		size_t repsz;
+		auto res = libappletLaunch(AppletId_LibraryAppletPlayerSelect, &args, st_in, 0xA0, st_out, 0x18, &repsz);
+		if(R_SUCCEEDED(res))
+		{
+			u64 lres = *(u64*)st_out;
+			AccountUid *uid_ptr = (AccountUid*)&st_out[8];
+			if(lres == 0) memcpy(&user, uid_ptr, sizeof(user));
+		}
+	}
+
+	if(accountUidIsValid(&user))
+	{
+		if (FormatHex128(user) == FormatHex128(uid)) {
+			return false;
+		}
+
+		uid=user;
+		return GetUserID();
+	}
+	return false;
+}
+bool createSaveData(uint64_t _tid, AccountUid _userID) {
+	//createSaveData For the actual user
+	FsFileSystem abc;
+	if(R_SUCCEEDED(fsOpen_SaveData (&abc,0x05B9DB505ABBE000,_userID))) {
+		//cout << "Save Exist" << endl;
+		fsFsClose(&abc);
+		return true;
+	}
+
+	NacpStruct nacp;
+	nacp = TitleIDinfo(_tid);
+
+	FsSaveDataAttribute attr;
+	memset(&attr, 0, sizeof(FsSaveDataAttribute));
+	attr.application_id = _tid;
+	attr.uid = _userID;
+	attr.system_save_data_id = 0;
+	attr.save_data_type = FsSaveDataType_Account;
+	attr.save_data_rank = 0;
+	attr.save_data_index = 0;
+
+	FsSaveDataCreationInfo svCreate;
+	memset(&svCreate, 0, sizeof(FsSaveDataCreationInfo));
+	int64_t saveSize = 0, journalSize = 0;
+
+	saveSize = nacp.user_account_save_data_size;
+	journalSize = nacp.user_account_save_data_journal_size;
+
+	svCreate.save_data_size = saveSize;
+	svCreate.journal_size = journalSize;
+	svCreate.available_size = 0x4000;
+	svCreate.owner_id = nacp.save_data_owner_id;
+	svCreate.flags = 0;
+	svCreate.save_data_space_id = FsSaveDataSpaceId_User;
+
+	FsSaveDataMetaInfo meta;
+	memset(&meta, 0, sizeof(FsSaveDataMetaInfo));
+
+	meta.size = 0x40060;
+	meta.type = FsSaveDataMetaType_Thumbnail;
+
+	Result res = 0;
+	if(R_SUCCEEDED(res = fsCreateSaveDataFileSystem(&attr, &svCreate, &meta))) {
+		cout << "Save Created" << endl;
+		return true;
+	} else {
+		cout << "Save Fail" << endl;
+	}
+	return false;
+}
+bool MountUserSave(){
+	if(accountUidIsValid(&uid))
+	{
+		deinitUser();
+		createSaveData(0x05B9DB505ABBE000,uid);
+		if(R_SUCCEEDED(fsOpen_SaveData (&savedata,0x05B9DB505ABBE000,uid))) {
+			fsdevMountDevice("save", savedata);
+			rootsave = "save:/";
+			recover();
+			GetUserImage();
+			return true;
 		} else {
-			rootdirectory = oldroot;
-			isMounted=false;
-			fsFsClose(&appdata);
+			rootsave = rootdirectory+AccountID;
+			GetUserImage();
+			cout << "Failied to Mount User Save" <<std::endl;
+			return false;
 		}
-		return isMounted;
+	} else {
+		cout << "Invalid User UID" <<std::endl;
 	}
-	bool commit(){
-		if (isMounted){
-			fsdevCommitDevice("emmc");
-		}
-		return isMounted;
+	return false;
+}
+bool GetUserImage(){
+	AccountProfile prof;
+	auto res = accountGetProfile(&prof, uid);
+	if(res == 0)
+	{
+		u32 iconsize = 0;
+		accountProfileGetImageSize(&prof, &iconsize);
+		if(iconsize > 0)
+		{
+			u8 *icon = new u8[iconsize]();
+			u32 tmpsz;
+			res = accountProfileLoadImage(&prof, icon, iconsize, &tmpsz);
+			if(res == 0)
+			{
+				FILE *f = fopen((rootsave+"User.jpg").c_str(), "wb");
+				if(f)
+				{
+					fwrite(icon, 1, iconsize, f);
+					//cout << "Saved user image: "+rootsave+"User.jpg" <<std::endl;
+					fclose(f);
+				} else {
+					cout << "Failied to open output file image" <<std::endl;
+				}
+			}
+			delete[] icon;
+		} else
+			cout << "Failied user image size" <<std::endl;
+
+		accountProfileClose(&prof);
+		return true;
 	}
-	bool deinit(){
-		if (isMounted){
-			fsdevCommitDevice("emmc");
-			fsdevUnmountDevice("emmc");
-			fsFsClose(&appdata);
-		}
-		return isMounted;
+	cout << "Failied user image" <<std::endl;
+	return false;
+}
+bool commit(){
+	fsdevCommitDevice("save");
+	return true;
+}
+
+bool deinitUser(){
+	fsdevCommitDevice("save");
+	fsdevUnmountDevice("save");
+	fsFsClose(&savedata);
+	return true;
+}
+}
+
+namespace emmc {
+FsFileSystem appdata;
+bool isMounted=false;
+//Mount user
+bool init(){
+	if(R_SUCCEEDED(fsOpenBisFileSystem(&appdata, FsBisPartitionId_User, ""))) {
+		fsdevMountDevice("emmc", appdata);
+		isMounted=true;
+	} else {
+		rootdirectory = oldroot;
+		isMounted=false;
+		fsFsClose(&appdata);
 	}
+	return isMounted;
+}
+bool commit(){
+	if (isMounted) {
+		fsdevCommitDevice("emmc");
+	}
+	return isMounted;
+}
+bool deinit(){
+	if (isMounted) {
+		fsdevCommitDevice("emmc");
+		fsdevUnmountDevice("emmc");
+		fsFsClose(&appdata);
+	}
+	return isMounted;
+}
 }
 
 bool GetAppletMode(){
@@ -405,7 +409,7 @@ bool GetAppletMode(){
 
 json DInfo(string ver){
 	static json info;
-	if (info["App"].is_null()){
+	if (info["App"].is_null()) {
 		//INIT
 		setInitialize();
 		setsysInitialize();
@@ -417,19 +421,19 @@ json DInfo(string ver){
 
 		//Get Config file , order sdmc - Nand - hardcoded
 		json config;
-		if (!read_DB(config,"sdmc:/JK.config")){
-			if (!read_DB(config,rootdirectory+"JK.config")){
-				std::cout  << "# Using default Config" <<std::endl;
+		if (!read_DB(config,"sdmc:/JK.config")) {
+			if (!read_DB(config,rootdirectory+"JK.config")) {
+				std::cout << "# Using default Config" <<std::endl;
 			}
 		}
 		//If not exist use default config
-		if(config["AutoUpdate"].is_null()){config["AutoUpdate"]=1;}
-		if(config["Beta"].is_null()){config["Beta"]=0;}
-		if(config["Beta_URL"].is_null()){config["Beta_URL"]="";}
-		if(config["author"].is_null()){config["author"]="darkxex";}
-		if(config["repo"].is_null()){config["repo"]="RipJKAnimeNX";}
+		if(config["AutoUpdate"].is_null()) {config["AutoUpdate"]=1;}
+		if(config["Beta"].is_null()) {config["Beta"]=0;}
+		if(config["Beta_URL"].is_null()) {config["Beta_URL"]="";}
+		if(config["author"].is_null()) {config["author"]="darkxex";}
+		if(config["repo"].is_null()) {config["repo"]="RipJKAnimeNX";}
 		info["config"]=config;
-		
+
 		info["UNIX"]=time(0);
 		//DeviceID
 		u64 id = 0;
@@ -544,7 +548,7 @@ json DInfo(string ver){
 			}
 			info["Region"]=a;
 		}
-		
+
 		//App Ver
 		json base;
 		read_DB(base,"romfs:/V");
@@ -553,7 +557,7 @@ json DInfo(string ver){
 		setsysExit();
 		cout << std::setw(4) << info << std::endl;
 	}
-	if (ver.length() > 0){
+	if (ver.length() > 0) {
 		info["App"]=ver;
 	}
 	return info;
@@ -599,11 +603,11 @@ std::string KeyboardCall (std::string hint, std::string text){
 		swkbdClose(&swkbd);
 		return "";
 	}
-	
+
 	swkbdConfigMakePresetDefault(&swkbd);
 	swkbdConfigSetInitialCursorPos (&swkbd, 0);
 	swkbdConfigSetOkButtonText(&swkbd,"Buscar");
-	if (hint=="Buscar el Anime"){
+	if (hint=="Buscar el Anime") {
 		swkbdConfigSetHeaderText(&swkbd, "Buscador de Anime");
 		swkbdConfigSetSubText(&swkbd, "Escribe el Nombre del Anime que Deseas Buscar");
 		swkbdConfigSetStringLenMax(&swkbd, 32);
@@ -618,7 +622,7 @@ std::string KeyboardCall (std::string hint, std::string text){
 
 	if (strlen(text.c_str()) != 0)
 		swkbdConfigSetInitialText(&swkbd, text.c_str());
-	
+
 	swkbdConfigSetTextCheckCallback(&swkbd, Keyboard_ValidateText);
 
 	if (R_FAILED(ret = swkbdShow(&swkbd, input_string, sizeof(input_string)))) {
@@ -649,11 +653,11 @@ Result WebBrowserCall(std::string url,bool nag){
 	// webPageCreate/webNewsCreate requires running under a host title which has HtmlDocument content, when the title is an Application. When the title is an Application when using webPageCreate/webNewsCreate, and webConfigSetWhitelist is not used, the whitelist will be loaded from the content. Atmosphère hbl_html can be used to handle this.
 	rc = webNewsCreate(&config, url.c_str());
 	printf("webPageCreate(): 0x%x\n", rc);
-	if (R_SUCCEEDED(rc)) {			
+	if (R_SUCCEEDED(rc)) {
 		//mount user data to save logins and that stuff
 		printf("Try to save logins\n");//
 		webConfigSetUid(&config,user::uid);
-		
+
 		printf("SetMainConfigs\n");
 		webConfigSetJsExtension (&config, true);
 		webConfigSetScreenShot (&config, true);
@@ -664,7 +668,7 @@ Result WebBrowserCall(std::string url,bool nag){
 		webConfigSetMediaPlayerSpeedControl (&config, true);
 		webConfigSetMediaAutoPlay (&config, true);
 		//webConfigSetTransferMemory (&config, true);
-		
+
 		//Player section
 		if (!nag) {
 			bool Direct=false;
@@ -672,15 +676,15 @@ Result WebBrowserCall(std::string url,bool nag){
 			//webConfigSetDisplayUrlKind (&config, false);
 			webConfigSetPlayReport(&config, false);
 			//webConfigSetFooter(&config, false);
-			
+
 			//Ignore for direct play
 			//if(url.find("/gsplay/player.html") == string::npos){Direct=false;}
-			
-			//Use direct play on 
-			if(url.find("mxdcontent.net/") != string::npos){Direct=true;}//Mixdrop
-			if(url.find("fvs.io/redirector") != string::npos){Direct=true;}//Fembed
 
-			if (Direct){
+			//Use direct play on
+			if(url.find("mxdcontent.net/") != string::npos) {Direct=true;}//Mixdrop
+			if(url.find("fvs.io/redirector") != string::npos) {Direct=true;}//Fembed
+
+			if (Direct) {
 				webConfigSetMediaPlayerAutoClose (&config, true);
 				webConfigSetBootAsMediaPlayer(&config, true);
 			}
@@ -712,10 +716,10 @@ Result WebBrowserCall(std::string url,bool nag){
 			}
 		}
 /*
-		else {
-			sleep(3);
-		}
-		*/
+                else {
+                        sleep(3);
+                }
+ */
 		printf("\n");
 	}
 	return rc;

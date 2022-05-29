@@ -158,14 +158,14 @@ void LoadImages(){
 	B_R.loadFromFile("romfs:/img/R.png");
 	B_M.loadFromFile("romfs:/img/MINUS.png");
 	B_P.loadFromFile("romfs:/img/PLUS.png");
-	
+
 	//GOD.MapT[""].loadFromFileCustom("", 38,38)
 	GOD.MapT["EXIT"].loadFromFileCustom("romfs:/img/EXIT.png", 38,38);
 	GOD.MapT["MUSIC"].loadFromFileCustom("romfs:/img/MUSIC.png", 38,38);
 
 	GOD.MapT["ULT"].loadFromFileCustom("romfs:/img/ULT.png", 43,43);
 	GOD.MapT["ULTB"].loadFromFileCustom("romfs:/img/ULT.png",55,55);
-	
+
 	B_ZR.loadFromFile("romfs:/img/ZR.png");
 	B_ZL.loadFromFile("romfs:/img/ZL.png");
 	B_RIGHT.loadFromFile("romfs:/img/RIGHT.png");

@@ -141,7 +141,7 @@ bool ReloadSkin=false;
 void loadSkin(string img="");
 void setSkin(string path="");
 void selectskin(string val="");
-//Main 
+//Main
 bool JKMainLoop();
 bool PlayF=false;
 bool PlayEffect(Mix_Chunk* efect);

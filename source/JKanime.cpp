@@ -45,18 +45,18 @@ int AnimeLoader(void* data){
 			if (AppletMode) quit=true;
 			if(quit) return 0;
 		}
-		
+
 		//execute this once, or if Mgate is true
 		static bool Mgate=true;
-		if (Mgate){
+		if (Mgate) {
 			#if __has_include("Debug.h")
 				#include "Debug.h"
 			#endif
 			int Req = Net::HEAD("https://bvc-hac-lp1.cdn.nintendo.net/13-0-0")["CODE"];
-			switch(Req){
-				case 0:
-				case 503:
-				if (!isSXOS){
+			switch(Req) {
+			case 0:
+			case 503:
+				if (!isSXOS) {
 					//Check if dns are correct
 					cout << "# Place DNS" << endl;
 					fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
@@ -70,18 +70,18 @@ int AnimeLoader(void* data){
 					//txStealthMode(0);
 				}
 				break;
-				
+
 			}
 		}
 		//Check for app Updates
 		CheckUpdates(AppletMode);
 		steep++;
-		
-		if (Mgate){
+
+		if (Mgate) {
 			//Download themes
 			if (!mount_theme("themes",true))
 			{
-				if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/themes00.romfs",rootdirectory+"themes00.romfs")){
+				if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/themes00.romfs",rootdirectory+"themes00.romfs")) {
 					mount_theme("themes",true);
 					GOD.ReloadSkin=true;
 				}
@@ -100,11 +100,11 @@ int AnimeLoader(void* data){
 		//std::cout << std::setw(4) << MainPage << std::endl;
 		//Check headers ToDo
 		string content = MainPage["BODY"];
-		if (MainPage["CODE"] == 0){
+		if (MainPage["CODE"] == 0) {
 			cout << "- Error can't connect with Web" << endl;
 			throw "Error Connect";
 		}
-		if (MainPage["CODE"] == 403){
+		if (MainPage["CODE"] == 403) {
 			cout << "- Error cloudflare active in Web" << endl;
 			throw "Error cloudflare active";
 		}
@@ -122,8 +122,8 @@ int AnimeLoader(void* data){
 		steep++;//Download All not existing images
 		cout << "# Recent IMG " << endl;
 		CheckImgVector(ChapImag,imgNumbuffer);
-		
-		
+
+
 		steep++;//'haschange' See if there is any new chap
 		bool haschange = true;
 		if (!BD["latestchapter"].is_null()) {
@@ -134,7 +134,7 @@ int AnimeLoader(void* data){
 		}
 		steep++;//Display List
 		if(reloading) {Frames=0; reloading = false;}
-		
+
 		if (haschange || BD["TimeStamp"].is_null()) {
 			//update TimeStamp
 			if (BD["arrays"]["chapter"]["link"].is_null() || BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].is_null()) {
@@ -164,12 +164,12 @@ int AnimeLoader(void* data){
 				BD["arrays"]["chapter"]["link"]=ChapLink;
 				BD["arrays"]["chapter"]["images"]=ChapImag;
 				haschange = true;
-			} 
+			}
 		} else {
 			cout << "# TimeStamp: " << BD["TimeStamp"] << endl;
 		}
 
- 		steep++;//Get history
+		steep++;//Get history
 		cout << "# History IMG " << endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
 
@@ -177,9 +177,9 @@ int AnimeLoader(void* data){
 		temp0=content.find("Listado de últimos agregados");
 		temp1=content.find("</section>",temp0);
 		temcont = content.substr(temp0,temp1-temp0);
-		
+
 		MkAGR(temcont);
-		
+
 		steep++;//banner to Database
 		if (haschange) {
 			temp0=content.find("<section class=\"hero\">");
@@ -190,7 +190,7 @@ int AnimeLoader(void* data){
 		}
 		steep++;//Top, Hour to Database
 		MkTOP();
-		
+
 
 		steep++;//Download All not existing images of Favorites
 		if(UD["favoritos"].is_null()) {
@@ -200,14 +200,14 @@ int AnimeLoader(void* data){
 		}
 		cout << "# favoritos IMG ";
 		CheckImgVector(UD["favoritos"],porcentajebufferF);
-		
+
 		cout << "# End Image Download " << endl;
 
 
 		steep++;//Load to cache all Programation Chaps
 		cout << "# Cache Recent ";
 		if (haschange) {
-			cout << " , haschange " ;
+			cout << " , haschange ";
 			if(DataGeter(BD["arrays"]["chapter"]["link"], part, ofall)) {
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
@@ -249,19 +249,19 @@ bool DataGeter(json LinkList,int& part, int& ofall){
 	}
 	vector<string> chain1 = LinkList;
 	vector<string> chain2 = LinkList;
-	
+
 	std::reverse(chain1.begin(), chain1.end());
-	
+
 	std::default_random_engine e(time(0));
 	std::shuffle(std::begin(chain1), std::end(chain1), e);
 	std::shuffle(std::begin(chain2), std::end(chain2), e);
-	
-	
+
+
 	std::thread chaps1(DataMakerT,chain1);
 	std::thread chaps2(DataMakerT,chain2);
 
 	bool mik = DataMaker(LinkList,part, ofall);
-	
+
 	if (chaps1.joinable()) {chaps1.join();}
 	if (chaps2.joinable()) {chaps2.join();}
 	return mik;
@@ -271,7 +271,7 @@ void DataMakerT(json LinkList) {
 	string a = "";
 	//int sep=0;
 	mytotal=LinkList.size();
-	if (mytotal <= 0){return ;}
+	if (mytotal <= 0) {return;}
 	for (int x = 0; x < mytotal&& !quit; x++)
 	{
 		if (!isConnected) while (!Net::HasConnection()) {SDL_Delay(2000); if(quit) return; }
@@ -286,7 +286,7 @@ void DataMakerT(json LinkList) {
 		}
 	}
 	if(quit) return;
-	return ;
+	return;
 }
 bool DataMaker(json LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
@@ -294,7 +294,7 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 	part=0;
 	//int sep=0;
 	ofall=LinkList.size();
-	if (ofall <= 0){return false;}
+	if (ofall <= 0) {return false;}
 	for (int x = 0; x < ofall&& !quit; x++)
 	{
 		if(hasmchap) part = x+1;
@@ -307,14 +307,14 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 				DataUpdate(link);
 				hasmchap=true;
 				/*
-				if (sep >= 101){
-					//write_DB(BD,"sdmc:/DataBase.json");
-					write_DB(AB,rootdirectory+"AnimeBase.json");
-					sep=0;
-				}
-				
-				sep++;
-				*/
+				   if (sep >= 101){
+				        //write_DB(BD,"sdmc:/DataBase.json");
+				        write_DB(AB,rootdirectory+"AnimeBase.json");
+				        sep=0;
+				   }
+
+				   sep++;
+				 */
 			} else {
 				//AB["AnimeBase"][name]["TimeStamp"] = BD["TimeStamp"];
 			}
@@ -338,7 +338,7 @@ int MkTOP(){
 	TOPC=scrapElementAll(content,"https://jkanime.net/");
 	TOPC.erase(unique(TOPC.begin(),TOPC.end()),TOPC.end());
 	BD["arrays"]["Top"]["link"]=TOPC;
-	
+
 	cout << "IMG " << endl;
 	CheckImgVector(TOPC,imgNumbuffer);
 	return 0;
@@ -349,11 +349,11 @@ int MkBNR(string content){
 	BD["arrays"]["Banner"]["link"]=scrapElementAll(content, "https://jkanime.net/");
 	BD["arrays"]["Banner"]["img"]=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/animes/video/image/");
 	BD["arrays"]["Banner"]["name"]=scrapElementAll(content, "<h2>","</h2>");
-	
+
 	cout << "IMG " << endl;
 	vector<string> BannerFile;
 	int sizeI = BD["arrays"]["Banner"]["img"].size();
-	for (int i=0; i < sizeI; i++){
+	for (int i=0; i < sizeI; i++) {
 		string url = BD["arrays"]["Banner"]["img"][i];
 		string name = url;
 		replace(name,"https://cdn.jkanime.net/assets/images/animes/video/image/","");
@@ -421,14 +421,14 @@ int MkHOR(){
 }
 int MkDIR(){
 	//make directory
-	if (BD["arrays"]["Directory"]["TimeStamp"].is_null()){BD["arrays"]["Directory"]["TimeStamp"]=0;}
-	if (BD["arrays"]["Directory"]["InTime"].is_null()){BD["arrays"]["Directory"]["InTime"]=0;}
-	if (BD["arrays"]["Directory"]["page"].is_null()){BD["arrays"]["Directory"]["page"]=1;}
-	if (BD["arrays"]["Directory"]["link"].is_null()){BD["arrays"]["Directory"]["link"]={};}
+	if (BD["arrays"]["Directory"]["TimeStamp"].is_null()) {BD["arrays"]["Directory"]["TimeStamp"]=0;}
+	if (BD["arrays"]["Directory"]["InTime"].is_null()) {BD["arrays"]["Directory"]["InTime"]=0;}
+	if (BD["arrays"]["Directory"]["page"].is_null()) {BD["arrays"]["Directory"]["page"]=1;}
+	if (BD["arrays"]["Directory"]["link"].is_null()) {BD["arrays"]["Directory"]["link"]={};}
 	try{
-	
-		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_Month || BD["arrays"]["Directory"]["link"].size() == 0){
-			
+
+		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_Month || BD["arrays"]["Directory"]["link"].size() == 0) {
+
 			//Flush Resents by week
 			vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
 			if (ChapLink.size() > 60) {
@@ -452,13 +452,13 @@ int MkDIR(){
 				replace(content,"https://jkanime.net/directorio/","");
 				replace(content,"https://jkanime.net///","");
 				TDIR=scrapElementAll(content,"https://jkanime.net/");
-				
 
-				if (TDIR.size() > 0){
+
+				if (TDIR.size() > 0) {
 					DIR.insert(DIR.end(), TDIR.begin(), TDIR.end());
-				} else 
-					break;//just in case
-				
+				} else
+					break; //just in case
+
 				//cout << scrap << "  # " << to_string(BD["arrays"]["Directory"]["page"]) << endl;
 				if (content.find("Resultados Siguientes &raquo;") != string::npos) {
 					cout << "  #" << to_string(ofall);
@@ -474,7 +474,7 @@ int MkDIR(){
 			BD["arrays"]["Directory"]["pageT"]=BD["arrays"]["Directory"]["page"];
 			BD["arrays"]["Directory"]["page"]=1;
 			DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());
-			if (ofall != 0 && DIR.size() != 0){
+			if (ofall != 0 && DIR.size() != 0) {
 				BD["arrays"]["Directory"]["TimeStamp"]=TimeNow();
 			}
 			BD["arrays"]["Directory"]["link"]=DIR;
@@ -494,7 +494,7 @@ int MkDIR(){
 	{
 		cout << "# Cache Directory " << endl;
 		try{
-			if (DataGeter(BD["arrays"]["Directory"]["link"], part, ofall)){
+			if (DataGeter(BD["arrays"]["Directory"]["link"], part, ofall)) {
 				BD["arrays"]["Directory"]["InTime"]=1;
 				write_DB(AB,rootdirectory+"AnimeBase.json");
 			}
@@ -511,32 +511,32 @@ int MkDIR(){
 
 int downloadjkanimevideo(void* data) {//Download THREAD
 	try{
-	ChainManager(true,true);
-	for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size(); x++) {
-		if (x==0) {led_on(1);}
-		DownTitle="................";
-		serverenlace = "................";
-		isDownloading=true;
-		porcendown=0;
-		if(cancelcurl) {serverenlace = "Error de descarga"; break;}
-		string urldown=BD["arrays"]["downloads"]["queue"][x];
-		string namedownload = urldown;
-		NameOfLink(namedownload);
-		mayus(namedownload);
-		DownTitle=namedownload;
-		//namedownload = namedownload.substr(0, namedownload.length() - 1);
-		BD["arrays"]["downloads"]["log"][x] = ">>>>  "+namedownload;
-		mkdir("sdmc:/Videos",0777);
-		string directorydownload = "sdmc:/Videos/" +namedownload + ".mp4";
+		ChainManager(true,true);
+		for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size(); x++) {
+			if (x==0) {led_on(1);}
+			DownTitle="................";
+			serverenlace = "................";
+			isDownloading=true;
+			porcendown=0;
+			if(cancelcurl) {serverenlace = "Error de descarga"; break;}
+			string urldown=BD["arrays"]["downloads"]["queue"][x];
+			string namedownload = urldown;
+			NameOfLink(namedownload);
+			mayus(namedownload);
+			DownTitle=namedownload;
+			//namedownload = namedownload.substr(0, namedownload.length() - 1);
+			BD["arrays"]["downloads"]["log"][x] = ">>>>  "+namedownload;
+			mkdir("sdmc:/Videos",0777);
+			string directorydownload = "sdmc:/Videos/" +namedownload + ".mp4";
 
-		if (!linktodownoadjkanime(urldown,directorydownload)) {
-			serverenlace = "Error de descarga";
-			BD["arrays"]["downloads"]["log"][x] = "Error: "+namedownload;
-		} else {
-			BD["arrays"]["downloads"]["log"][x] = "100% : "+namedownload;
+			if (!linktodownoadjkanime(urldown,directorydownload)) {
+				serverenlace = "Error de descarga";
+				BD["arrays"]["downloads"]["log"][x] = "Error: "+namedownload;
+			} else {
+				BD["arrays"]["downloads"]["log"][x] = "100% : "+namedownload;
+			}
 		}
-	}
-	if(cancelcurl==0) led_on(3); else led_on(0);
+		if(cancelcurl==0) led_on(3); else led_on(0);
 	} catch(...) {
 		LOG::E(5);
 		cout << "- Thread Download Error Catched" <<endl;
@@ -550,70 +550,70 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 }
 int searchjk(void* data) {//Search Thread
 	try{
-	BD["com"]["porcentajereload"] = 0;
-	BD["com"]["porcentajereloadAll"]=0;
-	BD["arrays"]["search"]["link"].clear();
-	BD["arrays"]["search"]["images"].clear();
-	BD["arrays"]["search"]["date"].clear();
-	reloadingsearch = true;
+		BD["com"]["porcentajereload"] = 0;
+		BD["com"]["porcentajereloadAll"]=0;
+		BD["arrays"]["search"]["link"].clear();
+		BD["arrays"]["search"]["images"].clear();
+		BD["arrays"]["search"]["date"].clear();
+		reloadingsearch = true;
 
-	string texts = BD["searchtext"];
-	replace(texts, " ", "_");
-	replace(texts, "!", "");
-	replace(texts, ";", "");
-	if (texts.length() > 0) {
-		cout << "# Search: " << texts << endl;
-		string content = "";
-		for (int c=1;c < 10 && !quit; c++) {
-			string tempCont=Net::GET("https://jkanime.net/buscar/" + texts + "/"+to_string(c)+"/");
-			content += tempCont;
-			
-			if (tempCont.find("Resultados Siguientes &raquo;") != string::npos) {
-				cout << "  #" << to_string(c);
-				//some code here soon
-			} else {
-				cout << "  #" << to_string(c) << endl;
-				break;
+		string texts = BD["searchtext"];
+		replace(texts, " ", "_");
+		replace(texts, "!", "");
+		replace(texts, ";", "");
+		if (texts.length() > 0) {
+			cout << "# Search: " << texts << endl;
+			string content = "";
+			for (int c=1; c < 10 && !quit; c++) {
+				string tempCont=Net::GET("https://jkanime.net/buscar/" + texts + "/"+to_string(c)+"/");
+				content += tempCont;
+
+				if (tempCont.find("Resultados Siguientes &raquo;") != string::npos) {
+					cout << "  #" << to_string(c);
+					//some code here soon
+				} else {
+					cout << "  #" << to_string(c) << endl;
+					break;
+				}
 			}
-		}
 
-		int val0 = 0,val1 = 1,val2,val3, val4;
-		while (val0 != -1) {
-			val0 = content.find("<div class=\"anime__item\">", val1);
-			if (val0 == -1) { break; }
+			int val0 = 0,val1 = 1,val2,val3, val4;
+			while (val0 != -1) {
+				val0 = content.find("<div class=\"anime__item\">", val1);
+				if (val0 == -1) { break; }
 
-			val1 = 6 + content.find("href=", val0);
-			val2 = (content.find('"', val1));
-			string gdrive = content.substr(val1, val2 - val1);
-			BD["arrays"]["search"]["link"].push_back(gdrive);
+				val1 = 6 + content.find("href=", val0);
+				val2 = (content.find('"', val1));
+				string gdrive = content.substr(val1, val2 - val1);
+				BD["arrays"]["search"]["link"].push_back(gdrive);
 
-			val3 = content.find("data-setbg=", val2) + 12;
-			val4 = content.find('"', val3);
-			string gsearchpreview = content.substr(val3, val4 - val3);
-			BD["arrays"]["search"]["images"].push_back(gsearchpreview);
-			//cout << gsearchpreview << endl;
+				val3 = content.find("data-setbg=", val2) + 12;
+				val4 = content.find('"', val3);
+				string gsearchpreview = content.substr(val3, val4 - val3);
+				BD["arrays"]["search"]["images"].push_back(gsearchpreview);
+				//cout << gsearchpreview << endl;
 
-			val3 = content.find("<p>", val4) + 3;
-			val4 = content.find("</p>", val3);
-			gsearchpreview = content.substr(val3, val4 - val3);
-			RemoveAccents(gsearchpreview);
-			if (gsearchpreview.length() > 90) {
-				gsearchpreview=gsearchpreview.substr(0,90)+"...";
+				val3 = content.find("<p>", val4) + 3;
+				val4 = content.find("</p>", val3);
+				gsearchpreview = content.substr(val3, val4 - val3);
+				RemoveAccents(gsearchpreview);
+				if (gsearchpreview.length() > 90) {
+					gsearchpreview=gsearchpreview.substr(0,90)+"...";
+				}
+				replace(gsearchpreview, "&quot;", "");
+				BD["arrays"]["search"]["date"].push_back(gsearchpreview);
+				val1++;
 			}
-			replace(gsearchpreview, "&quot;", "");
-			BD["arrays"]["search"]["date"].push_back(gsearchpreview);
-			val1++;
-		}
 
-		porcentajebufferFF=BD["arrays"]["search"]["images"].size();
-		CheckImgVector(BD["arrays"]["search"]["images"],porcentajebufferF);
-		porcentajebufferFF=0;
-	}
-	else
-	{
-		statenow = programation_s;
-		returnnow = programation_s;
-	}
+			porcentajebufferFF=BD["arrays"]["search"]["images"].size();
+			CheckImgVector(BD["arrays"]["search"]["images"],porcentajebufferF);
+			porcentajebufferFF=0;
+		}
+		else
+		{
+			statenow = programation_s;
+			returnnow = programation_s;
+		}
 	} catch(...) {
 		LOG::E(6);
 		cout << "- Thread Search Error Catched" <<endl;
@@ -729,27 +729,27 @@ void DataUpdate(string Link) {//Get info off chapter
 	if(quit) return;
 	json AnimeINF=AB["AnimeBase"][name];//
 	string TMP="";
-	if (AnimeINF["sinopsis"].is_null()){
+	if (AnimeINF["sinopsis"].is_null()) {
 		//Sinopsis
 		TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 		replace(TMP, "<p rel=\"sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
 		//AnimeINF["sinopsis"] = TMP.substr(0,800);
 		AnimeINF["sinopsis"] = TMP;
 	}
-	if (AnimeINF["Image"].is_null()){
+	if (AnimeINF["Image"].is_null()) {
 		//get image
 		TMP = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
 		AnimeINF["Image"] = TMP;
 	}
 
-	if (AnimeINF["Tipo"].is_null()){
+	if (AnimeINF["Tipo"].is_null()) {
 		//Anime info
 		TMP = scrapElement(a, "<span>Tipo:","</li");
 		replace(TMP, "<span>Tipo:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
 		AnimeINF["Tipo"] = TMP;
 	}
 
-	if (AnimeINF["Idiomas"].is_null()){
+	if (AnimeINF["Idiomas"].is_null()) {
 		TMP = scrapElement(a, "Idiomas:","</li");
 		replace(TMP, "Idiomas:", ""); replace(TMP, "  ", " "); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
 		AnimeINF["Idiomas"] = TMP;
@@ -799,7 +799,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	}
 	AnimeINF["nextdate"] = TMP;
 
-	if (AnimeINF["generos"].is_null()){
+	if (AnimeINF["generos"].is_null()) {
 		//Generos
 		int indx1 = 1, indx2, indx3;
 		indx1 = a.find("<span>Genero:</span>", indx1);
@@ -825,17 +825,17 @@ void DataUpdate(string Link) {//Get info off chapter
 	} else {
 		AnimeINF["enemision"] = "true";
 		AnimeINF["Estado"] = "En Emisión";
-		if (a.find(">Por estrenar<") != string::npos){
+		if (a.find(">Por estrenar<") != string::npos) {
 			AnimeINF["Estado"] = "Por estrenar";
 		}
-		if (a.find(">En espera<") != string::npos){
+		if (a.find(">En espera<") != string::npos) {
 			AnimeINF["Estado"] = "En espera";
 		}
 	}
 	/*
 
-	
-	*/
+
+	 */
 	//Get Caps number
 	int val0, val1, val2, val3;
 	val0 = a.rfind("href=\"#pag");
@@ -877,11 +877,11 @@ void DataUpdate(string Link) {//Get info off chapter
 		}
 	}
 	if(AnimeINF["mincapit"].get<int>()==0)
-	AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
-	
-	
+		AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
+
+
 	AnimeINF["TimeStamp"] = BD["TimeStamp"];
-		stringstream strm;
+	stringstream strm;
 	try{
 //		strm << setw(4) << base;
 		strm << AnimeINF;
