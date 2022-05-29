@@ -142,21 +142,23 @@ int AnimeLoader(void* data){
 				cout << "# New TimeStamp: " << BD["TimeStamp"] << endl;
 
 				//merge vectors
-				if (!BD["arrays"]["chapter"]["images"].is_null() && !BD["arrays"]["chapter"]["link"].is_null())
+				if (!BD["arrays"]["chapter"]["link"].is_null())
 				{
 					vector<string> OChapLink=BD["arrays"]["chapter"]["link"];
-					vector<string> OChapImag=BD["arrays"]["chapter"]["images"];
-
 					ChapLink.erase(find(ChapLink.begin(), ChapLink.end(), OChapLink[0]),ChapLink.end());
-					ChapImag.erase(find(ChapImag.begin(), ChapImag.end(), OChapImag[0]),ChapImag.end());
-
 					ChapLink.insert(ChapLink.end(), OChapLink.begin(), OChapLink.end());
-					ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
-
 					//if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
+				}
+				if (!BD["arrays"]["chapter"]["images"].is_null())
+				{
+					vector<string> OChapImag=BD["arrays"]["chapter"]["images"];
+					ChapImag.erase(find(ChapImag.begin(), ChapImag.end(), OChapImag[0]),ChapImag.end());
+					ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
 					//if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
 				}
 				DoubleKill(ChapLink);
+				ChapImag.erase(unique(ChapImag.begin(),ChapImag.end()),ChapImag.end());
+
 				GOD.PlayEffect(GOD.proc);
 				Frames=1;
 				BD["arrays"]["chapter"]["link"]=ChapLink;
@@ -429,9 +431,14 @@ int MkDIR(){
 			
 			//Flush Resents by week
 			vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
-			if (ChapLink.size() > 60){
+			if (ChapLink.size() > 60) {
 				ChapLink.erase(ChapLink.begin()+60,ChapLink.end());
 				BD["arrays"]["chapter"]["link"]=ChapLink;
+			}
+			vector<string> ChapImg=BD["arrays"]["chapter"]["images"];
+			if (ChapImg.size() > 60) {
+				ChapImg.erase(ChapImg.begin()+60,ChapImg.end());
+				BD["arrays"]["chapter"]["images"]=ChapImg;
 			}
 
 			cout << "# Directory Get ";
