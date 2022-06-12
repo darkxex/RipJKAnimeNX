@@ -442,9 +442,9 @@ int main(int argc, char **argv)
 							}
 						}
 					}
-					if (BD["arrays"]["Banner"]["files"].size() > 0) {       //Draw Banner
+					if (BD["arrays"]["Banner"]["link"].size() > 0) {       //Draw Banner
 						int XF=10, YF=65, WF=760, HF=427;
-						bannersize = BD["arrays"]["Banner"]["files"].size()-1;
+						bannersize = BD["arrays"]["Banner"]["link"].size()-1;
 						//clock cicle 5s
 						bool makebomb = false;
 						if (inTimeN(5001)) {
@@ -457,17 +457,21 @@ int main(int argc, char **argv)
 						}
 						//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
 						//NameOfLink(temptext);
-						string path = BD["arrays"]["Banner"]["files"][bannersel];
+                        string path = rootdirectory+"DATA/nop.png";
+                        if (BD["arrays"]["Banner"]["files"].size() > 0) {
+                           path = BD["arrays"]["Banner"]["files"][bannersel];
+                        }
 						string temptext = BD["arrays"]["Banner"]["name"][bannersel];
 
 						VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
 						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);
+                        string seudopath = path;
+                        replace(seudopath,rootdirectory+"DATA/","");
 						if (makebomb) {
-							GOD.MapT[path.substr(25)].offboom_size=2;
-							GOD.MapT[path.substr(25)].TickerBomb();
+							GOD.MapT[seudopath].offboom_size=2;
+							GOD.MapT[seudopath].TickerBomb();
 							makebomb = false;
 						}
-
 						VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
 						gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,60)+ ":", textColor);
 						gTextTexture.render(XF, YF-5);

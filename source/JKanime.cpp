@@ -346,8 +346,9 @@ int MkTOP(){
 int MkBNR(string content){
 	//Get Latest added animes
 	cout << "# Banner Get ";
+    string imgurl = "https://cdn.jkdesu.com";
 	BD["arrays"]["Banner"]["link"]=scrapElementAll(content, "https://jkanime.net/");
-	BD["arrays"]["Banner"]["img"]=scrapElementAll(content, "https://cdn.jkanime.net/assets/images/animes/video/image/");
+	BD["arrays"]["Banner"]["img"]=scrapElementAll(content, imgurl+"/assets/images/animes/video/image/");//https://cdn.jkdesu.com/assets/images/animes/video/image/jkvideo_85d3aaa2683a8047cc191aa9a39d5d8d.jpg
 	BD["arrays"]["Banner"]["name"]=scrapElementAll(content, "<h2>","</h2>");
 
 	cout << "IMG " << endl;
@@ -356,7 +357,7 @@ int MkBNR(string content){
 	for (int i=0; i < sizeI; i++) {
 		string url = BD["arrays"]["Banner"]["img"][i];
 		string name = url;
-		replace(name,"https://cdn.jkanime.net/assets/images/animes/video/image/","");
+		replace(name,imgurl+"/assets/images/animes/video/image/","");
 		name = rootdirectory+"DATA/"+name;
 		BannerFile.push_back(name);
 
