@@ -12,12 +12,12 @@ jobs:
     - uses: actions/checkout@v1
     - name: Update repo.
       run: |
+        git config --global --add safe.directory /__w/RipJKAnimeNX/RipJKAnimeNX
         git submodule update --init --recursive
         
     - name: Make app
       continue-on-error: true
       run: |
-        git config --global --add safe.directory /__w/RipJKAnimeNX/RipJKAnimeNX
         git clone https://github.com/StarDustCFW/nspmini
         make -C nspmini portlib
         make -j$(nproc)
