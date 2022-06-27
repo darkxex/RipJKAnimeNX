@@ -2,13 +2,13 @@
 echo RipJKForwader ------------------------------------
 title RipJKForwader
 if not exist romfs\05B9DB505ABBE000.nsp (
-	make -C RipJKForwader -j20
+	make -C RipJKForwader -j16
 	move /y "RipJKForwader\Output\RipJKAnime[05B9DB505ABBE000][v0].nsp" "romfs\05B9DB505ABBE000.nsp"
 )
 
 echo RipJKAnime_NX ------------------------------------
 title RipJKAnime_NX
-make -j20 NSP
+make -j16 NSP
 set a=%errorlevel%
 
 

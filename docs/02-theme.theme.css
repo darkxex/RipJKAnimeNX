@@ -1,0 +1,22 @@
+//META{"name":"02 Theme by Ruben mod by Kronos2308","description":"Darling In the Franxx theme","author":"Ruben7173","version":"3.0"}*//{}
+
+@import url(https://Ruben7173.github.io/BetterDiscord-Themes/Modules/transparency2.css);
+
+:root {
+	/* background URL */ /* default url hhttps://images.alphacoders.com/898/898775.jpg
+	--background-image: url(https://images4.alphacoders.com/908/thumb-1920-908470.jpg) center/cover no-repeat;
+
+	--background-image: url(https://images.alphacoders.com/898/898775.jpg) center/cover no-repeat;
+	*/
+	--background-image: url(https://c4.wallpaperflare.com/wallpaper/603/974/333/anime-white-skin-fan-art-zero-two-wallpaper-preview.jpg) center/cover no-repeat;
+	/* Guild and Top bar transparency */
+	--transparency-1: linear-gradient(to left, rgba(0,0,0,0.85), rgba(0,0,0,0.75));
+	/* transparency for channels and private channels */
+	--transparency-2: linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.65));
+	/* chat and top area and other secondary pages */
+	--transparency-3: linear-gradient(to right, rgba(0,0,0,0.75), rgba(0,0,0,0.75));
+	/* member list */
+	--transparency-4: linear-gradient(to right, rgba(0,0,0,0.55), rgba(0,0,0,0.65));
+	/* transparecy with gradient of top bar */
+	--transparency-5: linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.75),rgba(0,0,0,0.65), rgba(0,0,0,0.62), rgba(0,0,0,0.60),rgba(0,0,0,0.55), rgba(0,0,0,0.55));
+}

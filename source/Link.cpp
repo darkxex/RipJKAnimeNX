@@ -115,6 +115,7 @@ string Nozomi_player(string Link){
 	string codetemp;
 	//Get FirstKey
 	string FirstKey = Net::GET(Link);
+	cout << "GET: "<< FirstKey << endl;
 	codetemp = scrapElement(FirstKey,"name=\"data\" value=\"", "\"");
 	replace(codetemp,"name=\"data\" value=\"","");
 	FirstKey = codetemp;
@@ -156,52 +157,62 @@ string Fembed_Link(string Link) {
 std::vector<std::string> arrayserversbak = {
 	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
 };
+
 std::vector<std::string> arrayservers = arrayserversbak;
+const string host = "https://jkanime.net/";
 
 bool onlinejkanimevideo(string onlineenlace,string server){
 	if (!Net::HasConnection()) {return false;}
 	string videourl = "";
 	string content = "";
 	string tempcon = "";
+
 	content = Net::GET(onlineenlace);
 	if (server == "Fembed 2.0") {
-		videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
+		videourl = scrapElement(content, "jkfembed.php?u=,"\"");
+		videourl = host + videourl;
 		if(videourl.length()) {
 			tempcon = Fembed_Link(videourl);
 			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "Nozomi") {
-		videourl = scrapElement(content,"https://jkanime.net/um2.php?");
+		videourl = scrapElement(content,"um2.php?","\"");
+		videourl = host + videourl;
 		if(videourl.length()) {
 			tempcon = Nozomi_player(videourl);
 			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "MixDrop") {
-		videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
+		videourl = scrapElement(content,"jkvmixdrop.php?u=","\"");
+		videourl = host + videourl;
 		if(videourl.length()) {
 			tempcon=MD_s(videourl);
 			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "Okru") {
-		videourl = scrapElement(content,"https://jkanime.net/jkokru.php?");
+		videourl = scrapElement(content,"jkokru.php?","\"");
+		videourl = host + videourl;
 		replace(videourl, "https://jkanime.net/jkokru.php?u=", "https://ok.ru/videoembed/");
 	}
 	if (server == "Desu") {
-		videourl = scrapElement(content,"https://jkanime.net/um.php?");
+		videourl = scrapElement(content,"um.php?","\"");
+		videourl = host + videourl;
 	}
 	if (server == "Fembed") {
-		videourl = scrapElement(content,"https://jkanime.net/jkfembed.php?u=");
+		videourl = scrapElement(content,"jkfembed.php?u=","\"");
+		videourl = host + videourl;
 	}
 	if (server == "Xtreme S") {
-		videourl = scrapElement(content,"https://jkanime.net/jk.php?");
+		videourl = scrapElement(content,"jk.php?","\"");
+		videourl = host + videourl;
 	}
 	if (server == "Mega") {
-		videourl = scrapElement(content,"https://mega.nz/embed/");
+		videourl = scrapElement(content,"https://mega.nz/embed/","\"");
 	}
-	cout << videourl << endl;
+	cout << " que llega: "<< videourl << endl;
 	if (videourl.length() != 0)
 	{
 		WebBrowserCall(videourl);
@@ -218,7 +229,8 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	string content = "";
 	content = Net::GET(urltodownload);
 
-	videourl = scrapElement(content, "https://jkanime.net/um2.php?");
+	videourl = scrapElement(content, "um2.php?","\"");
+	videourl = host + videourl;
 	if(videourl.length())
 	{
 		videourl = Nozomi_Link(videourl);
@@ -231,7 +243,8 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		}
 	}
 
-	videourl = scrapElement(content, "https://jkanime.net/jkfembed.php?u=");
+	videourl = scrapElement(content, "jkfembed.php?u=","\"");
+	videourl = host + videourl;
 	if (videourl.length())
 	{
 		videourl = Fembed_Link(videourl);
@@ -244,12 +257,12 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		}
 	}
 
-	videourl = scrapElement(content, "https://www.mediafire.com/file/");
+	videourl = scrapElement(content, "https://www.mediafire.com/file/","\"");
 	if(videourl.length())
 	{
 		cout << videourl << endl;
 		string tempmedia = Net::GET(videourl);
-		videourl = scrapElement(tempmedia, "https://download");
+		videourl = scrapElement(tempmedia, "https://download","\"");
 		if(videourl.length())
 		{
 			replace(videourl, "\\", "");
@@ -260,7 +273,8 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		}
 	}
 
-	videourl = scrapElement(content,"https://jkanime.net/jkvmixdrop.php?u=");
+	videourl = scrapElement(content,"jkvmixdrop.php?u=","\"");
+	videourl = host + videourl;
 	if(videourl.length())
 	{
 		cout << videourl << endl;
@@ -274,12 +288,12 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		}
 	}
 
-	videourl = scrapElement(content, "https://www24.zippyshare.com");
+	videourl = scrapElement(content, "https://www24.zippyshare.com","\"");
 	if(videourl.length())
 	{
 		cout << videourl << endl;
 		string tempmedia = Net::GET(videourl);
-		videourl = scrapElement(tempmedia, "https://www24.zippyshare.com/d");
+		videourl = scrapElement(tempmedia, "https://www24.zippyshare.com/d","\"");
 		if(videourl.length())
 		{
 			replace(videourl, "\\", "");
@@ -290,7 +304,8 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		}
 	}
 
-	videourl = scrapElement(content, "https://jkanime.net/jk.php?");
+	videourl = scrapElement(content, "jk.php?","\"");
+	videourl = host + videourl;
 	if(videourl.length())
 	{
 		replace(videourl, "\\", "");

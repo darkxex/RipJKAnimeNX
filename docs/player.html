@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Player</title>
+<script src="jquery.min.js"></script>
+<script src="https://cdn.jkanime.net/assets/dplayer.js"></script>
+<link rel="stylesheet" href="https://cdn.jkanime.net/assets/DPlayer.min.css">
+<meta name="robots" content="noindex, nofollow" />
+<meta name="referrer" content="never" />
+<meta name="referrer" content="no-referrer" />
+<style>
+	html,
+	body {
+		width: 100%;
+		height: 100%;
+		margin: auto;
+		overflow: hidden;
+	}
+	#cnv {
+		display: none;
+	}
+	.dplayer-icon.dplayer-camera-icon {
+		display: inline-block !important;
+	}
+	span.dplayer-bezel-icon.cplay {
+		opacity: 1;
+		color: #fff;
+		background: #f97a29;
+		height: 80px;
+		width: 80px;
+		margin: -41px 0 0 -41px;
+	}
+
+	.dplayer-mobile-play {
+		opacity: 0 !important;
+		height: 80px;
+		width: 80px;
+	}
+
+	span.dplayer-bezel-icon.cplay svg.splay {
+		position: relative;
+		left: 2px;
+	}
+	div#hlsload {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		margin: auto;
+		background: #000;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 99;
+	}
+	#hlsload p {
+		color: #fff;
+		margin: top;
+		width: 250px;
+		height: 30px;
+		font-size: 20px;
+		top: 0;
+		bottom: 0;
+		position: absolute;
+		left: 0;
+		right: 0;
+	}
+	#hlsload b {
+		font-weight: normal;
+	}
+	.button-reload {
+		opacity: 0;
+		position: absolute;
+		z-index:99999999999;
+	}
+	.button-play {
+		//color: #fff;
+		z-index:99999999999;
+		margin: auto;
+		opacity: 0;
+		width: 200px;
+		height: 40px;
+		font-size: 20px;
+		top: 0;
+		bottom: 0;
+		position: absolute;
+		left: 0;
+		right: 0;
+	}
+			
+	button {
+		background:  rgba(0,0,0,0.5);
+		color:  #fff;
+		border:2px solid #fff;
+	}		
+    </style>
+</head>
+<body>
+	<button class="button-play" id="Marker" onclick="dp.play();">Play</button>
+	<button class="button-reload" id="Reloadb" onclick="reload();">Recargar</button>
+    <script type="text/javascript">
+		var dp;
+        window.onload = function() {
+            document.getElementById('mse').style.height = window.innerHeight + 'px';
+			//Marker.style.top = (window.innerHeight/2)+"px";
+			//Marker.style.left = (window.innerWidth/2 - Marker.clientWidth/2)+"px";
+			
+			Reloadb.style.top = (window.innerHeight - Reloadb.clientHeight-10)+"px";
+			Reloadb.style.left = (window.innerWidth/2 - Reloadb.clientWidth/2)+"px";
+
+        }
+	
+	/*
+	
+	*/
+    </script>
+	
+<div id='hlsload'><p><b class="i" id="message">Obteniendo servidores</b></p></div>
+<div id="mse"></div>
+
+<script type="text/javascript">
+	try{
+		var lastRequest = 0;
+		var startTime = 0;
+		var dataHash;
+		var limitRequest = 3;
+		var resizer;
+		var videourl;
+		var vidid;
+		var isplayer=false;
+		var LS = localStorage;
+		var SS = sessionStorage;
+		function setPlayer(urlv){
+            $("#hlsload").remove();
+			dp = new DPlayer({
+				container: document.getElementById('mse'),
+				preload: 'none', // metadata auto none
+				screenshot: false,
+				airplay: false,
+				theme: '#FADFA3',
+				hotkey: true,
+				//autoplay: true,
+
+				video: {
+					url: urlv,//'play.mp4',//data.file,
+					type: 'video/mp4'
+				},
+				highlight: [{text: 'intro',time: 90,}, {text: 'Medio',time: 1000,}]
+			});
+
+			dp.on('fullscreen', function() {
+				if (/Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+					screen.orientation.lock('landscape');
+				}
+			});
+						
+			function addplaybutton() {
+				Marker.style.opacity=1;
+				setTimeout(function(){
+					Reloadb.style.opacity=1;
+				},2000)
+				
+
+				//document.querySelector(".dplayer-bezel-icon").innerHTML = '<svg class="splay" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 16 32"><path d="M15.552 15.168q0.448 0.32 0.448 0.832 0 0.448-0.448 0.768l-13.696 8.512q-0.768 0.512-1.312 0.192t-0.544-1.28v-16.448q0-0.96 0.544-1.28t1.312 0.192z"></path></svg>';
+				//document.querySelector(".dplayer-bezel-icon").className = "dplayer-bezel-icon cplay";
+			}
+			function remplaybutton(){
+				Marker.style.opacity=0;
+				Reloadb.style.opacity=0;
+				//document.querySelector(".dplayer-bezel-icon").className = "dplayer-bezel-icon";
+			}
+			
+			function notifyim(){
+				if (LS[vidid] > 10) {
+					dp.notice("Para resumir "+vidid+", debes tocar dos veces Resumir", 15000, 0.8);
+				} else {
+					dp.notice(vidid, 15000, 0.8);
+				}
+			}
+
+			addplaybutton();
+			dp.on('play', function() {
+				remplaybutton();
+			});
+			dp.on('playing', function() {
+				remplaybutton();
+			});
+			dp.on('pause', function() {
+				addplaybutton();
+				notifyim();
+			});
+			notifyim();
+			var x = setInterval(function() {
+				var ti = Math.floor(dp.video.currentTime);
+				if(ti>59){
+					LS[vidid] = ti;
+					var minutes = Math.floor(ti / 60);
+					var seconds = ti - minutes * 60;
+					Marker.innerHTML="Resumir: "+minutes+":"+seconds;
+					Marker.onclick=function(){setTimeout(function(){dp.play();},1000); dp.seek(LS[vidid])};
+					//Marker.style.left = (window.innerWidth/2 - Marker.clientWidth/2)+"px";
+				} else if (LS[vidid] > 10){
+					var minutes = Math.floor(LS[vidid] / 60);
+					var seconds = LS[vidid] - minutes * 60;
+					Marker.onclick=function(){setTimeout(function(){dp.play();},1000); dp.seek(LS[vidid])};
+					Marker.innerHTML=" Resumir: "+minutes+":"+seconds;
+					//Marker.style.left = (window.innerWidth/2 - Marker.clientWidth/2)+"px";
+				} else {
+					//Marker.innerHTML=vidid+" Play";
+				}
+			}, 1000);
+			/*
+				var result = confirm("Reproducirlo");
+				if (result == true) {
+					dp.toggle();
+					dp.play();
+				}
+			*/
+			//dp.toggle();
+			isplayer=true;
+		}
+		function request(num) {
+			lastRequest = new Date().getTime() / 1000;
+			var checkUrl = "https://jkanime.net/gsplay/api.php";
+                if (!checkUrl) return;
+
+                $.post(checkUrl, { v: dataHash }, function (data) {
+
+                    if (data.status == 401) {
+                        //window.location.href = 'error.html';
+						$("#message").text('Ha ocurrido un error: 401');
+						return ;
+                    }
+                    
+                    if (typeof data.sleep != "undefined") {
+                        if (isNaN(data.sleep)) data.sleep = 3000;
+
+                        if (++num < limitRequest) setTimeout(function () {
+                            request(num);
+                        }, data.sleep);
+                        else $("#message").text('No se pudo obtener video.');
+                    } else if (typeof data.file !== 'undefined') {
+					
+						let str = data.file
+						var val1 = str.lastIndexOf("/");
+						var val2 = str.search(".mp4");
+						vidid = str.substr(val1, val2 - val1);//val2 - val1);
+						if(!isplayer){
+							setPlayer(data.file);
+						} else {
+							dp.switchVideo({url: data.file,type: 'video/mp4'});
+						}
+						return data.file;
+                    } else {
+                        $("#message").text('Ha ocurrido un error: ' + data.error);
+                    }
+                }, "json").fail(function () {
+					$("#message").text('Ha ocurrido un error, el servidor no respondio correctamente');
+			});
+		}			
+			
+       function boot () {
+            function resizeVideo() {
+                jwplayer().resize($(window).width(), $(window).height());
+            }
+
+            function init() {
+                if (!window.location.hash) {
+                    $("#message").text('No se pudo obtener video.');
+                    return;
+                }
+
+                var file = window.location.hash.split('#')[1];
+				dataHash = file;
+                
+				$("#message").text('Creando sistemas y consultando datos...');
+                request(0);
+				//vidid = dataHash.substr(50, 16)
+				
+            }
+
+            init();
+        }
+		function reload(){
+			request(0);
+			
+			/*
+			var ti = Math.floor(dp.video.currentTime);
+			if(ti!=0){
+				LS[vidid] = ti;
+			}
+			
+			console.log(LS[vidid]);
+			request(0);
+				window.location.reload(true);
+		*/
+			
+
+		}
+
+		$(document).ready(function () {
+			boot();
+		});
+		onbeforeunload = function(e){
+			//alert("cerrando");
+		}
+	} catch(e){
+		alert(e);
+	}
+    </script>
+
+</body>
+</html>
