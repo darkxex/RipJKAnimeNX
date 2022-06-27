@@ -17,6 +17,7 @@ jobs:
     - name: Make app
       continue-on-error: true
       run: |
+        git config --global --add safe.directory /__w/RipJKAnimeNX/RipJKAnimeNX
         git clone https://github.com/StarDustCFW/nspmini
         make -C nspmini portlib
         make -j$(nproc)
