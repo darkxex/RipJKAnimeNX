@@ -169,7 +169,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 
 	content = Net::GET(onlineenlace);
 	if (server == "Fembed 2.0") {
-		videourl = scrapElement(content, "jkfembed.php?u=,"\"");
+		videourl = scrapElement(content, "jkfembed.php?u=","\"");
 		videourl = host + videourl;
 		if(videourl.length()) {
 			tempcon = Fembed_Link(videourl);
