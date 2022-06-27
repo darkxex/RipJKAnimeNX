@@ -18,6 +18,5 @@ if %a% equ 0 color 0a
 echo -----------------------------------
 
 %systemroot%\system32\timeout.exe 20
-%systemroot%\system32\timeout.exe 20
 
 
