@@ -21,7 +21,7 @@
 #include "SDLWork.hpp"
 
 //Private Link decoders
-string MD_s(string Link){
+string MixDrop_Link(string Link){
 	replace(Link, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
 	string decode="";
 	for (int i=1; i<6; i++) {
@@ -159,7 +159,7 @@ std::vector<std::string> arrayserversbak = {
 };
 
 std::vector<std::string> arrayservers = arrayserversbak;
-const string host = "https://jkanime.net/";
+const string JkURL = "https://jkanime.net/";
 
 bool onlinejkanimevideo(string onlineenlace,string server){
 	if (!Net::HasConnection()) {return false;}
@@ -170,48 +170,49 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	content = Net::GET(onlineenlace);
 	if (server == "Fembed 2.0") {
 		videourl = scrapElement(content, "jkfembed.php?u=","\"");
-		videourl = host + videourl;
 		if(videourl.length()) {
-			tempcon = Fembed_Link(videourl);
+			tempcon = Fembed_Link(JkURL + videourl);
 			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "Nozomi") {
 		videourl = scrapElement(content,"um2.php?","\"");
-		videourl = host + videourl;
 		if(videourl.length()) {
-			tempcon = Nozomi_player(videourl);
+			tempcon = Nozomi_player(JkURL + videourl);
 			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "MixDrop") {
 		videourl = scrapElement(content,"jkvmixdrop.php?u=","\"");
-		videourl = host + videourl;
 		if(videourl.length()) {
-			tempcon=MD_s(videourl);
+			tempcon=MixDrop_Link(JkURL + videourl);
 			if(tempcon.length()) {videourl=tempcon;}
 		}
 	}
 	if (server == "Okru") {
 		videourl = scrapElement(content,"jkokru.php?","\"");
-		videourl = host + videourl;
-		replace(videourl, "https://jkanime.net/jkokru.php?u=", "https://ok.ru/videoembed/");
+        if (videourl.length() != 0) {
+            replace(videourl, "jkokru.php?u=", "https://ok.ru/videoembed/");
+            videourl = JkURL + videourl;
+        }
 	}
 	if (server == "Desu") {
 		videourl = scrapElement(content,"um.php?","\"");
-		videourl = host + videourl;
+        if (videourl.length() != 0) {videourl = JkURL + videourl;}
 	}
 	if (server == "Fembed") {
 		videourl = scrapElement(content,"jkfembed.php?u=","\"");
-		videourl = host + videourl;
+        if (videourl.length() != 0) {videourl = JkURL + videourl;}
 	}
 	if (server == "Xtreme S") {
 		videourl = scrapElement(content,"jk.php?","\"");
-		videourl = host + videourl;
+        if (videourl.length() != 0) {videourl = JkURL + videourl;}
 	}
 	if (server == "Mega") {
 		videourl = scrapElement(content,"https://mega.nz/embed/","\"");
+        if (videourl.length() != 0) {videourl = JkURL + videourl;}
 	}
+
 	cout << " que llega: "<< videourl << endl;
 	if (videourl.length() != 0)
 	{
@@ -230,10 +231,9 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	content = Net::GET(urltodownload);
 
 	videourl = scrapElement(content, "um2.php?","\"");
-	videourl = host + videourl;
 	if(videourl.length())
 	{
-		videourl = Nozomi_Link(videourl);
+		videourl = Nozomi_Link(JkURL + videourl);
 		if(videourl.length())
 		{
 			cout << videourl << endl;
@@ -244,10 +244,9 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	}
 
 	videourl = scrapElement(content, "jkfembed.php?u=","\"");
-	videourl = host + videourl;
 	if (videourl.length())
 	{
-		videourl = Fembed_Link(videourl);
+		videourl = Fembed_Link(JkURL + videourl);
 		if (videourl.length())
 		{
 			cout << videourl << endl;
@@ -274,11 +273,10 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	}
 
 	videourl = scrapElement(content,"jkvmixdrop.php?u=","\"");
-	videourl = host + videourl;
 	if(videourl.length())
 	{
 		cout << videourl << endl;
-		videourl=MD_s(videourl);
+		videourl=MixDrop_Link(JkURL + videourl);
 		if (videourl.length())
 		{
 			cout << videourl << endl;
@@ -305,9 +303,9 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	}
 
 	videourl = scrapElement(content, "jk.php?","\"");
-	videourl = host + videourl;
 	if(videourl.length())
 	{
+        videourl = JkURL + videourl;
 		replace(videourl, "\\", "");
 		replace(videourl, "https://jkanime.net/jk.php?u=", "https://jkanime.net/");
 		cout << videourl << endl;

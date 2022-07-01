@@ -393,6 +393,7 @@ void InputHandle(){
 					break;
 					case chapter_s:
 						if(serverpront) {
+                            if (arrayservers.size() == 0) break;
 							string tempurl = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
 							string temp = tempurl;
 							NameOfLink(temp);
