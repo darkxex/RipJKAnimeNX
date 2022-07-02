@@ -444,6 +444,10 @@ bool CheckUpdates(bool force){
 					if (InstallNSP(fileU)) {
 						DInfo(New);
 						std::cout << Ver << " ---> " << New <<std::endl;
+                        //Relaunch After update success
+                        if (config["ReLaunch"].get<int>() == 1) {
+                            if(!quit) AppletMode = true;
+                        }
 						return true;
 					}
 				}

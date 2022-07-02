@@ -422,12 +422,15 @@ json DInfo(string ver){
 		//Get Config file , order sdmc - Nand - hardcoded
 		json config;
 		if (!read_DB(config,"sdmc:/JK.config")) {
-			if (!read_DB(config,rootdirectory+"JK.config")) {
-				std::cout << "# Using default Config" <<std::endl;
+			if (!read_DB(config,"romfs:/JK.config")) {
+                if (!read_DB(config,rootdirectory+"JK.config")) {
+                    std::cout << "# Using default Config" <<std::endl;
+                }
 			}
 		}
 		//If not exist use default config
 		if(config["AutoUpdate"].is_null()) {config["AutoUpdate"]=1;}
+		if(config["ReLaunch"].is_null()) {config["ReLaunch"]=0;}
 		if(config["Beta"].is_null()) {config["Beta"]=0;}
 		if(config["Beta_URL"].is_null()) {config["Beta_URL"]="";}
 		if(config["author"].is_null()) {config["author"]="darkxex";}
