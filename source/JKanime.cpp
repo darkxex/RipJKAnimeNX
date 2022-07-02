@@ -76,6 +76,8 @@ int AnimeLoader(void* data){
 		//Check for app Updates
 		CheckUpdates(AppletMode);
 		steep++;
+        //exit thread if are in applet mode
+        if (AppletMode) {quit=true; return 0;}
 
 		if (Mgate) {
 			//Download themes
@@ -181,11 +183,18 @@ int AnimeLoader(void* data){
 		MkAGR(temcont);
 
 		steep++;//banner to Database
+        int Blink = BD["arrays"]["Banner"]["link"].size();
+        int Bfile = BD["arrays"]["Banner"]["files"].size();
+
+		if (haschange || Blink != Bfile) {
+            temp0=content.find("<section class=\"hero\">");
+            temp1=content.find("<div class=\"solopc\">",temp0);
+            temcont = content.substr(temp0,temp1-temp0);
+            MkBNR(temcont);
+		}
+        
+        //hourglas
 		if (haschange) {
-			temp0=content.find("<section class=\"hero\">");
-			temp1=content.find("<div class=\"solopc\">",temp0);
-			temcont = content.substr(temp0,temp1-temp0);
-			MkBNR(temcont);
 			MkHOR();
 		}
 		steep++;//Top, Hour to Database
@@ -237,8 +246,6 @@ int AnimeLoader(void* data){
 	cout << "# End Thread Chain" << endl;
 	isChained=false;
 	ChainManager(false,!isDownloading&&!isChained);
-	//exit after load the cache if are in applet mode
-	if (AppletMode) quit=true;
 	return 0;
 
 }

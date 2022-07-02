@@ -445,6 +445,7 @@ int main(int argc, char **argv)
 					if (BD["arrays"]["Banner"]["link"].size() > 0) {       //Draw Banner
 						int XF=10, YF=65, WF=760, HF=427;
 						bannersize = BD["arrays"]["Banner"]["link"].size()-1;
+                        int filesize = BD["arrays"]["Banner"]["files"].size()-1;
 						//clock cicle 5s
 						bool makebomb = false;
 						if (inTimeN(5001)) {
@@ -458,7 +459,7 @@ int main(int argc, char **argv)
 						//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
 						//NameOfLink(temptext);
                         string path = rootdirectory+"DATA/nop.png";
-                        if (BD["arrays"]["Banner"]["files"].size() > 0) {
+                        if (filesize == bannersize) {
                            path = BD["arrays"]["Banner"]["files"][bannersel];
                         }
 						string temptext = BD["arrays"]["Banner"]["name"][bannersel];
