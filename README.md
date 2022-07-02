@@ -37,7 +37,7 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
   <summary>Como Compilar, Devs</summary>
 
 ## Compilar 
-esta app hace uso de [nspmini](https://github.com/StarDustCFW/nspmini) como librería
+Esta app hace uso de [nspmini](https://github.com/StarDustCFW/nspmini) como librería
 ```sh
 # Deberás usar los siguientes comandos para instalar nspmini en devkitpro
 # ya q no viene de serie
@@ -51,17 +51,26 @@ make
 make NSP
 
 ``` 
-	
+</details>
+
+<details>
+  <summary>Configuracion</summary>
+
 ## Configuracion
-* ``AutoUpdate``: Define si la app se actualizara automáticamente
-* ``author`` y ``repo``: se utilizan para calcular el link de descarga, ej ``"github.com/"+author+"/"+repo+"/releases"``
-* ``Beta``: cuando esta activa descarga los updates de Beta_URL en vez de la release
-* ``Beta_URL``: URL de la versión beta
+* ``AutoUpdate``: Define si la app se actualizara automáticamente.
+* ``ReLaunch``: Define si la app debe Reiniciarse al actualizar.
+* ``Beta``: cuando esta activa descarga los updates de Beta_URL en vez de la release.
+* * ``1`` Si, ``0`` No.
+* ``Beta_URL``: URL de la versión beta.
+* ``author`` y ``repo``: se utilizan para calcular el link de descarga, ej ``"github.com/"+author+"/"+repo+"/releases"``.
 
 * ``JK.config`` deberá estar ubicado en la raiz de la SD para que sobrescriba la configuración por defecto
+
+### Ejemplo
 ```json
 {
  "AutoUpdate": 1,
+ "ReLaunch": 0,
  "Beta":0,
  "Beta_URL": "https://mysitio.blabla/beta.nsp",
  "author":"darkxex",
@@ -69,6 +78,7 @@ make NSP
 }
 
 ```
+
 
 ## LOGS
 * La app crea automaticamente un fichero JK.log en la SD solo si es abierta desde su nsp
