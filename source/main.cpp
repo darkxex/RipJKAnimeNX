@@ -448,7 +448,7 @@ int main(int argc, char **argv)
                         int filesize = BD["arrays"]["Banner"]["files"].size()-1;
 						//clock cicle 5s
 						bool makebomb = false;
-						if (inTimeN(5001)) {
+						if (inTimeN(7001)) {
 							if (Btimer) {
 								makebomb = true;
 								bannersel++;
@@ -459,6 +459,7 @@ int main(int argc, char **argv)
 						//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
 						//NameOfLink(temptext);
                         string path = rootdirectory+"DATA/nop.png";
+                        static string seudopath = "";
                         if (filesize == bannersize) {
                            path = BD["arrays"]["Banner"]["files"][bannersel];
                         }
@@ -466,13 +467,43 @@ int main(int argc, char **argv)
 
 						VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
 						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);
-                        string seudopath = path;
+
+                        //this save the prev image and reset the alpha
+                        static int alphaB = 250;
+                        static string oldimage = "";
+						if (makebomb) {
+                            alphaB = 250;
+                            oldimage = seudopath;
+						}
+                        //Set seudo path
+                        seudopath = path;
                         replace(seudopath,rootdirectory+"DATA/","");
+
+                        //this is a disolve effect
+                        if(oldimage != ""){
+                            if (alphaB > 0){
+                                if (inTimeN(31,0)) {
+                                    alphaB-=10;
+                                    //cout << "Alpha of : " << oldimage << " set to:" << alphaB << " over : " << seudopath << endl;
+                                }
+                                GOD.MapT[oldimage].setAlpha(alphaB);
+                                GOD.MapT[oldimage].render(XF, YF);
+                           } else {
+                                GOD.MapT[oldimage].setAlpha(255);
+                                oldimage = "";
+                           }
+                           
+                        }
+                        //This is a jump efect
+                        /*
 						if (makebomb) {
 							GOD.MapT[seudopath].offboom_size=2;
 							GOD.MapT[seudopath].TickerBomb();
 							makebomb = false;
 						}
+                        
+                        */
+
 						VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
 						gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,60)+ ":", textColor);
 						gTextTexture.render(XF, YF-5);
