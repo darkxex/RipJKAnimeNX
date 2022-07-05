@@ -68,6 +68,7 @@ extern string rootdirectory;
 extern string oldroot;
 extern string rootsave;
 extern string roottheme;
+extern string CDNURL;
 
 extern int hasError;
 //Screen dimension constants

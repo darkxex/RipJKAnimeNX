@@ -36,6 +36,7 @@ string rootdirectory = "emmc:/RipJKAnime_NX/";
 string rootsave = "save:/";
 string roottheme = "themes:/";
 string oldroot = "sdmc:/switch/RipJKAnimeNX/";
+string CDNURL = "cdn.jkdesu.com";
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;

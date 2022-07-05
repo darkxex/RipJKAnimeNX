@@ -118,7 +118,7 @@ int AnimeLoader(void* data){
 		string temcont = content.substr(temp0,temp1-temp0);
 		steep++;//rebuild list
 		vector<string> ChapLink=scrapElementAll(temcont, "https://jkanime.net/");
-		vector<string> ChapImag=scrapElementAll(temcont, "https://cdn.jkdesu.com/assets/images/");
+		vector<string> ChapImag=scrapElementAll(temcont, "https://"+CDNURL+"/assets/images/");
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "<span>","</span>");
 
 		steep++;//Download All not existing images
@@ -353,9 +353,9 @@ int MkTOP(){
 int MkBNR(string content){
 	//Get Latest added animes
 	cout << "# Banner Get ";
-    string imgurl = "https://cdn.jkdesu.com";
+    string imgurl = "https://"+CDNURL+"";
 	BD["arrays"]["Banner"]["link"]=scrapElementAll(content, "https://jkanime.net/");
-	BD["arrays"]["Banner"]["img"]=scrapElementAll(content, imgurl+"/assets/images/animes/video/image/");//https://cdn.jkdesu.com/assets/images/animes/video/image/jkvideo_85d3aaa2683a8047cc191aa9a39d5d8d.jpg
+	BD["arrays"]["Banner"]["img"]=scrapElementAll(content, imgurl+"/assets/images/animes/video/image/");//https://"+CDNURL+"/assets/images/animes/video/image/jkvideo_85d3aaa2683a8047cc191aa9a39d5d8d.jpg
 	BD["arrays"]["Banner"]["name"]=scrapElementAll(content, "<h2>","</h2>");
 
 	cout << "IMG " << endl;
@@ -388,7 +388,7 @@ int MkHOR(){
 	cout << "# HourGlass Get ";
 	string content=Net::GET("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
-	replace(content,"https://cdn.jkdesu.com/assets/images/animes/image/","https://jkanime.net/");
+	replace(content,"https://"+CDNURL+"/assets/images/animes/image/","https://jkanime.net/");
 	replace(content,".jpg","/");
 	replace(content,".png","/");
 
@@ -746,7 +746,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	}
 	if (AnimeINF["Image"].is_null()) {
 		//get image
-		TMP = scrapElement(a, "https://cdn.jkdesu.com/assets/images/animes/image/");
+		TMP = scrapElement(a, "https://"+CDNURL+"/assets/images/animes/image/");
 		AnimeINF["Image"] = TMP;
 	}
 
