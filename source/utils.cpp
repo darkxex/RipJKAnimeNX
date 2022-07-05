@@ -157,6 +157,16 @@ void mayus(std::string &s){
 	}
 }
 void RemoveAccents(std::string& word){
+        replace(word, "à","á");
+        replace(word, "è","é");
+        replace(word, "ì","í");
+        replace(word, "ò","ó");
+        replace(word, "ù","ú");
+        replace(word, "À","Á");
+        replace(word, "È","É");
+        replace(word, "Ì","Í");
+        replace(word, "Ò","Ó");
+        replace(word, "Ù","Ú");
 /*
         //std::cout << word << std::endl;
         replace(word, "á","a");
@@ -164,11 +174,6 @@ void RemoveAccents(std::string& word){
         replace(word, "í","i");
         replace(word, "ó","o");
         replace(word, "ú","u");
-        replace(word, "à","a");
-        replace(word, "è","e");
-        replace(word, "ì","i");
-        replace(word, "ò","o");
-        replace(word, "ù","u");
         replace(word, "ñ","n");
 
         replace(word, "Á","A");
@@ -176,12 +181,8 @@ void RemoveAccents(std::string& word){
         replace(word, "Í","I");
         replace(word, "Ó","O");
         replace(word, "Ú","U");
-        replace(word, "À","A");
-        replace(word, "È","E");
-        replace(word, "Ì","I");
-        replace(word, "Ò","O");
-        replace(word, "Ù","U");
         replace(word, "Ñ","N");
+        
         replace(word, "¡","");
         replace(word, "!","");
         replace(word, "?","");
