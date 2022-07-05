@@ -433,10 +433,12 @@ json DInfo(string ver){
 		if(config["ReLaunch"].is_null()) {config["ReLaunch"]=0;}
 		if(config["Beta"].is_null()) {config["Beta"]=0;}
 		if(config["Beta_URL"].is_null()) {config["Beta_URL"]="";}
+		if(config["CDNURL"].is_null()) {config["CDNURL"]="cdn.jkdesu.com";}
 		if(config["author"].is_null()) {config["author"]="darkxex";}
 		if(config["repo"].is_null()) {config["repo"]="RipJKAnimeNX";}
 		info["config"]=config;
-
+        CDNURL = config["CDNURL"].get<string>();
+        std::cout << "# CDMURL " << CDNURL <<std::endl;
 		info["UNIX"]=time(0);
 		//DeviceID
 		u64 id = 0;

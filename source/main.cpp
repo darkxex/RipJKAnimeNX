@@ -448,7 +448,7 @@ int main(int argc, char **argv)
                         int filesize = BD["arrays"]["Banner"]["files"].size()-1;
 						//clock cicle 5s
 						bool makebomb = false;
-						if (inTimeN(7001)) {
+						if (inTimeN(5001,1)) {
 							if (Btimer) {
 								makebomb = true;
 								bannersel++;
@@ -488,7 +488,9 @@ int main(int argc, char **argv)
                                 }
                                 GOD.MapT[oldimage].setAlpha(alphaB);
                                 GOD.MapT[oldimage].render(XF, YF);
-                           } else {
+                           } 
+                           
+                           if (alphaB <= 0 || oldimage == seudopath){
                                 GOD.MapT[oldimage].setAlpha(255);
                                 oldimage = "";
                            }

@@ -322,14 +322,18 @@ void CheckImgVector(json List,int& index){
 	{
 		index = x+1;
 		std::string tempima = List[x];
+		//std::cout << "img: >" << tempima << std::endl;
 		if (tempima.length() == 0) continue;
-		replace(tempima,"\"","");
-		replace(tempima,"https://"+CDNURL+"/assets/images/animes/image/","");
-		replace(tempima,"https://jkanime.net/", "");
-		replace(tempima,".jpg", "/");
-		int v2 = tempima.find("/");
-		if (v2 > 0) {tempima = tempima.substr(0, v2);}
-		//std::cout << "img:" << tempima << std::endl;
+        
+        //Get the anime name
+        replace(tempima,"\"","");
+        int v0 = (tempima.substr(0, tempima.length()-1)).rfind("/");
+        tempima = tempima.substr(v0+1);
+        replace(tempima,".png", "");
+        replace(tempima,".jpg", "");
+        replace(tempima,"/", "");
+
+		//std::cout << "img: <" << tempima << std::endl;
 		CheckImgNet(rootdirectory+"DATA/"+tempima+".jpg");
 	}
 	index=0;
