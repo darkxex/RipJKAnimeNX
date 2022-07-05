@@ -324,7 +324,7 @@ void CheckImgVector(json List,int& index){
 		std::string tempima = List[x];
 		if (tempima.length() == 0) continue;
 		replace(tempima,"\"","");
-		replace(tempima,"https://cdn.jkanime.net/assets/images/animes/image/","");
+		replace(tempima,"https://cdn.jkdesu.com/assets/images/animes/image/","");
 		replace(tempima,"https://jkanime.net/", "");
 		replace(tempima,".jpg", "/");
 		int v2 = tempima.find("/");
@@ -341,7 +341,7 @@ bool CheckImgNet(std::string image,std::string url){
 		if(url.length() > 0) {
 			tmp = url;
 		} else {
-			tmp = "https://cdn.jkanime.net/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
+			tmp = "https://cdn.jkdesu.com/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
 		}
 		cout << "# Missing "+image+", Downloading..." << endl;
 		return Net::DOWNLOAD(tmp,image,false);

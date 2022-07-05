@@ -118,7 +118,7 @@ int AnimeLoader(void* data){
 		string temcont = content.substr(temp0,temp1-temp0);
 		steep++;//rebuild list
 		vector<string> ChapLink=scrapElementAll(temcont, "https://jkanime.net/");
-		vector<string> ChapImag=scrapElementAll(temcont, "https://cdn.jkanime.net/assets/images/");
+		vector<string> ChapImag=scrapElementAll(temcont, "https://cdn.jkdesu.com/assets/images/");
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "<span>","</span>");
 
 		steep++;//Download All not existing images
@@ -388,7 +388,7 @@ int MkHOR(){
 	cout << "# HourGlass Get ";
 	string content=Net::GET("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
-	replace(content,"https://cdn.jkanime.net/assets/images/animes/image/","https://jkanime.net/");
+	replace(content,"https://cdn.jkdesu.com/assets/images/animes/image/","https://jkanime.net/");
 	replace(content,".jpg","/");
 	replace(content,".png","/");
 
@@ -746,7 +746,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	}
 	if (AnimeINF["Image"].is_null()) {
 		//get image
-		TMP = scrapElement(a, "https://cdn.jkanime.net/assets/images/animes/image/");
+		TMP = scrapElement(a, "https://cdn.jkdesu.com/assets/images/animes/image/");
 		AnimeINF["Image"] = TMP;
 	}
 

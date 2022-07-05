@@ -407,10 +407,6 @@ bool DoubleKill(vector<string>& data) {
 	//for(i=0; i < sizecap; i++){
 	while(chap.size() > 0 && !quit) {
 		string anime = chap[i];
-		/*
-		   https://jkanime.net/lupin-iii-part-6/
-		   https://cdn.jkanime.net/assets/images/animes/image/lupin-iii-part-6.jpg
-		 */
 		int v2 = anime.find("/", 20);
 		string serie = anime.substr(0, v2 + 1);
 		chap = eraseVec(chap,serie);
