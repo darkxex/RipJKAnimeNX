@@ -469,10 +469,10 @@ int main(int argc, char **argv)
 						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);
 
                         //this save the prev image and reset the alpha
-                        static int alphaB = 250;
+                        static int alphaB = 255;
                         static string oldimage = "";
 						if (makebomb) {
-                            alphaB = 250;
+                            alphaB = 255;
                             oldimage = seudopath;
 						}
                         //Set seudo path
@@ -483,7 +483,8 @@ int main(int argc, char **argv)
                         if(oldimage != ""){
                             if (alphaB > 0){
                                 if (inTimeN(31,0)) {
-                                    alphaB-=10;
+                                    alphaB-=20;
+                                    if (alphaB < 0){alphaB=0;}
                                     //cout << "Alpha of : " << oldimage << " set to:" << alphaB << " over : " << seudopath << endl;
                                 }
                                 GOD.MapT[oldimage].setAlpha(alphaB);
