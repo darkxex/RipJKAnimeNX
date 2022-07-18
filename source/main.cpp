@@ -442,10 +442,14 @@ int main(int argc, char **argv)
 							}
 						}
 					}
-					if (BD["arrays"]["Banner"]["link"].size() > 0) {       //Draw Banner
-						int XF=10, YF=65, WF=760, HF=427;
+                    //Draw Banner
+					int XF=10, YF=65, WF=760, HF=427;
+                    VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
+                    if (BD["arrays"]["Banner"]["link"].size() > 0) {
+						
 						bannersize = BD["arrays"]["Banner"]["link"].size()-1;
                         int filesize = BD["arrays"]["Banner"]["files"].size()-1;
+						
 						//clock cicle 5s
 						bool makebomb = false;
 						if (inTimeN(5001,1)) {
@@ -465,7 +469,6 @@ int main(int argc, char **argv)
                         }
 						string temptext = BD["arrays"]["Banner"]["name"][bannersel];
 
-						VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
 						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);
 
                         //this save the prev image and reset the alpha
