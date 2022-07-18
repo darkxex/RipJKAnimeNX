@@ -72,6 +72,7 @@ int AnimeLoader(void* data){
 				break;
 
 			}
+            Mgate=false;
 		}
 		//Check for app Updates
 		CheckUpdates(AppletMode);
@@ -79,16 +80,19 @@ int AnimeLoader(void* data){
         //exit thread if are in applet mode
         if (AppletMode) {quit=true; return 0;}
 
-		if (Mgate) {
+        static bool Mromfs=true;
+		if (Mromfs) {
 			//Download themes
 			if (!mount_theme("themes",true))
 			{
-				if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/themes00.romfs",rootdirectory+"themes00.romfs")) {
-					mount_theme("themes",true);
-					GOD.ReloadSkin=true;
-				}
+                if(!reloading){
+                    if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/themes00.romfs",rootdirectory+"themes00.romfs")) {
+                        mount_theme("themes",true);
+                        GOD.ReloadSkin=true;
+                    }
+                }
 			}
-			Mgate=false;
+			Mromfs = false;
 		}
 
 		steep++;
@@ -135,7 +139,7 @@ int AnimeLoader(void* data){
 			}
 		}
 		steep++;//Display List
-		if(reloading) {Frames=0; reloading = false;}
+		if(reloading) {Frames=0; reloading = false; Mromfs=true;}
 
 		if (haschange || BD["TimeStamp"].is_null()) {
 			//update TimeStamp
@@ -147,16 +151,20 @@ int AnimeLoader(void* data){
 				if (!BD["arrays"]["chapter"]["link"].is_null())
 				{
 					vector<string> OChapLink=BD["arrays"]["chapter"]["link"];
-					ChapLink.erase(find(ChapLink.begin(), ChapLink.end(), OChapLink[0]),ChapLink.end());
-					ChapLink.insert(ChapLink.end(), OChapLink.begin(), OChapLink.end());
-					//if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
+                    if (OChapLink.size() > 0) {
+                        ChapLink.erase(find(ChapLink.begin(), ChapLink.end(), OChapLink[0]),ChapLink.end());
+                        ChapLink.insert(ChapLink.end(), OChapLink.begin(), OChapLink.end());
+                        //if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
+                    }
 				}
 				if (!BD["arrays"]["chapter"]["images"].is_null())
 				{
 					vector<string> OChapImag=BD["arrays"]["chapter"]["images"];
-					ChapImag.erase(find(ChapImag.begin(), ChapImag.end(), OChapImag[0]),ChapImag.end());
-					ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
-					//if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
+                    if (OChapImag.size() > 0) {
+                        ChapImag.erase(find(ChapImag.begin(), ChapImag.end(), OChapImag[0]),ChapImag.end());
+                        ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
+                        //if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
+                    }
 				}
 				DoubleKill(ChapLink);
 				ChapImag.erase(unique(ChapImag.begin(),ChapImag.end()),ChapImag.end());
