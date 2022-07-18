@@ -990,14 +990,9 @@ int main(int argc, char **argv)
 
 	//Free resources and close SDL
 	GOD.deint();
-	//LOG Save
-	if (hasError > 0) {
-		cout << "ErrorSession: " << hasError << endl;
-		LOG::SaveFile(true);
-	} else {
-		LOG::SaveFile();
-	}
 
+	//LOG END
+    LOG::deinit();
 
 
 	accountExit();

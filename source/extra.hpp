@@ -114,7 +114,6 @@ bool isChained=false;
 bool AppletMode=false;
 bool isSXOS=false;
 bool hasStealth=false;
-int hasError=0;
 bool ongrid=true;
 //
 bool isLoaded=false;

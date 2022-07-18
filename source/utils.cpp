@@ -577,67 +577,79 @@ namespace LOG {
 streambuf* stream_buffer_cout;
 streambuf* stream_buffer_cin;
 std::stringstream redirectStream;
-fstream file;
+fstream fileLog;
+bool HasError = false;
+int ErrorCode = 0;
 
-int E(int r){
-	GOD.PlayEffect(GOD.aree);
-	led_on(2);
-	int result = 1;
-	for(int i=1; i < r; i++) {
-		result = result*10;
-	}
-	hasError+=result;
-	return result;
-}
 bool MLOG(){
-//		return true;
-//		return (DInfo()["TID"] == "05B80C7D3B860000");
-	return (DInfo()["TID"] == "05B9DB505ABBE000");
+//	return true;
+//	return (DInfo()["TID"] == "05B80C7D3B860000");
+    return (DInfo()["TID"] == "05B9DB505ABBE000");
 }
 
 void init(){
-	if (MLOG()) {
-		// Backup streambuffers of  cout
-		stream_buffer_cout = cout.rdbuf();
-		stream_buffer_cin = cin.rdbuf();
-
-		Mem();
-		cout << "HEAD> < " << time(0) << " >" << endl;
-		cout << std::setw(4) << DInfo() << std::endl;
-	}
+    if (MLOG()) {
+        // Backup streambuffers of  cout
+        stream_buffer_cout = cout.rdbuf();
+        stream_buffer_cin = cin.rdbuf();
+            
+        //Save logs to memory
+        Memory();
+        cout << "HEAD> < " << time(0) << " >" << endl;
+        cout << std::setw(4) << DInfo() << std::endl;
+    }
+}
+int E(int r){
+    GOD.PlayEffect(GOD.aree);
+    led_on(2);
+    int result = 1;
+    for(int i=1; i < r; i++) {
+        result*=10;
+    }
+    //Redirect Logs to a file since a error occur.
+    if (!HasError){Files();}
+    ErrorCode+=result;
+    return result;
 }
 
-
-void SaveFile(bool error){
-	if (MLOG()) {
-		//Save log File
-		cout << "END> < " << time(0) << " >" << endl;
-		//file.open(rootdirectory+"JK.log", ios::app);
-		if(error) {
-			file.open("sdmc:/JK_e.log", ios::app);
-		} else {
-			file.open("sdmc:/JK.log",std::fstream::out);
-		}
-
-		file << redirectStream.str();
-		file.close();
-	}
-}
-
-void Mem(){
-	if (MLOG()) {
-		cout << "Log to Mem >" << endl;
-		// Redirect cout to Mem
-		cout.rdbuf(redirectStream.rdbuf());
-	}
+void Memory(){
+    if (MLOG()) {
+        cout << "Log to Mem >" << endl;
+        // Redirect cout to Mem
+        cout.rdbuf(redirectStream.rdbuf());
+    }
 }
 void Screen(){
-	if (MLOG()) {
-		// Redirect cout back to screen
-		cout.rdbuf(stream_buffer_cout);
-		cout << "Log to screen >" << endl;
-	}
+    if (MLOG()) {
+        // Redirect cout back to screen
+        cout.rdbuf(stream_buffer_cout);
+        cout << "Log to screen >" << endl;
+    }
 }
+void Files(){
+    if (MLOG()) {
+        HasError = true;
+        cout << "Log to file >" << endl;
+        //Redirect Logs to this file
+        fileLog.open("sdmc:/JK.log", ios::app);
+        fileLog << redirectStream.str();//get log from memory
+        cout.rdbuf(fileLog.rdbuf());
+    }
+}
+void deinit(){
+    if (MLOG()) {
+        if (HasError){cout << "ErrorCode: " << ErrorCode << endl;}
+        cout << "END> < " << time(0) << " >" << endl;
+        Screen();
+        //Save log File
+        if (HasError){fileLog.close();}
+
+        cout << redirectStream.str() << endl;//Print the logs on nxlink
+        redirectStream.str("");
+    }
+}
+
+
 }
 
 

@@ -32,10 +32,11 @@ bool DoubleKill(vector<string>& data);
 
 namespace LOG {
 void init();
-void SaveFile(bool error=false);
-void Mem();
-void Screen();
 int E(int r);
+void Memory();
+void Screen();
+void Files();
+void deinit();
 }
 
 typedef enum {
@@ -70,7 +71,6 @@ extern string rootsave;
 extern string roottheme;
 extern string CDNURL;
 
-extern int hasError;
 //Screen dimension constants
 extern const int SCREEN_WIDTH, SCREEN_HEIGHT;
 
