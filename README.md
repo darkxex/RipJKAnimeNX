@@ -81,9 +81,9 @@ make NSP
 
 
 ## LOGS
-* La app crea automaticamente un fichero JK.log en la SD solo si es abierta desde su nsp
+* La app crea automaticamente un fichero JK.log en la SD
+* * solo si hay un error y es abierta desde su nsp,
 * * de Lo contrario los logs van la consola de NxLink
-* * si hay un error se creara un fichero JK_e.log
 
 	
 </details>
