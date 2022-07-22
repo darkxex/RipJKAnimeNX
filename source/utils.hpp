@@ -33,6 +33,7 @@ bool DoubleKill(vector<string>& data);
 namespace LOG {
 void init();
 int E(int r);
+int getErrorCode();
 void Memory();
 void Screen();
 void Files();

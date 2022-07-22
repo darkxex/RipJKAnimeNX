@@ -143,7 +143,11 @@ int AnimeLoader(void* data){
 
 		if (haschange || BD["TimeStamp"].is_null()) {
 			//update TimeStamp
-			if (BD["arrays"]["chapter"]["link"].is_null() || BD["arrays"]["chapter"]["link"][0] != ChapLink[0] || BD["TimeStamp"].is_null()) {
+            bool areNEQ = true;
+            if (BD["arrays"]["chapter"]["link"].size() > 0) areNEQ = BD["arrays"]["chapter"]["link"][0] != ChapLink[0];
+                
+			if (BD["arrays"]["chapter"]["link"].is_null() || areNEQ || BD["TimeStamp"].is_null()) {
+
 				BD["TimeStamp"] = to_string(TimeNow());
 				cout << "# New TimeStamp: " << BD["TimeStamp"] << endl;
 
@@ -171,8 +175,8 @@ int AnimeLoader(void* data){
 
 				GOD.PlayEffect(GOD.proc);
 				Frames=1;
-				BD["arrays"]["chapter"]["link"]=ChapLink;
-				BD["arrays"]["chapter"]["images"]=ChapImag;
+                if (ChapLink.size() > 0) BD["arrays"]["chapter"]["link"]=ChapLink;
+                if (ChapImag.size() > 0) BD["arrays"]["chapter"]["images"]=ChapImag;
 				haschange = true;
 			}
 		} else {

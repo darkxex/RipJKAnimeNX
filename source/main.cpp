@@ -41,6 +41,8 @@ int main(int argc, char **argv)
 
 	read_DB(BD,rootdirectory+"DataBase.json");
 
+    //temp fix 
+    if (BD["arrays"]["chapter"]["link"] == "[null]"_json ){BD["arrays"]["chapter"]["link"]="null"_json;}
 	BD["com"] = "{}"_json;
 	if (isset(BD,"DataBase")) {
 		BD.erase("DataBase");

@@ -611,7 +611,9 @@ int E(int r){
     ErrorCode+=result;
     return result;
 }
-
+int getErrorCode(){
+    return ErrorCode;
+}
 void Memory(){
     if (MLOG()) {
         cout << "Log to Mem >" << endl;
@@ -634,6 +636,9 @@ void Files(){
         fileLog.open("sdmc:/JK.log", ios::app);
         fileLog << redirectStream.str();//get log from memory
         cout.rdbuf(fileLog.rdbuf());
+        write_DB(AB,"sdmc:/AnimeBase.json.bak");
+        write_DB(BD,"sdmc:/DataBase.json.bak");
+        write_DB(UD,"sdmc:/UserData.json.bak");
     }
 }
 void deinit(){
