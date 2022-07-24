@@ -58,6 +58,7 @@ make NSP
 
 ## Configuracion
 * ``AutoUpdate``: Define si la app se actualizara automáticamente.
+* ``Logs2File``: Define si la app Creara un fichero de logs incluso si no hay un error (NXlink tampoco recibirá nada).
 * ``ReLaunch``: Define si la app debe Reiniciarse al actualizar.
 * ``Beta``: cuando esta activa descarga los updates de Beta_URL en vez de la release.
 * * ``1`` Si, ``0`` No.
@@ -70,6 +71,7 @@ make NSP
 ```json
 {
  "AutoUpdate": 1,
+ "Logs2File": 0,
  "ReLaunch": 0,
  "Beta":0,
  "Beta_URL": "https://mysitio.blabla/beta.nsp",

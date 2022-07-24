@@ -581,9 +581,12 @@ fstream fileLog;
 bool HasError = false;
 int ErrorCode = 0;
 
+bool Logs2File(){
+    return (DInfo()["config"]["Logs2File"] == 1);
+}
+
 bool MLOG(){
-//	return true;
-//	return (DInfo()["TID"] == "05B80C7D3B860000");
+    if (Logs2File()) return true;
     return (DInfo()["TID"] == "05B9DB505ABBE000");
 }
 
@@ -592,9 +595,13 @@ void init(){
         // Backup streambuffers of  cout
         stream_buffer_cout = cout.rdbuf();
         stream_buffer_cin = cin.rdbuf();
-            
-        //Save logs to memory
-        Memory();
+        if (Logs2File()){
+            //Save logs to File
+            Files();
+        } else {
+            //Save logs to memory
+            Memory();
+        }
         cout << "HEAD> < " << time(0) << " >" << endl;
         cout << std::setw(4) << DInfo() << std::endl;
     }
@@ -607,7 +614,12 @@ int E(int r){
         result*=10;
     }
     //Redirect Logs to a file since a error occur.
-    if (!HasError){Files();}
+    if (!HasError){
+        Files();
+        write_DB(AB,"sdmc:/AnimeBase.json.bak");
+        write_DB(BD,"sdmc:/DataBase.json.bak");
+        write_DB(UD,"sdmc:/UserData.json.bak");
+    }
     ErrorCode+=result;
     return result;
 }
@@ -636,9 +648,6 @@ void Files(){
         fileLog.open("sdmc:/JK.log", ios::app);
         fileLog << redirectStream.str();//get log from memory
         cout.rdbuf(fileLog.rdbuf());
-        write_DB(AB,"sdmc:/AnimeBase.json.bak");
-        write_DB(BD,"sdmc:/DataBase.json.bak");
-        write_DB(UD,"sdmc:/UserData.json.bak");
     }
 }
 void deinit(){

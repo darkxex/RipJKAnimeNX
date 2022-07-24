@@ -400,7 +400,7 @@ bool GetAppletMode(){
 	{
 		return true;
 	}
-	//if (DInfo()["TID"] == "05B9DB505ABBE000")
+    if (DInfo()["TID"] == "05B9DB505ABBE000")
 	{
 		__nx_applet_exit_mode = 1;
 	}
@@ -419,7 +419,7 @@ json DInfo(string ver){
 
 		Result ret = 0;
 
-		//Get Config file , order sdmc - Nand - hardcoded
+		//Get Config file , order sdmc -> romfs -> Nand -> Default
 		json config;
 		if (!read_DB(config,"sdmc:/JK.config")) {
 			if (!read_DB(config,"romfs:/JK.config")) {
@@ -430,6 +430,7 @@ json DInfo(string ver){
 		}
 		//If not exist use default config
 		if(config["AutoUpdate"].is_null()) {config["AutoUpdate"]=1;}
+		if(config["Logs2File"].is_null()) {config["Logs2File"]=0;}
 		if(config["ReLaunch"].is_null()) {config["ReLaunch"]=0;}
 		if(config["Beta"].is_null()) {config["Beta"]=0;}
 		if(config["Beta_URL"].is_null()) {config["Beta_URL"]="";}
