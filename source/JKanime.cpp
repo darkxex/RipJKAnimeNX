@@ -156,18 +156,20 @@ int AnimeLoader(void* data){
 				{
 					vector<string> OChapLink=BD["arrays"]["chapter"]["link"];
                     if (OChapLink.size() > 0) {
+                        cout << "# Merge: chapter link <-- 30 List in web" << endl;
                         ChapLink.erase(find(ChapLink.begin(), ChapLink.end(), OChapLink[0]),ChapLink.end());
                         ChapLink.insert(ChapLink.end(), OChapLink.begin(), OChapLink.end());
-                        //if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());}
+                        //if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());} // esto  es para controlar el tamaño máximo de la lista de animes
                     }
 				}
 				if (!BD["arrays"]["chapter"]["images"].is_null())
 				{
 					vector<string> OChapImag=BD["arrays"]["chapter"]["images"];
                     if (OChapImag.size() > 0) {
+                        cout << "# Merge: chapter images <-- 30 List in web" << endl;
                         ChapImag.erase(find(ChapImag.begin(), ChapImag.end(), OChapImag[0]),ChapImag.end());
                         ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
-                        //if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());}
+                        //if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());} // esto  es para controlar el tamaño máximo de la lista de animes
                     }
 				}
 				DoubleKill(ChapLink);
@@ -440,27 +442,16 @@ int MkHOR(){
 	return 0;
 }
 int MkDIR(){
-	//make directory
+    //Esto genera y actualiza la base de datos de los animes
 	if (BD["arrays"]["Directory"]["TimeStamp"].is_null()) {BD["arrays"]["Directory"]["TimeStamp"]=0;}
 	if (BD["arrays"]["Directory"]["InTime"].is_null()) {BD["arrays"]["Directory"]["InTime"]=0;}
 	if (BD["arrays"]["Directory"]["page"].is_null()) {BD["arrays"]["Directory"]["page"]=1;}
 	if (BD["arrays"]["Directory"]["link"].is_null()) {BD["arrays"]["Directory"]["link"]={};}
 	try{
-
+        //La base de datos se re escanea cada mes pero también se va actualizando según salen animes
 		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_Month || BD["arrays"]["Directory"]["link"].size() == 0) {
 
-			//Flush Resents by week
-			vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
-			if (ChapLink.size() > 60) {
-				ChapLink.erase(ChapLink.begin()+60,ChapLink.end());
-				BD["arrays"]["chapter"]["link"]=ChapLink;
-			}
-			vector<string> ChapImg=BD["arrays"]["chapter"]["images"];
-			if (ChapImg.size() > 60) {
-				ChapImg.erase(ChapImg.begin()+60,ChapImg.end());
-				BD["arrays"]["chapter"]["images"]=ChapImg;
-			}
-
+            //Aquí se obtiene una lista de todos los animes para luego procesar uno por uno
 			cout << "# Directory Get ";
 			vector<string> DIR={};
 			vector<string> TDIR={};
@@ -477,9 +468,9 @@ int MkDIR(){
 				if (TDIR.size() > 0) {
 					DIR.insert(DIR.end(), TDIR.begin(), TDIR.end());
 				} else
-					break; //just in case
+					break; //Por si acaso
 
-				//cout << scrap << "  # " << to_string(BD["arrays"]["Directory"]["page"]) << endl;
+                //verificar si ya no hay mas animes que listar
 				if (content.find("Resultados Siguientes &raquo;") != string::npos) {
 					cout << "  #" << to_string(ofall);
 					//some code here soon
@@ -490,10 +481,12 @@ int MkDIR(){
 				BD["arrays"]["Directory"]["page"]=BD["arrays"]["Directory"]["page"].get<int>()+1;
 				ofall++;
 			}
-			if(quit) { ofall=0; return false;}
+			if(quit) { ofall=0; return false;}//si la app se cierra por el usuario dejar esto en espera para continuar luego
+            //
 			BD["arrays"]["Directory"]["pageT"]=BD["arrays"]["Directory"]["page"];
 			BD["arrays"]["Directory"]["page"]=1;
-			DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());
+			DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());//borrar cosas repetidas
+            //cerrar escaneo de directorio por un mes
 			if (ofall != 0 && DIR.size() != 0) {
 				BD["arrays"]["Directory"]["TimeStamp"]=TimeNow();
 			}
@@ -509,7 +502,7 @@ int MkDIR(){
 		return 0;
 	}
 	if(quit) return false;
-	//Build All Data Base
+	//Con la lista de arriba hecha pasamos a procesar todos los elementos de la lista
 	if (BD["arrays"]["Directory"]["InTime"].get<int>() == 0)
 	{
 		cout << "# Cache Directory " << endl;
@@ -524,6 +517,18 @@ int MkDIR(){
 			//write_DB(BD,rootdirectory+"DataBase.json");
 			return 0;
 		}
+        
+        //Esta Parte limpia a lista de animes recientes a 60 elementos (no queremos que esta se extienda hasta el infinito)
+        vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
+        if (ChapLink.size() > 60) {
+            ChapLink.erase(ChapLink.begin()+60,ChapLink.end());
+            BD["arrays"]["chapter"]["link"]=ChapLink;
+        }
+        vector<string> ChapImg=BD["arrays"]["chapter"]["images"];
+        if (ChapImg.size() > 60) {
+        	ChapImg.erase(ChapImg.begin()+60,ChapImg.end());
+        	BD["arrays"]["chapter"]["images"]=ChapImg;
+        }
 	}
 	return 0;
 }
