@@ -400,7 +400,7 @@ bool GetAppletMode(){
 	{
 		return true;
 	}
-    if (DInfo()["TID"] == "05B9DB505ABBE000")
+    //if (DInfo()["TID"] == "05B9DB505ABBE000")
 	{
 		__nx_applet_exit_mode = 1;
 	}

@@ -8,40 +8,44 @@ string urlc = "https://myrincon.duckdns.org";
 //MAIN INT
 int main(int argc, char **argv)
 {
+    //Algunos servicios hay que inicializarlos
 	socketInitializeDefault();
 	romfsInit();
 	nxlinkStdio();
 	printf("Nxlink server Conected\n");
 
-	//Mount user
+	//Montar Partición USER como RW
 	emmc::init();
 
-	//LOG Init
-	LOG::init();
-	user::initUser();
-	AppletMode=GetAppletMode();
-	ChainManager(true,true);
-	isConnected=Net::HasConnection();
+	LOG::init();//control de logs
+	user::initUser();//obtener usuarios de la consola
+	AppletMode=GetAppletMode();//verificar si estamos en el Álbum o a full memoria
+	ChainManager(true,true);//Esto deshabilita el apagado de la pantalla y aumenta ligeramente el reloj de la cpu
+	isConnected=Net::HasConnection();//verifica si hay conexión a internet
 
+    //Intentamos usar el fichero de temas en themas:/ como RO
 	mount_theme("themes",true);
 
-	//Mount Save Data
+    //Intentamos montar la salva de Usuario en save:/ como RW
 	user::MountUserSave();
 
-	struct stat st = { 0 };
-	if (stat("sdmc:/RipJKAnime", &st) != -1) {
-		fsdevDeleteDirectoryRecursively("sdmc:/RipJKAnime");
+	/* Leer las bases de datos.
+    AB = AnimeBase.json,
+        Guarda los datos de los animes solamente
+    BD = DataBase.json,
+       Guarda las listas construidas de animes que van saliendo
+        y otros ajustes generales como: ultimo anime, búsquedas, etc
+        con el fin de pre cargar esto al inicio y no tener q esperar
+    UD = UserData.json
+        Guarda información mas personal para cada usuario como historial,favoritos 
+        y otra configuración solo de ese usuario
+    */
+	if(!read_DB(AB,rootdirectory+"AnimeBase.json")){
+		read_DB(AB,"romfs:/AnimeBase.json");//usar solo si no existe ninguna base de datos en memoria
 	}
-
-	//Read a JSON file
-	if(!read_DB(AB,rootdirectory+"AnimeBase.json"))
-	{
-		read_DB(AB,"romfs:/AnimeBase.json");
-	}
-
 	read_DB(BD,rootdirectory+"DataBase.json");
 
-    //temp fix 
+    //Estos son algunos fix que se han hecho a lo largo de las versiones, los cambios y errores detectados 
     if (BD["arrays"]["chapter"]["link"] == "[null]"_json ){BD["arrays"]["chapter"]["link"]="null"_json;}
 	BD["com"] = "{}"_json;
 	if (isset(BD,"DataBase")) {
@@ -51,19 +55,22 @@ int main(int argc, char **argv)
 		UD = BD["USER"];
 		BD.erase("USER");
 	}
+
 	read_DB(UD,rootsave+"UserData.json");
 
-	GOD.intA();//init the SDL
-
-	if (stat((rootdirectory+"DATA").c_str(), &st) == -1) {
+	GOD.intA();//Iniciar el motor SDL para dibujar gráficos
+    
+    //Crear carpetas si no existen
+    if(!isFileExist(rootdirectory+"DATA")){
 		mkdir(rootdirectory.c_str(), 0777);
 		mkdir((rootdirectory+"DATA").c_str(), 0777);
-	}
+    }
 
-	GOD.loadSkin();//Esto carga la skin guardada y la musica
+	GOD.loadSkin();//Esto carga la skin guardada y la música
 
-	gTextTexture.mark=false;
-	Farest.mark=false;
+    //Estas son algunas variables que serán útiles luego
+	gTextTexture.mark=false;//deshabilitar táctil para este objeto
+	Farest.mark=false;//deshabilitar táctil para este objeto
 	USER.loadFromFileCustom(rootsave+"User.jpg",58, 58);
 
 	SDL_Color textColor = { 50, 50, 50 };
@@ -76,44 +83,50 @@ int main(int argc, char **argv)
 	int posxbase = 20;
 	int posybase = 10;
 
+    //Inicializar el controlador de interfaz táctil y de controles
 	Inputinit();
 
+    //parte principal protegida por un try para obtener fallos si ocurren
 	try{
-		//Load images from Romfs
+		//Cargar imágenes de uso general guardadas en la romfs 
 		LoadImages();
-
+        
+        //revisemos si estamos en sxos
 		if (isSXOS) {
 			GOD.GenState = statenow;
 			GOD.JKMainLoop();
 			Farest.render((0), (0));
 			GOD.Confirm("Esta App No funciona Correctamente En SXOS",true,3);
 		}
-		//Set main Thread get images and descriptions
+
+        //Este Thread se encarga de cargar casi todo en segundo plano imagenes, datos, Animes, temas, etc ver JKanime.cpp
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
-		//Handle forced exit
+		
+            
+        //Esto se usa para evitar el cierre forzado de la app, poder capturar dicho evento y cerrar con normalidad.
 		//if (!AppletMode)
-		appletLockExit();
+            appletLockExit();
 
 
-		//While application is running
+		//Bucle principal mientas la app corre, salirse de aquí significa cerrarla, (se saldrá si se fuerza el cierre)
 		while (GOD.JKMainLoop())
 		{
-			//get if console is dokked
+			//Revisar si la consola esta en el dock o en modo portátil
 			AppletOperationMode stus=appletGetOperationMode();
 			if (stus == AppletOperationMode_Handheld) {isHandheld=true;}
 			if (stus == AppletOperationMode_Console) {isHandheld=false;}
 
-			//Clear screen
+			//Limpiar pantalla
 			SDL_SetRenderDrawColor(GOD.gRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderClear(GOD.gRenderer);
 
-			//wallpaper
+			//Dibujar Fondo de pantalla asignado
 			Farest.render((0), (0));
 
-			//Draw footer
+			//dibujar caja de abajo donde van los botones
 			VOX.render_VOX({0,671, 1280, 50}, 210, 210, 210, 115);
 
-			//render states
+			//Renderizar las fases del interfaz de Usuario
 			switch (statenow)
 			{
 			case chapter_s: {
