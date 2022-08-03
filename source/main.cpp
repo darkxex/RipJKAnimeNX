@@ -129,35 +129,33 @@ int main(int argc, char **argv)
 			//Renderizar las fases del interfaz de Usuario
 			switch (statenow)
 			{
+            //sección de apertura de anime
 			case chapter_s: {
-				//Draw a background to a nice view
+				//Dibujar recuadros donde posar elementos
 				USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
 				VOX.render_VOX({0,0, SCREEN_WIDTH, 670},170, 170, 170, 100);
 				VOX.render_VOX({0,0, 1280, 60},200, 200, 200, 130);
+
+                //Datos iniciales de anime
 				GOD.HR=200; GOD.HG=200; GOD.HB=200;
 				string temptext = BD["com"]["ActualLink"];
 				NameOfLink(temptext);
 
-				/*
-				   //warning , only display in sxos ToDo
-				   gTextTexture.loadFromRenderedText(GOD.Comic_16, "(*En SXOS desactiva Stealth Mode*)", textColor);
-				   gTextTexture.render(posxbase, 0 );
-				 */
 
-				//draw Title
+				//Dibujar Titulo
 				gTextTexture.loadFromRenderedText(GOD.Arista_40, temptext.substr(0,62)+ ":", textColor);
 				gTextTexture.render(posxbase, posybase);
 
-				{//draw preview image
+				{//Dibujar imagen de anime
 					VOX.render_VOX({ SCREEN_WIDTH - 412,63, 404, 590}, 0, 0, 0, 200);
 					GOD.Image(BD["com"]["ActualLink"],SCREEN_WIDTH - 410, 65,400, 550,BT_B);
 				}
 
-				{//draw description
+				{//Dibujar descripcion
 					int XG=10,YG=63,WG=850,HG=50;
 					static string rese_prot = "..";
 					string rese_p = BD["com"]["sinopsis"];
-					if (rese_prot != rese_p) {//load texture on text change
+					if (rese_prot != rese_p) {//recargar textura solo si el texto cambia (no lo hace, va mas rápido asi)
 						T_R.loadFromRenderedTextWrap(GOD.Comic_16, rese_p, textColor, WG-20);
 						rese_prot = rese_p;
 						//cout << "desc:" << T_R.getHeight()+60 << endl;
@@ -174,6 +172,7 @@ int main(int argc, char **argv)
 					gTextTexture.loadFromRenderedTextWrap(GOD.Comic_16, BD["com"]["generos"], textColor,WG-20);
 					gTextTexture.render(XG+10, YG+HG-gTextTexture.getHeight()-5);
 				}
+
 				bool anend=false;
 				int sizefix = 0;
 				if (maxcapit >= 0) {
@@ -197,8 +196,8 @@ int main(int argc, char **argv)
 					}
 				}
 
-				{//use this to move the element
-					int XS=250, YS =0;
+				{//Control deslizante de capítulos
+					int XS=250, YS =0;//use esto para mover el lemento entero
 					if (maxcapit >= 0) {
 						int mwide = 35;//52
 						int XD = 210+XS, YD = 582+YS;
@@ -285,7 +284,7 @@ int main(int argc, char **argv)
 					}
 				}
 
-				//Draw Footer Buttons
+				//Dibujar botones
 				int dist = 1095,posdist = 160;
 				if(serverpront) {
 					B_A.render_T(dist, 680,"Ver Online"); dist -= posdist;
@@ -295,7 +294,7 @@ int main(int argc, char **argv)
 					B_B.render_T(dist, 680,"Atrás"); dist -= posdist;
 					B_X.render_T(dist, 680,"Descargar"); dist -= posdist;
 				}
-
+                //comprobar si es favorito
 				if(gFAV) {
 					FAV.render(1225, 70);
 				} else {
@@ -303,6 +302,7 @@ int main(int argc, char **argv)
 					B_Y.render_T(dist, 680,"Favorito"); dist -= posdist;
 				}
 
+                //Dibujar Precuela y secuela si existe
 				if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
