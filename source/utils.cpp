@@ -573,6 +573,22 @@ bool isset(json& data,string key){
 	return true;
 }
 
+json StreamDev(string data){//Esto es para obtener valores de un json por red y modificar tamaños de interfaz
+    json base;
+    //cout << "GET -" << data << "-" << std::endl;
+    string content=Net::GET(data);//cout <<content << std::endl;
+    
+    base = "{\"X\":0,\"Y\":0,\"H\":0,\"W\":0,\"A\":0,\"B\":0,\"Z\":0}"_json;
+    if(json::accept(content))
+    {
+        //Parse and use the JSON data
+        base = json::parse(content);
+        std::cout << "Json Readed Dev... "<< data << std::endl;
+	}
+    cout << std::setw(4) << base << std::endl;
+    return base;
+}
+
 namespace LOG {
 streambuf* stream_buffer_cout;
 streambuf* stream_buffer_cin;

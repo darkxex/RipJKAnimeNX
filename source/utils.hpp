@@ -29,6 +29,7 @@ bool isset(json& data,string key);
 void NameOfLink(string& word);
 string KeyOfLink(string word);
 bool DoubleKill(vector<string>& data);
+json StreamDev(string data = "");
 
 namespace LOG {
 void init();
