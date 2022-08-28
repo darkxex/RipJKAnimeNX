@@ -273,8 +273,10 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 	//Print Menu once
 	VOX.render_VOX({0,0,SCREEN_WIDTH,SCREEN_HEIGHT}, 0, 0, 0, 150);
 
-	int NX=255,NY=200,NW=770,NH=330,BR = 2;
-	T_T.loadFromRenderedTextWrap(Arista_30, text, { 50, 50, 50 },NW-20);
+	int NW=500,NH=210,BR = 2;//Ancho y largo
+    int NX=(SCREEN_WIDTH-NW) /2, NY=(SCREEN_HEIGHT-NH)/2;//Centrado al medio
+
+	T_T.loadFromRenderedTextWrap(Arista_40, text, { 50, 50, 50 },NW-20);
 
 	//Draw black back
 	VOX.render_VOX({NX-BR,NY-BR,NW+(BR*2),NH+(BR*2)}, 50, 50, 50, 200);
@@ -293,7 +295,7 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 	}
 
 	if (image.length()>0) {
-		IMG.loadFromFileCustom(image, 190,190);
+		IMG.loadFromFileCustom(image, 100,100);
 		IMG.render(NX+10, NY+10);
 	}
 	//Draw withe front
@@ -303,8 +305,8 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 	VOX.render_VOX({NX,NY+(NH/4*3),NW,BR}, 50, 50, 50, 200);
 	if(!okonly) {
 		VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),BR,(NH/4)+2}, 50, 50, 50, 200);
-		B_A.render_T(NX+(NW/4)-45, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"SI");
-		B_B.render_T(NX+(NW/4*3)-45, NY+(NH/4*3)+((NH/4)/2)-(B_B.getHeight()/2),"NO");
+		B_B.render_T(NX+(NW/4)-45, NY+(NH/4*3)+((NH/4)/2)-(B_B.getHeight()/2),"NO");
+		B_A.render_T(NX+(NW/4*3)-45, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"SI");
 	} else {
 		B_A.render_T(NX+(NW/2)-55, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"Aceptar");
 	}
@@ -742,8 +744,8 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				offset3++;
 			}
 			if (GenState == menu_s) {
-				if (x < 6) continue;
-				if (x > 9 && x < 16) continue;
+				//if (x < 6) continue;
+				//if (x > 9 && x < 16) continue;
 			}
 			if ((AbsoluteSize < Frames)&&(x > 30)) break;
 			if (x == selectindex) {
