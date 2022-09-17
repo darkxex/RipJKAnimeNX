@@ -321,11 +321,12 @@ int main(int argc, char **argv)
 				break;
 			}
 			case menu_s:
-			case programation_s:      {
+			case programation_s: {//este sera el manu principal donde salen los últimos capítulos emitidos 
 				if (!reloading&&BD["arrays"]["chapter"]["link"].size()>=1) {
 
-					if(ongrid) {
+					if(ongrid) {// ongrid esta deprecad, cambia la vista de cuadricula a lista antigua.
 						USER.render(SCREEN_WIDTH - USER.getWidth()-1,1);
+                        //definir comandos táctiles solo para esta instancia que abran el menú con un deslizado
 						if (GOD.fingermotion_LEFT & (GOD.TouchX > 1100)) {
 							GOD.fingermotion_LEFT = false;
 							statenow=menu_s;
@@ -334,11 +335,11 @@ int main(int argc, char **argv)
 							GOD.fingermotion_RIGHT = false;
 							statenow=programation_s;
 						}
-						GOD.HR=200; GOD.HG=200; GOD.HB=200;
-						if (preview)
+						GOD.HR=200; GOD.HG=200; GOD.HB=200;//color de barra superior
+						if (preview)//preview define si se ha terminado de cargar todo suele usarse solo en el primer arranque
 						{
 							GOD.ListCover(selectchapter,BD["arrays"]["chapter"],ongrid,Frames);
-							if (isHandheld && statenow!=menu_s) {
+							if (isHandheld && statenow!=menu_s) {//iconos superiores visibles solo cuando esta en modo portatil
 								FAVB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - 20, 1);
 								HISB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - 50, 1);
 								BUSB.render(SCREEN_WIDTH - USER.getWidth() - FAVB.getWidth() - BUS.getWidth() - HISB.getWidth() - 70, 1);
@@ -346,6 +347,10 @@ int main(int argc, char **argv)
 						} else {
 							VOX.render_VOX({ 0,14, 50, 46}, 255, 255, 255, 200);
 						}
+                        
+                    
+                        //Animacion de rotacion un lado a otro
+                        //Al rotar indica trabajo en segundo plano
 						double angle = 0.0;
 						static int Ticker=0;
 						if (isChained) {
@@ -357,13 +362,13 @@ int main(int argc, char **argv)
 						}else if (Ticker < 0) {
 							Ticker=0;
 						}
-
 						if (part > 0) {
 							gTextTexture.loadFromRenderedText(GOD.digi_9, to_string(ofall - part), {50,50,50});
 							gTextTexture.render(27 - (gTextTexture.getWidth()/2), 30);
 						}
 						REC.render(5, 15,NULL,angle);
-					} else {
+                        
+					} else {//Lista Clasica
 						GOD.ListClassic(selectchapter,BD["arrays"]["chapter"]);
 						if (preview)
 						{
@@ -373,7 +378,7 @@ int main(int argc, char **argv)
 						B_DOWN.render_T(580, 630,"");
 					}
 
-					//Draw Header
+					//Dibujar Cabecera y titulo del anime
 					gTextTexture.loadFromRenderedText(GOD.digi_11, ("(Ver "+DInfo()["App"].get<string>()+") #KASTXUPALO").c_str(), {100,0,0});
 					gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 3, 672);
 
@@ -393,13 +398,16 @@ int main(int argc, char **argv)
 						}
 					}
 				} else {
+                    //pantalla de carga, suele  aparecer solo en la primera apertura de la app
 					string textpro="Cargando programación";
 					if(imgNumbuffer>0) {textpro+=" "+to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
 					GOD.PleaseWait(textpro,false);
 				}
+                
+                //Menu lateral (Falta mejorarlo)
 				if (statenow==menu_s) {
 
-					{
+					{//Esto dibuja un menú lateral de opciones para moverse entre las diferentes instancias
 						StatesList= {"Búsqueda","Historial","Favoritos","En Emisión","Top Anime","Nuevos","AnimeFLV"};
 						if(isDownloading) {StatesList.push_back("Descargas");}
 
@@ -410,7 +418,7 @@ int main(int argc, char **argv)
 						VOX.render_VOX({XD,61, 1, 607}, 255, 255, 255, 235);        //line left
 						gTextTexture.loadFromRenderedText(GOD.Arista_20, "Menú Primario",textColor);
 						gTextTexture.render(XD+20, 65);
-						if (imgNumbuffer > 0) {
+						if (imgNumbuffer > 0) {//esto muestra el progreso en segundo plano
 							gTextTexture.loadFromRenderedText(GOD.Comic_16, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
 						}
@@ -431,7 +439,7 @@ int main(int argc, char **argv)
 								selectelement = sel;
 							}
 						}
-
+                        //dibujar elementos del menú
 						for (int x = 0; x < indexLsize; x++) {
 							if(x == 0) {BUSB.render(XD+10, YD + (x * mwide)+5);}
 							if(x == 1) {HISB.render(XD+10, YD + (x * mwide)+5);}
@@ -444,20 +452,23 @@ int main(int argc, char **argv)
 							if(x == 8) {DOWB.render(XD+10, YD + (x * mwide)+5);}
 
 							if (x == selectelement) {
-								T_T.loadFromRenderedText(GOD.Arista_50, StatesList[x], textWhite);
-								VOX.render_VOX({XD+80-10,YD + (x * mwide)+5, W-100, T_T.getHeight()-5}, 50, 50, 50, 100);
-								T_T.render(XD+80, YD + (x * mwide));
+								T_T.loadFromRenderedText(GOD.digi_40, StatesList[x], textColor);
+                                int cen = YD + (x * mwide) + ((mwide - T_T.getHeight() )/2);
+								VOX.render_VOX({XD+80-3,cen + 5, W-100, T_T.getHeight()-5}, 50, 50, 50, 100);
+								T_T.render(XD+85, cen);
 							} else {
-								gTextTexture.loadFromRenderedText(GOD.Arista_50, StatesList[x],textColor);
-								gTextTexture.render(XD+80, YD + (x * mwide));
+								gTextTexture.loadFromRenderedText(GOD.digi_40, StatesList[x],textWhite);
+                                int cen = YD + (x * mwide) + ((mwide - gTextTexture.getHeight() )/2);
+								gTextTexture.render(XD+85, cen);
 							}
 
-							if (x < indexLsize-1) {
-								VOX.render_VOX({XD+80,YD + (x * mwide)+mwide+2, W-130, 1}, 255, 255, 255, 235);
+							if (x < indexLsize-1) {//separador
+								VOX.render_VOX({XD+75,YD + (x * mwide)+mwide+2, W-105, 1}, 255, 255, 255, 235);
 							}
 						}
 					}
-                    //Draw Banner
+                    
+                    //Dibuja un banner con imagenes de animes recomendados
 					int XF=10, YF=65, WF=760, HF=427;
                     VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
                     if (BD["arrays"]["Banner"]["link"].size() > 0) {
@@ -465,7 +476,7 @@ int main(int argc, char **argv)
 						bannersize = BD["arrays"]["Banner"]["link"].size()-1;
                         int filesize = BD["arrays"]["Banner"]["files"].size()-1;
 						
-						//clock cicle 5s
+						//Reloj 5s para pasar de una imagen a otra
 						bool makebomb = false;
 						if (inTimeN(5001,1)) {
 							if (Btimer) {
@@ -484,9 +495,9 @@ int main(int argc, char **argv)
                         }
 						string temptext = BD["arrays"]["Banner"]["name"][bannersel];
 
-						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);
+						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);//Renderizar imagen principal
 
-                        //this save the prev image and reset the alpha
+                        //salvar imagen y reiniciar la transparencia
                         static int alphaB = 255;
                         static string oldimage = "";
 						if (makebomb) {
@@ -497,7 +508,7 @@ int main(int argc, char **argv)
                         seudopath = path;
                         replace(seudopath,rootdirectory+"DATA/","");
 
-                        //this is a disolve effect
+                        //Efecto de disolver
                         if(oldimage != ""){
                             if (alphaB > 0){
                                 if (inTimeN(31,0)) {
@@ -524,7 +535,8 @@ int main(int argc, char **argv)
 						}
                         
                         */
-
+                        
+                        //Titulo del anime en el banner
 						VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
 						gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,60)+ ":", textColor);
 						gTextTexture.render(XF, YF-5);
@@ -532,7 +544,7 @@ int main(int argc, char **argv)
 						VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
 						B_RIGHT.render_T(XF+5, YF+HF-40,"Ver Ahora");
 
-
+                        //elemento temporal para el cambio de temas
 						if (isset(UD["Themes"],"name")) {
 							//Thema temporal
 							static int WT = 190;
@@ -541,22 +553,20 @@ int main(int argc, char **argv)
 						}
 					}
 
-					//Draw footer buttons
+					//dibujar botones del fondo del menu
 					int dist = 1100,posdist = 170;
 					B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
 					B_B.render_T(dist, 680,"Atrás"); dist -= posdist;
 					if (isHandheld) {CLEAR.render_T(dist, 680,"Cache"); dist -= posdist;}
 					break;
 				}
-				//Draw footer buttons
+				//dibujar botones del fondo de la pantalla principal
 				int dist = 1100,posdist = 170;
 				B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
 				B_R.render_T(dist, 680,"Buscar"); dist -= posdist;
 				//B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
 				B_Y.render_T(dist, 680,"Menú"); dist -= posdist;
 				if(isDownloading) {B_X.render_T(dist, 680,"Descargas"); dist -= posdist-10;}
-
-
 				break;
 			}
 			case search_s:                    {

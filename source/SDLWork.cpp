@@ -117,10 +117,12 @@ void SDLB::intA(){
 	Arista_20 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 20);
 	Arista_50 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 50);
 	Arista_100 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 100);
-	digi_16 = TTF_OpenFont("romfs:/fonts/digifont.otf", 16);
 	digi_9 = TTF_OpenFont("romfs:/fonts/digifont.otf", 9);
 	digi_11 = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
-
+	digi_16 = TTF_OpenFont("romfs:/fonts/digifont.otf", 16);
+    digi_20 = TTF_OpenFont("romfs:/fonts/digifont.otf", 20);
+    digi_40 = TTF_OpenFont("romfs:/fonts/digifont.otf", 40);
+    digi_50 = TTF_OpenFont("romfs:/fonts/digifont.otf", 50);
 }
 bool SDLB::JKMainLoop(){
 	try{
