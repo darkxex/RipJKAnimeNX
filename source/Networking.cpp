@@ -184,7 +184,7 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 			data["POST"] = POSTFIEL;
 		}
 		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
-		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIES.txt").c_str());
+		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIESW.txt").c_str());
 		curl_easy_setopt(curl, CURLOPT_REFERER, url.c_str());
 		if (Verify) {
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);

@@ -72,6 +72,7 @@ extern string oldroot;
 extern string rootsave;
 extern string roottheme;
 extern string CDNURL;
+extern bool ClFlock;
 
 //Screen dimension constants
 extern const int SCREEN_WIDTH, SCREEN_HEIGHT;

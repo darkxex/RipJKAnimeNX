@@ -643,7 +643,7 @@ std::string KeyboardCall (std::string hint, std::string text){
 	return std::string(buf);
 }
 
-Result WebBrowserCall(std::string url,bool nag){
+Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/libnx/web_8h.html
 	cout << "WEB :"+url <<std::endl;
 	Result rc = 0;
 	if (nag) {
@@ -665,6 +665,10 @@ Result WebBrowserCall(std::string url,bool nag){
 		webConfigSetUid(&config,user::uid);
 
 		printf("SetMainConfigs\n");
+        //webConfigSetUserAgentAdditionalString(&config, "(Windows NT 10.0; Win64; x64; rv:105.0) Gecko/20100101 Firefox/105.0");
+        //webConfigSetEcClientCert(&config, true);
+        //webConfigSetPageCache (&config, true);
+        //webConfigSetPlayReport(&config, false);
 		webConfigSetJsExtension (&config, true);
 		webConfigSetScreenShot (&config, true);
 		webConfigSetBootDisplayKind (&config, WebBootDisplayKind_Black);

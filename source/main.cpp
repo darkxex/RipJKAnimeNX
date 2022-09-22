@@ -920,6 +920,11 @@ int main(int argc, char **argv)
 			if (inTimeN(15000)) {
 				isConnected=Net::HasConnection();
 			}
+            if (ClFlock){
+                //CloudFlare protege este sitio asi q lo abrimos en en navegador
+                WebBrowserCall("https://jkanime.net/",false);
+                ClFlock = false;
+            }
 			if (!isConnected) {
 				gTextTexture.loadFromRenderedText(GOD.digi_16, "Sin Internet", {255,0,0});
 				VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,671-gTextTexture.getHeight(), gTextTexture.getWidth()+4, gTextTexture.getHeight()}, 0, 0, 0, 180);

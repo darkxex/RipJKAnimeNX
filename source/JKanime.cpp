@@ -106,14 +106,22 @@ int AnimeLoader(void* data){
 		//std::cout << std::setw(4) << MainPage << std::endl;
 		//Check headers ToDo
 		string content = MainPage["BODY"];
-		if (MainPage["CODE"] == 0) {
-			cout << "- Error can't connect with Web" << endl;
-			throw "Error Connect";
-		}
-		if (MainPage["CODE"] == 403) {
-			cout << "- Error cloudflare active in Web" << endl;
-			throw "Error cloudflare active";
-		}
+        int numCode = MainPage["CODE"];
+        switch (numCode) {
+            case 0:
+                cout << "- Error can't connect with Web" << endl;
+                throw "Error Connect";
+                break;
+            case 403:
+            case 503:
+                cout << "- Error cloudflare active in Web" << endl;
+                //Esto dará una visual al usuario que no se puede entrar por cloudflare
+                ClFlock = true;
+                //Si se me permite luego y si el navegador de la switch lo admite
+                //quisiera extraer los cookies para poder usar la web icluso si cloudflare esta activo
+                throw "Error cloudflare active";
+                break;
+        }
 
 		steep++;//Get Programation list, Links and Images
 		int temp0=0,temp1=0;
