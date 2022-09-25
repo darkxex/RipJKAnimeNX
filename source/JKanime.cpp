@@ -100,8 +100,9 @@ int AnimeLoader(void* data){
 			//Download All not existing images
 			CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
 		}
-
+        
 		steep++;//Get main page
+        //GetCookies();//Get Cookies
 		json MainPage=Net::REQUEST("https://jkanime.net/");
 		//std::cout << std::setw(4) << MainPage << std::endl;
 		//Check headers ToDo

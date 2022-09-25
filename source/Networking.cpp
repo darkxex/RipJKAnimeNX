@@ -135,7 +135,8 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,do
 
 
 namespace Net {
-string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+//string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
+string UserAgent = "Mozilla/5.0 (Nintendo Switch; WebApplet) AppleWebKit/609.4 (KHTML, like Gecko) NF/6.0.2.20.5 NintendoBrowser/5.1.0.22023";
 int DebugNet = 1;        //0 no debug ,  1 some debug, 2 All debug
 
 //Simplification
@@ -184,7 +185,7 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 			data["POST"] = POSTFIEL;
 		}
 		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
-		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIESW.txt").c_str());
+		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIES.txt").c_str());
 		curl_easy_setopt(curl, CURLOPT_REFERER, url.c_str());
 		if (Verify) {
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
