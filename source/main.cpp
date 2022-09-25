@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 				}
 
 				{//Control deslizante de capítulos
-					int XS=250, YS =0;//use esto para mover el lemento entero
+					int XS=240, YS =0;//use esto para mover el lemento entero
 					if (maxcapit >= 0) {
 						int mwide = 35;//52
 						int XD = 210+XS, YD = 582+YS;
@@ -225,19 +225,19 @@ int main(int argc, char **argv)
 						B_DOWN.render_T(280+XS, 630+YS,"");
 					}
 					if (maxcapit >= 0&&BD["com"]["nextdate"] != "Pelicula") {//draw caps numbers Slider
-						VOX.render_VOX({posxbase + 70+XS, posybase + 571+YS, 420, 33 }, 50, 50, 50, 200);
+						VOX.render_VOX({posxbase + 50+XS, posybase + 571+YS, 460, 33 }, 50, 50, 50, 200);
 						SDL_Color com = {};
 						if (latest-2 >= mincapit) {
 							com=textGray;
 							if (latest-2 == latestcolor) com=textGrayGreen;
 							gTextTexture.loadFromRenderedText(GOD.AF_35,  to_string(latest-2), com);
-							gTextTexture.render(posxbase + 150 +XS-gTextTexture.getWidth()/2, posybase + 565+YS);
+							gTextTexture.render(posxbase + 120 +XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						if (latest-1 >= mincapit) {
 							com=textGray;
 							if (latest-1 == latestcolor) com=textGrayGreen;
 							gTextTexture.loadFromRenderedText(GOD.AF_35,  to_string(latest-1), com);
-							gTextTexture.render(posxbase + 215+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
+							gTextTexture.render(posxbase + 200+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						{
 							com=textBlue;
@@ -255,13 +255,13 @@ int main(int argc, char **argv)
 							com=textGray;
 							if (latest+1 == latestcolor) com=textGrayGreen;
 							gTextTexture.loadFromRenderedText(GOD.AF_35,  to_string(latest+1), com);
-							gTextTexture.render(posxbase + 345+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
+							gTextTexture.render(posxbase + 360+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 						if (latest+2 <= maxcapit) {
 							com=textGray;
 							if (latest+2 == latestcolor) com=textGrayGreen;
 							gTextTexture.loadFromRenderedText(GOD.AF_35,  to_string(latest+2), com);
-							gTextTexture.render(posxbase + 410+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
+							gTextTexture.render(posxbase + 440+XS-gTextTexture.getWidth()/2, posybase + 565+YS);
 						}
 
 						if (maxcapit >= 10 && !serverpront) {
@@ -269,8 +269,8 @@ int main(int argc, char **argv)
 							B_DOWN.render_T(280+XS, 630+YS,"-10",serverpront);
 						}
 
-						B_LEFT.render_T(75+XS, 580+YS,to_string(mincapit),latest == mincapit);
-						B_RIGHT.render_T(485+XS, 580+YS,to_string(maxcapit),latest == maxcapit);
+						B_LEFT.render_T(45+XS, 580+YS,to_string(mincapit),latest == mincapit);
+						B_RIGHT.render_T(515+XS, 580+YS,to_string(maxcapit),latest == maxcapit);
 					} else {
 						VOX.render_VOX({posxbase + 185+XS, posybase + 570+YS, 200, 35 }, 50, 50, 50, 200);
 						if (BD["com"]["nextdate"] == "Pelicula" || mincapit == maxcapit) {
@@ -923,6 +923,7 @@ int main(int argc, char **argv)
             if (ClFlock){
                 //CloudFlare protege este sitio asi q lo abrimos en en navegador
                 WebBrowserCall("https://jkanime.net/",false);
+                GetCookies();
                 ClFlock = false;
             }
 			if (!isConnected) {
