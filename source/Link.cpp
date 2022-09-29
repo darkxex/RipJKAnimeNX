@@ -193,7 +193,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 		videourl = scrapElement(content,"jkokru.php?","\"");
         if (videourl.length() != 0) {
             replace(videourl, "jkokru.php?u=", "https://ok.ru/videoembed/");
-            videourl = JkURL + videourl;
+            //videourl = JkURL + videourl;
         }
 	}
 	if (server == "Desu") {

@@ -61,4 +61,5 @@
 127.0.0.1 *addthis.com
 127.0.0.1 *culturedischargenarcotic*
 127.0.0.1 *google-analytics*
+127.0.0.1 disasterthoughtless.com
 
