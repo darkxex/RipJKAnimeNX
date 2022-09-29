@@ -237,7 +237,6 @@ bool initUser(){
 		 */
         
 		cout <<"User Init OK" <<std::endl;
-        GetCookies();
 		return GetUserID();
 	} else {
 		cout << "Failied to init User" <<std::endl;
