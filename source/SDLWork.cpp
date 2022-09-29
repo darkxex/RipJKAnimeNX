@@ -105,9 +105,10 @@ void SDLB::intA(){
 		}
 	}
 
-	AF_19 = TTF_OpenFont("romfs:/fonts/AF.ttf", 19);
+	NSM = TTF_OpenFont("romfs:/fonts/NintendoStandard.ttf", 22);
+	//AF_19 = TTF_OpenFont("romfs:/fonts/AF.ttf", 19);
 	AF_35 = TTF_OpenFont("romfs:/fonts/AF.ttf", 35);
-	Arista_27 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 27);
+	//Arista_27 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 27);
 
 	//Comic_19 = TTF_OpenFont("romfs:/fonts/Comic.ttf", 19);
 	Comic_16 = TTF_OpenFont("romfs:/fonts/Comic.ttf", 16);
@@ -115,14 +116,14 @@ void SDLB::intA(){
 	Arista_40 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 40);
 	Arista_30 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 30);
 	Arista_20 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 20);
-	Arista_50 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 50);
+	//Arista_50 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 50);
 	Arista_100 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 100);
 	digi_9 = TTF_OpenFont("romfs:/fonts/digifont.otf", 9);
 	digi_11 = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
 	digi_16 = TTF_OpenFont("romfs:/fonts/digifont.otf", 16);
-    digi_20 = TTF_OpenFont("romfs:/fonts/digifont.otf", 20);
+    //digi_20 = TTF_OpenFont("romfs:/fonts/digifont.otf", 20);
     digi_40 = TTF_OpenFont("romfs:/fonts/digifont.otf", 40);
-    digi_50 = TTF_OpenFont("romfs:/fonts/digifont.otf", 50);
+    //digi_50 = TTF_OpenFont("romfs:/fonts/digifont.otf", 50);
 }
 bool SDLB::JKMainLoop(){
 	try{
@@ -1231,7 +1232,7 @@ int LTexture::render_T(int x, int y, std::string text, bool presed){
 	//Render to screen
 	SDL_RenderCopy(GOD.gRenderer, mTexture, NULL, &renderQuad);
 	if (text.length()) {
-		SDL_Surface* textSurface = TTF_RenderUTF8_Blended(GOD.AF_19, text.c_str(), { 50, 50, 50 });
+		SDL_Surface* textSurface = TTF_RenderUTF8_Blended(GOD.NSM, text.c_str(), { 50, 50, 50 });
 		if (textSurface == NULL)
 		{
 			printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());

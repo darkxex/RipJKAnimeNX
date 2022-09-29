@@ -482,7 +482,7 @@ json DInfo(string ver){
 		if(config["repo"].is_null()) {config["repo"]="RipJKAnimeNX";}
 		info["config"]=config;
         CDNURL = config["CDNURL"].get<string>();
-        std::cout << "# CDMURL " << CDNURL <<std::endl;
+        //std::cout << "# CDMURL " << CDNURL <<std::endl;
 		info["UNIX"]=time(0);
 		//DeviceID
 		u64 id = 0;

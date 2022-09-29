@@ -538,7 +538,7 @@ int main(int argc, char **argv)
                         
                         //Titulo del anime en el banner
 						VOX.render_VOX({XF, YF, WF, 30}, 255, 255, 255, 135);
-						gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,60)+ ":", textColor);
+						gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,55)+ ":", textColor);
 						gTextTexture.render(XF, YF-5);
 
 						VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
@@ -593,7 +593,7 @@ int main(int argc, char **argv)
 							}
 						}
 					}else {
-						NOP.render_T(230, 355,BD["searchtext"]);
+						NOP.render_T(230, 402,BD["searchtext"]);
 					}
 					//Draw Header
 					gTextTexture.loadFromRenderedText(GOD.Comic_16, "Resultados de Búsqueda:", {100,0,0});
@@ -696,7 +696,7 @@ int main(int argc, char **argv)
 							B_DOWN.render_T(580, 630,"");
 						}
 					}
-				} else NOP.render_T(230, 355,"");
+				} else NOP.render_T(230, 402,"");
 
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.Comic_16, "history", {100,0,0});
@@ -734,7 +734,7 @@ int main(int argc, char **argv)
 							B_DOWN.render_T(580, 630,"");
 						}
 					}
-				} else NOP.render_T(230, 355,"");
+				} else NOP.render_T(230, 402,"");
 
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.Comic_16, "Top Anime", {100,0,0});
@@ -770,7 +770,7 @@ int main(int argc, char **argv)
 							B_DOWN.render_T(580, 630,"");
 						}
 					}
-				} else NOP.render_T(230, 355,"");
+				} else NOP.render_T(230, 402,"");
 
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.Comic_16, "Ultimos Animes Agregados", {100,0,0});
@@ -807,7 +807,7 @@ int main(int argc, char **argv)
 							B_DOWN.render_T(580, 630,"");
 						}
 					}
-				} else NOP.render_T(230, 355,"");
+				} else NOP.render_T(230, 402,"");
 
 				//Draw Header
 				gTextTexture.loadFromRenderedText(GOD.Comic_16, "En Emisión", {100,0,0});

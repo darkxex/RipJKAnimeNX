@@ -99,6 +99,7 @@ std::map<std::string,LTexture> MapT {};
 SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 //Globally used font
+TTF_Font *NSM = NULL;
 TTF_Font *AF_19 = NULL;
 TTF_Font* AF_35 = NULL;
 TTF_Font *Comic_16 = NULL;
