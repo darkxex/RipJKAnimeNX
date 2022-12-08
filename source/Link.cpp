@@ -124,7 +124,7 @@ string Nozomi_player(string Link){
 	string data = "data=" + FirstKey;
 	string SecondKey = Net::REDIRECT("https://jkanime.net/gsplay/redirect_post.php",data);
 	//Use CustomPlayer
-	replace(SecondKey,"https://jkanime.net/gsplay/player.html#","https://darkxex.github.io/RipJKAnimeNX/player.html#");
+	//replace(SecondKey,"https://jkanime.net/gsplay/player.html#","https://darkxex.github.io/RipJKAnimeNX/player.html#");
 	return SecondKey;
 }
 string Fembed_Link(string Link) {
@@ -155,7 +155,7 @@ string Fembed_Link(string Link) {
 
 //servers
 std::vector<std::string> arrayserversbak = {
-	"Nozomi","Fembed 2.0","MixDrop","Desu","Xtreme S","Okru"
+	"Nozomi","Desu","Fembed 2.0","MixDrop","Xtreme S","Okru"
 };
 
 std::vector<std::string> arrayservers = arrayserversbak;
