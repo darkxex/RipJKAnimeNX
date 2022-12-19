@@ -563,7 +563,7 @@ json DInfo(string ver){
 				a="MSM";//"Mariko Simulation Model";
 				break;
 			case SetSysProductModel_Aula:
-				a="MOM";//"Mariko Pro Model(?) ";
+				a="MOM";//"Mariko oled Model(?) ";
 				break;
 			}
 			info["Model"]=a;
