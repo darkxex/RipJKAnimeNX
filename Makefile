@@ -34,6 +34,7 @@ VERSION_MAJOR := 2
 VERSION_MINOR := 6
 VERSION_MICRO := 5
 
+VERSION_EXDAT := 1
 APP_TITLE	:=	RipJKAnimeNX
 APP_AUTHOR	:=	AngelXex & Kronos2308
 APP_VERSION	:=	${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_MICRO}
@@ -175,6 +176,10 @@ all: $(BUILD)
 
 $(BUILD):
 	@echo '{"V":"$(APP_VERSION)"}'>romfs/V
+	@echo '$(VERSION_EXDAT)'>romfs/ED
+	@echo '$(VERSION_EXDAT)'>imgs/theme/ED
+	@echo 'ExtData V$(VERSION_EXDAT)'
+	@echo '$(shell /opt/devkitPro/tools/bin/build_romfs.exe imgs/theme imgs/themes00.romfs)' >/dev/null
 	@[ -d $@ ] || mkdir -p $@
 	@[ -d $(CURDIR)/$(OUTDIR) ] || mkdir -p $(CURDIR)/$(OUTDIR)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
