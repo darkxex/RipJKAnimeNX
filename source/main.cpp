@@ -565,8 +565,9 @@ int main(int argc, char **argv)
 				B_A.render_T(dist, 680,"Aceptar"); dist -= posdist;
 				B_R.render_T(dist, 680,"Buscar"); dist -= posdist;
 				//B_L.render_T(dist, 680,"AnimeFLV");dist -= posdist;
-				B_Y.render_T(dist, 680,"Menú"); dist -= posdist;
+				B_P.render_T(dist, 680,"Menú"); dist -= posdist;
 				if(isDownloading) {B_X.render_T(dist, 680,"Descargas"); dist -= posdist-10;}
+                if(isHandheld) GOD.MapT["EXIT"].render_T(80, 680,"",quit);
 				break;
 			}
 			case search_s:                    {
@@ -937,11 +938,11 @@ int main(int argc, char **argv)
 			}
 
 			GOD.MapT["MUSIC"].render_T(10, 680,"",(Mix_PausedMusic() == 1 || Mix_PlayingMusic() == 0));
-
+/*
 			if((programation_s == statenow && isHandheld)|quit) {
 				GOD.MapT["EXIT"].render_T(80, 680,"",quit);
 			}
-
+*/
 			//Display the list
 			if (!quit&&!reloading&&!AppletMode&&Frames>2) {preview = true;}
 

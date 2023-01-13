@@ -249,7 +249,7 @@ void InputHandle(){
 						}
 						GOD.WorKey="0"; GOD.MasKey=-1;
 					}
-					else if (GOD.MapT["EXIT"].SPr()) e.jbutton.button = BT_P;
+					else if (GOD.MapT["EXIT"].SPr()) {cancelcurl = 1;quit = true;}//e.jbutton.button = BT_B ? BT_p;
 					else if (GOD.MapT["MUSIC"].SPr()) e.jbutton.button = BT_M;
 
 					else if (USER.SPr()) {PlayerGet();}
@@ -425,8 +425,17 @@ void InputHandle(){
 					}
 				}
 				if (e.jbutton.button == BT_P) {                // (+) button down close to home menu
-					cancelcurl = 1;
-					quit = true;
+                    //mimetizá
+					switch (statenow)
+					{
+					case programation_s:
+						callmenuslide();
+						break;                        
+					default:
+						returnnow = programation_s;
+						statenow = programation_s;
+						break;
+                    }
 				}
 				if (e.jbutton.button == BT_M) {                // (-) button down
 					GOD.SwapMusic();
@@ -497,6 +506,12 @@ void InputHandle(){
 
 					switch (statenow)
 					{
+					case programation_s:
+						if (GOD.Confirm("Desea Salir al Home?")) {
+                            cancelcurl = 1;
+                            quit = true;
+						}
+						break;
 					case download_s:
 						statenow = chapter_s;
 						if (porcendown >= 100) led_on(0);
@@ -594,7 +609,8 @@ void InputHandle(){
 					switch (statenow)
 					{
 					case programation_s:
-						callmenuslide();
+						//callmenuslide();
+						callfavs();
 						break;
 					case menu_s:
 						callfavs();
@@ -622,10 +638,6 @@ void InputHandle(){
 					case favorites_s:
 
 						break;
-
-
-
-
 					}
 				}
 				if (e.jbutton.button == BT_R3) {                // (R3) button down
