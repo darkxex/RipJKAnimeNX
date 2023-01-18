@@ -27,7 +27,7 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 * * (A menos que se desactive deliberadamente)
 # A tener en cuenta
 * Esta app no funciona correctamente en modo applet (desde el albúm) porque requiere mas memoria y del uso del navegador
-* Debes usar lo básico antibaneo (dns, incógnito ,[host](https://github.com/darkxex/RipJKAnimeNX/raw/master/romfs/default.txt) de atmosphere,etc)
+* Debes usar lo básico antibaneo (incógnito ,[host](https://github.com/darkxex/RipJKAnimeNX/raw/master/romfs/default.txt) de atmosphere,etc),90dns suele dar problemas
 * Necesita Sí o Sí Internet (el anime no se trae por magia azteca o algo).
 * Para ver Animes descargados puedes usar [NXMP](https://github.com/proconsule/nxmp/releases) que tiene soporte directo por darkxex.
 * Los videos se guardan en la Raíz de la sd /Videos/
