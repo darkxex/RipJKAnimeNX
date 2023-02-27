@@ -32,7 +32,6 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 * Para ver Animes descargados puedes usar [NXMP](https://github.com/proconsule/nxmp/releases) que tiene soporte directo por darkxex.
 * Los videos se guardan en la Raíz de la sd /Videos/
 * No mover la app a la memoria de la consola porque podria dar problemas al momento de actualizarse
-* Atmosphere 1.4.1 Hace al navegador Crashear
 
 <details>
   <summary>Como Compilar, Devs</summary>
