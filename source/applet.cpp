@@ -408,7 +408,9 @@ FsFileSystem appdata;
 bool isMounted=false;
 //Mount user
 bool init(){
-	if(R_SUCCEEDED(fsOpenBisFileSystem(&appdata, FsBisPartitionId_User, ""))) {
+    bool MountEMMC = true;
+    MountEMMC = (DInfo()["config"]["MountEMMC"].get<int>() == 1);
+	if(R_SUCCEEDED(fsOpenBisFileSystem(&appdata, FsBisPartitionId_User, "")) && MountEMMC) {
 		fsdevMountDevice("emmc", appdata);
 		isMounted=true;
 	} else {
@@ -429,6 +431,7 @@ bool deinit(){
 		fsdevCommitDevice("emmc");
 		fsdevUnmountDevice("emmc");
 		fsFsClose(&appdata);
+        isMounted=false;
 	}
 	return isMounted;
 }
@@ -465,14 +468,15 @@ json DInfo(string ver){
 		//Get Config file , order sdmc -> romfs -> Nand -> Default
 		json config;
 		if (!read_DB(config,"sdmc:/JK.config")) {
-			if (!read_DB(config,"romfs:/JK.config")) {
-                if (!read_DB(config,rootdirectory+"JK.config")) {
+            if (!read_DB(config,rootdirectory+"sdmc:/config/JK.config")) {
+                if (!read_DB(config,"romfs:/JK.config")) {
                     std::cout << "# Using default Config" <<std::endl;
                 }
 			}
 		}
 		//If not exist use default config
 		if(config["AutoUpdate"].is_null()) {config["AutoUpdate"]=1;}
+		if(config["MountEMMC"].is_null()) {config["MountEMMC"]=1;}
 		if(config["Logs2File"].is_null()) {config["Logs2File"]=0;}
 		if(config["ReLaunch"].is_null()) {config["ReLaunch"]=0;}
 		if(config["Beta"].is_null()) {config["Beta"]=0;}
