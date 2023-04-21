@@ -74,6 +74,8 @@ bool reloading = false;
 bool preview = false;
 int selectchapter = 0;
 int imgNumbuffer = 0;
+int imgNumbufferAll = 30;
+
 int part = 0;
 int ofall = 0;
 int porcentajebufferF =0;

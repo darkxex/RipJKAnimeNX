@@ -65,7 +65,7 @@ make NSP
 * ``CDNURL``: Sobrescribe el dominio para la descarga de imágenes.
 * ``author`` y ``repo``: se utilizan para calcular el link de descarga, ej ``"github.com/"+author+"/"+repo+"/releases"``.
 
-* ``JK.config`` deberá estar ubicado en la raíz de la SD o en ``sdmc:/config/JK.config`` para que sobrescriba la configuración por defecto
+* ``JK.config`` deberá estar ubicado en la raíz de la SD o en ``sdmc:/RipJKAnimeNX/JK.config`` para que sobrescriba la configuración por defecto
 
 ### Ejemplo
 ```json

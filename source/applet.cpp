@@ -467,8 +467,8 @@ json DInfo(string ver){
 
 		//Get Config file , order sdmc -> romfs -> Nand -> Default
 		json config;
-		if (!read_DB(config,"sdmc:/JK.config")) {
-            if (!read_DB(config,"sdmc:/config/JK.config")) {
+		if (!read_DB(config,oldroot+"JK.config")) {
+            if (!read_DB(config,"sdmc:/JK.config")) {
                 if (!read_DB(config,"romfs:/JK.config")) {
                     std::cout << "# Using default Config" <<std::endl;
                 }

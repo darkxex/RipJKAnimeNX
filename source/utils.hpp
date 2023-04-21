@@ -99,6 +99,7 @@ extern bool reloading;
 extern bool preview;
 extern int selectchapter;
 extern int imgNumbuffer;
+extern int imgNumbufferAll;
 extern int part;
 extern int ofall;
 extern int porcentajebufferF;

@@ -389,7 +389,7 @@ int main(int argc, char **argv)
 					}else {
 						gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 2);
 						if (imgNumbuffer > 0) {
-							gTextTexture.loadFromRenderedText(GOD.Comic_16, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
+							gTextTexture.loadFromRenderedText(GOD.Comic_16, "Imágenes: ("+to_string(imgNumbuffer)+"/"+to_string(imgNumbufferAll)+")", {0,100,0});
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 22);
 							//Heart.render(posxbase + 570, posybase + 3 + (imgNumbuffer-1) * 22);
 						}
@@ -401,7 +401,7 @@ int main(int argc, char **argv)
 				} else {
                     //pantalla de carga, suele  aparecer solo en la primera apertura de la app
 					string textpro="Cargando programación";
-					if(imgNumbuffer>0) {textpro+=" "+to_string(imgNumbuffer)+"/30";} else {textpro+="...";}
+					if(imgNumbuffer>0) {textpro+=" "+to_string(imgNumbuffer)+"/"+to_string(imgNumbufferAll)+"";} else {textpro+="...";}
 					GOD.PleaseWait(textpro,false);
 				}
                 
@@ -420,7 +420,7 @@ int main(int argc, char **argv)
 						gTextTexture.loadFromRenderedText(GOD.Arista_20, "Menú Primario",textColor);
 						gTextTexture.render(XD+20, 65);
 						if (imgNumbuffer > 0) {//esto muestra el progreso en segundo plano
-							gTextTexture.loadFromRenderedText(GOD.Comic_16, "Imágenes: ("+to_string(imgNumbuffer)+"/30)", {0,100,0});
+							gTextTexture.loadFromRenderedText(GOD.Comic_16, "Imágenes: ("+to_string(imgNumbuffer)+"/"+to_string(imgNumbufferAll)+")", {0,100,0});
 							gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 15, 70);
 						}
 						if (part > 0) {

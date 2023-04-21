@@ -335,6 +335,7 @@ void CheckImgVector(json List,int& index){
 	index=0;
 	int listsize=List.size();
 	if (listsize <= 0) {return;}
+    imgNumbufferAll = listsize;
 	for (int x = 0; x < listsize && !quit; x++)
 	{
 		index = x+1;
