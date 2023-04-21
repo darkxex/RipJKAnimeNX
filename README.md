@@ -60,12 +60,12 @@ make NSP
 * ``AutoUpdate``: Define si la app se actualizara automáticamente.
 * ``Logs2File``: Define si la app Creara un fichero de logs incluso si no hay un error (NXlink tampoco recibirá nada).
 * ``ReLaunch``: Define si la app debe Reiniciarse al actualizar.
-* ``Beta``: cuando esta activa descarga los updates de Beta_URL en vez de la release.
+* ``MountSD``: Define si la app usara ``sdmc:/RipJKAnimeNX/`` en ves de la nand.
 * * ``1`` Si, ``0`` No.
-* ``Beta_URL``: URL de la versión beta.
+* ``CDNURL``: Sobrescribe el dominio para la descarga de imágenes.
 * ``author`` y ``repo``: se utilizan para calcular el link de descarga, ej ``"github.com/"+author+"/"+repo+"/releases"``.
 
-* ``JK.config`` deberá estar ubicado en la raiz de la SD para que sobrescriba la configuración por defecto
+* ``JK.config`` deberá estar ubicado en la raíz de la SD o en ``sdmc:/config/JK.config`` para que sobrescriba la configuración por defecto
 
 ### Ejemplo
 ```json
@@ -73,8 +73,8 @@ make NSP
  "AutoUpdate": 1,
  "Logs2File": 0,
  "ReLaunch": 0,
- "Beta":0,
- "Beta_URL": "https://mysitio.blabla/beta.nsp",
+ "MountSD":0,
+ "CDNURL":"cdn.jkdesu.com",
  "author":"darkxex",
  "repo": "RipJKAnimeNX"
 }

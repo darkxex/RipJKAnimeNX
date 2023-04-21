@@ -392,10 +392,11 @@ bool CheckUpdates(bool force){
 					}
 
 					string Nurl= asset[0]["browser_download_url"];
+                    /*
 					if (config["Beta"] == 1) {
 						Nurl= config["Beta_URL"].get<string>();
 					}
-
+*/
 					//check if URl is ok
 					if (Nurl.find(".nsp") == string::npos) {
 						std::cout << "- NO " << Nurl <<std::endl;
@@ -469,15 +470,17 @@ bool CheckUpdates(bool force){
 
    Spected:
    JK.config
-        {
-                "AutoUpdate": 1,
-                "Beta": 1,
-                "Beta_URL": "https://mysitio.blabla/beta.nsp",
-                "author":"??"
-                "repo": "??"
-        }
+    {
+     "AutoUpdate": 1,
+     "Logs2File": 0,
+     "ReLaunch": 0,
+     "MountSD":0,
+     "CDNURL":"cdn.jkdesu.com",
+     "author":"darkxex",
+     "repo": "RipJKAnimeNX"
+    }
 
    On sd card root on the root dir of the app
    sdmc:/JK.config
-   User:/RipJKAnime/JK.config
+   sdmc:/config/JK.config
  */

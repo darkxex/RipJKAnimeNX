@@ -510,8 +510,8 @@ int main(int argc, char **argv)
 						}
                         //Set seudo path
                         seudopath = path;
-                        replace(seudopath,rootdirectoryTEMP,"");
-                        //replace(seudopath,rootdirectoryDATA,"");
+                        replace(seudopath,rootdirectory+"TEMP/","");
+                        //replace(seudopath,rootdirectory+"DATA/","");
 
                         //Efecto de disolver
                         if(oldimage != ""){

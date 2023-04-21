@@ -409,7 +409,7 @@ bool isMounted=false;
 //Mount user
 bool init(){
     bool MountEMMC = true;
-    MountEMMC = (DInfo()["config"]["MountEMMC"].get<int>() == 1);
+    MountEMMC = (DInfo()["config"]["MountSD"].get<int>() == 0);
 	if(R_SUCCEEDED(fsOpenBisFileSystem(&appdata, FsBisPartitionId_User, "")) && MountEMMC) {
 		fsdevMountDevice("emmc", appdata);
 		isMounted=true;
@@ -476,11 +476,11 @@ json DInfo(string ver){
 		}
 		//If not exist use default config
 		if(config["AutoUpdate"].is_null()) {config["AutoUpdate"]=1;}
-		if(config["MountEMMC"].is_null()) {config["MountEMMC"]=1;}
 		if(config["Logs2File"].is_null()) {config["Logs2File"]=0;}
 		if(config["ReLaunch"].is_null()) {config["ReLaunch"]=0;}
-		if(config["Beta"].is_null()) {config["Beta"]=0;}
-		if(config["Beta_URL"].is_null()) {config["Beta_URL"]="";}
+		if(config["MountSD"].is_null()) {config["MountSD"]=0;}
+//		if(config["Beta"].is_null()) {config["Beta"]=0;}
+//		if(config["Beta_URL"].is_null()) {config["Beta_URL"]="";}
 		if(config["CDNURL"].is_null()) {config["CDNURL"]="cdn.jkdesu.com";}
 		if(config["author"].is_null()) {config["author"]="darkxex";}
 		if(config["repo"].is_null()) {config["repo"]="RipJKAnimeNX";}
