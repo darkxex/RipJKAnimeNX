@@ -33,6 +33,8 @@
 
 //use the nand of the switch
 string rootdirectory = "emmc:/RipJKAnime_NX/";
+string rootdirectoryDATA = "emmc:/RipJKAnime_NX/DATA/";
+string rootdirectoryTEMP = "emmc:/RipJKAnime_NX/TEMP/";
 string rootsave = "save:/";
 string roottheme = "themes:/";
 string oldroot = "sdmc:/switch/RipJKAnimeNX/";

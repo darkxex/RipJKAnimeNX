@@ -65,6 +65,7 @@ int main(int argc, char **argv)
 		mkdir(rootdirectory.c_str(), 0777);
 		mkdir((rootdirectory+"DATA").c_str(), 0777);
     }
+	mkdir((rootdirectory+"TEMP").c_str(), 0777);
 
 	GOD.loadSkin();//Esto carga la skin guardada y la música
 
@@ -488,12 +489,15 @@ int main(int argc, char **argv)
 						}
 						//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
 						//NameOfLink(temptext);
-                        string path = rootdirectory+"DATA/nop.png";
+                        string path = rootdirectory+"DATA/nop.png";//ESTO puede ser un error
                         static string seudopath = "";
                         if (filesize == bannersize) {
                            path = BD["arrays"]["Banner"]["files"][bannersel];
                         }
-						string temptext = BD["arrays"]["Banner"]["name"][bannersel];
+                       string temptext = "NULL";
+                       if (!BD["arrays"]["Banner"]["name"][bannersel].is_null()){
+                            temptext = BD["arrays"]["Banner"]["name"][bannersel];
+                        }
 
 						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);//Renderizar imagen principal
 
@@ -506,13 +510,15 @@ int main(int argc, char **argv)
 						}
                         //Set seudo path
                         seudopath = path;
-                        replace(seudopath,rootdirectory+"DATA/","");
+                        replace(seudopath,rootdirectoryTEMP,"");
+                        //replace(seudopath,rootdirectoryDATA,"");
 
                         //Efecto de disolver
                         if(oldimage != ""){
                             if (alphaB > 0){
-                                if (inTimeN(31,0)) {
-                                    alphaB-=20;
+                                if (inTimeN(51,0)) {
+                                    alphaB-=30;
+                                    if (alphaB < 100){alphaB-=10;}
                                     if (alphaB < 0){alphaB=0;}
                                     //cout << "Alpha of : " << oldimage << " set to:" << alphaB << " over : " << seudopath << endl;
                                 }

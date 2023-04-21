@@ -110,17 +110,20 @@ int AnimeLoader(void* data){
         int numCode = MainPage["CODE"];
         switch (numCode) {
             case 0:
-                cout << "- Error can't connect with Web" << endl;
+                cout << "- Error can't connect with Web #" << numCode << endl;
                 throw "Error Connect";
                 break;
             case 403:
             case 503:
-                cout << "- Error cloudflare active in Web" << endl;
+                cout << "- Error cloudflare active in Web #" << numCode << endl;
                 //Esto dará una visual al usuario que no se puede entrar por cloudflare
                 ClFlock = true;
                 //Si se me permite luego y si el navegador de la switch lo admite
                 //quisiera extraer los cookies para poder usar la web icluso si cloudflare esta activo
                 throw "Error cloudflare active";
+                break;
+            default:
+                cout << "# Web State #" << numCode << endl;
                 break;
         }
 
@@ -205,11 +208,13 @@ int AnimeLoader(void* data){
 
 		MkAGR(temcont);
 
-		steep++;//banner to Database
+		steep++;//banner to Database /* */
         int Blink = BD["arrays"]["Banner"]["link"].size();
         int Bfile = BD["arrays"]["Banner"]["files"].size();
+        int Bname = BD["arrays"]["Banner"]["name"].size();
 
-		if (haschange || Blink != Bfile) {
+		if (haschange || Blink != Bfile ||Bfile != Bname)
+        {
             temp0=content.find("<section class=\"hero\">");
             temp1=content.find("<div class=\"solopc\">",temp0);
             temcont = content.substr(temp0,temp1-temp0);
@@ -388,7 +393,7 @@ int MkBNR(string content){
 		string url = BD["arrays"]["Banner"]["img"][i];
 		string name = url;
 		replace(name,imgurl+"/assets/images/animes/video/image/","");
-		name = rootdirectory+"DATA/"+name;
+		name = rootdirectory+"TEMP/"+name;
 		BannerFile.push_back(name);
 
 		CheckImgNet(name,url);
