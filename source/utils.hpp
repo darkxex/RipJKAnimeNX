@@ -16,6 +16,8 @@ vector<string> scrapElementAll(string content, string get,string delim ="",strin
 vector<string> split (string s, string delimiter);
 void touch(string route);
 bool copy_me(string origen, string destino);
+std::string read_FL(std::string path);
+std::string read_File(std::string path);
 bool read_DB(json& base,string path);
 bool write_DB(json base,string path);
 void led_on(int inter);
@@ -74,6 +76,7 @@ extern string roottheme;
 extern string CDNURL;
 extern bool ClFlock;
 extern bool Mromfs;
+extern bool ThemeNeedUpdate;
 //Screen dimension constants
 extern const int SCREEN_WIDTH, SCREEN_HEIGHT;
 

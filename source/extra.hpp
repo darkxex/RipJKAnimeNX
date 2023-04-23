@@ -39,6 +39,7 @@ string oldroot = "sdmc:/RipJKAnimeNX/";
 string CDNURL = "cdn.jkdesu.com";
 bool ClFlock = false;
 bool Mromfs=true;
+bool ThemeNeedUpdate=false;
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 720;

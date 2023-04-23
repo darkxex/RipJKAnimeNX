@@ -220,6 +220,15 @@ bool copy_me(std::string origen, std::string destino) {
 	}
 	return false;
 }
+std::string read_FL(std::string path){
+	std::ifstream inf(path);
+    string TempLine = "";
+	if(!inf.fail()) {
+		getline(inf, TempLine);
+	}
+    inf.close();
+	return TempLine;
+}
 bool read_DB(json& base,std::string path){
 	std::ifstream inf(path);
 	if(!inf.fail()) {

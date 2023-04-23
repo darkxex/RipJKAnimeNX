@@ -28,9 +28,11 @@ int TimeNow(){
 //BEGUING THREAD CHAIN
 void ThemeDown(){
     if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/themes00.romfs",rootdirectory+"themes00.romfs")) {
+        ThemeNeedUpdate = false;
         if (mount_theme("themes",true))
         {
-            GOD.SkinInit(roottheme,true);//Esto añade a la lista de skins
+            GOD.SkinInit(roottheme);//Esto añade a la lista de skins
+            GOD.SkinInit(oldroot+"themes/",true);//Esto añade a la lista de skins
             GOD.ReloadSkin=true;
         } else
             Mromfs = true;
@@ -95,8 +97,9 @@ int AnimeLoader(void* data){
         std::thread themeT;
 		if (Mromfs) {
 			//Download themes
-			if (!mount_theme("themes",true))
+			if (!mount_theme("themes",true) || ThemeNeedUpdate)
 			{
+                mount_theme("themes",false);
                 themeT = std::thread(ThemeDown);
 			}
             Mromfs = false;

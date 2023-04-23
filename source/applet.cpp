@@ -62,7 +62,6 @@ bool mount_theme(string in,bool mount){
 	string file = rootdirectory+"themes00.romfs";
 	erase(rootdirectory+"theme.romfs");
 	erase(rootdirectory+"themes.romfs");
-
 	if (mount) {
 		if(isFileExist(in+":/")) {
 			//cout << in+":/  is mounted" << endl;
@@ -73,7 +72,13 @@ bool mount_theme(string in,bool mount){
 				cout << "unable to mount  "+ in << endl;
 				return false;
 			}else{
-				//cout << in+":/ mounted" << endl;
+                string ExDR = read_FL("romfs:/ED");
+                string ExDT = read_FL(in+":/ED");
+                if (ExDR != ExDT){
+                    cout << "MainV" << ExDR << " ThemeV" << ExDT <<" Mistmatch"<< endl;
+                    ThemeNeedUpdate = true;
+                    return false;
+                }
 				return true;
 			}
 		}
