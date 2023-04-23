@@ -28,11 +28,28 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 # A tener en cuenta
 * Esta app no funciona correctamente en modo applet (desde el albúm) porque requiere mas memoria y del uso del navegador
 * Debes usar lo básico antibaneo (incógnito ,[host](https://github.com/darkxex/RipJKAnimeNX/raw/master/romfs/default.txt) de atmosphere,etc),90dns suele dar problemas
-* Necesita Sí o Sí Internet (el anime no se trae por magia azteca o algo).
+* Necesita Sí o Sí Internet (el anime no se trae por magia azteca o algo asi).
 * Para ver Animes descargados puedes usar [NXMP](https://github.com/proconsule/nxmp/releases) que tiene soporte directo por darkxex.
 * Los videos se guardan en la Raíz de la sd /Videos/
 * No mover la app a la memoria de la consola porque podria dar problemas al momento de actualizarse
 
+<details>
+  <summary>Temas</summary>
+  
+## Temas
+* Los temas consisten de 3 ficheros ``background.jpg``, ``music.ogg`` y ``heart.png``
+* * ``background.jpg`` Es una imagen de 1280x720px es el fondo que se usara
+* * ``music.ogg`` Es la musica que sonara en el fondo el formato tiene que ser ogg
+* * ``heart.png`` Es una imagen que se usa de puntero e icono, tiene 16x14px
+* Estos ficheros deben estar en una carpeta, esta debe ser nombrada como desea ya que sera elnombre del tema
+* *  Puestos en ``sdmc:/RipJKAnimeNX/theme``
+* Ejemplo 
+* * ``sdmc:/RipJKAnimeNX/theme/mytemacool/background.jpg``
+* * ``sdmc:/RipJKAnimeNX/theme/mytemacool/music.ogg``
+* * ``sdmc:/RipJKAnimeNX/theme/mytemacool/heart.png``
+* Si uno de estos ficheros falta se usara el por defecto, sientete libre de experimentar
+  
+</details>
 <details>
   <summary>Como Compilar, Devs</summary>
 
@@ -80,13 +97,16 @@ make NSP
 }
 
 ```
+</details>
 
+<details>
+  <summary>Logs, devs</summary>
 
 ## LOGS
 * La app crea automaticamente un fichero JK.log en la SD
 * * solo si hay un error y es abierta desde su nsp,
 * * de Lo contrario los logs van la consola de NxLink
-
+* ``Logs2File``: Define si la app Creara un fichero de logs forzado
 	
 </details>
 
