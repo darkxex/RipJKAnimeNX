@@ -12,6 +12,7 @@
 #include <string>
 #include <cmath>
 #include <iostream>
+#include <filesystem>
 #include <math.h>
 #include "utils.hpp"
 #include "SDLWork.hpp"
@@ -196,8 +197,10 @@ void SDLB::SwapMusic(bool swap){
 		}
 	}
 }
+
 string defcord = "romfs:/theme/default";
 string SkinMaster = defcord;
+int them = 1;
 string theme(string file){
 	if (SkinMaster == defcord) {
 		if (isFileExist(rootdirectory+file)) {
@@ -244,31 +247,42 @@ void SDLB::loadSkin(string img){
 	}
 }
 void SDLB::setSkin(string path){
-	UD["Themes"]["use"] = path;
-	ReloadSkin=true;
+    if (UD["Themes"]["use"].get<string>() != path){
+        UD["Themes"]["use"] = path;
+        ReloadSkin=true;
+    }
+}
+void SDLB::SkinInit(string path,bool add) {
+    try {
+        if (!add){
+            BD["Themes"]["files"] = "[]"_json;
+            BD["Themes"]["files"].push_back(defcord);
+        }
+        if(isFileExist(path)){
+            for (const auto & entry : std::filesystem::directory_iterator(path)){
+                if (entry.is_directory()){
+                    if (UD["Themes"]["use"].get<string>() == entry.path()){
+                       them = BD["Themes"]["files"].size()+1;
+                    }
+                    BD["Themes"]["files"].push_back(entry.path());
+                    std::cout << entry.path() << std::endl;
+                }
+            }
+        }
+	} catch(...) {
+		cout << "- Error Catched, SkinInit" <<endl;
+	}
 }
 void SDLB::selectskin(string val) {
-	static int them = 0;
-	std::vector<std::string> temas = {
-		roottheme+"Devilovania",
-		roottheme+"Digimon",
-		roottheme+"Kurumi",
-		roottheme+"Miku",
-		roottheme+"NeonDrive",
-		roottheme+"NoBulletsFly",
-		roottheme+"Velvet-sad",
-		roottheme+"Megalovania",
-		roottheme+"TocToc",
-		roottheme+"TrueHero",
-		roottheme+"Asriel",
-		"romfs:/theme/default"
-	};
-
-	GOD.setSkin(temas[them]);
-	//next theme
-	int allp = temas.size()-1;
-	them++;
-	if (them > allp) them=0;
+    try {
+        //next theme
+        int allp = BD["Themes"]["files"].size()-1;
+        if (them > allp) them=0;
+        GOD.setSkin(BD["Themes"]["files"][them]);
+        them++;
+	} catch(...) {
+		cout << "- Error Catched, loadSkin" <<endl;
+	}
 }
 bool SDLB::Confirm(std::string text,bool okonly,int type){
 

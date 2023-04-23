@@ -66,7 +66,8 @@ int main(int argc, char **argv)
 		mkdir((rootdirectory+"DATA").c_str(), 0777);
     }
 	mkdir((rootdirectory+"TEMP").c_str(), 0777);
-
+    GOD.SkinInit(roottheme);//Esto carga la lista de skins
+    GOD.SkinInit(oldroot+"themes/",true);//Esto añade a la lista de skins
 	GOD.loadSkin();//Esto carga la skin guardada y la música
 
     //Estas son algunas variables que serán útiles luego

@@ -142,6 +142,7 @@ int MasKey=-1;
 std::string WorKey="00";
 //Skin manager
 bool ReloadSkin=false;
+void SkinInit(string path,bool add = false);
 void loadSkin(string img="");
 void setSkin(string path="");
 void selectskin(string val="");
