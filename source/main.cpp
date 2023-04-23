@@ -304,7 +304,7 @@ int main(int argc, char **argv)
 					B_Y.render_T(dist, 680,"Favorito"); dist -= posdist;
 				}
 
-                //Dibujar Precuela y secuela si existe
+                //Dibujar Precuela y secuela si existe resolver congelamiento
 				if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
