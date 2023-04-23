@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 6
-VERSION_MICRO := 8
+VERSION_MICRO := 9
 
 VERSION_EXDAT := 1
 APP_TITLE	:=	RipJKAnimeNX
@@ -175,7 +175,7 @@ LOWER_TITLEID  = $(shell echo $(APP_TITLEID) | tr A-Z a-z)
 all: $(BUILD)
 
 $(BUILD):
-	@echo '{"V":"$(APP_VERSION)"}'>romfs/V
+	@echo '$(APP_VERSION)'>romfs/V
 	@echo '$(VERSION_EXDAT)'>romfs/ED
 	@echo '$(VERSION_EXDAT)'>imgs/theme/ED
 	@echo 'ExtData V$(VERSION_EXDAT)'

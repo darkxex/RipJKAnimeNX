@@ -608,9 +608,7 @@ json DInfo(string ver){
 		}
 
 		//App Ver
-		json base;
-		read_DB(base,"romfs:/V");
-		info["App"]=base["V"];
+		info["App"]=read_FL("romfs:/V");;
 
 		setsysExit();
 		cout << std::setw(4) << info << std::endl;
