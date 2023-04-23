@@ -48,6 +48,7 @@ Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo S
 * * ``sdmc:/RipJKAnimeNX/theme/mytemacool/music.ogg``
 * * ``sdmc:/RipJKAnimeNX/theme/mytemacool/heart.png``
 * Si uno de estos ficheros falta se usara el por defecto, sientete libre de experimentar
+* Aqui tienes algunos ejemplos [Aqui](/imgs/theme)
   
 </details>
 <details>
