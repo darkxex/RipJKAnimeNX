@@ -26,6 +26,17 @@ int TimeNow(){
 }
 
 //BEGUING THREAD CHAIN
+void ThemeDown(){
+    if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/themes00.romfs",rootdirectory+"themes00.romfs")) {
+        if (mount_theme("themes",true))
+        {
+            GOD.SkinInit(roottheme,true);//Esto añade a la lista de skins
+            GOD.ReloadSkin=true;
+        } else
+            Mromfs = true;
+    }
+}
+
 int AnimeLoader(void* data){
 	int steep=0;
 	try{
@@ -79,21 +90,14 @@ int AnimeLoader(void* data){
 		steep++;
         //exit thread if are in applet mode
         if (AppletMode) {quit=true; return 0;}
-
-        static bool Mromfs=true;
+        std::thread themeT;
 		if (Mromfs) {
 			//Download themes
 			if (!mount_theme("themes",true))
 			{
-                if(!reloading){
-                    if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/themes00.romfs",rootdirectory+"themes00.romfs")) {
-                        mount_theme("themes",true);
-                        GOD.SkinInit(roottheme,true);//Esto añade a la lista de skins
-                        GOD.ReloadSkin=true;
-                    }
-                }
+                themeT = std::thread(ThemeDown);
 			}
-			Mromfs = false;
+            Mromfs = false;
 		}
 
 		steep++;
@@ -265,6 +269,7 @@ int AnimeLoader(void* data){
 
 		steep++;//Load Directory
 		MkDIR();
+        if (themeT.joinable()) {themeT.join();}
 	} catch(...) {
 		LOG::E(2);
 		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
