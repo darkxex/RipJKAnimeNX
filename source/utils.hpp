@@ -77,6 +77,7 @@ extern string CDNURL;
 extern bool ClFlock;
 extern bool Mromfs;
 extern bool ThemeNeedUpdate;
+extern bool reloadmain;
 //Screen dimension constants
 extern const int SCREEN_WIDTH, SCREEN_HEIGHT;
 

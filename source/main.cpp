@@ -927,12 +927,13 @@ int main(int argc, char **argv)
 			//clock cicle 15s
 			if (inTimeN(15000)) {
 				isConnected=Net::HasConnection();
+                
 			}
             if (ClFlock){
                 //CloudFlare protege este sitio asi q lo abrimos en en navegador
-                WebBrowserCall("https://jkanime.net/",false);
-                GetCookies();
+                Net::Bypass();
                 ClFlock = false;
+                reloadmain = true;
             }
 			if (!isConnected) {
 				gTextTexture.loadFromRenderedText(GOD.digi_16, "Sin Internet", {255,0,0});
@@ -956,7 +957,8 @@ int main(int argc, char **argv)
 			if (Frames>1000) Frames=0;
 			if (Frames>0) Frames++;
 			//Update tik
-			if (inTimeN(1260000)) {
+			if (inTimeN(1260000) || reloadmain) {
+                reloadmain = false;
 				if (Net::HasConnection()) {
 					if(!isChained) {
 						cout << "Reloading Animes" << endl;

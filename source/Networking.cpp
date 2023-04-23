@@ -137,22 +137,6 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,do
 namespace Net {
 //string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
 string UserAgent = "Mozilla/5.0 (Nintendo Switch; WebApplet) AppleWebKit/609.4 (KHTML, like Gecko) NF/6.0.2.22.5 NintendoBrowser/5.1.0.23519";
-/*
-bool init(){
-    //this is to ge the user agent of browser WIP
-    bool change = false;
-    string UserAgentSet = "UserAgent"+DInfo["Firmware"].get<string>();
-    if (isset(BD,UserAgentSet)) {
-        UserAgent = BD[UserAgentSet].get<string>();
-    } else {
-        string id = DInfo["DeviceID"].get<string>();
-        WebBrowserCall("https://????/?set="+id,false);
-        BD[UserAgentSet] = GET("https://????/?get="+id);
-        change = true;
-    }
-    return change;
-}
-*/
 int DebugNet = 1;        //0 no debug ,  1 some debug, 2 All debug
 
 //Simplification
@@ -319,6 +303,19 @@ bool DOWNLOAD(string url,string path,bool progress){
 	}
 	return allok;
 }
+
+bool Bypass(){
+    #if __has_include("Debug.h")
+        //just for tests
+		#include "DBY.h"
+    #else
+        //just open the browser
+        WebBrowserCall("https://jkanime.net",false);
+	#endif
+    GetCookies();
+    return change;
+}
+
 
 bool HasConnection(){
 	NifmInternetConnectionType connectionType;
