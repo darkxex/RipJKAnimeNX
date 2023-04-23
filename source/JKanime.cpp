@@ -90,6 +90,8 @@ int AnimeLoader(void* data){
 		steep++;
         //exit thread if are in applet mode
         if (AppletMode) {quit=true; return 0;}
+        
+        //Aqui creamos otra ramificación para no detener el cargador de animes -.-
         std::thread themeT;
 		if (Mromfs) {
 			//Download themes
@@ -156,7 +158,7 @@ int AnimeLoader(void* data){
 			}
 		}
 		steep++;//Display List
-		if(reloading) {Frames=0; reloading = false; Mromfs=true;}
+		if(reloading) {Frames=0; reloading = false;}
 
 		if (haschange || BD["TimeStamp"].is_null()) {
 			//update TimeStamp
