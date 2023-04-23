@@ -32,7 +32,7 @@ void ThemeDown(){
         if (mount_theme("themes",true))
         {
             GOD.SkinInit(roottheme);//Esto añade a la lista de skins
-            GOD.SkinInit(oldroot+"themes/",true);//Esto añade a la lista de skins
+            GOD.SkinInit(oldroot+"theme/",true);//Esto añade a la lista de skins
             GOD.ReloadSkin=true;
         } else
             Mromfs = true;
