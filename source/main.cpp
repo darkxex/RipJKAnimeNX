@@ -87,6 +87,11 @@ int main(int argc, char **argv)
 
     //Inicializar el controlador de interfaz táctil y de controles
 	Inputinit();
+    std::thread CapS;
+    std::thread CapP;
+    bool CapSC = false;
+    bool CapPC = false;
+        
 
     //parte principal protegida por un try para obtener fallos si ocurren
 	try{
@@ -309,17 +314,36 @@ int main(int argc, char **argv)
 					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
-					if(!serverpront) {CheckImgNet(imagelocal); B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
-					GOD.Cover(imagelocal,160,456,"Secuela",120,BT_R);
+                    if (!isFileExist(imagelocal)){
+                        if (!CapSC){
+                            CapS = std::thread(CheckImgNet,imagelocal,"");
+                            CapSC = true;
+                        }
+                    } else {
+                        if (CapS.joinable()) {CapS.join();}
+                        
+                        CapSC = false;
+                        if(!serverpront) {B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
+                        GOD.Cover(imagelocal,160,456,"Secuela",120,BT_R);
+                    }
 				}
 				if (isset(AB["AnimeBase"][KeyName],"Precuela")) {
 					string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
-					if(!serverpront) {CheckImgNet(imagelocal); B_L.render_T(dist, 680,"Precuela"); dist -= posdist;}
-					GOD.Cover(imagelocal,10,456,"Precuela",120,BT_L);
+                    if (!isFileExist(imagelocal)){
+                        if (!CapPC){
+                            CapP = std::thread(CheckImgNet,imagelocal,"");
+                            CapPC = true;
+                        }
+                    } else {
+                        if (CapP.joinable()) {CapP.join();}
+                    
+                        CapPC = false;
+                        if(!serverpront) {B_R.render_T(dist, 680,"Precuela"); dist -= posdist;}
+                        GOD.Cover(imagelocal,10,456,"Precuela",120,BT_L);
+                    }
 				}
-
 				break;
 			}
 			case menu_s:
@@ -996,6 +1020,8 @@ int main(int argc, char **argv)
 	write_DB(AB,rootdirectory+"AnimeBase.json");
 	write_DB(UD,rootsave+"UserData.json");
 
+    if (CapS.joinable()) {CapS.join();}
+    if (CapP.joinable()) {CapP.join();}
 	if (NULL == capithread) {printf("capithread Not in use\n");} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
 	if (NULL == downloadthread) {printf("downloadthread Not in use\n");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
 	if (NULL == searchthread) {printf("searchthread Not in use\n");} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
