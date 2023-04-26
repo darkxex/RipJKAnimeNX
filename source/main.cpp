@@ -532,10 +532,12 @@ int main(int argc, char **argv)
 						if (makebomb) {
                             alphaB = 255;
                             oldimage = seudopath;
+                            //cout << "Alpha of : " << oldimage << " over : " << seudopath << endl;
 						}
                         //Set seudo path
-                        seudopath = path;
-                        replace(seudopath,rootdirectory+"TEMP/","");
+                        seudopath = path.substr(path.rfind("/")+1);
+
+                        //replace(seudopath,rootdirectory+"TEMP/","");
                         //replace(seudopath,rootdirectory+"DATA/","");
 
                         //Efecto de disolver

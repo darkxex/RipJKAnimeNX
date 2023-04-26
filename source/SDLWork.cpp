@@ -429,7 +429,7 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 		path=path.substr(0,val1);
 		path = rootdirectory+"DATA/"+path+".jpg";
 	}
-	std::string KeyImage=path.substr(25);
+	std::string KeyImage=path.substr(path.rfind("/")+1);
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
 		path = "romfs:/img/nop.png";
@@ -449,7 +449,7 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 }
 void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,int selected){
 //render images and map to memory for fast display
-	std::string KeyImage=path.substr(25);
+	std::string KeyImage=path.substr(path.rfind("/")+1);
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
 		path = "romfs:/img/nop.png";
@@ -509,7 +509,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 }
 void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int index,int& select,bool render){
 //render images and map to memory for fast display
-	std::string KeyImage=path.substr(25);
+	std::string KeyImage=path.substr(path.rfind("/")+1);
 	std::string KeyText=Text;
 	std::string KeyTextH=Text+"-Head";
 
