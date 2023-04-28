@@ -95,6 +95,7 @@ int main(int argc, char **argv)
 
     //parte principal protegida por un try para obtener fallos si ocurren
 	try{
+        Net::init();//Establecer init de red
 		//Cargar imágenes de uso general guardadas en la romfs 
 		LoadImages();
         

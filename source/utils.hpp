@@ -14,6 +14,7 @@ void mayus(string &s);
 string scrapElement(string content, string get,string delim ="" );
 vector<string> scrapElementAll(string content, string get,string delim ="",string addend="");
 vector<string> split (string s, string delimiter);
+string url_decode(string text);
 void touch(string route);
 bool copy_me(string origen, string destino);
 std::string read_FL(std::string path);

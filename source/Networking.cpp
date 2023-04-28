@@ -304,15 +304,35 @@ bool DOWNLOAD(string url,string path,bool progress){
 	return allok;
 }
 
+bool init(){
+    bool change = false;
+    if (isset(BD,"UserAgent")) {
+        string result = BD["UserAgent"].get<string>();
+        if(result.length() > 100){
+            cout << "# UserAgent : " << result << std::endl;
+            UserAgent = result;
+            change = true;
+        }
+    }
+    return change;
+}
 bool Bypass(){
-    #if __has_include("Debug.h")
-        //just for tests
-		#include "DBY.h"
-    #else
-        //just open the browser
-        WebBrowserCall("https://jkanime.net",false);
-	#endif
-    GetCookies();
+    bool change = false;
+
+    //Just open the browser
+    WebBrowserCall("https://jkanime.net/",false);
+    string cookies = "";
+    GetCookies(cookies);//save the cookies
+    
+    //Get UserAgent From Cookies
+    string TUA = scrapElement(cookies, "Mozilla%2F5.0","%22");
+    if (TUA.length() > 100){
+        TUA = url_decode(TUA);
+        UserAgent = TUA;
+        BD["UserAgent"] = TUA;
+        cout << "# New UserAgent : -->" << TUA << "<--" <<std::endl;
+        change = true;
+    } 
     return change;
 }
 

@@ -642,7 +642,7 @@ bool ChainManager(bool Chain,bool AndChaing){
 	}
 }
 
-bool GetCookies(){
+bool GetCookies(string &cookies){
     //Obtener y salvar las cookies del navegador
     //0x8000000000001071
     FsFileSystem dataW;
@@ -650,7 +650,7 @@ bool GetCookies(){
     if(R_SUCCEEDED(fsOpen_SystemSaveData (&dataW,FsSaveDataSpaceId_System,0x8000000000001071,user::uid))) {
         fsdevMountDevice("bro", dataW);
         std::string path = "bro:/Cookie.dat";
-        
+
         std::ifstream inf(path);
         if(!inf.fail()) {
             std::string tempcookie="";
@@ -676,6 +676,7 @@ bool GetCookies(){
                 }
                 r++;
             }
+            cookies = cookiestr;
             std::ofstream otf(rootdirectory+"COOKIES.txt");
             otf << cookiestr;
             otf.close();
