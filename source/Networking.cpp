@@ -306,8 +306,8 @@ bool DOWNLOAD(string url,string path,bool progress){
 
 bool init(){
     bool change = false;
-    if (isset(BD,"UserAgent")) {
-        string result = BD["UserAgent"].get<string>();
+    if (isset(BD,"UserAgentSet")) {
+        string result = BD["UserAgentSet"].get<string>();
         if(result.length() > 100){
             cout << "# UserAgent : " << result << std::endl;
             UserAgent = result;
@@ -316,6 +316,7 @@ bool init(){
     }
     return change;
 }
+
 bool Bypass(){
     bool change = false;
 
@@ -329,7 +330,7 @@ bool Bypass(){
     if (TUA.length() > 100){
         TUA = url_decode(TUA);
         UserAgent = TUA;
-        BD["UserAgent"] = TUA;
+        BD["UserAgentSet"] = TUA;
         cout << "# New UserAgent : -->" << TUA << "<--" <<std::endl;
         change = true;
     } 
