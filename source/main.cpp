@@ -953,20 +953,20 @@ int main(int argc, char **argv)
 
 			//clock cicle 15s
 			if (inTimeN(15000)) {
+                //Verificar si esta conectado cada 15s
 				isConnected=Net::HasConnection();
                 
 			}
-            if (ClFlock){
-                //CloudFlare protege este sitio asi q lo abrimos en en navegador
-                Net::Bypass();
-                ClFlock = false;
-                reloadmain = true;
-            }
 			if (!isConnected) {
 				gTextTexture.loadFromRenderedText(GOD.digi_16, "Sin Internet", {255,0,0});
 				VOX.render_VOX({SCREEN_WIDTH - gTextTexture.getWidth() - 8,671-gTextTexture.getHeight(), gTextTexture.getWidth()+4, gTextTexture.getHeight()}, 0, 0, 0, 180);
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 671-gTextTexture.getHeight() );
-			}
+			} else if (ClFlock){
+                //CloudFlare protege este sitio asi q lo abrimos en en navegador
+                GOD.PleaseWait("CloudFlare Activo, Abriendo Navegador");
+                reloadmain = Net::Bypass();
+                ClFlock = false;
+            }
 
 			if(programation_s != statenow && isHandheld) {
 				BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);
