@@ -771,6 +771,10 @@ std::string KeyboardCall (std::string hint, std::string text){
 }
 
 Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/libnx/web_8h.html
+    string cburl = url+"404.shtml";
+    if(ClFlock){
+        url = url+to_string(Frames)+"M/";
+    }
 	cout << "WEB :"+url <<std::endl;
 	Result rc = 0;
 	if (nag) {
@@ -800,6 +804,10 @@ Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/l
 
 
 */
+        if(ClFlock){
+            //webConfigSetCallbackUrl (&config, (url+"?__cf_chl_tk=").c_str()); 	
+            webConfigSetCallbackUrl (&config, (cburl).c_str());
+        }
 		webConfigSetJsExtension (&config, true);
 		webConfigSetBootDisplayKind (&config, WebBootDisplayKind_Black);
 		webConfigSetPageCache (&config, true);

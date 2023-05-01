@@ -34,3 +34,4 @@ bool ChainManager(bool Chain,bool AndChaing);
 std::string KeyboardCall (std::string hint="", std::string text="");
 Result WebBrowserCall(std::string url="",bool nag=false);
 bool GetCookies(string &cookies);
+bool ClearWebData(u64 uidsave);
