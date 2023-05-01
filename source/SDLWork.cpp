@@ -286,19 +286,21 @@ void SDLB::selectskin(string val) {
 }
 bool SDLB::Confirm(std::string text,bool okonly,int type){
 
-	LTexture NAG,IMG;
+	LTexture NAG,IMG,BAC;
 	//Print Menu once
 	VOX.render_VOX({0,0,SCREEN_WIDTH,SCREEN_HEIGHT}, 0, 0, 0, 150);
 
-	int NW=500,NH=210,BR = 2;//Ancho y largo
+	int NW=598,NH=240;//,BR = 2;//Ancho y largo
     int NX=(SCREEN_WIDTH-NW) /2, NY=(SCREEN_HEIGHT-NH)/2;//Centrado al medio
 
 	T_T.loadFromRenderedTextWrap(Arista_40, text, { 50, 50, 50 },NW-20);
 
 	//Draw black back
-	VOX.render_VOX({NX-BR,NY-BR,NW+(BR*2),NH+(BR*2)}, 50, 50, 50, 200);
+	//VOX.render_VOX({NX-BR,NY-BR,NW+(BR*2),NH+(BR*2)}, 50, 50, 50, 200);
 	//Draw Icon
 	std::string image = "";
+    BAC.loadFromFileCustom("romfs:/img/pop/back.png", NH, NW);
+	BAC.render(NX, NY);
 	switch(type) {
 	case 1:
 		image = "romfs:/img/pop/ques.png";
@@ -315,17 +317,19 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 		IMG.loadFromFileCustom(image, 100,100);
 		IMG.render(NX+10, NY+10);
 	}
+
 	//Draw withe front
-	NAG.render_VOX({NX,NY,NW,NH}, 200, 200, 200, 200);//
+	//NAG.render_VOX({NX,NY,NW,NH}, 200, 200, 200, 200);//
 	T_T.render(NX+(NW/2)-(T_T.getWidth()/2), NY+((NH/4*3)/2)-(T_T.getHeight()/2));
 
-	VOX.render_VOX({NX,NY+(NH/4*3),NW,BR}, 50, 50, 50, 200);
+	//VOX.render_VOX({NX,NY+(NH/4*3),NW,BR}, 50, 50, 50, 200);
 	if(!okonly) {
-		VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),BR,(NH/4)+2}, 50, 50, 50, 200);
-		B_B.render_T(NX+(NW/4)-45, NY+(NH/4*3)+((NH/4)/2)-(B_B.getHeight()/2),"NO");
-		B_A.render_T(NX+(NW/4*3)-45, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"SI");
+		//VOX.render_VOX({NX+(NW/2),NY+(NH/4*3),BR,(NH/4)+2}, 50, 50, 50, 200);
+		B_B.render_T(NX+(NW/4)-10, NY+(NH/4*3)+((NH/4)/2)-(B_B.getHeight()/2)-18,"Cancel");
+		B_A.render_T(NX+(NW/4*3)-130, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2)-18,"Aceptar");
 	} else {
-		B_A.render_T(NX+(NW/2)-55, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"Aceptar");
+		//B_A.render_T(NX+(NW/2)-55, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2),"Aceptar");
+		B_A.render_T(NX+(NW/4*3)-130, NY+(NH/4*3)+((NH/4)/2)-(B_A.getHeight()/2)-18,"Aceptar");
 	}
 
 	bool breaker = true;
@@ -358,16 +362,27 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 				else if (GOD.MapT["MUSIC"].SP()) e.jbutton.button = BT_M;
 				else if (B_A.SP()) {e.jbutton.button = BT_A;}
 				else if (B_B.SP()) {e.jbutton.button = BT_B;}
-				else if (NAG.SP()) {e.jbutton.button = -1;}
+				else if (BAC.SP()) {e.jbutton.button = -1;}
 				GOD.TouchX = -1;
 				GOD.TouchY = -1;
 				GOD.TouchXU = -1;
 				GOD.TouchYU = -1;
 			case SDL_JOYBUTTONDOWN:
 				if (e.jbutton.which == 0) {
+                    /*
 					if (e.jbutton.button == BT_P) {        // (+) button down close to home menu
 						cancelcurl = 1;
 						quit = true;
+						result = false;
+						breaker = false;
+						break;
+					}
+                    */
+                    if (e.jbutton.button == BT_X) {                // (X) button down
+                        ClearWebData(0x8000000000001071);
+                        ClearWebData(0x8000000000001091);
+                        ClearWebData(0x8000000000001061);
+                        remove((rootdirectory+"COOKIES.txt").c_str());
 						result = false;
 						breaker = false;
 						break;
@@ -433,6 +448,9 @@ void SDLB::Image(std::string path,int X, int Y,int W, int H,int key){
 	if (!isFileExist(path)) {
 		KeyImage="nop.png";
 		path = "romfs:/img/nop.png";
+        int sizeportraitx = 224;
+        int sizeportraity =280;
+        W = (sizeportraitx * (H * 10000 /sizeportraity) /10000);
 	}
 
 

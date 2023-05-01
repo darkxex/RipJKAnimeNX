@@ -714,9 +714,9 @@ void InputHandle(){
 						}
 						break;
 					case menu_s:
-						if (BD["arrays"]["Banner"]["link"].size()>0)
+						if (BD["arrays"]["Benner"].size()>0)
 						{
-							string path = BD["arrays"]["Banner"]["files"][bannersel];
+							string path = BD["arrays"]["Benner"][bannersel]["file"];
 							Farest.free();
 							Farest.loadFromFileCustom(path,720,1280);
 						}
@@ -727,10 +727,10 @@ void InputHandle(){
 					switch (statenow)
 					{
 					case menu_s:
-						if (BD["arrays"]["Banner"]["link"].size()>0)
+						if (BD["arrays"]["Benner"].size()>0)
 						{
 							returnnow = menu_s;
-							capBuffer(BD["arrays"]["Banner"]["link"][bannersel]);
+							capBuffer(BD["arrays"]["Benner"][bannersel]["link"]);
 							gFAV = isFavorite(BD["com"]["ActualLink"]);
 						}
 						break;

@@ -219,11 +219,8 @@ int AnimeLoader(void* data){
 		MkAGR(temcont);
 
 		steep++;//banner to Database /* */
-        int Blink = BD["arrays"]["Banner"]["link"].size();
-        int Bfile = BD["arrays"]["Banner"]["files"].size();
-        int Bname = BD["arrays"]["Banner"]["name"].size();
 
-		if (haschange || Blink != Bfile ||Bfile != Bname)
+		//if (haschange)
         {
             temp0=content.find("<section class=\"hero\">");
             temp1=content.find("<div class=\"solopc\">",temp0);
@@ -393,24 +390,59 @@ int MkBNR(string content){
 	//Get Latest added animes
 	cout << "# Banner Get ";
     string imgurl = "https://"+CDNURL+"";
-	BD["arrays"]["Banner"]["link"]=scrapElementAll(content, "https://jkanime.net/");
-	BD["arrays"]["Banner"]["img"]=scrapElementAll(content, imgurl+"/assets/images/animes/video/image/");//https://"+CDNURL+"/assets/images/animes/video/image/jkvideo_85d3aaa2683a8047cc191aa9a39d5d8d.jpg
-	BD["arrays"]["Banner"]["name"]=scrapElementAll(content, "<h2>","</h2>");
-
+	vector<string> BannerElem = scrapElementAll(content, "<div class=\"hero__items set-bg\"","</div>","",false);
+    bool hasbaner = false;
 	cout << "IMG " << endl;
 	vector<string> BannerFile;
-	int sizeI = BD["arrays"]["Banner"]["img"].size();
+	int sizeI = BannerElem.size();
+    json banerall = "[]"_json;
 	for (int i=0; i < sizeI; i++) {
-		string url = BD["arrays"]["Banner"]["img"][i];
+		string tCont = BannerElem[i];
+        string name = scrapElement(tCont, "<h2>","</h2>");
+        string link = scrapElement(tCont, "href=\"","\"");
+        string img = scrapElement(tCont, "data-setbg=\""+imgurl+"/assets/images/animes/video/image/","\"");
+        //string img = scrapElement(tCont, "data-setbg=\"","\"");
+        string file = rootdirectory+"TEMP/"+img.substr(img.rfind("/")+1);;
+        
+        replace(link,"href=\"","");
+        replace(img,"data-setbg=\"","");
+        replace(name,"<h2>","");
+        
+        if (img.length() > 0 &&link.length() > 0){
+            json dataT;
+            dataT["name"] = name;
+            dataT["link"] = link;
+            dataT["img"] = img;
+            dataT["file"] = file;
+            CheckImgNet(file,img);
+            banerall.push_back(dataT);
+            hasbaner = true;
+        }
+        /*
+        		TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
+    //cout << "Banner" << content << endl;
+	//BD["arrays"]["Be nner"]["link"]=
+	//BD["arrays"]["Be nner"]["img"]=scrapElementAll(content, imgurl+"/assets/images/animes/video/image/");//https://"+CDNURL+"/assets/images/animes/video/image/jkvideo_85d3aaa2683a8047cc191aa9a39d5d8d.jpg
+	//BD["arrays"]["Be nner"]["name"]=scrapElementAll(content, "<h2>","</h2>");
+scrapElementAll(content, "data-setbg=\""+imgurl+"/assets/images/animes/video/image/","\"");
+            temp0=content.find("<section class=\"hero\">");
+            temp1=content.find("<div class=\"solopc\">",temp0);
+            temcont = content.substr(temp0,temp1-temp0);
+            
 		string name = url;
 		replace(name,imgurl+"/assets/images/animes/video/image/","");
 		name = rootdirectory+"TEMP/"+name;
 		BannerFile.push_back(name);
 
 		CheckImgNet(name,url);
+        
+        */
 	}
-	BD["arrays"]["Banner"]["files"]=BannerFile;
-	//cout << setw(4) << BD["arrays"]["Banner"] << endl;
+    if (hasbaner){
+        BD["arrays"]["Benner"] = banerall;
+    }
+	//BD["arrays"]["Banner"]["files"]=BannerFile;
+	cout << setw(4) << BD["arrays"]["Benner"] << endl;
 	return 0;
 }
 int MkAGR(string content){

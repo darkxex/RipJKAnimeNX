@@ -48,6 +48,9 @@ int main(int argc, char **argv)
     //Estos son algunos fix que se han hecho a lo largo de las versiones, los cambios y errores detectados 
     if (BD["arrays"]["chapter"]["link"] == "[null]"_json ){BD["arrays"]["chapter"]["link"]="null"_json;}
 	BD["com"] = "{}"_json;
+	if (isset(BD,"Banner")) {
+		BD.erase("Banner");
+	}
 	if (isset(BD,"DataBase")) {
 		BD.erase("DataBase");
 	}
@@ -389,10 +392,18 @@ int main(int argc, char **argv)
 						}else if (Ticker < 0) {
 							Ticker=0;
 						}
+
 						if (part > 0) {
-							gTextTexture.loadFromRenderedText(GOD.digi_9, to_string(ofall - part), {50,50,50});
-							gTextTexture.render(27 - (gTextTexture.getWidth()/2), 30);
+                            gTextTexture.loadFromRenderedText(GOD.digi_9, to_string(ofall - part), {50,50,50});
+                            gTextTexture.render(27 - (gTextTexture.getWidth()/2), 30);
 						}
+                        //if ( part % 2 == 0){
+                        if (Ticker > 0){
+                            if ((Ticker % 10) > 5){
+                                Heart.render(19, 30);
+                            }
+                        }
+
 						REC.render(5, 15,NULL,angle);
                         
 					} else {//Lista Clasica
@@ -497,11 +508,10 @@ int main(int argc, char **argv)
                     
                     //Dibuja un banner con imagenes de animes recomendados
 					int XF=10, YF=65, WF=760, HF=427;
-                    VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
-                    if (BD["arrays"]["Banner"]["link"].size() > 0) {
+                    if (BD["arrays"]["Benner"].size() > 0) {
+                        VOX.render_VOX({XF-2, YF-2, WF+4, HF+4}, 255, 255, 255, 235);
 						
-						bannersize = BD["arrays"]["Banner"]["link"].size()-1;
-                        int filesize = BD["arrays"]["Banner"]["files"].size()-1;
+						bannersize = BD["arrays"]["Benner"].size()-1;
 						
 						//Reloj 5s para pasar de una imagen a otra
 						bool makebomb = false;
@@ -513,16 +523,16 @@ int main(int argc, char **argv)
 							} else
 								Btimer=true;
 						}
-						//string temptext = BD["arrays"]["Banner"]["link"][bannersel];
+						//string temptext = BD["arrays"]["Benner"]["link"][bannersel];
 						//NameOfLink(temptext);
                         string path = rootdirectory+"DATA/nop.png";//ESTO puede ser un error
                         static string seudopath = "";
-                        if (filesize == bannersize) {
-                           path = BD["arrays"]["Banner"]["files"][bannersel];
+                        if (bannersize >= bannersel) {
+                           path = BD["arrays"]["Benner"][bannersel]["file"];
                         }
                        string temptext = "NULL";
-                       if (!BD["arrays"]["Banner"]["name"][bannersel].is_null()){
-                            temptext = BD["arrays"]["Banner"]["name"][bannersel];
+                       if (BD["arrays"]["Benner"][bannersel]["name"].is_string()){
+                            temptext = BD["arrays"]["Benner"][bannersel]["name"];
                         }
 
 						GOD.Image(path, XF, YF, WF, HF,BT_RIGHT);//Renderizar imagen principal
@@ -533,7 +543,7 @@ int main(int argc, char **argv)
 						if (makebomb) {
                             alphaB = 255;
                             oldimage = seudopath;
-                            //cout << "Alpha of : " << oldimage << " over : " << seudopath << endl;
+                            cout << "Alpha of : " << oldimage << " over : " << seudopath << endl;
 						}
                         //Set seudo path
                         seudopath = path.substr(path.rfind("/")+1);
@@ -963,7 +973,7 @@ int main(int argc, char **argv)
 				gTextTexture.render(SCREEN_WIDTH - gTextTexture.getWidth() - 5, 671-gTextTexture.getHeight() );
 			} else if (ClFlock){
                 //CloudFlare protege este sitio asi q lo abrimos en en navegador
-                GOD.PleaseWait("CloudFlare Activo, Abriendo Navegador");
+                GOD.PleaseWait("CloudFlare Activo, Abriendo Navegador Espere...");
                 reloadmain = Net::Bypass();
                 ClFlock = false;
             }

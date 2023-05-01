@@ -1049,7 +1049,7 @@
             "Tipo": "ONA",
             "enemision": "true",
             "generos": "Thriller, Misterio, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
             "nextdate": "  ",
             "sinopsis": "Yan Yuechu regresó a su ciudad natal para trabajar e hizo nuevos amigos en su lugar de trabajo. Un día, fue a XY Escape Room y se sintió profundamente atraído por el propietario, Xu Aiyou. Sin embargo, fue entonces cuando comenzó a experimentar extrañas ilusiones en la sala de escape. A medida que Yan Yuechu conoció a Xu Aiyou, comenzaron a ocurrir más y más incidentes a su alrededor e incluso a sus amigos. En el proceso de resolver las salas de escape y encontrar a la mente maestra detrás de todos estos eventos, gradualmente descubrió la verdad detrás de sus recuerdos perdidos..."
@@ -1525,9 +1525,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Sci-Fi, Accion, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 0,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "La historia se centra en unas chicas llamadas Actresses que pelean junto a unas misteriosas máquinas llamadas Vices."
         },
         "alice-to-zouroku": {
@@ -2498,9 +2498,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Colegial, Musica, Drama, ",
-            "maxcapit": 2,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Domingo 23 Abril ",
+            "nextdate": " Domingo 07 Mayo ",
             "sinopsis": "Aono siempre ha admirado a su padre, un gran violinista que le entregó la pasión por el instrumento. Pero luego de que el matrimonio de sus padres se convirtiera en algo tóxico, el chico promete no volver a tocar. Un día después de un incidente con una pelota, acaba en la enfermería con una violinista amatéur que toca muy mal. Luego de descubrir que la chica no solamente se encuentra aislada de sus compañeros, sino que la tratan de abusona, cuando todo es falso, Aono decide enseñarle a tocar."
         },
         "aoharu-x-kikanjuu": {
@@ -4708,6 +4708,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/birdie-wing-golf-girls-story.jpg",
+            "Secuela": "https://jkanime.net/birdie-wing-golf-girls-story-season-2/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -4715,8 +4716,7 @@
             "maxcapit": 13,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Birdie Wing: Golf Girls&#039; Story es una historia juvenil centrada en dos golfistas. Dos niñas, Eve y Aoi, que crecieron en circunstancias completamente diferentes y tienen diferentes estilos de juego, se ven atrapadas en el mundo de las mujeres en el golf.",
-            "Secuela": "https://jkanime.net/birdie-wing-golf-girls-story-season-2/"
+            "sinopsis": "Birdie Wing: Golf Girls&#039; Story es una historia juvenil centrada en dos golfistas. Dos niñas, Eve y Aoi, que crecieron en circunstancias completamente diferentes y tienen diferentes estilos de juego, se ven atrapadas en el mundo de las mujeres en el golf."
         },
         "birdie-wing-golf-girls-story-season-2": {
             "Duracion": "24 min.",
@@ -4730,9 +4730,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Deportes, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Segunda temporada de Birdie Wing: Gold Girl&#039;s Story."
         },
         "birthday-wonderland": {
@@ -5666,9 +5666,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Colegial, Comedia, Shounen, ",
-            "maxcapit": 4,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "Kyoutaro Ichikawa es un niño de 11 años que parece normal, pero en realidad está obsesionado con los asesinatos. Y su idea es convertirse en asesino acabando con la ídolo de la escuela, Anna Yamada. Se esconde en la biblioteca para planear su ataque, pero por casualidad termina conociendo a la misma chica con la que planea acabar, que se esconde de los demás alumnos para comer caramelos y dulces tranquila.\n\nPoco a poco se encuentran todos los días, y establecen una peculiar conexión. Eventualmente, Yamada va derritiendo el corazón de hielo de Kyoutaro. A este punto, el chico se pregunta si realmente quiere acabar con ella o en realidad siente algo mucho más profundo por la dulce chica."
         },
         "boku-no-tonari-ni-ankoku-hakaishin-ga-imasu": {
@@ -9378,9 +9378,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Sobrenatural, Fantasía, Accion, Seinen, ",
-            "maxcapit": 2,
+            "maxcapit": 3,
             "mincapit": 1,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "El héroe legendario se enfrenta al dios de la necromancia, pero cuando la batalla acaba, el ambiente se queda como un mal augurio. Durante los últimos momentos de la batalla, el dios hace una última apuesta: magia de reencarnación. Y del otro lado del tiempo y el espacio, se despierta un joven llamado Polka Shinoyama que no se siente como el de siempre..."
         },
         "deadman-wonderland": {
@@ -10659,9 +10659,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Sci-Fi, Comedia, Aventura, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Jueves 27 Abril ",
+            "nextdate": " Jueves 04 Mayo ",
             "sinopsis": "Tercera temporada de Doctor Stone. Sennku y los demás se embarcan en una misión para viajar más allá de lo que conocen y descubrir nuevos límites."
         },
         "dr-stone-ryuusui": {
@@ -10672,6 +10672,7 @@
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/dr-stone-ryuusui.jpg",
             "Precuela": "https://jkanime.net/dr-stone-stone-wars/",
+            "Secuela": "https://jkanime.net/dr-stone-new-world/",
             "TimeStamp": "-.-",
             "Tipo": "Especial",
             "enemision": "false",
@@ -10679,8 +10680,7 @@
             "maxcapit": 1,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "El episodio original servirá como puente entre la segunda y la tercera temporada.\n",
-            "Secuela": "https://jkanime.net/dr-stone-new-world/"
+            "sinopsis": "El episodio original servirá como puente entre la segunda y la tercera temporada.\n"
         },
         "dr-stone-stone-wars": {
             "Duracion": "24 min.",
@@ -11603,6 +11603,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/edens-zero.jpg",
+            "Secuela": "https://jkanime.net/edens-zero-2nd-season/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -11610,8 +11611,7 @@
             "maxcapit": 25,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "En Granbell Kingdom, un parque de atracciones abandonado, Shiki ha vivido toda su vida entre máquinas. Pero un día, Rebecca y su compañero gato Happy aparecen en la entrada del parque. ¡Poco saben estos recién llegados que este es el primer contacto humano que Granbell ha tenido en cien años!\n\nMientras Shiki tropieza en su camino para hacer nuevos amigos, sus antiguos vecinos se agitan ante la oportunidad de una rebelión robótica ... Y cuando su antigua patria se vuelve demasiado peligrosa, Shiki debe unirse a Rebecca y Happy en su nave espacial y escapar al cosmos sin límites.",
-            "Secuela": "https://jkanime.net/edens-zero-2nd-season/"
+            "sinopsis": "En Granbell Kingdom, un parque de atracciones abandonado, Shiki ha vivido toda su vida entre máquinas. Pero un día, Rebecca y su compañero gato Happy aparecen en la entrada del parque. ¡Poco saben estos recién llegados que este es el primer contacto humano que Granbell ha tenido en cien años!\n\nMientras Shiki tropieza en su camino para hacer nuevos amigos, sus antiguos vecinos se agitan ante la oportunidad de una rebelión robótica ... Y cuando su antigua patria se vuelve demasiado peligrosa, Shiki debe unirse a Rebecca y Happy en su nave espacial y escapar al cosmos sin límites."
         },
         "edens-zero-2nd-season": {
             "Duracion": "24 min.",
@@ -11625,9 +11625,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Shounen, Sci-Fi, Fantasía, Comedia, Aventura, Shounen, ",
-            "maxcapit": 4,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "Segunda temporada de Edens Zero. Seguimos las aventuras de Shiki, Homura y el resto del grupo en un mundo lleno de robots y viajes espaciales."
         },
         "edomae-elf": {
@@ -11641,9 +11641,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Sobrenatural, Comedia, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Koito Koganei es una joven que trabaja como ayudante en el santuario Takamimi. Pero el residente del santuario es una elfa milenaria que adora los videojuegos y odia salir. Si quieres dejar una ofrenda, sus preferidas son bebidas energéticas, papas fritas, videojuegos y otras cosas muy otaku. ¿Podrá Koganei mantener a la elfa feliz?"
         },
         "ef-a-tale-of-melodies-blu-ray": {
@@ -19180,9 +19180,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Fantasía, ",
-            "maxcapit": 12,
+            "maxcapit": 13,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "Ha ocurrido un incidente importante en la pacífica Tierra del Cielo.\n¡La joven princesa Elle ha sido secuestrada por los monstruos de Underg Empire!\nUna joven valiente, Sora, sigue a la princesa a través de un agujero misterioso.\nVolando entre dos mundos! ¡La aventura con Pretty Cure comienza ahora!"
         },
         "hiscoool-seha-girls": {
@@ -21159,9 +21159,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Colegial, Fantasía, Aventura, Accion, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "Luego de recibir acoso constante, un chico ve una puerta ante él. Al cruzarla, se encuentra con un mundo lleno de fantasía, magia y artefactos increíbles. Sin embargo, así como hay magia, hay monstruos. Lo más interesante es que puede llevarse todo lo que encuentre a la Tierra cuando quiera regresar. Y esta nueva vida cambiará su perspectiva para siempre."
         },
         "isekai-izakaya-koto-aitheria-no-izakaya-nobu": {
@@ -21289,9 +21289,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Seinen, Fantasía, Comedia, Seinen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Una pareja de hermanos es transportada a un mundo de fantasía luego de que un accidente acabe con sus vidas normales y corrientes. Pero cuando el hermano menor espera ser quien tenga la mayor cantidad de poderes, descubre que es su hermana mayor, Mayu, quien puede defenderlo de absolutamente todo lo malo. Es un tanque andante con unos poderes increíbles, pero lo peor es que su hermano es un completo inútil."
         },
         "isekai-quartet": {
@@ -21373,9 +21373,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Harem, Romance, Fantasía, Comedia, Aventura, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "En esta historia hay un montón de giros y vueltas. Primero, el protagonista era un héroe que salvó al mundo, pero luego de perder popularidad, se transformó en un don nadie. Eventualmente, reencarna en el mundo normal, pero cuando finalmente llega a la adolescencia, el mundo que antiguamente lo rechazó, lo recluta de vuelta para ayudarlos nuevamente."
         },
         "isekai-wa-smartphone-to-tomo-ni": {
@@ -21385,6 +21385,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/isekai-wa-smartphone-to-tomo-ni.jpg",
+            "Secuela": "https://jkanime.net/isekai-wa-smartphone-to-tomo-ni-2/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -21392,8 +21393,7 @@
             "maxcapit": 12,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Después de un extraño accidente en el que lo mataron unos rayos, el joven de 15 años Mochizuki Touya se despierta para encontrarse cara a cara con Dios. “Lamento decir que he cometido un error…” se queja el viejo gruñón antes de decirle que puede reencarnarse en un mundo de fantasía y, como recompensa, le permite llevarse su smarthphone.\n\nY así comienza la aventura de Touya en un nuevo mundo pseudo-medieval y anacrónico. ¡Amigos! ¡Risas! ¡Lágrimas! ¡Inexpicable Deus ex Machina! El chico se embarca en un viaje lleno de cosas increíbles, viajando distraídamente de un lugar a otro, siguiendo cualquier objetivo que le atraiga.\n\n¡Las cortinas se levantan en un cuento épico de espadas, brujería y… aplicaciones de smarthphone!",
-            "Secuela": "https://jkanime.net/isekai-wa-smartphone-to-tomo-ni-2/"
+            "sinopsis": "Después de un extraño accidente en el que lo mataron unos rayos, el joven de 15 años Mochizuki Touya se despierta para encontrarse cara a cara con Dios. “Lamento decir que he cometido un error…” se queja el viejo gruñón antes de decirle que puede reencarnarse en un mundo de fantasía y, como recompensa, le permite llevarse su smarthphone.\n\nY así comienza la aventura de Touya en un nuevo mundo pseudo-medieval y anacrónico. ¡Amigos! ¡Risas! ¡Lágrimas! ¡Inexpicable Deus ex Machina! El chico se embarca en un viaje lleno de cosas increíbles, viajando distraídamente de un lugar a otro, siguiendo cualquier objetivo que le atraiga.\n\n¡Las cortinas se levantan en un cuento épico de espadas, brujería y… aplicaciones de smarthphone!"
         },
         "isekai-wa-smartphone-to-tomo-ni-2": {
             "Duracion": "24 min.",
@@ -21407,9 +21407,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Harem, Romance, Fantasía, Comedia, Aventura, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "Segunda temporada de In Another World With My Smartphone. Seguiremos la historia de Touya Mochizuki, a quien Dios mató, sin querer, con un rayo. Para enmendarlo, le ofrece la reencarnación, y Touya solamente pide que sea acompañado de su teléfono inteligente."
         },
         "isekai-yakkyoku": {
@@ -21710,7 +21710,7 @@
             "Duracion": "23 min.",
             "Emitido": "Ago 1 de 2021 a Dic 18 de 2021",
             "Episodios": "20",
-            "Estado": "En Emisión",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/jahy-sama-wa-kujikenai.jpg",
             "TimeStamp": "-.-",
@@ -21719,7 +21719,7 @@
             "generos": "Comedia, Shounen, Sobrenatural, ",
             "maxcapit": 20,
             "mincapit": 1,
-            "nextdate": "...",
+            "nextdate": " ",
             "sinopsis": "La Gran Jahy, segunda al mando del Reino Oscuro, es una figura amenazadora, temida y reverenciada por todos. Pero cuando un encuentro con una misteriosa mujer resulta en la destrucción del preciado cristal de mana del Reino Oscuro, ¡este cae derrotado! ¡Ahora Jahy acaba en el mundo humano como una niña pequeña y débil a falta del poder del cristal de maná! Por desgracia, el plan de revivir al Reino Oscuro de Jahy no será tan sencillo, puesto que hacerlo desde un pequeño y destartalado apartamento mientras se busca la vida para ganar dinero con el que pagar el alquiler y comer, no es fácil"
         },
         "jaku-chara-tomozaki-kun": {
@@ -21967,9 +21967,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Historico, Fantasía, Accion, Shounen, ",
-            "maxcapit": 4,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "Gabimaru, el vacío, es un ninja del pueblo de Iwagakure. Luego de ser condenado a muerte, piensa que está harto de asesinar y del mundo de los ninjas, por lo cual acepta su destino. Pero hay algo en él que no le permite morir, y parece ser el vínculo con su esposa. Esto ocasiona que ninguna ejecución funcione y siga viviendo."
         },
         "jijou-wo-shiranai-tenkousei-ga-guigui-kuru": {
@@ -21983,9 +21983,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Colegial, Comedia, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Domingo 23 Abril ",
+            "nextdate": " Domingo 07 Mayo ",
             "sinopsis": "Seguimos la adorable historia de amor entre el chico más popular de la clase y la típica niña callada. Dos pequeños de quinto grado se conocen cuando el nuevo chico se transfiere a la escuela y descubre que a la niña la acosan constantemente. Resulta ser que el pequeño tiene el superpoder de lograr que la niña demuestre su verdadera personalidad, y lo único que hacía falta era un poco de cariño y atención."
         },
         "jikan-no-shihaisha": {
@@ -22959,6 +22959,7 @@
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/kaguya-sama-wa-kokurasetai-ultra-romantic.jpg",
             "Precuela": "https://jkanime.net/kaguya-sama-wa-kokurasetai-tensai-tachi-no-renai-zunousen-2/",
+            "Secuela": "https://jkanime.net/kaguya-sama-wa-kokurasetai-first-kiss-wa-owaranai/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -22966,8 +22967,7 @@
             "maxcapit": 13,
             "mincapit": 0,
             "nextdate": " ",
-            "sinopsis": "Tercera temporada de Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen .\n\n",
-            "Secuela": "https://jkanime.net/kaguya-sama-wa-kokurasetai-first-kiss-wa-owaranai/"
+            "sinopsis": "Tercera temporada de Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen .\n\n"
         },
         "kai-byoui-ramune": {
             "Duracion": "24 min.",
@@ -23547,9 +23547,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Fantasía, Ecchi, Comedia, Accion, Seinen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Miercoles 26 Abril ",
+            "nextdate": " Miercoles 03 Mayo ",
             "sinopsis": "Los padres de Yukito son miembros de una secta. Luego de que sea sacrificado, reencarna en una región donde la religión no existe y no hay pudor, ya que los materiales adultos son más que bienvenidos. Además, el país decide cuándo vives o mueres. Para evitar la ejecución de un amigo, se sacrifican ambos, pero son salvados por el dios de la religión de la secta de los padres de Yukito."
         },
         "kamisama-dolls": {
@@ -23876,9 +23876,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Romance, Fantasía, ",
-            "maxcapit": 2,
+            "maxcapit": 3,
             "mincapit": 1,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "Park Eunha fallece en la Corea moderna, solo para reencarnar en el cuerpo de Raeliana McMillan, la hija mayor de un barón nuevo rico. Sin embargo, este mundo no es lo que parece: resulta ser el universo de una novela que leyó anteriormente. Su familia la adora y su vida parece idílica, pero nada puede estar más lejos de la verdad. Porque Raeliana sabe perfectamente el final de la novela, y sabe que su destino es morir a manos de su prometido, quien lo planea todo.\n\nY no piensa aceptar su destino. Decide enamorar a alguien con una buena posición, el duque Noah Volstaire, buscando una forma de cambiar la historia. Sabiendo eventos futuros, Raeliana ofrece información a Noah con la condición de que se comporte como su prometido, aunque sea falso. Pero, aparentemente, el duque tiene otros planes."
         },
         "kanojo-mo-kanojo": {
@@ -24458,9 +24458,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Shounen, Sci-Fi, Comedia, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Una alienígena que quiere destruir la tierra decide visitarla antes de dar el golpe final. Caminando por la ciudad de Tokio se tropieza con un cat café, y su perspectiva sobre la humanidad cambia drásticamente cuando conecta con las peludas criaturas."
         },
         "kaze-ga-tsuyoku-fuiteiru": {
@@ -24866,9 +24866,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Space, Sci-Fi, Colegial, Accion, ",
-            "maxcapit": 2,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Domingo 23 Abril ",
+            "nextdate": " Domingo 07 Mayo ",
             "sinopsis": "Continuación de The Witch of Mercury. Seguiremos las aventuras de Suletta después de los acontecimientos del final de la primera temporada."
         },
         "kigeki-comedy": {
@@ -25062,9 +25062,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Shounen, Historico, Fantasía, Accion, Shounen, ",
-            "maxcapit": 2,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Domingo 23 Abril ",
+            "nextdate": " Domingo 07 Mayo ",
             "sinopsis": "Inicia el arco de los herreros en Kimetsu No Yaiba. Continuación de la segunda temporada, Arco del distrito rojo. Tanjiro y compañía tendrán que cumplir una nueva misión, acompañados de dos pilares."
         },
         "kimetsu-no-yaiba-movie-mugen-ressha-hen": {
@@ -25109,6 +25109,7 @@
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/kimetsu-no-yaiba-yuukaku-hen.jpg",
             "Precuela": "https://jkanime.net/kimetsu-no-yaiba-movie-mugen-ressha-hen/",
+            "Secuela": "https://jkanime.net/kimetsu-no-yaiba-katanakaji-no-sato-hen/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -25116,8 +25117,7 @@
             "maxcapit": 11,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Tanjirou, Zenitsu e Inosuke, con la ayuda del Sound Hashira Tengen Uzui, viajan al distrito rojo de Yoshiwara para cazar a un demonio que ha estado aterrorizando a la ciudad.",
-            "Secuela": "https://jkanime.net/kimetsu-no-yaiba-katanakaji-no-sato-hen/"
+            "sinopsis": "Tanjirou, Zenitsu e Inosuke, con la ayuda del Sound Hashira Tengen Uzui, viajan al distrito rojo de Yoshiwara para cazar a un demonio que ha estado aterrorizando a la ciudad."
         },
         "kimi-ga-nozomu-eien": {
             "Duracion": "23 min. por episodio",
@@ -25278,9 +25278,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Cosas de la vida, Colegial, Seinen, ",
-            "maxcapit": 2,
+            "maxcapit": 3,
             "mincapit": 1,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "Ganta Nakami sufre dee insomnio, y se tropieza con Isaki Magari en el observatorio abandonado de la escuela. Después de la muerte de un alumno, se rumorea que el sitio está embrujado, y luego de quedarse encerrados adentro, tendrán que intentar ignorar el miedo y comenzar a hablar. Luego de establecer una evidente conexión, el lugar se convierte en su refugio seguro."
         },
         "kimi-wa-kanata": {
@@ -25756,9 +25756,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Musica, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "Luego de que Kizuna Ai, una grande en el mundo virtual, desapareciera sin dejar rastro, su legado es innegable. La influencia de lo virtual en el mundo cotidiano es palpable y muchas chicas sueñan con hacer la misma marca que Ai. Entre ellas se encuentra Miracle, que sueña con ser la próxima Ai. Gracias a esto, se crea la academia de ADEN, donde reclutan talento para crear el próximo idol virtual."
         },
         "kj-file": {
@@ -26388,9 +26388,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Fantasía, Comedia, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Miercoles 26 Abril ",
+            "nextdate": " Miercoles 03 Mayo ",
             "sinopsis": "Megumin y Yunyun son hechiceras que están aprendiendo métodos de magia. Ambas son las mejores de la clase, y Yunyun ya ha avanzado lo suficiente como para ser una bruja respetada. Pero en el caso de Megumin, le ha llamado la atención otro tipo de magia: la magia explosiva. A pesar de las advertencias (que su uso es limitado), Megumin está segura de que finalmente es el camino que debe seguir para ser una maga poderosa y... ¿voluptuosa?"
         },
         "kono-subarashii-sekai-ni-shukufuku-wo": {
@@ -26847,7 +26847,7 @@
             "Tipo": "ONA",
             "enemision": "false",
             "generos": "Fantasía, Aventura, Accion, ",
-            "maxcapit": 20,
+            "maxcapit": 26,
             "mincapit": 1,
             "nextdate": " ",
             "sinopsis": "La animación cuenta la historia de Xiao Shuai, que se ha metido en un mundo genial por accidente y se ve envuelto en una disputa entre universidades de parkour."
@@ -26939,6 +26939,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/kuma-kuma-kuma-bear.jpg",
+            "Secuela": "https://jkanime.net/kuma-kuma-kuma-bear-punch/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -26946,8 +26947,7 @@
             "maxcapit": 12,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Yuna, de quince años, prefiere quedarse en casa y jugar obsesivamente a su VRMMO favorito a hacer cualquier otra cosa, incluso ir a la escuela. Cuando una nueva actualización extraña le da un atuendo de oso único en su tipo que viene con habilidades dominadas, Yuna se desgarra: el atuendo es insoportablemente lindo, pero demasiado vergonzoso para usar en el juego. Pero luego, de repente, se ve transportada al mundo del juego, enfrentando monstruos y magia de verdad, ¡y el traje de oso se convierte en la mejor arma que tiene!",
-            "Secuela": "https://jkanime.net/kuma-kuma-kuma-bear-punch/"
+            "sinopsis": "Yuna, de quince años, prefiere quedarse en casa y jugar obsesivamente a su VRMMO favorito a hacer cualquier otra cosa, incluso ir a la escuela. Cuando una nueva actualización extraña le da un atuendo de oso único en su tipo que viene con habilidades dominadas, Yuna se desgarra: el atuendo es insoportablemente lindo, pero demasiado vergonzoso para usar en el juego. Pero luego, de repente, se ve transportada al mundo del juego, enfrentando monstruos y magia de verdad, ¡y el traje de oso se convierte en la mejor arma que tiene!"
         },
         "kuma-kuma-kuma-bear-punch": {
             "Duracion": "24 min.",
@@ -26961,9 +26961,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Fantasía, Comedia, Aventura, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "Seguimos las aventuras de Yuna, que con su trajecito de oso, tiene excelentes puntos en sus habilidades dentro del mundo virtual de World Fantasy Online. Segunda temporada con más acción y muchas situaciones absurdas."
         },
         "kuma-miko": {
@@ -29742,9 +29742,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Fantasía, Accion, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Ambientado en un futuro cercano distópico donde la cultura otaku en Japón ha sido aniquilada por una misteriosa organización conocida como SSC, Magical Girl Destroyers sigue las desventuras de Otaku Hero, un joven revolucionario que ama la cultura otaku, y Anarchy, Blue, and Pink. un trío de chicas mágicas que lo admiran. Juntos luchan por crear un mundo en el que puedas decir lo que te gusta sobre lo que te gusta tanto como te gusta."
         },
         "mahou-shoujo-nante-mou-ii-desukara": {
@@ -29937,6 +29937,7 @@
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/mahoutsukai-no-yome.jpg",
             "Precuela": "https://jkanime.net/mahoutsukai-no-yome-hoshi-matsu-hito/",
+            "Secuela": "https://jkanime.net/mahoutsukai-no-yome-season-2/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -29944,8 +29945,7 @@
             "maxcapit": 24,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Chise Hatori ha llevado una vida de abusos y de desprecio en la que no ha conocido nunca el amor. Sin el calor de una familia, su actitud ante la vida siempre ha sido derrotista. Cuando ya no tenía esperanza y la van a vender como esclava, aparece un hombre con cabeza de bestia y misteriosos poderes que la compra para ofrecerle convertirla en su aprendiz... y en su futura esposa.",
-            "Secuela": "https://jkanime.net/mahoutsukai-no-yome-season-2/"
+            "sinopsis": "Chise Hatori ha llevado una vida de abusos y de desprecio en la que no ha conocido nunca el amor. Sin el calor de una familia, su actitud ante la vida siempre ha sido derrotista. Cuando ya no tenía esperanza y la van a vender como esclava, aparece un hombre con cabeza de bestia y misteriosos poderes que la compra para ofrecerle convertirla en su aprendiz... y en su futura esposa."
         },
         "mahoutsukai-no-yome-hoshi-matsu-hito": {
             "Duracion": "23 min. por episodio.",
@@ -29992,9 +29992,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Romance, Fantasía, Drama, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Jueves 27 Abril ",
+            "nextdate": " Jueves 04 Mayo ",
             "sinopsis": "Segunda temporada de The Ancient Magus&#039; Bride. Chise Hatori ha entrado en una escuela de magia para aprender a usar sus habilidades. ¿Cuál será el papel de Elias en esta historia?"
         },
         "mahoutsukai-reimeiki": {
@@ -30274,9 +30274,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Fantasía, Drama, Aventura, Accion, ",
-            "maxcapit": 2,
+            "maxcapit": 3,
             "mincapit": 1,
-            "nextdate": " Miercoles 26 Abril ",
+            "nextdate": " Miercoles 03 Mayo ",
             "sinopsis": "Cuarta temporada de Majutsushi Orphen Hagure Tabi ."
         },
         "majutsushi-orphen-hagure-tabi-urbanrama-hen": {
@@ -30799,9 +30799,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Colegial, Parodia, Fantasía, Comedia, Accion, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Mash Burnedead es un fugitivo que ha huido de una sociedad donde la magia y poder son la normal. Es una amenaza genética y necesitan purgarlo. Sin embargo, Mash ha entrenado su cuerpo a un punto en que cree poder enfrentarse a la magia, con el sueño de convertirse en el visonario divino. Esto le permitirá ganarse el respeto de la sociedad, a la vez que le dará propósito para salir de su escondite y unirse a la academia de magia de Easton."
         },
         "masou-gakuen-hxh": {
@@ -31010,9 +31010,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Harem, Romance, Ecchi, Comedia, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Luego de que su abuela fallece, Hayato decide vender el café cerca de la costa que le pertenecía. Pero en una visita descubre que adentro viven un grupo de cinco chicas jóvenes que dicen ser su familia. La pasión de las chicas convence a Hayato de intentar mantener el café abierto, pero su falta de disciplina y orden hacen que las cosas se compliquen."
         },
         "megami-ryou-no-ryoubo-kun": {
@@ -31808,6 +31808,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/mix-meisei-story.jpg",
+            "Secuela": "https://jkanime.net/mix-meisei-story-nidome-no-natsu-sora-no-mukou-e/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -31815,8 +31816,7 @@
             "maxcapit": 24,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "La historia tiene lugar en la misma escuela secundaria Meisei Gakuen que Touch, solo 26 años después. Como Touch, Mix gira en torno a los hermanos y el béisbol como tema principal.",
-            "Secuela": "https://jkanime.net/mix-meisei-story-nidome-no-natsu-sora-no-mukou-e/"
+            "sinopsis": "La historia tiene lugar en la misma escuela secundaria Meisei Gakuen que Touch, solo 26 años después. Como Touch, Mix gira en torno a los hermanos y el béisbol como tema principal."
         },
         "mix-meisei-story-nidome-no-natsu-sora-no-mukou-e": {
             "Duracion": "24 min.",
@@ -31830,9 +31830,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Deportes, Shounen, Shounen, ",
-            "maxcapit": 4,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "Segunda temporada de Mix: Meisei Story. Una historia conmovedora sobre dos chicos que logran con ser las próximas estrellas del béisbol."
         },
         "miyakawa-ke-no-kuufuku": {
@@ -32142,6 +32142,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/mobile-suit-gundam-the-witch-from-mercury.jpg",
+            "Secuela": "https://jkanime.net/kidou-senshi-gundam-suisei-no-majo-season-2/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -32149,8 +32150,7 @@
             "maxcapit": 12,
             "mincapit": 0,
             "nextdate": " ",
-            "sinopsis": "Cuando un montón de corporaciones han entrado al espacio y crearon un sistema económico que se sostiene, una joven solitaria de un planeta remoto se transfiere a la escuela tecnológica de Asticassia. Allí, se enfrentará a un mundo nuevo.",
-            "Secuela": "https://jkanime.net/kidou-senshi-gundam-suisei-no-majo-season-2/"
+            "sinopsis": "Cuando un montón de corporaciones han entrado al espacio y crearon un sistema económico que se sostiene, una joven solitaria de un planeta remoto se transfiere a la escuela tecnológica de Asticassia. Allí, se enfrentará a un mundo nuevo."
         },
         "mobile-suit-gundam-thunderbolt": {
             "Duracion": " por episodio.",
@@ -32942,9 +32942,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Thriller, Drama, Seinen, ",
-            "maxcapit": 3,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Domingo 23 Abril ",
+            "nextdate": " Domingo 07 Mayo ",
             "sinopsis": "Tetsuo Tosu es un asalariado común que no está de acuerdo con la nueva relación de su hija. Su novio no solamente es grosero y parece un interesad, sino que luego de que descubre que abusa físicamente de ella, Tetsuo decide que debe investigar de dónde salió. Cuál es su sorpresa al descubrir que el chico viene de un sindicato criminal que lo usa como carnada para enamorar a chicas con familiares millonarios y acabar con ellas cuando ya no son de utilidad...\n\nLógicamente, Tetsuo decide tomar la justicia en sus manos. Reika, su hija, está en peligro, y será capaz de hacer cualquier cosa, incluso asesinar a su novio, para protegerla. El problema con la desaparición de ese bueno para nada es que el sindicato del que salió comenzará a notar su ausencia, y tanto Tetsuo como Reika y toda la familia caerán en su radar como sospechosos."
         },
         "my-neighbor-totoro": {
@@ -34122,9 +34122,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Shoujo, Romance, Fantasía, Shoujo, ",
-            "maxcapit": 1,
+            "maxcapit": 2,
             "mincapit": 1,
-            "nextdate": " Miercoles 26 Abril ",
+            "nextdate": " Miercoles 03 Mayo ",
             "sinopsis": "Hace cien años, la guerra entre los humanos y las bestias terminó. Los humanos perdieron. Debido a esto, los humanos establecieron la tradición de ofrecer un sacrificio humano para el Rey de las Bestias. Aquí entra en la historia la pequeña Sariphi, de 15 años. Pero esta joven es totalmente distinta a las otras niñas. No le teme al rey de las bestias, ni tampoco le teme a su destino. Esto sorprende al Rey, tanto, que le permite andar libremente por su reino hasta el día del sacrificio.\n\nPero este pequeño acto de bondad será el catalizador de un cambio radical que sacudirá a todo el reino de Ozmargo."
         },
         "nierautomata-ver11a": {
@@ -35521,9 +35521,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Super Poderes, Shounen, Fantasía, Comedia, Aventura, Accion, ",
-            "maxcapit": 1059,
+            "maxcapit": 1060,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "Una historia épica de piratas, donde narra la historia de Monkey D. Luffy quien cuando tenia 7 años, comió accidentalmente una Akuma no mi(Fruta del diablo) la cual le convirtió en un hombre de goma. Por otra parte Gol D. Roger conocido como El rey de los Piratas quien fuera ejecutado por la Marine, habló antes de morir, acerca de su mayor tesoro,el One Piece escondido en la Gran line. Esta noticia desató la gran era de los piratas lanzando a incontables piratas a ese lugar, en busca del One Piece el tesoro perdido. Diez años después, Luffy inspirado en Gol D. Roger y un pirata de nombre Akagami no Shanks (Shanks el pelirrojo) se convierte en pirata deseando ser el próximo Rey de los Piratas y zarpar para conocer amigos y tener aventuras con ellos, teniendo como meta encontrar el One Piece."
         },
         "one-piece-3d2y-ace-no-shi-wo-koete-luffy-nakama-tono-chikai": {
@@ -36336,9 +36336,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Sci-Fi, Colegial, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Jueves 27 Abril ",
+            "nextdate": " Jueves 04 Mayo ",
             "sinopsis": "Una historia sobre el arte y tres amigos que sueñan dominar una nueva versión: el arte perceptivo. Uno de ellos es el heredero del concepto, hijo de quienes lo crearon, y otro de los chicos quiere conectar nuevamente con una amistad pasada que perdió debido a un incidente."
         },
         "orange": {
@@ -36696,9 +36696,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Sobrenatural, Drama, Seinen, ",
-            "maxcapit": 2,
+            "maxcapit": 3,
             "mincapit": 1,
-            "nextdate": " Miercoles 26 Abril ",
+            "nextdate": " Miercoles 03 Mayo ",
             "sinopsis": "Ai Hoshino tiene 16 años y es una de las idols más adoradas de la nación. Su carisma y poder de atracción ha alcanzado incluso los lugares más recónditos de Japón, incluyendo un pequeño hospital en las afueras. Allí existe un doctor cuya pasión por Ai solo compite con la de una de sus pacientes, una niña de 14 años con cáncer terminal. Gorou Amemiya es un ginecólogo de 30 años que sueña con algún día ir a un concierto de B-Komachi, el grupo de Ai. Un día, cuál es su sorpresa al descubrir que una de sus pacientes es nada más y nada menos que Ai, y que tiene un gran secreto... ¡está embarazada!\n\nSi esto sale a la luz, sería el escándalo del siglo. Gorou jura proteger a la muchacha y su privacidad a toda costa, y llevarla a término con su embarazo (que, además, es de gemelos). Pero el mundo del entretenimiento es más que despiadado, y la seguridad de Gorou comienza a peligrar cuando un misterioso acosador parece reconocerlo como el doctor de la idol."
         },
         "oshiete-galko-chan": {
@@ -36862,9 +36862,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Seinen, Romance, Comedia, Seinen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "Desde que su padre murió, Ichirou Kuga ha luchado para mantener a sus dos hermanos menores con nada más que una pequeña herencia y su pasión por dibujar manga. Pero cada vez es más difícil mantenerse al día con sus crecientes responsabilidades y plazos, especialmente después de que sus dos últimos asistentes renunciaron para seguir sus sueños. Justo cuando se acerca a su punto de quiebre, la hermosa y aterradoramente competente Shiori Goshiki solicita convertirse en su nueva asistente. Pero hay algo casi de otro mundo en Goshiki, y pronto Kuga encuentra su realidad de cabeza cuando ella declara que están comprometidos para casarse."
         },
         "otonari-no-tenshi-sama-ni-itsunomanika-dame-ningen-ni-sareteita-ken": {
@@ -36942,9 +36942,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Fantasía, Aventura, ",
-            "maxcapit": 2,
+            "maxcapit": 3,
             "mincapit": 1,
-            "nextdate": " Jueves 27 Abril ",
+            "nextdate": " Jueves 04 Mayo ",
             "sinopsis": "en duda "
         },
         "oushitsu-kyoushi-haine": {
@@ -38221,7 +38221,7 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, Aventura, Comedia, Fantasía, Niños, Niños, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
             "nextdate": "  ",
             "sinopsis": "¡Sigue a Liko y Roy mientras descubren los misterios que los rodean y encuentra a Friede, el Capitán Pikachu, Amethio y otros durante sus emocionantes aventuras!"
@@ -40144,9 +40144,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Harem, Shounen, Colegial, Romance, Comedia, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Tousuke estudia en una academia donde, sobre todo, hay delincuentes juveniles. Es acosado sin parar por las chicas que allí estudian, pero un día, recibe una herencia de su abuelo que, al abrirlo, le deja una extraña marca en la frente. Ya que el artefacto dice salvarlo de los problemas, cree que finalmente parará el acoso, pero en realidad, lo que logra la marca es enamorar a la chica más fuerte entre el grupo que lo acosaba."
         },
         "rokuhoudou-yotsuiro-biyori": {
@@ -44174,6 +44174,7 @@
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/shingeki-no-kyojin-the-final-season-part-2.jpg",
             "Precuela": "https://jkanime.net/shingeki-no-kyojin-the-final-season/",
+            "Secuela": "https://jkanime.net/shingeki-no-kyojin-the-final-season-kanketsu-hen/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -44181,8 +44182,7 @@
             "maxcapit": 12,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Temporada final de SNK.",
-            "Secuela": "https://jkanime.net/shingeki-no-kyojin-the-final-season-kanketsu-hen/"
+            "sinopsis": "Temporada final de SNK."
         },
         "shinigami-bocchan-to-kuro-maid": {
             "Duracion": "24 min.",
@@ -45285,9 +45285,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Seinen, Colegial, Drama, Seinen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Martes 25 Abril ",
+            "nextdate": " Martes 02 Mayo ",
             "sinopsis": "Iwakura Mitsumi es una alumna muy aplicada que sueña con salir de su pueblo y entrar en una buena universidad de Tokio. Pero al trasladarse, la vida de la ciudad la abruma, hasta que conoce a Shima Sousuke, un chico que es su completo opuesto. Es despreocupado y flojo, pero su personalidad es magnética. Al menos ahora podrá enfrentar su vida como estudiante de secundaria en Tokio con el dulce Sousuke a su lado."
         },
         "skirt-no-naka-wa-kedamono-deshita": {
@@ -48435,9 +48435,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Seinen, Sci-Fi, Aventura, Seinen, ",
-            "maxcapit": 4,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "La humanidad actual vive dentro de ghettos resguardados por robots, y los niños aprenden a quererlos como parte de su familia. Los niños están llenos de curiosidad sobre el mundo exterior, hasta que descubren que más allá de los muros existen seres sobrenaturales que aislaron a la humanidad. Maru está estudiando lo que queda de Tokio para crear un refugio, pero según lo que se encuentra, ese santuario está muy lejos de aparecer."
         },
         "tenjou-tenge": {
@@ -48547,9 +48547,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Isekai, Harem, Romance, Fantasía, Accion, ",
-            "maxcapit": 3,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Domingo 23 Abril ",
+            "nextdate": " Domingo 07 Mayo ",
             "sinopsis": "Shiinya Kazuya falleció heroicamente al salvar a unas jóvenes de un atacante, y ha reencarnado en un mundo lleno de magia. Recuerda su vida pasada, pero ahora ocupa la identidad de Cain von Silford, el tercer hijo de un aristócrata. Al recibir la bendición de los dioses en su quinto cumpleaños, Cain descubre que sus estadísticas de ataque y habilidad son altísimas, y decide ocultar este hecho para poder escalar poco a poco en la sociedad mientras entrena en las mazmorras más oscuras."
         },
         "tensei-oujo-to-tensai-reijou-no-mahou-kakumei": {
@@ -49062,9 +49062,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Musica, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Miercoles 26 Abril ",
+            "nextdate": " Miercoles 03 Mayo ",
             "sinopsis": "¡Es hora de abrir el telón de una nueva historia de Cinderella Girls! ¡Chicas trabajadoras y productores prometedores se unen para apuntar a las estrellas y convertirse en el próximo gran ídolo! Entre sus hermosos atuendos, actuaciones electrizantes y príncipes atractivos que distraen, estos aspirantes a ídolos tienen mucho con lo que lidiar."
         },
         "the-idolmster-movie-kagayaki-no-mukougawa-e": {
@@ -49161,9 +49161,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Accion, ",
-            "maxcapit": 2,
+            "maxcapit": 3,
             "mincapit": 1,
-            "nextdate": " Martes 25 Abril ",
+            "nextdate": " Martes 02 Mayo ",
             "sinopsis": "Un día la Tierra fue atacada por alienígenas. Quien salvó a la devastada Fuerza Aérea de Autodefensa fue una legendaria criatura con rostro humano. Desde ese momento, el ejercito se dio cuenta de que habían coexistido desde hace tiempo con estos seres, por lo que se les dio el nombre de «Hombres de la frontera» y se les puso bajo vigilancia. Años más tarde, con el mundo sumido en el caos debido a unos misteriosos ataques terroristas, se crea una organización para tomar medidas contra los delitos que tienen que ver con los «Hombre de la frontera» y que tiene el deber de ocultar su existencia al mundo. "
         },
         "the-reflection": {
@@ -49851,6 +49851,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "",
+            "Secuela": "https://jkanime.net/tokyo-mew-mew-new-2nd-season/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -49858,8 +49859,7 @@
             "maxcapit": 12,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Nueva animación de Tokyo Mew Mew.\n\n",
-            "Secuela": "https://jkanime.net/tokyo-mew-mew-new-2nd-season/"
+            "sinopsis": "Nueva animación de Tokyo Mew Mew.\n\n"
         },
         "tokyo-mew-mew-new-2nd-season": {
             "Duracion": "24 min.",
@@ -49873,9 +49873,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Shoujo, Sci-Fi, Romance, Fantasía, Shoujo, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Martes 25 Abril ",
+            "nextdate": " Martes 02 Mayo ",
             "sinopsis": "Segunda temporada de Tokyo Mew Mew New. Continuamos la historia de Ichigo Momomiya, una joven que descubre que tiene poderes mágicos."
         },
         "tokyo-ravens": {
@@ -50102,7 +50102,8 @@
             "maxcapit": 12,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Una comedia de vida matrimonial obra de Kenjiro Hata, autor de Hayate the Comat Butler y que ¡al fin da el salto al anime! Nasa Yuzaki se enamora a primera vista tras conocer a la misteriosa Tsukasa. Cuando Nasa reúne valor para declararle lo que siente, la respuesta de la chica le sorprende: Saldré contigo, pero solo si nos casamos. ¡La entrañable vida de casados de Nasa y Tsukasa está a punto de comenzar"
+            "sinopsis": "Una comedia de vida matrimonial obra de Kenjiro Hata, autor de Hayate the Comat Butler y que ¡al fin da el salto al anime! Nasa Yuzaki se enamora a primera vista tras conocer a la misteriosa Tsukasa. Cuando Nasa reúne valor para declararle lo que siente, la respuesta de la chica le sorprende: Saldré contigo, pero solo si nos casamos. ¡La entrañable vida de casados de Nasa y Tsukasa está a punto de comenzar",
+            "Secuela": "https://jkanime.net/tonikaku-kawaii-sns/"
         },
         "tonikaku-kawaii-2nd-season": {
             "Duracion": "24 min.",
@@ -50116,9 +50117,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Shounen, Romance, Comedia, Shounen, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Viernes 28 Abril ",
+            "nextdate": " Viernes 05 Mayo ",
             "sinopsis": "Segunda temporada de Tonikaku Kawaii. Seguimos la vida de casados de Nasa y Tsukasa, quienes aprenderán más sobre la convivencia y el matrimonio."
         },
         "tonikaku-kawaii-seifuku": {
@@ -50129,6 +50130,7 @@
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/tonikaku-kawaii-seifuku.jpg",
             "Precuela": "https://jkanime.net/tonikaku-kawaii-sns/",
+            "Secuela": "https://jkanime.net/tonikaku-kawaii-2nd-season/",
             "TimeStamp": "-.-",
             "Tipo": "Especial",
             "enemision": "false",
@@ -50136,8 +50138,7 @@
             "maxcapit": 1,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Episodio especial de Tonikaku Kawaii programado para ser lanzado en otoño de 2022.",
-            "Secuela": "https://jkanime.net/tonikaku-kawaii-2nd-season/"
+            "sinopsis": "Episodio especial de Tonikaku Kawaii programado para ser lanzado en otoño de 2022."
         },
         "tonikaku-kawaii-sns": {
             "Duracion": "24 min",
@@ -50146,6 +50147,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/tonikaku-kawaii-sns.jpg",
+            "Precuela": "https://jkanime.net/tonikaku-kawaii/",
             "Secuela": "https://jkanime.net/tonikaku-kawaii-seifuku/",
             "TimeStamp": "-.-",
             "Tipo": "OVA",
@@ -50420,6 +50422,7 @@
             "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/trinity-seven.jpg",
+            "Secuela": "https://jkanime.net/trinity-seven-ova/",
             "TimeStamp": "-.-",
             "Tipo": "Serie",
             "enemision": "false",
@@ -50731,9 +50734,9 @@
         },
         "tsukipro-the-animation-2": {
             "Duracion": "24 min.",
-            "Emitido": "Jul 7 de 2021 ",
-            "Episodios": "Desconocido",
-            "Estado": "En espera",
+            "Emitido": "Jul 7 de 2021 a Dic 29 de 2021",
+            "Episodios": "13",
+            "Estado": "Concluido",
             "Idiomas": "Japonés",
             "Image": "https://cdn.jkdesu.com/assets/images/animes/image/tsukipro-the-animation-2.jpg",
             "Precuela": "https://jkanime.net/tsukipro-the-animation/",
@@ -50741,9 +50744,9 @@
             "Tipo": "Serie",
             "enemision": "false",
             "generos": "Musica, ",
-            "maxcapit": 8,
+            "maxcapit": 13,
             "mincapit": 1,
-            "nextdate": ".Miercoles 01 Septiembre ",
+            "nextdate": " ",
             "sinopsis": "Segunda temporada de Tsukipro The Animation."
         },
         "tsukiuta-the-animation": {
@@ -51165,9 +51168,9 @@
             "Tipo": "ONA",
             "enemision": "true",
             "generos": "Deportes, ",
-            "maxcapit": 1,
+            "maxcapit": 3,
             "mincapit": 1,
-            "nextdate": "  ",
+            "nextdate": " Domingo 07 Mayo ",
             "sinopsis": "Seguiremos las aventuras de T.M. Opera O, Admire Vega y Narita Top Road de Uma Musume: Pretty Derby."
         },
         "uma-musume-pretty-derby-season-2": {
@@ -52040,9 +52043,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Drama, Aventura, Accion, Seinen, ",
-            "maxcapit": 15,
+            "maxcapit": 16,
             "mincapit": 1,
-            "nextdate": " Lunes 24 Abril ",
+            "nextdate": " Lunes 01 Mayo ",
             "sinopsis": "Segunda Temporada de Vinland Saga"
         },
         "violet-evergarden": {
@@ -52465,7 +52468,25 @@
             "maxcapit": 12,
             "mincapit": 1,
             "nextdate": " ",
-            "sinopsis": "Miyako es una estudiante universitaria tímida, otaku. Sin embargo, ¿pudiera haber conocido posiblemente a un ángel de un estudiante de escuela primaria?\n\n¡La hermana de Miyako ha traído a casa a una amiga llamada Hana que, tan pronto como Miyako pone sus ojos en ella, su corazón no puede parar de latir rápidamente!\n\nVa a ser una batalla cuesta arriba lograr que Hana se convierta en su amiga..."
+            "sinopsis": "Miyako es una estudiante universitaria tímida, otaku. Sin embargo, ¿pudiera haber conocido posiblemente a un ángel de un estudiante de escuela primaria?\n\n¡La hermana de Miyako ha traído a casa a una amiga llamada Hana que, tan pronto como Miyako pone sus ojos en ella, su corazón no puede parar de latir rápidamente!\n\nVa a ser una batalla cuesta arriba lograr que Hana se convierta en su amiga...",
+            "Secuela": "https://jkanime.net/watashi-ni-tenshi-ga-maiorita-precious-friends/"
+        },
+        "watashi-ni-tenshi-ga-maiorita-precious-friends": {
+            "Duracion": "1 hr 6 min",
+            "Emitido": "Oct 13 de 2022 ",
+            "Episodios": "1",
+            "Estado": "Concluido",
+            "Idiomas": "Japonés",
+            "Image": "https://cdn.jkdesu.com/assets/images/animes/image/watashi-ni-tenshi-ga-maiorita-precious-friends.jpg",
+            "Precuela": "https://jkanime.net/watashi-ni-tenshi-ga-maiorita/",
+            "TimeStamp": "-.-",
+            "Tipo": "Pelicula",
+            "enemision": "false",
+            "generos": "Comedia, Shoujo Ai, ",
+            "maxcapit": 1,
+            "mincapit": 1,
+            "nextdate": "Pelicula",
+            "sinopsis": "Hana, Hinata, Noa, Koyori y Kanon siempre son buenas amigas. ¡Hoy, tienen una fiesta de dulces amistosa en casa con los dulces caseros de Miyako! Las galletas con forma de flor se parecen a los adornos para el cabello que usa Hana. El adorno para el cabello era un tesoro preciado que Hana recibió de su abuela cuando era pequeña, y todos quedaron intrigados con la historia. ¡Y como práctica para el viaje escolar, deciden ir a visitar la casa de la abuela de Hana...! La primera salida para todos está por comenzar."
         },
         "watashi-no-hashtag-ga-haenakute": {
             "Duracion": "3 min",
@@ -52494,9 +52515,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Shoujo Ai, Comedia, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Jueves 27 Abril ",
+            "nextdate": " Jueves 04 Mayo ",
             "sinopsis": "Hime Shiraki sueña con casarse con un multimillonario para ser su esposa modelo, y ha hecho todo lo necesario para convertir ese sueño en realidad. Es una niña preciosa, tiene las notas más altas y su reputación no tiene ni una mancha. Pero un día, se tropieza con Mai Mikoshiba, rompiéndole el brazo en el accidente. Mai le pide que la reemplace en su trabajo, que resulta ser un café con temática de una escuela de niñas. Cuando conoce al resto de las empleadas, la reciben con cariño, excepto una de ellas, que parece ver más allá de su imagen idílica."
         },
         "watashi-nouryoku-wa-heikinchi-de-tte-itta-yo-ne": {
@@ -52985,9 +53006,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Musica, ",
-            "maxcapit": 2,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Domingo 23 Abril ",
+            "nextdate": " Domingo 07 Mayo ",
             "sinopsis": "La historia se desarrolla en un mundo después de que los artistas de Dai Star explotaran en popularidad mundial en el siglo XX. Kokona Ootori, de 16 años, sigue su sueño de convertirse en una estrella mundial de Dai al audicionar para la compañía teatral Sirius."
         },
         "world-fool-news": {
@@ -53521,9 +53542,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Romance, Comedia, ",
-            "maxcapit": 4,
+            "maxcapit": 5,
             "mincapit": 1,
-            "nextdate": " Sábado 29 Abril ",
+            "nextdate": " Sábado 06 Mayo ",
             "sinopsis": "Luego de un desengaño amoroso donde su novio la engaña con otra chica que conoce dentro de un videojuego, Akane está segura de que todos los gamers son iguales. Sin embargo, cuando conoce a Yamada, un chico callado, tímido y nada sociable, hay algo en él que la atrae. Más allá de que su personaje en el juego tiene todas sus habilidades en la puntuación máxima y la puede proteger, Akane quiere conocerlo mucho mejor."
         },
         "yamato-nadeshiko-shichi-henge": {
@@ -54845,9 +54866,9 @@
             "Tipo": "Serie",
             "enemision": "true",
             "generos": "Harem, Fantasía, Ecchi, Comedia, Accion, ",
-            "maxcapit": 3,
+            "maxcapit": 4,
             "mincapit": 1,
-            "nextdate": " Jueves 27 Abril ",
+            "nextdate": " Jueves 04 Mayo ",
             "sinopsis": "Los héroes pasados sellaron una puerta que llevaba al mundo de los humanos para evitar que los demonios invadiesen. Sin embargo, el sello se está debilitando, y tienen que regresar nuevamente al lugar para sellarla de nuevo. Pero Shion, el héroe que lleva a Excalibur, sufre un trágico accidente que acaba con su vida luego de caer en un agujero cavado por un granjero pervertido llamado Touka, que buscaba defenderse de los demonios. Por suerte, Shion tiene a una compañera nigromante, pero no puede revivirlo del todo, sino que debe usar su cuerpo. Así que usa el cuerpo de Shion para meter el alma de Touka, que ahora debe actuar como el héroe."
         },
         "yuusha-ni": {

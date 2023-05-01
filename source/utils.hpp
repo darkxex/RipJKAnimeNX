@@ -12,7 +12,7 @@ bool isFileExist(string file);
 void replace(string& subject, const string& search,const string& replace);
 void mayus(string &s);
 string scrapElement(string content, string get,string delim ="" );
-vector<string> scrapElementAll(string content, string get,string delim ="",string addend="");
+vector<string> scrapElementAll(string content, string get,string delim ="",string addend="",bool del=true);
 vector<string> split (string s, string delimiter);
 string url_decode(string text);
 void touch(string route);
