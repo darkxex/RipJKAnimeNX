@@ -114,10 +114,10 @@ int main(int argc, char **argv)
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 		
             
+        
         //Esto se usa para evitar el cierre forzado de la app, poder capturar dicho evento y cerrar con normalidad.
 		//if (!AppletMode)
             appletLockExit();
-
 
 		//Bucle principal mientas la app corre, salirse de aquí significa cerrarla, (se saldrá si se fuerza el cierre)
 		while (GOD.JKMainLoop())
@@ -318,6 +318,7 @@ int main(int argc, char **argv)
 					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
+                    if(!serverpront) {B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
                     if (!isFileExist(imagelocal)){
                         if (!CapSC){
                             CapS = std::thread(CheckImgNet,imagelocal,"");
@@ -325,9 +326,7 @@ int main(int argc, char **argv)
                         }
                     } else {
                         if (CapS.joinable()) {CapS.join();}
-                        
                         CapSC = false;
-                        if(!serverpront) {B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
                         GOD.Cover(imagelocal,160,456,"Secuela",120,BT_R);
                     }
 				}
@@ -335,6 +334,7 @@ int main(int argc, char **argv)
 					string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
+                    if(!serverpront) {B_R.render_T(dist, 680,"Precuela"); dist -= posdist;}
                     if (!isFileExist(imagelocal)){
                         if (!CapPC){
                             CapP = std::thread(CheckImgNet,imagelocal,"");
@@ -342,9 +342,7 @@ int main(int argc, char **argv)
                         }
                     } else {
                         if (CapP.joinable()) {CapP.join();}
-                    
                         CapPC = false;
-                        if(!serverpront) {B_R.render_T(dist, 680,"Precuela"); dist -= posdist;}
                         GOD.Cover(imagelocal,10,456,"Precuela",120,BT_L);
                     }
 				}
@@ -585,7 +583,7 @@ int main(int argc, char **argv)
 						gTextTexture.loadFromRenderedText(GOD.Arista_30, temptext.substr(0,55)+ ":", textColor);
 						gTextTexture.render(XF, YF-5);
 
-						VOX.render_VOX({XF, YF+HF-45, 160, 45}, 255, 255, 255, 135);
+						VOX.render_VOX({XF, YF+HF-45, 165, 45}, 255, 255, 255, 135);
 						B_RIGHT.render_T(XF+5, YF+HF-40,"Ver Ahora");
 
                         //elemento temporal para el cambio de temas
@@ -1028,18 +1026,14 @@ int main(int argc, char **argv)
 	//clear allocate
 	BD["com"] = "{}"_json;
 
-	// write prettified JSON
-	write_DB(BD,rootdirectory+"DataBase.json");
-	write_DB(AB,rootdirectory+"AnimeBase.json");
-	write_DB(UD,rootsave+"UserData.json");
-
+    emmc::Save();
+    
     if (CapS.joinable()) {CapS.join();}
     if (CapP.joinable()) {CapP.join();}
 	if (NULL == capithread) {printf("capithread Not in use\n");} else {printf("capithread in use: %s\n", SDL_GetError()); SDL_WaitThread(capithread, NULL);}
 	if (NULL == downloadthread) {printf("downloadthread Not in use\n");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
 	if (NULL == searchthread) {printf("searchthread Not in use\n");} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
 	if (NULL == Loaderthread) {printf("Loaderthread Not in use\n");}else {printf("Loaderthread in use: %s\n", SDL_GetError()); SDL_WaitThread(Loaderthread, NULL);}
-
 
 
 	//Free loaded images
