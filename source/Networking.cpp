@@ -321,7 +321,7 @@ bool Bypass(){
     bool change = false;
 
     //Just open the browser
-    WebBrowserCall("https://jkanime.net/",false);
+    WebBrowserCloud("https://jkanime.net/");
     string cookies = "";
     GetCookies(cookies);//save the cookies
     
@@ -449,9 +449,7 @@ bool CheckUpdates(bool force){
 					}
 					std::cout << "- OK " << Nurl <<std::endl;
 
-
-
-					string fileU=rootdirectory+"update.nsp";
+					string fileU=rootdirectory+"UPD/update."+Ver+".nsp";
 
 					//Have the update?
 					json UP;
@@ -469,14 +467,17 @@ bool CheckUpdates(bool force){
 
 					if (needDown) {
 						//Download New Update
+                        fsdevDeleteDirectoryRecursively((rootdirectory+"UPD").c_str());
+                        mkdir((rootdirectory+"UPD").c_str(), 0777);
+                        
 						if (!Net::DOWNLOAD(Nurl, fileU,false))
 						{
 							std::cout << "Download error" << New <<std::endl;
 							return false;
 						} else {
 							//Store update data
-							UP["update"]=New;
-							write_DB(UP,fileU+".json");
+							//UP["update"]=New;
+							//write_DB(UP,fileU+".json");
 							std::cout << Ver << " --> " << New <<std::endl;
 						}
 					}
