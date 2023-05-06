@@ -431,6 +431,13 @@ bool commit(){
 	}
 	return isMounted;
 }
+bool Save(){
+	// write prettified JSON
+	write_DB(BD,rootdirectory+"DataBase.json");
+	write_DB(AB,rootdirectory+"AnimeBase.json");
+	write_DB(UD,rootsave+"UserData.json");
+	return 0;
+}
 bool deinit(){
 	if (isMounted) {
 		fsdevCommitDevice("emmc");
@@ -770,13 +777,53 @@ std::string KeyboardCall (std::string hint, std::string text){
 	return std::string(buf);
 }
 
-Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/libnx/web_8h.html
+Result WebBrowserCloud(std::string url){
     string cburl = url+"404.shtml";
-    if(ClFlock){
-        url = url+to_string(Frames)+"M/";
-    }
-	cout << "WEB :"+url <<std::endl;
+    url = url+to_string(Frames)+"M/";
+    cout << "Cloud WEB :"+url <<std::endl;
+
 	Result rc = 0;
+	WebCommonConfig config;
+	WebCommonReply reply;
+
+	rc = webNewsCreate(&config, url.c_str());
+	printf("webPageCreate(): 0x%x\n", rc);
+	if (R_SUCCEEDED(rc)) {
+		//mount user data to save logins and that stuff
+		webConfigSetUid(&config,user::uid);
+
+        //webConfigSetCallbackUrl (&config, (url+"?__cf_chl_tk=").c_str()); 	
+        webConfigSetCallbackUrl (&config, (cburl).c_str());
+        webConfigSetFooter(&config, false);
+		webConfigSetJsExtension (&config, true);
+		webConfigSetBootDisplayKind (&config, WebBootDisplayKind_Black);
+		webConfigSetPageCache (&config, true);
+		webConfigSetBootLoadingIcon (&config, true);
+		webConfigSetPageScrollIndicator (&config, true);
+        webConfigSetPointer(&config, false);
+        webConfigSetTouchEnabledOnContents(&config, false);
+
+		//block redirection
+		if(url.substr(0,20) == "https://jkanime.net/") {
+			webConfigSetWhitelist(&config, "^https://jkanime\\.net($|/)");
+		} else {
+			webConfigSetWhitelist(&config, "^http*");
+		}
+
+        WebExitReason exitReason = WebExitReason_UnknownE;
+        //webConfigShow (WebCommonConfig *config, WebCommonReply *out)
+        webConfigShow(&config, &reply);
+        webConfigRequestExit (&config);
+		rc = webReplyGetExitReason(&reply, &exitReason);
+		printf("webReplyGetExitReason(): 0x%x", rc);
+		if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
+		printf("\n");
+	}
+	return rc;
+}
+Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/libnx/web_8h.html
+	Result rc = 0;
+	cout << "WEB :"+url <<std::endl;
 	if (nag) {
 		url = KeyboardCall ("Escribir URL http://", url);
 		urlc = url;
@@ -804,10 +851,6 @@ Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/l
 
 
 */
-        if(ClFlock){
-            //webConfigSetCallbackUrl (&config, (url+"?__cf_chl_tk=").c_str()); 	
-            webConfigSetCallbackUrl (&config, (cburl).c_str());
-        }
 		webConfigSetJsExtension (&config, true);
 		webConfigSetBootDisplayKind (&config, WebBootDisplayKind_Black);
 		webConfigSetPageCache (&config, true);
@@ -884,6 +927,22 @@ Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/l
 	return rc;
 }
 
+Result WebWiFiCall(std::string url){//https://switchbrew.github.io/libnx/web_8h.html
+    nsvmInitialize();
+	Result rc = 0;
+	cout << "WiFiWEB :"+url <<std::endl;
+    WebWifiConfig config;
+    WebWifiReturnValue out;
+    webWifiCreate(&config, NULL, url.c_str(), (Uuid) {0} , 0);
+    rc = webWifiShow (&config, &out);
+
+	printf("webPageCreate(): 0x%d\n", rc);
+	if (R_SUCCEEDED(rc)) {
+        printf(", 0x%d", rc);
+    }
+    nsvmExit();
+	return rc;
+}
 
 //KeyboardCall ("Buscar Anime (3 letras minimo.)", "");
 
