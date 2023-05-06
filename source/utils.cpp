@@ -2,7 +2,6 @@
 #include <string>
 #include <math.h>
 #include <stdio.h>
-#include <string>
 #include <cmath>
 #include <vector>
 #include <sys/stat.h>
@@ -11,6 +10,11 @@
 #include <iostream>
 #include <switch.h>
 #include <thread>
+#include <stdlib.h>
+#include <string.h>
+#include <stdexcept>
+#include <iomanip>
+#include <zlib.h>
 #include "utils.hpp"
 #include "Networking.hpp"
 #include <SDL.h>
@@ -200,7 +204,7 @@ void RemoveAccents(std::string& word){
 char from_hex(char ch) {
     return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
 }
-
+//---private
 string url_decode(string text) {
     char h;
     ostringstream escaped;
@@ -225,6 +229,99 @@ string url_decode(string text) {
     return escaped.str();
 }
 
+
+std::string compress(const std::string& str, int compressionlevel = Z_BEST_COMPRESSION) {
+/** Compress a STL string using zlib with given compression level and return* the binary data. */
+    z_stream zs;                        // z_stream is zlib's control structure
+    memset(&zs, 0, sizeof(zs));
+
+    if (deflateInit(&zs, compressionlevel) != Z_OK)
+        throw(std::runtime_error("deflateInit failed while compressing."));
+
+    zs.next_in = (Bytef*)str.data();
+    zs.avail_in = str.size();           // set the z_stream's input
+
+    int ret;
+    char outbuffer[10240];
+    std::string outstring;
+
+    // retrieve the compressed bytes blockwise
+    do {
+        zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
+        zs.avail_out = sizeof(outbuffer);
+
+        ret = deflate(&zs, Z_FINISH);
+
+        if (outstring.size() < zs.total_out) {
+            // append the block to the output string
+            outstring.append(outbuffer,
+                             zs.total_out - outstring.size());
+        }
+    } while (ret == Z_OK);
+
+    deflateEnd(&zs);
+
+    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
+        std::ostringstream oss;
+        oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
+        throw(std::runtime_error(oss.str()));
+    }
+
+    return outstring;
+}
+
+std::string decompress(const std::string str) {
+/** Decompress an STL string using zlib and return the original data. */
+    z_stream zs;                        // z_stream is zlib's control structure
+    memset(&zs, 0, sizeof(zs));
+
+    if (inflateInit(&zs) != Z_OK)
+        throw(std::runtime_error("inflateInit failed while decompressing."));
+
+    zs.next_in = (Bytef*)str.data();
+    zs.avail_in = str.size();
+
+    int ret;
+    char outbuffer[10240];
+    std::string outstring;
+
+    // get the decompressed bytes blockwise using repeated calls to inflate
+    do {
+        zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
+        zs.avail_out = sizeof(outbuffer);
+
+        ret = inflate(&zs, 0);
+
+        if (outstring.size() < zs.total_out) {
+            outstring.append(outbuffer,
+                             zs.total_out - outstring.size());
+        }
+
+    } while (ret == Z_OK);
+
+    inflateEnd(&zs);
+
+    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
+        std::ostringstream oss;
+        cout << "Exception during zlib decompression: (" << ret << ") "
+            << zs.msg;
+        throw(std::runtime_error(oss.str()));
+    }
+
+    return outstring;
+}
+
+std::string read_File(std::string path){
+    std::ifstream inf(path);
+    if(!inf.fail()) {
+        std::stringstream buffer;
+        buffer << inf.rdbuf();
+        inf.close();
+        return buffer.str();
+    }
+    return "";
+}
+//---end private
 void touch(std::string route){
 	std::ofstream outfile;
 	outfile.open(route, std::ios_base::app);
@@ -249,26 +346,28 @@ bool copy_me(std::string origen, std::string destino) {
 	}
 	return false;
 }
-std::string read_FL(std::string path){
+std::string read_FL(std::string path,int line){
 	std::ifstream inf(path);
     string TempLine = "";
 	if(!inf.fail()) {
-		getline(inf, TempLine);
+		for(int f = 1; !inf.eof() && f <= line ; f++)
+		{
+            if (f == line){
+                getline(inf, TempLine);
+            }
+		}
 	}
     inf.close();
 	return TempLine;
 }
-bool read_DB(json& base,std::string path){
+bool read_DB(json& base,std::string path,bool ucomp){
 	std::ifstream inf(path);
 	if(!inf.fail()) {
-		std::string tempjson="";
-		for(int f = 0; !inf.eof(); f++)
-		{
-			string TempLine = "";
-			getline(inf, TempLine);
-			tempjson += TempLine;
-		}
+        std::stringstream buffer;
+        buffer << inf.rdbuf();
+		std::string tempjson=buffer.str();
 		inf.close();
+        if(ucomp || tempjson.substr(0,1) != "{"){tempjson=decompress(tempjson);}//decompress lzip
 		if(json::accept(tempjson))
 		{
 			//Parse and use the JSON data
@@ -277,9 +376,10 @@ bool read_DB(json& base,std::string path){
 			return true;
 		}
 	}
+    std::cout << "Json is Bad... "<< path << std::endl;
 	return false;
 }
-bool write_DB(json base,std::string path){
+bool write_DB(json base,std::string path,bool comp){
 	std::string pathtemp = path+".tmp";
 	std::string pathback = path+".bck";
 	std::string type = path.substr(0,4);
@@ -288,7 +388,10 @@ bool write_DB(json base,std::string path){
 		strm << std::setw(4) << base;
 //		strm << base;
 		std::string A = strm.str();
-
+        if (comp){
+            std::cout << "Json: lzip... "<< path << std::endl;
+            A = compress(A);
+        }//compress lzip
 		std::ofstream otf(pathtemp);
 		otf << A;
 		otf.close();
@@ -457,8 +560,6 @@ bool DoubleKill(vector<string>& data) {
 	data = next;
 	return true;
 }
-
-
 std::vector<std::string> eraseVec(std::vector<std::string> array,std::string patther){
 	std::vector<std::string> array2={};
 	for (int x=0; x < (int)array.size(); x++) {
@@ -570,14 +671,15 @@ void TickerName(int& color,int sec,int min,int max){
  */
 }
 std::string string_to_hex(const std::string& in) {
-	std::stringstream ss;
+    ostringstream ret;
 
-	ss << std::hex << std::setfill('0');
-	for (size_t i = 0; in.length() > i; ++i) {
-		ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
-	}
-	return ss.str();
+    for (string::size_type i = 0; i < in.length(); ++i)
+        ret << std::hex << std::setfill('0') << std::setw(2) << std::uppercase << (int)in[i];
+        //ret << std::hex << std::setfill('0') << std::setw(2) << (upper_case ? std::uppercase : std::nouppercase) << (int)s[i];
+
+    return ret.str();
 }
+int FromHex(const string &s) { return strtoul(s.c_str(), NULL, 16); }
 
 void NameOfLink(std::string& word){
 	replace(word, "https://jkanime.net/", "");
