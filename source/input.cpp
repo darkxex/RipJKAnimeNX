@@ -279,8 +279,8 @@ void InputHandle(){
 							GOD.PleaseWait("Borrando cache");
 							read_DB(AB,"romfs:/AnimeBase.json");
 							BD="{}"_json;
-							mount_theme("themes",false);
 							fsdevDeleteDirectoryRecursively((rootdirectory).c_str());
+							mount_theme("themes",false);
 							statenow=99;
 						}
 
