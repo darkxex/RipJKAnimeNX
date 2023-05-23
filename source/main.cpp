@@ -993,9 +993,9 @@ int main(int argc, char **argv)
 			if (Frames>0) Frames++;
 			//Update tik
 			if (inTimeN(1260000) || reloadmain) {
-                reloadmain = false;
 				if (Net::HasConnection()) {
 					if(!isChained) {
+                        reloadmain = false;
 						cout << "Reloading Animes" << endl;
 						//Set main Thread get images and descriptions
 						Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);

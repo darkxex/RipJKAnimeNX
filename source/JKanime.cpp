@@ -24,9 +24,10 @@ int TimeNow(){
 	time_t t = time(0);
 	return t;
 }
-
+bool ThemeISUpdating = false;
 //BEGUING THREAD CHAIN
 void ThemeDown(){
+    ThemeISUpdating = true;
     if (Net::DOWNLOAD("https://github.com/darkxex/RipJKAnimeNX/raw/master/imgs/themes00.romfs",rootdirectory+"themes00.romfs")) {
         ThemeNeedUpdate = false;
         if (mount_theme("themes",true))
@@ -37,10 +38,12 @@ void ThemeDown(){
         } else
             Mromfs = true;
     }
+    ThemeISUpdating = false;
 }
 
 int AnimeLoader(void* data){
 	int steep=0;
+    std::thread themeT;
 	try{
 		isChained=true;
 		ChainManager(true,true);
@@ -92,25 +95,7 @@ int AnimeLoader(void* data){
 		steep++;
         //exit thread if are in applet mode
         if (AppletMode) {quit=true; return 0;}
-        
-        //Aqui creamos otra ramificación para no detener el cargador de animes -.-
-        std::thread themeT;
-		if (Mromfs) {
-			//Download themes
-			if (!mount_theme("themes",true) || ThemeNeedUpdate)
-			{
-                mount_theme("themes",false);
-                themeT = std::thread(ThemeDown);
-			}
-            Mromfs = false;
-		}
-
-		steep++;
-		if(!reloading) {
-			//Download All not existing images
-			CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
-		}
-        
+                
 		steep++;//Get main page
         //GetCookies();//Get Cookies
 		json MainPage=Net::REQUEST("https://jkanime.net/");
@@ -136,6 +121,25 @@ int AnimeLoader(void* data){
                 cout << "# Web State #" << numCode << endl;
                 break;
         }
+
+        //Aqui creamos otra ramificación para no detener el cargador de animes -.-
+		if (Mromfs) {
+			//Download themes
+			if (!mount_theme("themes",true) || ThemeNeedUpdate)
+			{
+                if (!ThemeISUpdating){
+                   mount_theme("themes",false);
+                   themeT = std::thread(ThemeDown);
+                }
+			}
+            Mromfs = false;
+		}
+
+		steep++;
+		if(!reloading) {
+			//Download All not existing images
+			CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
+		}
 
 		steep++;//Get Programation list, Links and Images
 		int temp0=0,temp1=0;
@@ -271,17 +275,17 @@ int AnimeLoader(void* data){
 
 		steep++;//Load Directory
 		MkDIR();
-        if (themeT.joinable()) {themeT.join();}
 	} catch(...) {
 		LOG::E(2);
 		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
 		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
+    if (themeT.joinable()) {themeT.join();}
 	if(quit) write_DB(AB,rootdirectory+"AnimeBase.json");
 	cout << "# End Thread Chain" << endl;
-	isChained=false;
 	ChainManager(false,!isDownloading&&!isChained);
+	isChained=false;
 	return 0;
 
 }
