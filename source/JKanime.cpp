@@ -59,7 +59,7 @@ int AnimeLoader(void* data){
 			if (AppletMode) InstallNSP("romfs:/05B9DB505ABBE000.nsp");
 			SDL_Delay(3000);
 			if (AppletMode) quit=true;
-			if(quit) return 0;
+			if(quit) throw "Error is AppletMode";;
 		}
 
 		//execute this once, or if Mgate is true
@@ -94,7 +94,7 @@ int AnimeLoader(void* data){
 		CheckUpdates(AppletMode);
 		steep++;
         //exit thread if are in applet mode
-        if (AppletMode) {quit=true; return 0;}
+        if (AppletMode) {quit=true; throw "Error is AppletMode";}
                 
 		steep++;//Get main page
         //GetCookies();//Get Cookies
@@ -278,11 +278,11 @@ int AnimeLoader(void* data){
 	} catch(...) {
 		LOG::E(2);
 		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
-		appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
+		//appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
-    if (themeT.joinable()) {themeT.join();}
 	if(quit) write_DB(AB,rootdirectory+"AnimeBase.json");
+    if (themeT.joinable()) {themeT.join();}
 	cout << "# End Thread Chain" << endl;
 	ChainManager(false,!isDownloading&&!isChained);
 	isChained=false;
