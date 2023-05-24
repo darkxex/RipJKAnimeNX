@@ -1,4 +1,5 @@
 @echo off
+set PATH=c:\devkitPro\msys2\usr\bin;%PATH%
 echo RipJKForwader ------------------------------------
 title RipJKForwader
 if not exist romfs\05B9DB505ABBE000.nsp (

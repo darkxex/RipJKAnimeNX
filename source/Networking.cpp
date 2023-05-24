@@ -427,11 +427,6 @@ bool CheckUpdates(bool force){
 					}
 
 					string Nurl= asset[0]["browser_download_url"];
-                    /*
-					if (config["Beta"] == 1) {
-						Nurl= config["Beta_URL"].get<string>();
-					}
-*/
 					//check if URl is ok
 					if (Nurl.find(".nsp") == string::npos) {
 						std::cout << "- NO " << Nurl <<std::endl;
@@ -449,23 +444,11 @@ bool CheckUpdates(bool force){
 					}
 					std::cout << "- OK " << Nurl <<std::endl;
 
-					string fileU=rootdirectory+"UPD/update."+Ver+".nsp";
+					string fileU=rootdirectory+"UPD/update."+New+".nsp";
 
 					//Have the update?
-					json UP;
-					bool needDown = true;
-					if (read_DB(UP,fileU+".json")) {
-						if(UP["update"] == New) {
-							needDown = false;
-						}
-
-					}
-					if (!isFileExist(fileU)) {
-						needDown = true;
-					}
 					std::cout << Ver << " -> " << New <<std::endl;
-
-					if (needDown) {
+					if (!isFileExist(fileU)) {
 						//Download New Update
                         fsdevDeleteDirectoryRecursively((rootdirectory+"UPD").c_str());
                         mkdir((rootdirectory+"UPD").c_str(), 0777);
@@ -475,9 +458,6 @@ bool CheckUpdates(bool force){
 							std::cout << "Download error" << New <<std::endl;
 							return false;
 						} else {
-							//Store update data
-							//UP["update"]=New;
-							//write_DB(UP,fileU+".json");
 							std::cout << Ver << " --> " << New <<std::endl;
 						}
 					}
@@ -519,4 +499,18 @@ bool CheckUpdates(bool force){
    On sd card root on the root dir of the app
    sdmc:/JK.config
    sdmc:/config/JK.config
- */
+//old stuff
+
+					if (config["Beta"] == 1) {
+						Nurl= config["Beta_URL"].get<string>();
+					}
+
+
+					json UP;
+					if (read_DB(UP,fileU+".json")) {
+						if(UP["update"] == New) {
+							needDown = false;
+						}
+					}
+
+*/
