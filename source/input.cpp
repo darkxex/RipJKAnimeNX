@@ -444,8 +444,12 @@ void InputHandle(){
 					if (statenow == chapter_s) {
 						if (isset(AB["AnimeBase"][KeyName],"Precuela")) {
 							if (!serverpront) {
+                                string templink1 = BD["com"]["ActualLink"];
 								capBuffer(AB["AnimeBase"][KeyName]["Precuela"]);
 								gFAV = isFavorite(BD["com"]["ActualLink"]);
+                                if (!isset(AB["AnimeBase"][KeyName],"Secuela")){
+                                    AB["AnimeBase"][KeyName]["Secuela"] = templink1;
+                                }
 							} else {
 								serverpront=false;
 							}
@@ -467,6 +471,39 @@ void InputHandle(){
 						Btimer=false;
 						bannersel--;
 						if (bannersel<0) bannersel=bannersize;
+					}
+				}
+				if (e.jbutton.button == BT_R) {                // (R) button down
+					switch (statenow)
+					{
+					case chapter_s:
+						if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
+							if (!serverpront) {
+								capBuffer(AB["AnimeBase"][KeyName]["Secuela"]);
+								gFAV = isFavorite(BD["com"]["ActualLink"]);
+							} else {
+								serverpront=false;
+							}
+						}
+						break;
+					case programation_s:
+					case search_s:
+						callsearch();
+						break;
+
+					}
+					if (statenow == hourglass_s) {
+						if (WdayG < 7) {
+							WdayG++;
+							BD["arrays"]["HourGlass"]["link"] = BD["arrays"]["HourGlass"][Wday[WdayG]];
+						}
+					}
+
+					if (statenow == menu_s)
+					{
+						Btimer=false;
+						bannersel++;
+						if (bannersel>bannersize) bannersel=0;
 					}
 				}
 				if (e.jbutton.button == BT_ZL) {                // (ZL) button down
@@ -662,40 +699,6 @@ void InputHandle(){
 					switch (statenow)
 					{
 						//Change UI
-					}
-
-				}
-				if (e.jbutton.button == BT_R) {                // (R) button down
-					switch (statenow)
-					{
-					case chapter_s:
-						if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
-							if (!serverpront) {
-								capBuffer(AB["AnimeBase"][KeyName]["Secuela"]);
-								gFAV = isFavorite(BD["com"]["ActualLink"]);
-							} else {
-								serverpront=false;
-							}
-						}
-						break;
-					case programation_s:
-					case search_s:
-						callsearch();
-						break;
-
-					}
-					if (statenow == hourglass_s) {
-						if (WdayG < 7) {
-							WdayG++;
-							BD["arrays"]["HourGlass"]["link"] = BD["arrays"]["HourGlass"][Wday[WdayG]];
-						}
-					}
-
-					if (statenow == menu_s)
-					{
-						Btimer=false;
-						bannersel++;
-						if (bannersel>bannersize) bannersel=0;
 					}
 
 				}
