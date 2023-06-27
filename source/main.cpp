@@ -334,7 +334,7 @@ int main(int argc, char **argv)
 					string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
-                    if(!serverpront) {B_R.render_T(dist, 680,"Precuela"); dist -= posdist;}
+                    if(!serverpront) {B_L.render_T(dist, 680,"Precuela"); dist -= posdist;}
                     if (!isFileExist(imagelocal)){
                         if (!CapPC){
                             CapP = std::thread(CheckImgNet,imagelocal,"");

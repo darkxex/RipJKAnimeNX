@@ -767,7 +767,11 @@ int capBuffer (string Tlink) {//anime manager
 		capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 	} else {
 		try{
-			BD["com"]["sinopsis"] = AB["AnimeBase"][name]["sinopsis"];
+            if (!AB["AnimeBase"][name]["sinopsis"].is_null()) {
+                BD["com"]["sinopsis"] = AB["AnimeBase"][name]["sinopsis"];
+            } else {
+                BD["com"]["sinopsis"] = " ";
+            }
 			BD["com"]["nextdate"] = AB["AnimeBase"][name]["nextdate"];//"......";
 			BD["com"]["generos"] = AB["AnimeBase"][name]["generos"];//"......";
 			BD["com"]["Emitido"] = AB["AnimeBase"][name]["Emitido"];
@@ -817,11 +821,24 @@ void DataUpdate(string Link) {//Get info off chapter
 	string TMP="";
 	if (AnimeINF["sinopsis"].is_null()) {
 		//Sinopsis
-		TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
-		replace(TMP, "<p rel=\"sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
+		//TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
+		TMP = scrapElement(a, "<p class=\"tab sinopsis\">","</p>");
+		replace(TMP, "<p class=\"tab sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
 		//AnimeINF["sinopsis"] = TMP.substr(0,800);
 		AnimeINF["sinopsis"] = TMP;
-	}
+	} else {
+        //cout << "-- HERE1 " <<endl;
+        string taser = AnimeINF["sinopsis"];
+        //cout << "-- HERE2 " <<endl;
+        if(taser.length() < 5){
+            //Sinopsis
+            //TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
+            TMP = scrapElement(a, "<p class=\"tab sinopsis\">","</p>");
+            replace(TMP, "<p class=\"tab sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
+            //AnimeINF["sinopsis"] = TMP.substr(0,800);
+            AnimeINF["sinopsis"] = TMP;
+        }
+    }
 	if (AnimeINF["Image"].is_null()) {
 		//get image
 		TMP = scrapElement(a, "https://"+CDNURL+"/assets/images/animes/image/");
