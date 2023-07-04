@@ -957,22 +957,23 @@ void DataUpdate(string Link) {//Get info off chapter
 		AnimeINF["maxcapit"] = 1;
 	}
 
-	if (AnimeINF["mincapit"].is_null())
+//	if (AnimeINF["mincapit"].is_null())
 	{
 		//empieza por 0?
 		int zero1, zero2;
 		string zerocontainer = "";
 		string zerocontainer2 = "";
-		zero1 = a.rfind("ajax/pagination_episodes/");
+		zero1 = a.rfind("/ajax/pagination_episodes/");
 		zero2 = a.find("'", zero1);
-		zerocontainer = "https://jkanime.net/" + a.substr(zero1, zero2 - zero1) + "/1/";
+		zerocontainer = "https://jkanime.net" + a.substr(zero1, zero2 - zero1) + "/1/";
 		replace(zerocontainer, "//a", "/a");
 		replace(zerocontainer, "//1/", "/1/");
 		//cout << zerocontainer << endl;
 		zerocontainer2 = Net::GET(zerocontainer);
+		//cout << zerocontainer << name << endl;
+		//cout << zerocontainer2 << name << endl;
 
-		int tempzero = zerocontainer2.find("\"0\"");
-		if (tempzero != -1) {
+		if (zerocontainer2.find("\"number\":\"0\"") != string::npos) {
 			AnimeINF["mincapit"] = 0;
 		}
 		else {
