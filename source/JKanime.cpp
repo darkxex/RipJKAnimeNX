@@ -207,6 +207,10 @@ int AnimeLoader(void* data){
                 if (ChapImag.size() > 0) BD["arrays"]["chapter"]["images"]=ChapImag;
 				haschange = true;
 			}
+            //Borrar Archivos temporales
+            fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
+            mkdir((rootdirectory+"TEMP").c_str(), 0777);
+
 		} else {
 			cout << "# TimeStamp: " << BD["TimeStamp"] << endl;
 		}

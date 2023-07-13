@@ -296,7 +296,7 @@ void InputHandle(){
 			{
 				if (e.jaxis.axis == 1 && statenow==chapter_s) {
 					e.jbutton.button=-1;
-					//SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
+					SDL_Log("Joystick %d axis %d value: %d\n",e.jaxis.which,e.jaxis.axis, e.jaxis.value);
 					if (e.jaxis.value < -22000) {
 						e.jbutton.button = BT_UP;
 					}
@@ -307,10 +307,11 @@ void InputHandle(){
 
 			}
 		case SDL_JOYBUTTONDOWN:
-			//SDL_Log("Joystick %d button %d down\n",e.jbutton.which, e.jbutton.button);
+			SDL_Log("Joystick %d button %d down Control# %d\n",e.jbutton.which, e.jbutton.button,e.jbutton.which);
 			// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L52
 			// seek for joystick #0
-			if (e.jbutton.which == 0) {
+			//if (e.jbutton.which == 0) 
+            {
 				if (e.jbutton.button == BT_A) {                // (A) button down
 
 					switch (statenow)
