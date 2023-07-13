@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta http-equiv="refresh" content="0; url=http://jkanime.net/33m" />
+<html>
+<body>
+
+<h1>The Window Navigator Object</h1>
+<h2>The userAgent Property</h2>
+
+<p id="demo"></p>
+
+<script>
+let agent = navigator.userAgent;
+document.getElementById("demo").innerHTML = "User-agent:<br>" + agent;
+agent = encodeURIComponent("\""+agent+"\"");
+document.cookie = "UA="+agent+"; expires=Thu, 18 Dec 2050 12:00:00 UTC; path=/"; 
+</script>
+
+</body>
+</html>

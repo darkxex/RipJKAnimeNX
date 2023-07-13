@@ -827,7 +827,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		//Sinopsis
 		//TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 		TMP = scrapElement(a, "<p class=\"tab sinopsis\">","</p>");
-		replace(TMP, "<p class=\"tab sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
+		replace(TMP, "<p class=\"tab sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "'"); replace(TMP, "&#039;", "'");
 		//AnimeINF["sinopsis"] = TMP.substr(0,800);
 		AnimeINF["sinopsis"] = TMP;
 	} else {
