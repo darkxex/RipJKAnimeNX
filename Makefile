@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 7
-VERSION_MICRO := 7
+VERSION_MICRO := 8
 
 VERSION_EXDAT := 1
 APP_TITLE	:=	RipJKAnimeNX
