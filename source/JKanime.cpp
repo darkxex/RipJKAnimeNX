@@ -526,6 +526,8 @@ int MkDIR(){
 			while (!quit) {
 				string content=Net::GET("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
 				replace(content,"https://jkanime.net/directorio/","");
+				replace(content,"https://jkanime.net/studio/","");
+				replace(content,"card-title\"><a href=\"https://jkanime.net/","");
 				replace(content,"https://jkanime.net///","");
 				TDIR=scrapElementAll(content,"https://jkanime.net/");
 
@@ -819,7 +821,21 @@ int capBuffer (string Tlink) {//anime manager
 void DataUpdate(string Link) {//Get info off chapter
 	if(quit) return;
 	string name = KeyOfLink(Link);
-	string a = Net::GET("https://jkanime.net/"+name+"/");
+    Link = "https://jkanime.net/"+name+"/";
+    json DataPage=Net::REQUEST(Link);
+/*
+    cout << "Link " << Link << endl;
+    cout << "COUNT " << DataPage["COUNT"] << endl;
+    cout << "RED " << DataPage["RED"] << endl;
+ */   
+    if (DataPage["COUNT"] > 0 && DataPage["RED"] == "https://jkanime.net/404.shtml"){
+        //puede darse el caso de que aparezca un link venenoso 
+        //y los thread no logran manejarlo y peta todo
+        cout << "Poison " << Link << endl;
+        return;
+    }
+
+	string a = DataPage["BODY"];
 	if(quit) return;
 	json AnimeINF=AB["AnimeBase"][name];//
 	string TMP="";

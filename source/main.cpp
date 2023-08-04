@@ -48,8 +48,8 @@ int main(int argc, char **argv)
     //Estos son algunos fix que se han hecho a lo largo de las versiones, los cambios y errores detectados 
     if (BD["arrays"]["chapter"]["link"] == "[null]"_json ){BD["arrays"]["chapter"]["link"]="null"_json;}
 	BD["com"] = "{}"_json;
-	if (isset(BD,"Banner")) {
-		BD.erase("Banner");
+	if (isset(BD["arrays"],"Banner")) {
+		BD["arrays"].erase("Banner");
 	}
 	if (isset(BD,"DataBase")) {
 		BD.erase("DataBase");

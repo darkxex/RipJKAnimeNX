@@ -155,7 +155,7 @@ string Fembed_Link(string Link) {
 
 //servers
 std::vector<std::string> arrayserversbak = {
-	"Nozomi","Desu","Fembed 2.0","MixDrop","Xtreme S","Okru"
+	"Nozomi","Desu","Fembed 2.0","MixDrop","Xtreme S","Okru","Fembed"
 };
 
 std::vector<std::string> arrayservers = arrayserversbak;
