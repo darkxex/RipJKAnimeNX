@@ -527,6 +527,7 @@ int MkDIR(){
 				string content=Net::GET("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
 				replace(content,"https://jkanime.net/directorio/","");
 				replace(content,"https://jkanime.net/studio/","");
+				replace(content,"card-title-alt\"><a href=\"https://jkanime.net/","");
 				replace(content,"card-title\"><a href=\"https://jkanime.net/","");
 				replace(content,"https://jkanime.net///","");
 				TDIR=scrapElementAll(content,"https://jkanime.net/");
@@ -822,6 +823,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	if(quit) return;
 	string name = KeyOfLink(Link);
     Link = "https://jkanime.net/"+name+"/";
+    if (Link == "https://jkanime.net/studio/") return;
     json DataPage=Net::REQUEST(Link);
 /*
     cout << "Link " << Link << endl;
