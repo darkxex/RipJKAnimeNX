@@ -368,7 +368,9 @@ bool SDLB::Confirm(std::string text,bool okonly,int type){
 				GOD.TouchXU = -1;
 				GOD.TouchYU = -1;
 			case SDL_JOYBUTTONDOWN:
-				if (e.jbutton.which == 0) {
+                SDL_Log("Joystick %d button %d down Control# %d\n",e.jbutton.which, e.jbutton.button,e.jbutton.which);
+				//if (e.jbutton.which == 0)
+                {
                     /*
 					if (e.jbutton.button == BT_P) {        // (+) button down close to home menu
 						cancelcurl = 1;
