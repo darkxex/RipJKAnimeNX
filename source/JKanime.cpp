@@ -285,7 +285,7 @@ int AnimeLoader(void* data){
 		//appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
-	if(quit) write_DB(AB,rootdirectory+"AnimeBase.json");
+	if(quit) write_DB(AB,rootdirectory+"AnimeMeta.json");
     if (themeT.joinable()) {themeT.join();}
 	cout << "# End Thread Chain" << endl;
 	ChainManager(false,!isDownloading&&!isChained);
@@ -328,8 +328,8 @@ void DataMakerT(json LinkList) {
 		if (!isConnected) while (!Net::HasConnection()) {SDL_Delay(2000); if(quit) return; }
 		string link = LinkList[x];
 		string name = KeyOfLink(link);
-		if (AB["AnimeBase"][name]["TimeStamp"] != BD["TimeStamp"] ) {
-			if (AB["AnimeBase"][name]["TimeStamp"].is_null() || AB["AnimeBase"][name]["enemision"]=="true") {
+		if (AB[name]["TimeStamp"] != BD["TimeStamp"] ) {
+			if (AB[name]["TimeStamp"].is_null() || AB[name]["enemision"]=="true") {
 				DataUpdate(link);
 			} else {
 
@@ -352,22 +352,22 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 		if (!isConnected) while (!Net::HasConnection()) {SDL_Delay(2000); if(quit) return false; }
 		string link = LinkList[x];
 		string name = KeyOfLink(link);
-		if (AB["AnimeBase"][name]["TimeStamp"] != BD["TimeStamp"] ) {
-			if (AB["AnimeBase"][name]["TimeStamp"].is_null() || AB["AnimeBase"][name]["enemision"]=="true") {
+		if (AB[name]["TimeStamp"] != BD["TimeStamp"] ) {
+			if (AB[name]["TimeStamp"].is_null() || AB[name]["enemision"]=="true") {
 				part = x+1;
 				DataUpdate(link);
 				hasmchap=true;
 				/*
 				   if (sep >= 101){
 				        //write_DB(BD,"sdmc:/DataBase.json");
-				        write_DB(AB,rootdirectory+"AnimeBase.json");
+				        write_DB(AB,rootdirectory+"AnimeMeta.json");
 				        sep=0;
 				   }
 
 				   sep++;
 				 */
 			} else {
-				//AB["AnimeBase"][name]["TimeStamp"] = BD["TimeStamp"];
+				//AB[name]["TimeStamp"] = BD["TimeStamp"];
 			}
 		}
 	}
@@ -375,7 +375,7 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 	ofall=0;
 	if(quit) return false;
 	if(hasmchap) {
-		write_DB(AB,rootdirectory+"AnimeBase.json");//write json
+		write_DB(AB,rootdirectory+"AnimeMeta.json");//write json
 	}
 	return true;
 }
@@ -577,7 +577,7 @@ int MkDIR(){
 		try{
 			if (DataGeter(BD["arrays"]["Directory"]["link"], part, ofall)) {
 				BD["arrays"]["Directory"]["InTime"]=1;
-				write_DB(AB,rootdirectory+"AnimeBase.json");
+				write_DB(AB,rootdirectory+"AnimeMeta.json");
 			}
 		} catch(...) {
 			LOG::E(4);
@@ -723,21 +723,21 @@ int capit(void* data) {//Get chap thread
 	DataUpdate(link);
 	try{
 		//cout << BD << endl;
-		BD["com"]["sinopsis"] = AB["AnimeBase"][name]["sinopsis"];
-		BD["com"]["nextdate"] = AB["AnimeBase"][name]["nextdate"];//"......";
-		BD["com"]["generos"] = AB["AnimeBase"][name]["generos"];//"......";
-		BD["com"]["Emitido"] = AB["AnimeBase"][name]["Emitido"];
-		BD["com"]["enemision"] = AB["AnimeBase"][name]["enemision"];
-		BD["com"]["Estado"] = AB["AnimeBase"][name]["Estado"];
-		mincapit = AB["AnimeBase"][name]["mincapit"];//1;
-		maxcapit = AB["AnimeBase"][name]["maxcapit"];//-1;
+		BD["com"]["sinopsis"] = AB[name]["sinopsis"];
+		BD["com"]["nextdate"] = AB[name]["nextdate"];//"......";
+		BD["com"]["generos"] = AB[name]["generos"];//"......";
+		BD["com"]["Emitido"] = AB[name]["Emitido"];
+		BD["com"]["enemision"] = AB[name]["enemision"];
+		BD["com"]["Estado"] = AB[name]["Estado"];
+		mincapit = AB[name]["mincapit"];//1;
+		maxcapit = AB[name]["maxcapit"];//-1;
 		//write json
-		//write_DB(AB,rootdirectory+"AnimeBase.json");
+		//write_DB(AB,rootdirectory+"AnimeMeta.json");
 
 		//Get Image
 		string image = rootdirectory+"DATA/"+name+".jpg";
-		if (!AB["AnimeBase"][name]["Image"].is_null()) {
-			CheckImgNet(image,AB["AnimeBase"][name]["Image"]);
+		if (!AB[name]["Image"].is_null()) {
+			CheckImgNet(image,AB[name]["Image"]);
 		}
 	}catch(...) {
 		LOG::E(7);
@@ -761,7 +761,7 @@ int capBuffer (string Tlink) {//anime manager
 	string image = rootdirectory+"DATA/"+name+".jpg";
 	statenow = chapter_s;
 
-	if (AB["AnimeBase"][name]["TimeStamp"].is_null())
+	if (AB[name]["TimeStamp"].is_null())
 	{
 		BD["com"]["sinopsis"] = " ";
 		BD["com"]["nextdate"] = " ";
@@ -774,26 +774,26 @@ int capBuffer (string Tlink) {//anime manager
 		capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 	} else {
 		try{
-            if (!AB["AnimeBase"][name]["sinopsis"].is_null()) {
-                BD["com"]["sinopsis"] = AB["AnimeBase"][name]["sinopsis"];
+            if (!AB[name]["sinopsis"].is_null()) {
+                BD["com"]["sinopsis"] = AB[name]["sinopsis"];
             } else {
                 BD["com"]["sinopsis"] = " ";
             }
-			BD["com"]["nextdate"] = AB["AnimeBase"][name]["nextdate"];//"......";
-			BD["com"]["generos"] = AB["AnimeBase"][name]["generos"];//"......";
-			BD["com"]["Emitido"] = AB["AnimeBase"][name]["Emitido"];
-			BD["com"]["enemision"] = AB["AnimeBase"][name]["enemision"];
-			BD["com"]["Estado"] = AB["AnimeBase"][name]["Estado"];
-			maxcapit = AB["AnimeBase"][name]["maxcapit"];
-			mincapit = AB["AnimeBase"][name]["mincapit"];
+			BD["com"]["nextdate"] = AB[name]["nextdate"];//"......";
+			BD["com"]["generos"] = AB[name]["generos"];//"......";
+			BD["com"]["Emitido"] = AB[name]["Emitido"];
+			BD["com"]["enemision"] = AB[name]["enemision"];
+			BD["com"]["Estado"] = AB[name]["Estado"];
+			maxcapit = AB[name]["maxcapit"];
+			mincapit = AB[name]["mincapit"];
 			//check For latest cap seend
 			if (!isset(UD["chapter"],name) || !isset(UD["chapter"][name],"latest")) {
 				//UD["chapter"].erase(name);
 				//get position to the latest cap if in emision
 				if (BD["com"]["enemision"] == "true") {
-					latest = AB["AnimeBase"][name]["maxcapit"];//is in emision
+					latest = AB[name]["maxcapit"];//is in emision
 				} else {
-					latest = AB["AnimeBase"][name]["mincapit"];//is not in emision
+					latest = AB[name]["mincapit"];//is not in emision
 				}
 				latestcolor = -1;
 			}
@@ -803,11 +803,11 @@ int capBuffer (string Tlink) {//anime manager
 			}
 
 			//Get Image
-			if (!AB["AnimeBase"][name]["Image"].is_null()) {
-				CheckImgNet(image,AB["AnimeBase"][name]["Image"]);
+			if (!AB[name]["Image"].is_null()) {
+				CheckImgNet(image,AB[name]["Image"]);
 			}
 
-			if (AB["AnimeBase"][name]["TimeStamp"] != BD["TimeStamp"]) {
+			if (AB[name]["TimeStamp"] != BD["TimeStamp"]) {
 				BD["com"]["nextdate"] = "Loading...";
 				capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 			}
@@ -839,7 +839,7 @@ void DataUpdate(string Link) {//Get info off chapter
 
 	string a = DataPage["BODY"];
 	if(quit) return;
-	json AnimeINF=AB["AnimeBase"][name];//
+	json AnimeINF=AB[name];//
 	string TMP="";
 	if (AnimeINF["sinopsis"].is_null()) {
 		//Sinopsis
@@ -1012,7 +1012,7 @@ void DataUpdate(string Link) {//Get info off chapter
 //		strm << setw(4) << base;
 		strm << AnimeINF;
 		//write to DB
-		AB["AnimeBase"][name]=AnimeINF;
+		AB[name]=AnimeINF;
 		cout << "Saved: " << name << endl;
 	} catch(...) {
 		LOG::E(9);

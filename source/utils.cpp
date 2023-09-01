@@ -772,7 +772,7 @@ int E(int r){
     //Redirect Logs to a file since a error occur.
     if (HasError){
         Files();
-        write_DB(AB,"sdmc:/AnimeBase.json.bak");
+        write_DB(AB,"sdmc:/AnimeMeta.json.bak");
         write_DB(BD,"sdmc:/DataBase.json.bak");
         write_DB(UD,"sdmc:/UserData.json.bak");
     }

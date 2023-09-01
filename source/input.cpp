@@ -277,7 +277,7 @@ void InputHandle(){
 							quit = true;
 							cancelcurl = 1;
 							GOD.PleaseWait("Borrando cache");
-							read_DB(AB,"romfs:/AnimeBase.json");
+							read_DB(AB,"romfs:/AnimeMeta.json");
 							BD="{}"_json;
 							fsdevDeleteDirectoryRecursively((rootdirectory).c_str());
 							mount_theme("themes",false);
@@ -443,13 +443,13 @@ void InputHandle(){
 				}
 				if (e.jbutton.button == BT_L) {                // (L) button down
 					if (statenow == chapter_s) {
-						if (isset(AB["AnimeBase"][KeyName],"Precuela")) {
+						if (isset(AB[KeyName],"Precuela")) {
 							if (!serverpront) {
                                 string templink1 = BD["com"]["ActualLink"];
-								capBuffer(AB["AnimeBase"][KeyName]["Precuela"]);
+								capBuffer(AB[KeyName]["Precuela"]);
 								gFAV = isFavorite(BD["com"]["ActualLink"]);
-                                if (!isset(AB["AnimeBase"][KeyName],"Secuela")){
-                                    AB["AnimeBase"][KeyName]["Secuela"] = templink1;
+                                if (!isset(AB[KeyName],"Secuela")){
+                                    AB[KeyName]["Secuela"] = templink1;
                                 }
 							} else {
 								serverpront=false;
@@ -478,9 +478,9 @@ void InputHandle(){
 					switch (statenow)
 					{
 					case chapter_s:
-						if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
+						if (isset(AB[KeyName],"Secuela")) {
 							if (!serverpront) {
-								capBuffer(AB["AnimeBase"][KeyName]["Secuela"]);
+								capBuffer(AB[KeyName]["Secuela"]);
 								gFAV = isFavorite(BD["com"]["ActualLink"]);
 							} else {
 								serverpront=false;

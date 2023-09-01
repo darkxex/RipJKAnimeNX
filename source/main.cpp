@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 	user::MountUserSave();
 
 	/* Leer las bases de datos.
-    AB = AnimeBase.json,
+    AB = AnimeMeta.json,
         Guarda los datos de los animes solamente
     BD = DataBase.json,
        Guarda las listas construidas de animes que van saliendo
@@ -40,8 +40,8 @@ int main(int argc, char **argv)
         Guarda información mas personal para cada usuario como historial,favoritos 
         y otra configuración solo de ese usuario
     */
-	if(!read_DB(AB,rootdirectory+"AnimeBase.json")){
-		read_DB(AB,"romfs:/AnimeBase.json");//usar solo si no existe ninguna base de datos en memoria
+	if(!read_DB(AB,rootdirectory+"AnimeMeta.json")){
+		read_DB(AB,"romfs:/AnimeMeta.json");//usar solo si no existe ninguna base de datos en memoria
 	}
 	read_DB(BD,rootdirectory+"DataBase.json");
 
@@ -69,6 +69,12 @@ int main(int argc, char **argv)
 		mkdir((rootdirectory+"DATA").c_str(), 0777);
     }
 	mkdir((rootdirectory+"TEMP").c_str(), 0777);
+
+    //delete old base
+    if(isFileExist(rootdirectory+"AnimeBase.json")){
+        remove((rootdirectory+"AnimeBase.json").c_str());
+    }
+
     GOD.SkinInit(roottheme);//Esto carga la lista de skins
     GOD.SkinInit(oldroot+"theme/",true);//Esto añade a la lista de skins
 	GOD.loadSkin();//Esto carga la skin guardada y la música
@@ -315,8 +321,8 @@ int main(int argc, char **argv)
 				}
 
                 //Dibujar Precuela y secuela si existe resolver congelamiento
-				if (isset(AB["AnimeBase"][KeyName],"Secuela")) {
-					string imagelocal=AB["AnimeBase"][KeyName]["Secuela"];
+				if (isset(AB[KeyName],"Secuela")) {
+					string imagelocal=AB[KeyName]["Secuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
                     if(!serverpront) {B_R.render_T(dist, 680,"Secuela"); dist -= posdist;}
@@ -331,8 +337,8 @@ int main(int argc, char **argv)
                         GOD.Cover(imagelocal,160,456,"Secuela",120,BT_R);
                     }
 				}
-				if (isset(AB["AnimeBase"][KeyName],"Precuela")) {
-					string imagelocal=AB["AnimeBase"][KeyName]["Precuela"];
+				if (isset(AB[KeyName],"Precuela")) {
+					string imagelocal=AB[KeyName]["Precuela"];
 					imagelocal = KeyOfLink(imagelocal);
 					imagelocal = rootdirectory+"DATA/"+imagelocal+".jpg";
                     if(!serverpront) {B_L.render_T(dist, 680,"Precuela"); dist -= posdist;}
@@ -1016,7 +1022,7 @@ int main(int argc, char **argv)
 		cout << "- Error Catched Main" << endl;
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
 		cout << "com: " << BD["com"] << endl;
-		write_DB(AB,rootdirectory+"AnimeBase.json.bak");
+		write_DB(AB,rootdirectory+"AnimeMeta.json.bak");
 		write_DB(BD,rootdirectory+"DataBase.json.bak");
 		write_DB(UD,rootdirectory+"UserData.json.bak");
 		quit=true;

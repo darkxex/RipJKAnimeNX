@@ -434,7 +434,7 @@ bool commit(){
 bool Save(){
 	// write prettified JSON
 	write_DB(BD,rootdirectory+"DataBase.json");
-	write_DB(AB,rootdirectory+"AnimeBase.json");
+	write_DB(AB,rootdirectory+"AnimeMeta.json");
 	write_DB(UD,rootsave+"UserData.json");
 	return 0;
 }
