@@ -685,8 +685,10 @@ void InputHandle(){
 						string tempurl = BD["com"]["ActualLink"].get<string>();
 						if(serverpront) {
 							tempurl = BD["com"]["ActualLink"].get<string>() + to_string(latest) + "/";
-						}
-						WebBrowserCall(tempurl);
+                            WebBrowserCall(tempurl);
+						} else {
+                            WebBrowserCall(tempurl,false,true);
+                        }
 						break;
 					}
 					case programation_s:

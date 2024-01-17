@@ -154,9 +154,12 @@ string Fembed_Link(string Link) {
 }
 
 //servers
+json Servers;
+json ServersTMP;
 std::vector<std::string> arrayserversbak = {
-	"Nozomi","Desu","Fembed 2.0","MixDrop","Xtreme S","Okru","Fembed"
+	"Desu","Nozomi","Xtreme S","Okru","MAS...","JKAnime"
 };
+bool white=false;
 
 std::vector<std::string> arrayservers = arrayserversbak;
 const string JkURL = "https://jkanime.net/";
@@ -166,8 +169,51 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	string videourl = "";
 	string content = "";
 	string tempcon = "";
+    
+    if(server.at(0) == '_')
+    {
+        std::cout << ServersTMP[server] << endl;
+        //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
+        string Videored = string("https://c4.jkdesu.com/e/") + ServersTMP[server].get<string>();
+        videourl = Net::REDIRECT(Videored,"");
+        //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
+        white=true;
+    }
+    
+    //abrir Web para ver capitulo
+	if (server == "JKAnime") {
+		videourl = onlineenlace;
+        white=true;
+	} else if (videourl == ""){
+        content = Net::GET(onlineenlace);
+    }
 
-	content = Net::GET(onlineenlace);
+	if (server == "MAS...") {
+		arrayservers.erase(arrayservers.begin()+arrayservers.size());
+		tempcon = scrapElement(content, "https://c4.jkdesu.com/servers/","'");
+        cout << "Mas Servers..." << tempcon << endl;
+        tempcon = Net::GET(tempcon);
+        cout << "Mas Servers..." << tempcon << endl;
+        try{
+
+            if(json2ob (tempcon,Servers)){
+                // even easier with structured bindings (C++17)
+                for (auto& [key, value] : Servers.items()) {
+                  //std::cout << key << " : " << value["server"] << "\n";
+                  std::cout << value["server"] << "::" << value["slug"] << endl;;
+                  string sourcename = string("_")+value["server"].get<string>();
+                  ServersTMP[sourcename] = value["slug"].get<string>();
+                  arrayservers.push_back(sourcename);
+                }
+                cout << std::setw(4) << ServersTMP << std::endl;
+            }
+        } catch(...) {
+            std::cout << "Error cap server... " << std::endl;
+        }
+
+
+        arrayservers.push_back("JKAnime");
+	}
 	if (server == "Fembed 2.0") {
 		videourl = scrapElement(content, "jkfembed.php?u=","\"");
 		if(videourl.length()) {
@@ -213,11 +259,12 @@ bool onlinejkanimevideo(string onlineenlace,string server){
         if (videourl.length() != 0) {videourl = JkURL + videourl;}
 	}
 
-	cout << " que llega: "<< videourl << endl;
+	cout << "Aqui llega: "<< videourl << endl;
 	if (videourl.length() != 0)
 	{
-		WebBrowserCall(videourl);
+		WebBrowserCall(videourl,false,white);
 		videourl = "";
+        white=false;
 		return true;
 	} else {
 		cout << "Server no encontrado..." << onlineenlace << endl;

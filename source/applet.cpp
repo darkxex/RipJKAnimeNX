@@ -821,7 +821,7 @@ Result WebBrowserCloud(std::string url){
 	}
 	return rc;
 }
-Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/libnx/web_8h.html
+Result WebBrowserCall(std::string url,bool nag,bool withe){//https://switchbrew.github.io/libnx/web_8h.html
 	Result rc = 0;
 	cout << "WEB :"+url <<std::endl;
 	if (nag) {
@@ -881,8 +881,17 @@ Result WebBrowserCall(std::string url,bool nag){//https://switchbrew.github.io/l
 			}
 
 			//block redirection
+            /*
 			if(url.substr(0,20) == "https://jkanime.net/") {
 				webConfigSetWhitelist(&config, "^https://jkanime\\.net($|/)");
+            */
+            if (withe){
+                string tempcon = "";
+                tempcon = scrapElement(url, "https://","/");
+                replace(tempcon, ".", "\\\\.");
+                tempcon = string("^") + tempcon + "($|/)";
+                std::cout << "Withe list:" << tempcon << endl;;
+                webConfigSetWhitelist(&config, tempcon.c_str());
 			} else {
 				webConfigSetWhitelist(&config, "^http*");
 			}

@@ -713,6 +713,19 @@ bool isset(json& data,string key){
 	return true;
 }
 
+bool json2ob (string data,json& base){
+    //getjson
+    if(json::accept(data))
+    {
+        //Parse and use the JSON data
+        base = json::parse(data);
+        cout << std::setw(4) << base << std::endl;
+        return true;
+	}
+    std::cout << "Json invalid... "<< data << std::endl;
+    return false;
+}
+
 json StreamDev(string data){//Esto es para obtener valores de un json por red y modificar tamaños de interfaz
     json base;
     //cout << "GET -" << data << "-" << std::endl;
