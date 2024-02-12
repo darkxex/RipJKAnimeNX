@@ -62,4 +62,5 @@
 127.0.0.1 *culturedischargenarcotic*
 127.0.0.1 *google-analytics*
 127.0.0.1 disasterthoughtless.com
-
+127.0.0.1 senselessvillaengineer.com
+127.0.0.1 blareclockwisebead.com

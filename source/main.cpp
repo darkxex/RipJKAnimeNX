@@ -3,7 +3,7 @@
 #include "extra.hpp"
 #include "input.hpp"
 //make some includes to clean a little the main
-string urlc = "https://myrincon.duckdns.org";
+string urlc = "https://myrincon.es";
 
 //MAIN INT
 int main(int argc, char **argv)

@@ -19,6 +19,16 @@
 #include "Networking.hpp"
 #include "Link.hpp"
 #include "SDLWork.hpp"
+//servers
+json Servers;
+json ServersTMP;
+std::vector<std::string> arrayserversbak = {
+	"Desu","Nozomi","Xtreme S","Okru","MAS...","JKAnime"
+};
+bool white=false;
+
+std::vector<std::string> arrayservers = arrayserversbak;
+const string JkURL = "https://jkanime.net/";
 
 //Private Link decoders
 string MixDrop_Link(string Link){
@@ -153,17 +163,47 @@ string Fembed_Link(string Link) {
 	return codetemp;
 }
 
-//servers
-json Servers;
-json ServersTMP;
-std::vector<std::string> arrayserversbak = {
-	"Desu","Nozomi","Xtreme S","Okru","MAS...","JKAnime"
-};
-bool white=false;
+bool OneMORE(string content){
+    string tempcon = "";
+    try{
+        //Obtener URL
+        tempcon = scrapElement(content, "https://c4.jkdesu.com/servers/","'");
+        if(tempcon.length() < 5) {
+            tempcon = "https://c4.jkdesu.com" + scrapElement(content, "/servers/","'");
+        }
+        
+        //Obtener info de la URL
+        cout << "Mas Servers." << tempcon << endl;
+        tempcon = Net::GET(tempcon);
+        tempcon = scrapElement(tempcon, "[","]") + "]";
+        cout << "Mas Servers.." << tempcon << endl;
 
-std::vector<std::string> arrayservers = arrayserversbak;
-const string JkURL = "https://jkanime.net/";
+/* 
+        replace(tempcon, "var servers = ", "");
+        replace(tempcon, "var servers =", "");
+        replace(tempcon, "var servers=", "");
+        cout << "Mas Servers..." << tempcon << endl;
+ */        
+        //destasar el json
+        if(json2ob (tempcon,Servers)){
+            // even easier with structured bindings (C++17)
+            for (auto& [key, value] : Servers.items()) {
+              //std::cout << key << " : " << value["server"] << "\n";
+              std::cout << value["server"] << "::" << value["slug"] << endl;;
+              string sourcename = string("_")+value["server"].get<string>();
+              ServersTMP[sourcename] = value["slug"].get<string>();
+              arrayservers.push_back(sourcename);
+            }
+            cout << std::setw(4) << ServersTMP << std::endl;
+        }
+    } catch(...) {
+        std::cout << "Error cap server... " << std::endl;
+        return false;
+    }
+    return true;
+}
 
+// Public Func
 bool onlinejkanimevideo(string onlineenlace,string server){
 	if (!Net::HasConnection()) {return false;}
 	string videourl = "";
@@ -176,6 +216,10 @@ bool onlinejkanimevideo(string onlineenlace,string server){
         //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
         string Videored = string("https://c4.jkdesu.com/e/") + ServersTMP[server].get<string>();
         videourl = Net::REDIRECT(Videored,"");
+        if(videourl.length()) {
+            videourl = "https://stardustcfw.github.io/player.html#" + string_to_hex(videourl);
+        }
+
         //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
         white=true;
     }
@@ -190,28 +234,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 
 	if (server == "MAS...") {
 		arrayservers.erase(arrayservers.begin()+arrayservers.size());
-		tempcon = scrapElement(content, "https://c4.jkdesu.com/servers/","'");
-        cout << "Mas Servers..." << tempcon << endl;
-        tempcon = Net::GET(tempcon);
-        cout << "Mas Servers..." << tempcon << endl;
-        try{
-
-            if(json2ob (tempcon,Servers)){
-                // even easier with structured bindings (C++17)
-                for (auto& [key, value] : Servers.items()) {
-                  //std::cout << key << " : " << value["server"] << "\n";
-                  std::cout << value["server"] << "::" << value["slug"] << endl;;
-                  string sourcename = string("_")+value["server"].get<string>();
-                  ServersTMP[sourcename] = value["slug"].get<string>();
-                  arrayservers.push_back(sourcename);
-                }
-                cout << std::setw(4) << ServersTMP << std::endl;
-            }
-        } catch(...) {
-            std::cout << "Error cap server... " << std::endl;
-        }
-
-
+        OneMORE(content);
         arrayservers.push_back("JKAnime");
 	}
 	if (server == "Fembed 2.0") {
