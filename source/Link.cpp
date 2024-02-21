@@ -21,20 +21,36 @@
 #include "SDLWork.hpp"
 //servers
 json Servers;
-json ServersTMP;
+//json ServersTMP;
 std::vector<std::string> arrayserversbak = {
-	"Desu","Nozomi","Xtreme S","Okru","MAS...","JKAnime"
+	"Desu","Nozomi","Xtreme S","Okru","MixDrop 2.0","MAS...","JKAnime"
 };
 bool white=false;
 
 std::vector<std::string> arrayservers = arrayserversbak;
 const string JkURL = "https://jkanime.net/";
 
+bool is_number(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(), 
+        s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+}
+
 //Private Link decoders
 string MixDrop_Link(string Link){
 	replace(Link, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
+    //https://s-delivery34.mxdcontent.net/v/667ce306d2f8dbdea39e15dbd0344781.mp4?s=MezX-H8reQFQ-cLwRwehFg&e=1708498435&_t=1708480280
+    
+    
+    /*
+    
+  
+
+    'MDCore||s|delivery34|mp4|667ce306d2f8dbdea39e15dbd0344781|mxdcontent|net|referrer|H8reQFQ|thumbs|knorpgkeslvqko|jpg|furl||wurl|v|MezX|1708498435|cLwRwehFg|_t|1708480280|vfile|vserver|remotesub|chromeInject|adTagUrl|poster'.split('|'), 0, {}))
+
+*/
 	string decode="";
-	for (int i=1; i<6; i++) {
+	for (int i=1; i<7; i++) {
 		decode = Link;
 		cout << "----------------------------------------- "+to_string(i) << endl;
 		cout << decode << endl;
@@ -53,17 +69,19 @@ string MixDrop_Link(string Link){
 			//get file name and key
 			string vidname = "";
 			string playkey = "";
+			string numkey = "";
+			string numkey2 = "";
+            bool ffounf = true;
 			for (u64 i=0; i < list.size(); i++) {
 				if ( (list[i]).length() == 32) vidname = list[i];
-				if ( (list[i]).length() == 22) playkey = list[i]; //some times get a split key,  fix that
+				if ( (list[i]).length() == 22) playkey = list[i]; //some times get a split key,  fix that, no e podido
+                //encuentra las llaves numéricas
+                if (ffounf){
+                    if ((list[i]).length() == 10 && is_number(list[i])) numkey = list[i];
+                } else {
+                    if ((list[i]).length() == 10 && is_number(list[i])) numkey2 = list[i];
+                }
 			}
-			//get num keys
-			int v1=0;
-			v1 = decode.find("|16");
-			string numkey = decode.substr(v1+1,10);
-
-			v1 = decode.find("|16",v1+10);
-			string numkey2 = decode.substr(v1+1,10);
 
 			//bypass, if not get the key repeat the process
 			if(!vidname.length()||!playkey.length()) {decode=""; continue;}
@@ -163,39 +181,47 @@ string Fembed_Link(string Link) {
 	return codetemp;
 }
 
-bool OneMORE(string content){
+bool OneMORE(string content,bool add = true){
     string tempcon = "";
     try{
-        //Obtener URL
-        tempcon = scrapElement(content, "https://c4.jkdesu.com/servers/","'");
-        if(tempcon.length() < 5) {
-            tempcon = "https://c4.jkdesu.com" + scrapElement(content, "/servers/","'");
-        }
-        
-        //Obtener info de la URL
-        cout << "Mas Servers." << tempcon << endl;
-        tempcon = Net::GET(tempcon);
-        tempcon = scrapElement(tempcon, "[","]") + "]";
-        cout << "Mas Servers.." << tempcon << endl;
-
-/* 
-        replace(tempcon, "var servers = ", "");
-        replace(tempcon, "var servers =", "");
-        replace(tempcon, "var servers=", "");
-        cout << "Mas Servers..." << tempcon << endl;
- */        
-        //destasar el json
-        if(json2ob (tempcon,Servers)){
-            // even easier with structured bindings (C++17)
-            for (auto& [key, value] : Servers.items()) {
-              //std::cout << key << " : " << value["server"] << "\n";
-              std::cout << value["server"] << "::" << value["slug"] << endl;;
-              string sourcename = string("_")+value["server"].get<string>();
-              ServersTMP[sourcename] = value["slug"].get<string>();
-              arrayservers.push_back(sourcename);
+        //verificar si no existe
+        if(!isset(BD["com"]["servers"][KeyName],to_string(latest))){
+            //Obtener URL
+            tempcon = scrapElement(content, "https://c4.jkdesu.com/servers/","'");
+            if(tempcon.length() < 5) {
+                tempcon = "https://c4.jkdesu.com" + scrapElement(content, "/servers/","'");
             }
-            cout << std::setw(4) << ServersTMP << std::endl;
+            
+            //Obtener info de la URL
+            cout << "Mas Servers." << tempcon << endl;
+            tempcon = Net::GET(tempcon);
+            tempcon = scrapElement(tempcon, "[","]") + "]";
+            cout << "Mas Servers.." << tempcon << endl;
+            
+            json ServersTMP;
+
+            //destasar el json
+            if(!json2ob (tempcon,ServersTMP)){
+                return false;
+            }
+            for (auto& [key, value] : ServersTMP.items()) {
+                //std::cout << key << " : " << value["server"] << "\n";
+                std::cout << value["server"] << "::" << value["slug"] << endl;;
+                string sourcename = string("_")+value["server"].get<string>();
+                      
+                BD["com"]["servers"][KeyName][to_string(latest)][sourcename] = value["slug"].get<string>();
+            }
+            Servers = BD["com"]["servers"][KeyName][to_string(latest)];
+       } else {
+            Servers = BD["com"]["servers"][KeyName][to_string(latest)];
         }
+                        // even easier with structured bindings (C++17)
+        if(add){
+            for (auto& [key, value] : Servers.items()) {
+                arrayservers.push_back(key);
+            }
+        }
+        cout << std::setw(4) << BD["com"]["servers"][KeyName][to_string(latest)] << std::endl;
     } catch(...) {
         std::cout << "Error cap server... " << std::endl;
         return false;
@@ -212,17 +238,17 @@ bool onlinejkanimevideo(string onlineenlace,string server){
     
     if(server.at(0) == '_')
     {
-        std::cout << ServersTMP[server] << endl;
+        std::cout << Servers << endl;
         //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-        string Videored = string("https://c4.jkdesu.com/e/") + ServersTMP[server].get<string>();
+        string Videored = string("https://c4.jkdesu.com/e/") + Servers[server].get<string>();
         videourl = Net::REDIRECT(Videored,"");
         if(videourl.length()) {
             videourl = "https://stardustcfw.github.io/player.html#" + string_to_hex(videourl);
         }
-
         //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
         white=true;
     }
+    
     
     //abrir Web para ver capitulo
 	if (server == "JKAnime") {
@@ -250,6 +276,23 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 			tempcon = Nozomi_player(JkURL + videourl);
 			if(tempcon.length()) {videourl=tempcon;}
 		}
+	}
+	if (server == "MixDrop 2.0") {
+        OneMORE(content,false);
+        if(isset(Servers,"_Mixdrop")){
+            std::cout << Servers["_Mixdrop"] << endl;
+            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
+            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mixdrop"].get<string>();
+            videourl = Net::REDIRECT(Videored,"");
+            if(videourl.length()) {
+                tempcon=MixDrop_Link(videourl);
+                if(tempcon.length()) {videourl=tempcon;}
+
+                videourl = "https://stardustcfw.github.io/player.html#" + string_to_hex(videourl);
+            }
+            //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
+            white=true;
+        }
 	}
 	if (server == "MixDrop") {
 		videourl = scrapElement(content,"jkvmixdrop.php?u=","\"");
@@ -340,6 +383,27 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 			if(Net::DOWNLOAD(videourl, directorydownload)) return true;
 			if(cancelcurl == 1) return false;
 		}
+	}
+	{
+        OneMORE(content,false);
+        if(isset(Servers,"_Mixdrop")){
+            string tempcon = "";
+            std::cout << Servers["_Mixdrop"] << endl;
+            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
+            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mixdrop"].get<string>();
+            videourl = Net::REDIRECT(Videored,"");
+            if(videourl.length()) {
+                tempcon=MixDrop_Link(videourl);
+                if(tempcon.length()) {
+                    videourl=tempcon;
+                    serverenlace = videourl;
+                    if(Net::DOWNLOAD(videourl, directorydownload)) return true;
+                    if(cancelcurl == 1) return false;
+                }
+            }
+            //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
+            //white=true;
+        }
 	}
 
 	videourl = scrapElement(content,"jkvmixdrop.php?u=","\"");

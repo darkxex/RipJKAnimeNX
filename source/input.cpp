@@ -709,7 +709,7 @@ void InputHandle(){
 					switch (statenow)
 					{
 					case chapter_s:
-						if(serverpront) {serverpront = false;}
+						if(serverpront) {serverpront = false;arrayservers=arrayserversbak;}
 						if (latest > mincapit)
 						{
 							latest--;
@@ -741,7 +741,7 @@ void InputHandle(){
 						}
 						break;
 					case chapter_s:
-						if(serverpront) {serverpront = false;}
+						if(serverpront) {serverpront = false;arrayservers=arrayserversbak;}
 						if (latest < maxcapit)
 						{
 							latest++;
