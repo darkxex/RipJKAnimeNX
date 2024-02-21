@@ -481,16 +481,28 @@ json DInfo(string ver){
 		Result ret = 0;
 
 		//Get Config file , order sdmc -> romfs -> Nand -> Default
+        
+        //leer Configuración por defecto
 		json config;
-		if (!read_DB(config,oldroot+"JK.config")) {
-            if (!read_DB(config,"sdmc:/JK.config")) {
-                std::cout << "# Using default Config" <<std::endl;
-                if (!read_DB(config,"romfs:/JK.config")) {
-                    std::cout << "# Error default Config" <<std::endl;
+        if (!read_DB(config,"romfs:/JK.config")) {
+            std::cout << "# Error default Config" <<std::endl;
+        }
+        try{
+            //leer Configuracion de usuario 
+            json configTMP;
+            if (!read_DB(configTMP,oldroot+"JK.config")) {
+                if (!read_DB(configTMP,"sdmc:/JK.config")) {
+                    std::cout << "# Using default Config" <<std::endl;
                 }
-			}
+            }
+           for (auto& [key, value] : configTMP.items()) {
+                std::cout << "  " << key << ":>:" << value << endl;
+                config[key] = value;
+            }
+		}catch(...) {
+			cout << "error user conf" << endl;
 		}
-		
+
 		info["config"]=config;
         CDNURL = config["CDNURL"].get<string>();
         //std::cout << "# CDMURL " << CDNURL <<std::endl;
