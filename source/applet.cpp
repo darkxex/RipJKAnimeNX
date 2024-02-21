@@ -415,14 +415,17 @@ bool isMounted=false;
 bool init(){
     bool MountEMMC = true;
     MountEMMC = (DInfo()["config"]["MountSD"].get<int>() == 0);
-	if(R_SUCCEEDED(fsOpenBisFileSystem(&appdata, FsBisPartitionId_User, "")) && MountEMMC) {
-		fsdevMountDevice("emmc", appdata);
-		isMounted=true;
-	} else {
-		rootdirectory = oldroot;
-		isMounted=false;
-		fsFsClose(&appdata);
+    if (MountEMMC){
+        if(R_SUCCEEDED(fsOpenBisFileSystem(&appdata, FsBisPartitionId_User, ""))) {
+            fsdevMountDevice("emmc", appdata);
+            isMounted=true;
+            return isMounted;
+        }
 	}
+    
+	rootdirectory = oldroot;
+	isMounted=false;
+	fsFsClose(&appdata);
 	return isMounted;
 }
 bool commit(){
@@ -436,7 +439,7 @@ bool Save(){
 	write_DB(BD,rootdirectory+"DataBase.json");
 	write_DB(AB,rootdirectory+"AnimeMeta.json");
 	write_DB(UD,rootsave+"UserData.json");
-	return 0;
+	return true;
 }
 bool deinit(){
 	if (isMounted) {
@@ -481,21 +484,13 @@ json DInfo(string ver){
 		json config;
 		if (!read_DB(config,oldroot+"JK.config")) {
             if (!read_DB(config,"sdmc:/JK.config")) {
+                std::cout << "# Using default Config" <<std::endl;
                 if (!read_DB(config,"romfs:/JK.config")) {
-                    std::cout << "# Using default Config" <<std::endl;
+                    std::cout << "# Error default Config" <<std::endl;
                 }
 			}
 		}
-		//If not exist use default config
-		if(config["AutoUpdate"].is_null()) {config["AutoUpdate"]=1;}
-		if(config["Logs2File"].is_null()) {config["Logs2File"]=0;}
-		if(config["ReLaunch"].is_null()) {config["ReLaunch"]=0;}
-		if(config["MountSD"].is_null()) {config["MountSD"]=0;}
-//		if(config["Beta"].is_null()) {config["Beta"]=0;}
-//		if(config["Beta_URL"].is_null()) {config["Beta_URL"]="";}
-		if(config["CDNURL"].is_null()) {config["CDNURL"]="cdn.jkdesu.com";}
-		if(config["author"].is_null()) {config["author"]="darkxex";}
-		if(config["repo"].is_null()) {config["repo"]="RipJKAnimeNX";}
+		
 		info["config"]=config;
         CDNURL = config["CDNURL"].get<string>();
         //std::cout << "# CDMURL " << CDNURL <<std::endl;

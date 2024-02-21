@@ -71,12 +71,11 @@ string MixDrop_Link(string Link){
 			string playkey = "";
 			string numkey = "";
 			string numkey2 = "";
-            bool ffounf = true;
 			for (u64 i=0; i < list.size(); i++) {
 				if ( (list[i]).length() == 32) vidname = list[i];
 				if ( (list[i]).length() == 22) playkey = list[i]; //some times get a split key,  fix that, no e podido
                 //encuentra las llaves numéricas
-                if (ffounf){
+                if (numkey == ""){
                     if ((list[i]).length() == 10 && is_number(list[i])) numkey = list[i];
                 } else {
                     if ((list[i]).length() == 10 && is_number(list[i])) numkey2 = list[i];
