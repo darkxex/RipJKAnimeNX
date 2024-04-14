@@ -279,7 +279,11 @@ int AnimeLoader(void* data){
 
 		steep++;//Load Directory
 		MkDIR();
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		LOG::E(2);
 		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
 		//appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
@@ -564,7 +568,11 @@ int MkDIR(){
 			ofall=0;
 			write_DB(BD,rootdirectory+"DataBase.json");
 		}
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		LOG::E(3);
 		cout << "- Thread Chain Error Catched, Get Dir Error" <<endl;
 		return 0;
@@ -630,7 +638,11 @@ int downloadjkanimevideo(void* data) {//Download THREAD
 			}
 		}
 		if(cancelcurl==0) led_on(3); else led_on(0);
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		LOG::E(5);
 		cout << "- Thread Download Error Catched" <<endl;
 		cout << BD["arrays"]["downloads"] << endl;
@@ -707,7 +719,11 @@ int searchjk(void* data) {//Search Thread
 			statenow = programation_s;
 			returnnow = programation_s;
 		}
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		LOG::E(6);
 		cout << "- Thread Search Error Catched" <<endl;
 		cout << BD["arrays"]["search"] << endl;
@@ -739,7 +755,11 @@ int capit(void* data) {//Get chap thread
 		if (!AB[name]["Image"].is_null()) {
 			CheckImgNet(image,AB[name]["Image"]);
 		}
-	}catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		LOG::E(7);
 		cout << "- Error "+name <<endl;
 	}
@@ -1014,7 +1034,11 @@ void DataUpdate(string Link) {//Get info off chapter
 		//write to DB
 		AB[name]=AnimeINF;
 		cout << "Saved: " << name << endl;
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		LOG::E(9);
 		cout << "Anime Problemático: "<< name << endl;
 		cout << strm.str() << endl;

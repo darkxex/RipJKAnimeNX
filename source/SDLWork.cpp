@@ -269,7 +269,11 @@ void SDLB::SkinInit(string path,bool add) {
                 }
             }
         }
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		cout << "- Error Catched, SkinInit" <<endl;
 	}
 }
@@ -280,7 +284,11 @@ void SDLB::selectskin(string val) {
         if (them > allp) them=0;
         GOD.setSkin(BD["Themes"]["files"][them]);
         them++;
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		cout << "- Error Catched, loadSkin" <<endl;
 	}
 }

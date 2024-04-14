@@ -235,7 +235,11 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 			try {
 				std::cout << std::setw(4) << data << std::endl;
 
-			}catch(...) {
+            } catch(const char* errorMessage) {
+                std::cout << "Error: " << errorMessage << std::endl;
+            } catch(const std::exception& e) {
+                std::cout << "Error: " << e.what() << std::endl;
+            } catch(...) {
 				LOG::E(10);
 				std::cout << " CODE: " << http_code << std::endl;
 				std::cout << " Redirects: " << redirects << std::endl;
@@ -475,7 +479,11 @@ bool CheckUpdates(bool force){
 				}
 			}
 		}
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		LOG::E(11);
 		std::cout << "# Update Error catch" << std::endl;
 	}

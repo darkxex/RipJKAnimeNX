@@ -499,7 +499,11 @@ json DInfo(string ver){
                 std::cout << "  " << key << ":>:" << value << endl;
                 config[key] = value;
             }
-		}catch(...) {
+        } catch(const char* errorMessage) {
+            std::cout << "Error: " << errorMessage << std::endl;
+        } catch(const std::exception& e) {
+            std::cout << "Error: " << e.what() << std::endl;
+        } catch(...) {
 			cout << "error user conf" << endl;
 		}
 

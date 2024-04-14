@@ -1017,7 +1017,11 @@ int main(int argc, char **argv)
 				Farest.render((0), (0));
 			}
 		}
-	} catch(...) {
+    } catch(const char* errorMessage) {
+        std::cout << "Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch(...) {
 		LOG::E(1);
 		cout << "- Error Catched Main" << endl;
 		GOD.PleaseWait("A ocurrido un error Critico la app se va a cerrar",true);
