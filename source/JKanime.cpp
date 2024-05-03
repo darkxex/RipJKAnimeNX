@@ -68,7 +68,7 @@ int AnimeLoader(void* data){
 			#if __has_include("Debug.h")
 				#include "Debug.h"
 			#endif
-			int Req = Net::HEAD("https://bvc-hac-lp1.cdn.nintendo.net/14-1-2")["CODE"];
+			int Req = Net::HEAD("https://bvc-hac-lp1.cdn.nintendo.net/18-0-0")["CODE"];
 			switch(Req) {
 			case 0:
 			case 503:

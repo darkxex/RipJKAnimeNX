@@ -179,21 +179,29 @@ string Fembed_Link(string Link) {
 	}
 	return codetemp;
 }
+string StreamWish_Link(string Link){
+    string API = "";//PremiumAppKEY
+    string FC = "";
+    
+    string tempcon = "";
+    string LinkTemp = "https://api.streamwish.com/api/file/direct_link?key="+API+"&file_code="+FC;
+    tempcon = Net::GET(Link);
+
+    return tempcon;
+}
 
 bool OneMORE(string content,bool add = true){
     string tempcon = "";
     try{
         //verificar si no existe
         if(!isset(BD["com"]["servers"][KeyName],to_string(latest))){
-            //Obtener URL
-            tempcon = scrapElement(content, "https://c4.jkdesu.com/servers/","'");
-            if(tempcon.length() < 5) {
-                tempcon = "https://c4.jkdesu.com" + scrapElement(content, "/servers/","'");
-            }
             
-            //Obtener info de la URL
+            //Obtener Data incrustada
+            tempcon = scrapElement(content, "var servers = [","]");
+
+            //Obtener info de la Data
             cout << "Mas Servers." << tempcon << endl;
-            tempcon = Net::GET(tempcon);
+            //tempcon = Net::GET(tempcon);
             tempcon = scrapElement(tempcon, "[","]") + "]";
             cout << "Mas Servers.." << tempcon << endl;
             
@@ -227,6 +235,7 @@ bool OneMORE(string content,bool add = true){
     }
     return true;
 }
+
 
 // Public Func
 bool onlinejkanimevideo(string onlineenlace,string server){
