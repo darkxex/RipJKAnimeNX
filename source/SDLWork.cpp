@@ -833,6 +833,10 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 }
 void SDLB::ListClassic(int& selectindex,json Jlinks) {
 	int indexLsize = Jlinks["link"].size();
+    if (selectindex >= indexLsize)
+    {
+        selectindex = indexLsize -1;
+    }
 	if(TouchY < 670 && TouchX < 530 && TouchY > 5 && TouchX > 15) {
 		int sel=(TouchY*30/660);
 		if (sel >= 0 && sel < indexLsize) {

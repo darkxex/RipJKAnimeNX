@@ -488,6 +488,22 @@ int MkHOR(){
 	vector<string> MPO={};
 	vector<string> HORC={};
 
+/*
+	MPO=BD["arrays"]["HourGlass"]["Lunes"];
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=BD["arrays"]["HourGlass"]["Martes"];
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=BD["arrays"]["HourGlass"]["Miercoles"];
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=BD["arrays"]["HourGlass"]["Jueves"];
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=BD["arrays"]["HourGlass"]["Viernes"];
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=BD["arrays"]["HourGlass"]["Sabado"];
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+	MPO=BD["arrays"]["HourGlass"]["Domingo"];
+	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
+*/
 	MPO=scrapElementAll(STP[1],"https://jkanime.net/","\"","Lunes");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
 	MPO=scrapElementAll(STP[2],"https://jkanime.net/","\"","Martes");
@@ -498,7 +514,7 @@ int MkHOR(){
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
 	MPO=scrapElementAll(STP[5],"https://jkanime.net/","\"","Viernes");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
-	MPO=scrapElementAll(STP[6],"https://jkanime.net/","\"","/Sabado");
+	MPO=scrapElementAll(STP[6],"https://jkanime.net/","\"","Sabado");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
 	MPO=scrapElementAll(STP[7],"https://jkanime.net/","\"","Domingo");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
