@@ -23,7 +23,7 @@
 json Servers;
 //json ServersTMP;
 std::vector<std::string> arrayserversbak = {
-	"Desu","Nozomi","Xtreme S","Okru","MixDrop 2.0","MAS...","JKAnime"
+	"MixDrop 2.0","Desu","Nozomi","Xtreme S","Okru","MAS...","JKAnime"
 };
 bool white=false;
 
@@ -86,7 +86,7 @@ string MixDrop_Link(string Link){
 			if(!vidname.length()||!playkey.length()) {decode=""; continue;}
 
 			//model
-			decode = "https://"+type+"-"+dely+".mxdcontent.net/v/"+vidname+".mp4?s="+playkey+"&e="+numkey+"&_t="+numkey2;//.substr(1)
+			decode = "https://"+type+"-"+dely+".mxcontent.net/v/"+vidname+".mp4?s="+playkey+"&e="+numkey+"&_t="+numkey2;//.substr(1)
 			cout << decode << endl;
 			break;
 		} else {
