@@ -43,14 +43,13 @@ bool is_number(const std::string& s)
 #include <regex>
 
 // Función para convertir un número en base 36 a base 10
-int base36ToInt(const std::string base36) {
-    std::cout << ">>>: " << base36 << std::endl;
-
-    return std::stoi(base36, nullptr, 36);
+int baseToInt(const std::string base36,int base) {
+    //std::cout << ">>>:" << base36 << "---" << base << std::endl;
+    return std::stoi(base36, nullptr, base);
 }
-
+/*
 // Función para desofuscar el código usando el mapeo dado
-std::string deobfuscate(const std::string& encoded, const std::vector<std::string>& map) {
+std::string deobfuscate(const std::string& encoded, const std::vector<std::string>& map,int base) {
     std::string result = encoded;
     int i = 0;
     // Encontrar todas las coincidencias de \b\w+\b (palabras) y reemplazarlas
@@ -60,66 +59,123 @@ std::string deobfuscate(const std::string& encoded, const std::vector<std::strin
         i++;
         if (i > 100) break;
         std::string word = match.str();
-        int index = base36ToInt(word);
+        std::cout << ">>" << word << "<<" << std::endl;
+        
+        int index = baseToInt(word,base);
+
         if (index < map.size()) {
             result.replace(match.position(), word.length(), map[index]);
-            std::cout << "<<<<<: " << result << std::endl;
-
+            //std::cout << "<<<<<: " << result << std::endl;
         }
+        
     }
 
     return result;
 }
+*/
+std::string deobfuscate(const std::string& encoded, const std::vector<std::string>& map, int base) {
+    std::string result;
+    
+    for (size_t i = 0; i < encoded.length(); ++i) {
+        std::string character = encoded.substr(i, 1);  // Tomar un solo carácter como string
+        
+        if (std::isalnum(character[0])) {  // Verificar si el carácter es alfanumérico
 
-int defuscate_mixdrop() {
-    // Mapeo del código JavaScript ofuscado
-    std::vector<std::string> map = {
-        "MDCore", "", "s", "delivery31", "mxcontent", "mp4", "net", "z19zw4vzcgrd7nl",
-        "referrer", "Xhog", "thumbs", "jpg", "furl", "wurl", "", "v2", "_zrWPlbeT2h0NWipW",
-        "_t", "1722912076", "1722896923", "vfile", "7d41a99fbee433ab6b5d75e7c171e70c",
-        "vserver", "remotesub", "chromeInject", "adTagUrl", "poster"
-    };
+            int index = baseToInt(character, base);
+            //std::cout << ">>" << character << "<<" << index << std::endl;
 
-    // Cadena codificada que representa el código ofuscado
-    std::string encoded = "0.q=\"//2-3.4.6/a/7.b\";0.c=\" \";0.d=\"//2-3.4.6/f/7.5?2=g-9&e=i&h=j\";"
-                          "0.k=\"l.5\";0.m=\"2-3\";0.n=\"\";0.o=1;0.p=\"\";0.8=\"\";";
+            if (index < (int)map.size()) {
+                if (map[index] == "ZZZ"){
+                    //revisar si se debe saltear
+                    result += character;
+                } else {
+                     // Agregar el carácter mapeado al resultado
+                    result += map[index];
+                    //std::cout << ">>" << character << ">> " << index << " >>" << map[index] << std::endl;
+                }
+            } else {
+                result += character;  // Agregar el carácter original si no hay mapeo
+            }
+        } else {
+            result += character;  // Agregar el carácter no alfanumérico al resultado
+        }
+    }
+    
+    vector<string> list = split (result, ";");
+    json data;
+	for (u64 i=0; i < list.size(); i++) {
+        vector<string> list2 = split (list[i], "=\"");
+        string a,b;
+        a = list2[0];
+        if (list2.size() > 1){
+            b = list2[1];
+        }
+        replace(a, "MDCore.", "");
+        replace(b, "\"", "");
 
-    // Desofuscar y mostrar el código
-    std::string deobfuscatedCode = deobfuscate(encoded, map);
-    std::cout << "Código desofuscado:\n" << deobfuscatedCode << std::endl;
+        //std::cout << a << "<--->" << b << std::endl;
+        data[a] = b;
+    }
+    cout << std::setw(4) << data << std::endl;
 
-    return 0;
+    return "https:"+data["wurl"].get<string>();
 }
 
+string defuscate_mixdrop(std::string Link) {
+    string decode="";
+	replace(Link, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
 
+    string ofucode="";
+    string mapcode="";
+	//tags
+    string tag1 = "MDCore.ref", tag2 = "</script>", tag3 = "return p}('", tag4 = ",'";
+    decode = Link;
+    cout << decode << endl;
+    string rrr = Net::GET(decode);
+    string yyy = "";
+    yyy = scrapElement(rrr, tag1,"</script>");
+    yyy = scrapElement(yyy, "return p}('",".split('|')");
+    
+    cout << yyy << endl;
+    cout << "--------------------------------" << endl;
+    
+    ofucode = scrapElement(yyy, tag3,"'");
+    mapcode = scrapElement(yyy, tag4,"'");
+    replace(ofucode, tag3, "");
+    replace(mapcode, tag4, "");
+    replace(mapcode, "||", "|ZZZ|");
 
+    if(mapcode.substr(0, 1) == "|"){
+        mapcode = "ZZZ"+mapcode;
+    }
+    cout << ofucode << endl;
+    cout << mapcode << endl;
+    
+    // Mapeo del código JavaScript ofuscado
+    std::vector<std::string> map = split (mapcode, "|");
+
+    // Desofuscar y mostrar el código
+    std::string deobfuscatedCode = deobfuscate(ofucode, map, 36);
+    std::cout << "Codigo desofuscado:\n" << deobfuscatedCode << std::endl;
+
+    return deobfuscatedCode;
+}
 
 //Private Link decoders
 string MixDrop_Link(string Link){
-    //defuscate_mixdrop();
-    //return "";
-	replace(Link, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
-    //https://s-delivery34.mxdcontent.net/v/667ce306d2f8dbdea39e15dbd0344781.mp4?s=MezX-H8reQFQ-cLwRwehFg&e=1708498435&_t=1708480280
+    try{
+        return defuscate_mixdrop(Link);
+    } catch(...) {
+        std::cout << "Error defuscate... " << std::endl;
+    }
+    string decode="";
+    replace(Link, "https://jkanime.net/jkvmixdrop.php?u=", "https://mixdrop.co/e/");
+    // Encuentra la posición del último '/'
+    size_t lastSlashPos = Link.find_last_of('/');
     
-    
-    /*
-    
-    MDCore.ref = "z19zw4vzcgrd7nl";
-    MDCore.sublangs = {"ar":"Arabic","bg":"Bulgarian","bs":"Bosnian","hr":"Croatian","cz":"Czech","dk":"Danish","en":"English","fi":"Finish","fr":"French","de":"German","in":"Hindi","it":"Italian","id":"Indonesian","jp":"Japanese","my":"Malaysian","no":"Norwegian","pl":"Polish","pt":"Portuguese","ru":"Russian","ro":"Romanian","rs":"Serbian","sk":"Slovak","es":"Spanish","se":"Swedish","tr":"Turkish","ud":"Urdu"};
-    eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('0.q="//2-3.4.6/a/7.b";0.c=" ";0.d="//2-3.4.6/f/7.5?2=g-9&e=i&h=j";0.k="l.5";0.m="2-3";0.n="";0.o=1;0.p="";0.8="";',27,27,'MDCore||s|delivery31|mxcontent|mp4|net|z19zw4vzcgrd7nl|referrer|Xhog|thumbs|jpg|furl|wurl||v2|_zrWPlbeT2h0NWipW|_t|1722912076|1722896923|vfile|7d41a99fbee433ab6b5d75e7c171e70c|vserver|remotesub|chromeInject|adTagUrl|poster'.split('|'),0,{}))
+    // Obtiene la subcadena desde esa posición + 1 hasta el final
+    std::string vidname = Link.substr(lastSlashPos + 1);
 
-    MDCore.q = "//s-delivery31.mxcontent.net/a/z19zw4vzcgrd7nl.jpg";
-    MDCore.c = " ";
-    MDCore.d = "//s-delivery31.mxcontent.net/v2/z19zw4vzcgrd7nl.mp4?s=g-9&e=1722912076&h=1722896923";
-    MDCore.k = "vfile.mp4";
-    MDCore.m = "s-delivery31";
-    MDCore.n = "";
-    MDCore.o = 1;
-    MDCore.p = "";
-    MDCore.referrer = "";
-
-*/
-	string decode="";
 	for (int i=1; i<7; i++) {
 		decode = Link;
 		cout << "----------------------------------------- "+to_string(i) << endl;
@@ -137,22 +193,22 @@ string MixDrop_Link(string Link){
 			string dely = scrapElement(decode, "delivery");
 
 			//get file name and key
-			string vidname = "";
+			
 			string playkey = "";
 			string numkey = "";
 			string numkey2 = "";
-            int vidnamelen = 32;
+            //int vidnamelen = 32;
             string vertype = "v";
             if (decode.find("|v2|")) 
             {
                 vertype="v2";
-                vidnamelen = 15;
+                //vidnamelen = 15;
                 //nl80orpgtlwoq3k
             }
 
             
 			for (u64 i=0; i < list.size(); i++) {
-				if ( (list[i]).length() == vidnamelen) vidname = list[i];
+				//if ( (list[i]).length() == vidnamelen) vidname = list[i];
 				if ( (list[i]).length() == 22) playkey = list[i]; //some times get a split key,  fix that, no e podido, no lo voy hacer
 
                 //encuentra las llaves numéricas
