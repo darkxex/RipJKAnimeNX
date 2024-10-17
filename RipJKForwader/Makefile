@@ -40,8 +40,9 @@ EXEFS_SRC	:=	exefs_src
 
 APP_TITLE := RipJKAnime
 APP_AUTHOR := AngelXex & Kronos2308
-APP_VERSION := (forwarder)
-APP_TITLEID := 05B9DB505ABBE000
+APP_VERSION := forwarder
+APP_TITLEID := 05b9db505abbe000
+CONFIG_JSON := npdm.json
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -148,6 +149,19 @@ ifneq ($(ROMFS),)
 	export NROFLAGS += --romfsdir=$(CURDIR)/$(ROMFS)
 endif
 
+ifeq ($(strip $(CONFIG_JSON)),)
+	jsons := $(wildcard *.json)
+	ifneq (,$(findstring $(TARGET).json,$(jsons)))
+		export APP_JSON := $(TOPDIR)/$(TARGET).json
+	else
+		ifneq (,$(findstring config.json,$(jsons)))
+			export APP_JSON := $(TOPDIR)/config.json
+		endif
+	endif
+else
+	export APP_JSON := $(TOPDIR)/$(CONFIG_JSON)
+endif
+
 .PHONY: $(BUILD) clean all
 
 #---------------------------------------------------------------------------------
@@ -183,6 +197,10 @@ DEPENDS	:=	$(OFILES:.o=.d)
 # main targets
 #---------------------------------------------------------------------------------
 all	: $(OUTPUT).nso $(OUTPUT).pfs0 $(OUTPUT).nacp
+
+ifeq ($(strip $(APP_JSON)),)
+$(OUTPUT).nsp	:	$(OUTPUT).nso
+endif
 
 $(OUTPUT).nso	:	$(OUTPUT).elf
 
