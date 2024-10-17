@@ -49,7 +49,9 @@ INCLUDES	:=	include source
 EXEFS_SRC	:=	RipJKForwader/exefs_src
 ROMFS		:=	romfs
 ICON        :=  Icon.jpg
-APP_TITLEID := 05B9DB505ABBE000
+APP_TITLEID := 05b9db505abbe000
+CONFIG_JSON := npdm.json
+
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
@@ -167,6 +169,19 @@ ifneq ($(ROMFS),)
 	export NROFLAGS += --romfsdir=$(CURDIR)/$(ROMFS)
 endif
 
+ifeq ($(strip $(CONFIG_JSON)),)
+	jsons := $(wildcard *.json)
+	ifneq (,$(findstring $(TARGET).json,$(jsons)))
+		export APP_JSON := $(TOPDIR)/$(TARGET).json
+	else
+		ifneq (,$(findstring config.json,$(jsons)))
+			export APP_JSON := $(TOPDIR)/config.json
+		endif
+	endif
+else
+	export APP_JSON := $(TOPDIR)/$(CONFIG_JSON)
+endif
+
 LOWER_TITLEID  = $(shell echo $(APP_TITLEID) | tr A-Z a-z)
 
 .PHONY: $(BUILD) clean all NSP
@@ -210,6 +225,10 @@ DEPENDS	:=	$(OFILES:.o=.d)
 # main targets
 #---------------------------------------------------------------------------------
 all	: $(OUTPUT).nso $(OUTPUT).pfs0 $(OUTPUT).nro $(OUTPUT).nacp
+
+ifeq ($(strip $(APP_JSON)),)
+$(OUTPUT).nsp	:	$(OUTPUT).nso
+endif
 
 $(OUTPUT).nso	:	$(OUTPUT).elf
 
