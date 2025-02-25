@@ -86,7 +86,6 @@ int AnimeLoader(void* data){
 					//txStealthMode(0);
 				}
 				break;
-
 			}
             Mgate=false;
 		}
@@ -117,8 +116,14 @@ int AnimeLoader(void* data){
                 //quisiera extraer los cookies para poder usar la web icluso si cloudflare esta activo
                 throw "Error cloudflare active";
                 break;
+			
+			case 200:
+				cout << "# Web State #" << numCode << endl;
+				break;
+
             default:
                 cout << "# Web State #" << numCode << endl;
+				throw "Error unknow state";
                 break;
         }
 
@@ -207,9 +212,6 @@ int AnimeLoader(void* data){
                 if (ChapImag.size() > 0) BD["arrays"]["chapter"]["images"]=ChapImag;
 				haschange = true;
 			}
-            //Borrar Archivos temporales
-            fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
-            mkdir((rootdirectory+"TEMP").c_str(), 0777);
 
 		} else {
 			cout << "# TimeStamp: " << BD["TimeStamp"] << endl;
@@ -227,6 +229,14 @@ int AnimeLoader(void* data){
 		MkAGR(temcont);
 
 		steep++;//banner to Database /* */
+
+		if (haschange)
+		{
+			//Borrar Archivos temporales
+            //fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
+            mkdir((rootdirectory+"TEMP").c_str(), 0777);
+
+		}
 
 		//if (haschange)
         {
@@ -260,22 +270,22 @@ int AnimeLoader(void* data){
 		cout << "# Cache Recent ";
 		if (haschange) {
 			cout << " , haschange ";
-			if(DataGeter(BD["arrays"]["chapter"]["link"], part, ofall)) {
+			if(DataMaker(BD["arrays"]["chapter"]["link"], part, ofall)) {
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
 		}
 
 		steep++;//Load to cache all Favorites Chaps
 		cout << "| favoritos ";
-		DataGeter(UD["favoritos"], part, ofall);
+		DataMaker(UD["favoritos"], part, ofall);
 
 		steep++;//Cache Top
 		cout << "| Top ";
-		DataGeter(BD["arrays"]["Top"]["link"], part, ofall);
+		DataMaker(BD["arrays"]["Top"]["link"], part, ofall);
 
 		steep++;//Cache Horario
 		cout << "| HourGlass " <<endl;;
-		DataGeter(BD["arrays"]["HourGlass"]["link"], part, ofall);
+		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
 
 		steep++;//Load Directory
 		MkDIR();
@@ -297,11 +307,14 @@ int AnimeLoader(void* data){
 	return 0;
 
 }
-
+/*
 bool DataGeter(json LinkList,int& part, int& ofall){
 	if(LinkList.is_null()) {
 		return false;
 	}
+	std::thread chaps1;
+	std::thread chaps2;
+
 	vector<string> chain1 = LinkList;
 	vector<string> chain2 = LinkList;
 
@@ -311,12 +324,12 @@ bool DataGeter(json LinkList,int& part, int& ofall){
 	std::shuffle(std::begin(chain1), std::end(chain1), e);
 	std::shuffle(std::begin(chain2), std::end(chain2), e);
 
-
-	std::thread chaps1(DataMakerT,chain1);
-	std::thread chaps2(DataMakerT,chain2);
+	chaps1 = std::thread (DataMakerT,chain1);
+	chaps2 = std::thread (DataMakerT,chain2);
 
 	bool mik = DataMaker(LinkList,part, ofall);
 
+	std::cout << ">>> Whait for thread"  << std::endl;
 	if (chaps1.joinable()) {chaps1.join();}
 	if (chaps2.joinable()) {chaps2.join();}
 	return mik;
@@ -327,22 +340,33 @@ void DataMakerT(json LinkList) {
 	//int sep=0;
 	mytotal=LinkList.size();
 	if (mytotal <= 0) {return;}
-	for (int x = 0; x < mytotal&& !quit; x++)
-	{
-		if (!isConnected) while (!Net::HasConnection()) {SDL_Delay(2000); if(quit) return; }
-		string link = LinkList[x];
-		string name = KeyOfLink(link);
-		if (AB[name]["TimeStamp"] != BD["TimeStamp"] ) {
-			if (AB[name]["TimeStamp"].is_null() || AB[name]["enemision"]=="true") {
-				DataUpdate(link);
-			} else {
+	try{
 
+		for (int x = 0; x < mytotal&& !quit; x++)
+		{
+			if (!isConnected) while (!Net::HasConnection()) {SDL_Delay(2000); if(quit) return; }
+			string link = LinkList[x];
+			string name = KeyOfLink(link);
+			if (AB[name]["TimeStamp"] != BD["TimeStamp"] ) {
+				if (AB[name]["TimeStamp"].is_null() || AB[name]["enemision"]=="true") {
+					DataUpdate(link);
+				} else {
+
+				}
 			}
 		}
+    } catch(const char* errorMessage) {
+        std::cout << ">Error: " << errorMessage << std::endl;
+    } catch(const std::exception& e) {
+        std::cout << ">>Error: " << e.what() << std::endl;
+    } catch(...) {
+		cout << "- Thread Search Error Catched" <<endl;
+		cout << BD["arrays"]["search"] << endl;
 	}
-	if(quit) return;
 	return;
 }
+*/
+
 bool DataMaker(json LinkList,int& part, int& ofall) {
 	bool hasmchap=false;
 	string a = "";
@@ -453,8 +477,8 @@ scrapElementAll(content, "data-setbg=\""+imgurl+"/assets/images/animes/video/ima
     if (hasbaner){
         BD["arrays"]["Benner"] = banerall;
     }
-	//BD["arrays"]["Banner"]["files"]=BannerFile;
-	cout << setw(4) << BD["arrays"]["Benner"] << endl;
+
+	//cout << setw(4) << BD["arrays"]["Benner"] << endl;
 	return 0;
 }
 int MkAGR(string content){
@@ -599,7 +623,7 @@ int MkDIR(){
 	{
 		cout << "# Cache Directory " << endl;
 		try{
-			if (DataGeter(BD["arrays"]["Directory"]["link"], part, ofall)) {
+			if (DataMaker(BD["arrays"]["Directory"]["link"], part, ofall)) {
 				BD["arrays"]["Directory"]["InTime"]=1;
 				write_DB(AB,rootdirectory+"AnimeMeta.json");
 			}
@@ -745,7 +769,7 @@ int searchjk(void* data) {//Search Thread
 		cout << BD["arrays"]["search"] << endl;
 	}
 	reloadingsearch = false;
-	DataGeter(BD["arrays"]["search"]["link"], porcentajebufferS, porcentajebufferAllS);
+	DataMaker(BD["arrays"]["search"]["link"], porcentajebufferS, porcentajebufferAllS);
 	return 0;
 }
 int capit(void* data) {//Get chap thread
@@ -861,11 +885,27 @@ void DataUpdate(string Link) {//Get info off chapter
     Link = "https://jkanime.net/"+name+"/";
     if (Link == "https://jkanime.net/studio/") return;
     json DataPage=Net::REQUEST(Link);
-/*
+	SDL_Delay(50);
+	
+	while(!quit){
+		if (DataPage["CODE"] == 429){
+			cout << "Firewall detected halt 60s " << Link << endl;
+			cout << DataPage["BODY"] << endl;
+			genTime(60);
+			DataPage=Net::REQUEST(Link);
+		}
+		if (DataPage["CODE"] == 200){
+			break;
+		}
+	}
+	if(quit) return;
+/* */ 
+    cout << "-------------------- " << Link << endl;
     cout << "Link " << Link << endl;
     cout << "COUNT " << DataPage["COUNT"] << endl;
     cout << "RED " << DataPage["RED"] << endl;
- */   
+    cout << "CODE " << DataPage["CODE"] << endl;
+  
     if (DataPage["COUNT"] > 0 && DataPage["RED"] == "https://jkanime.net/404.shtml"){
         //puede darse el caso de que aparezca un link venenoso 
         //y los thread no logran manejarlo y peta todo
@@ -875,6 +915,7 @@ void DataUpdate(string Link) {//Get info off chapter
 
 	string a = DataPage["BODY"];
 	if(quit) return;
+	
 	json AnimeINF=AB[name];//
 	string TMP="";
 	if (AnimeINF["sinopsis"].is_null()) {
@@ -1015,7 +1056,9 @@ void DataUpdate(string Link) {//Get info off chapter
 		AnimeINF["maxcapit"] = 1;
 	}
 
-//	if (AnimeINF["mincapit"].is_null())
+	//cout << ">>>>>>>>>>> HERE! 1 --> " << Link << endl;
+
+	if (AnimeINF["mincapit"].is_null())
 	{
 		//empieza por 0?
 		int zero1, zero2;
@@ -1023,13 +1066,21 @@ void DataUpdate(string Link) {//Get info off chapter
 		string zerocontainer2 = "";
 		zero1 = a.rfind("/ajax/pagination_episodes/");
 		zero2 = a.find("'", zero1);
-		zerocontainer = "https://jkanime.net" + a.substr(zero1, zero2 - zero1) + "/1/";
-		replace(zerocontainer, "//a", "/a");
-		replace(zerocontainer, "//1/", "/1/");
-		//cout << zerocontainer << endl;
-		zerocontainer2 = Net::GET(zerocontainer);
-		//cout << zerocontainer << name << endl;
-		//cout << zerocontainer2 << name << endl;
+		
+		if (zero1 > 0){
+			zerocontainer = "https://jkanime.net" + a.substr(zero1, zero2 - zero1) + "/1/";
+			replace(zerocontainer, "//a", "/a");
+			replace(zerocontainer, "//1/", "/1/");
+			//cout << zerocontainer << endl;
+			zerocontainer2 = Net::GET(zerocontainer);
+			//cout << zerocontainer << name << endl;
+			//cout << zerocontainer2 << name << endl;
+			
+		} else {
+			//cout << ">>>>>>>>>>>  " << a << endl;
+
+			cout << ">>>>>>>>>>> Error Catched --> " << zero1 << " --> "<< zero2 << endl;
+		}
 
 		if (zerocontainer2.find("\"number\":\"0\"") != string::npos) {
 			AnimeINF["mincapit"] = 0;
@@ -1038,6 +1089,8 @@ void DataUpdate(string Link) {//Get info off chapter
 			AnimeINF["mincapit"] = 1;
 		}
 	}
+	//cout << ">>>>>>>>>>> HERE! 2 --> " << Link << endl;
+
 	if(AnimeINF["mincapit"].get<int>()==0)
 		AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
 

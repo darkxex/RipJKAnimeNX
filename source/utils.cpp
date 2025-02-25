@@ -625,6 +625,9 @@ bool inTimeN(u64 sec,int framesdelay){
 	data[name]["frames"]= data[name]["frames"].get<int>()+1;
 	return false;
 }
+void genTime(int t){
+    for (int i=0;i<t;i++) {if (quit){break;} SDL_Delay(1000);}
+}
 void TickerName(int& color,int sec,int min,int max){
 	static bool running=false;
 	static bool Start=false;

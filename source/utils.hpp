@@ -25,6 +25,7 @@ void led_on(int inter);
 vector<string> eraseVec(vector<string> array,string patther);
 bool onTimeC(u64 sec,u64& time8);
 bool inTimeN(u64 sec,int framesdelay = 100);
+void genTime(int t);
 void TickerName(int& color,int sec,int min,int max);
 void RemoveAccents(string& word);
 string string_to_hex(const string& in);
