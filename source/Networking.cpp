@@ -353,6 +353,68 @@ bool HasConnection(){
 }
 }
 
+
+bool startsWith(const std::string& str, const std::string& prefix) {
+    return str.compare(0, prefix.length(), prefix) == 0;
+}
+
+// Devuelve el nombre del anime limpio de la URL o path
+std::string ExtractAnimeName(const std::string& input) {
+    std::string clean = input;
+
+    // Quitar parámetros de URL si existen
+    size_t q = clean.find('?');
+    if (q != std::string::npos) {
+        clean = clean.substr(0, q);
+    }
+
+    // Eliminar '/' final si existe
+    while (!clean.empty() && clean.back() == '/') {
+        clean.pop_back();
+    }
+
+    // URL JKANIME
+    if (startsWith(clean, "https://jkanime.net/")) {
+        std::string sub = clean.substr(strlen("https://jkanime.net/"));
+        size_t slash = sub.find('/');
+        if (slash != std::string::npos) {
+            return sub.substr(0, slash);
+        } else {
+            return sub;
+        }
+    }
+
+    // URL CDN JKDesu
+    if (startsWith(clean, "https://cdn.jkdesu.com/")) {
+        // Buscar "/image/" para cortar en el nombre
+        size_t imagePos = clean.find("/image/");
+        if (imagePos != std::string::npos) {
+            std::string sub = clean.substr(imagePos + strlen("/image/"));
+            // Tomar nombre de archivo
+            size_t last_slash = sub.rfind('/');
+            if (last_slash != std::string::npos) {
+                sub = sub.substr(last_slash + 1);
+            }
+            // Quitar extensión si existe
+            size_t dot = sub.rfind('.');
+            if (dot != std::string::npos) {
+                sub = sub.substr(0, dot);
+            }
+            return sub;
+        }
+    }
+
+    // Si es ruta local
+    // Tomar nombre de archivo sin extensión
+    size_t last_slash = clean.find_last_of("/\\");
+    std::string filename = (last_slash != std::string::npos) ? clean.substr(last_slash + 1) : clean;
+    size_t dot = filename.rfind('.');
+    if (dot != std::string::npos) {
+        filename = filename.substr(0, dot);
+    }
+    return filename;
+}
+
 void CheckImgVector(json List,int& index){
 	index=0;
 	int listsize=List.size();
@@ -362,18 +424,22 @@ void CheckImgVector(json List,int& index){
 	{
 		index = x+1;
 		std::string tempima = List[x];
-		//std::cout << "img: >" << tempima << std::endl;
+		std::cout << "img: >" << tempima << std::endl;
 		if (tempima.length() == 0) continue;
         
         //Get the anime name
+		
+		tempima = ExtractAnimeName(tempima);
+		/*
         replace(tempima,"\"","");
         int v0 = (tempima.substr(0, tempima.length()-1)).rfind("/");
         tempima = tempima.substr(v0+1);
         replace(tempima,".png", "");
         replace(tempima,".jpg", "");
         replace(tempima,"/", "");
+		*/
 
-		//std::cout << "img: <" << tempima << std::endl;
+		std::cout << "img: <" << tempima << std::endl;
 		CheckImgNet(rootdirectory+"DATA/"+tempima+".jpg");
 	}
 	index=0;
@@ -392,6 +458,7 @@ bool CheckImgNet(std::string image,std::string url){
 	}
 	return true;
 }
+
 bool CheckUpdates(bool force){
 	try{
 		string Ver = DInfo()["App"];

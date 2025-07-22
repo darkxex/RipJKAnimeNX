@@ -143,13 +143,13 @@ int AnimeLoader(void* data){
 		steep++;
 		if(!reloading) {
 			//Download All not existing images
-			CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
+			//CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
 		}
 
 		steep++;//Get Programation list, Links and Images
 		int temp0=0,temp1=0;
 		temp0=content.find("Programación");
-		temp1=content.find("TOP ANIMES",temp0);
+		temp1=content.find("Animes recientes",temp0);
 		string temcont = content.substr(temp0,temp1-temp0);
 		steep++;//rebuild list
 		vector<string> ChapLink=scrapElementAll(temcont, "https://jkanime.net/");
@@ -158,7 +158,7 @@ int AnimeLoader(void* data){
 
 		steep++;//Download All not existing images
 		cout << "# Recent IMG " << endl;
-		CheckImgVector(ChapImag,imgNumbuffer);
+		CheckImgVector(ChapLink,imgNumbuffer);
 
 
 		steep++;//'haschange' See if there is any new chap
@@ -193,6 +193,7 @@ int AnimeLoader(void* data){
                         //if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());} // esto  es para controlar el tamaño máximo de la lista de animes
                     }
 				}
+				/*
 				if (!BD["arrays"]["chapter"]["images"].is_null())
 				{
 					vector<string> OChapImag=BD["arrays"]["chapter"]["images"];
@@ -203,13 +204,14 @@ int AnimeLoader(void* data){
                         //if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());} // esto  es para controlar el tamaño máximo de la lista de animes
                     }
 				}
+				*/
 				DoubleKill(ChapLink);
-				ChapImag.erase(unique(ChapImag.begin(),ChapImag.end()),ChapImag.end());
+				//ChapImag.erase(unique(ChapImag.begin(),ChapImag.end()),ChapImag.end());
 
 				GOD.PlayEffect(GOD.proc);
 				Frames=1;
                 if (ChapLink.size() > 0) BD["arrays"]["chapter"]["link"]=ChapLink;
-                if (ChapImag.size() > 0) BD["arrays"]["chapter"]["images"]=ChapImag;
+                //if (ChapImag.size() > 0) BD["arrays"]["chapter"]["images"]=ChapImag;
 				haschange = true;
 			}
 
@@ -233,7 +235,7 @@ int AnimeLoader(void* data){
 		if (haschange)
 		{
 			//Borrar Archivos temporales
-            //fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
+            fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
             mkdir((rootdirectory+"TEMP").c_str(), 0777);
 
 		}
@@ -640,11 +642,13 @@ int MkDIR(){
             ChapLink.erase(ChapLink.begin()+60,ChapLink.end());
             BD["arrays"]["chapter"]["link"]=ChapLink;
         }
+		/*
         vector<string> ChapImg=BD["arrays"]["chapter"]["images"];
         if (ChapImg.size() > 60) {
         	ChapImg.erase(ChapImg.begin()+60,ChapImg.end());
         	BD["arrays"]["chapter"]["images"]=ChapImg;
         }
+		*/
 	}
 	return 0;
 }
@@ -916,13 +920,17 @@ void DataUpdate(string Link) {//Get info off chapter
 	string a = DataPage["BODY"];
 	if(quit) return;
 	
-	json AnimeINF=AB[name];//
+	json AnimeINF;//
+	if(!AB[name].is_null()){
+		AnimeINF=AB[name];
+	}
+	//
 	string TMP="";
 	if (AnimeINF["sinopsis"].is_null()) {
 		//Sinopsis
 		//TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
-		TMP = scrapElement(a, "<p class=\"tab sinopsis\">","</p>");
-		replace(TMP, "<p class=\"tab sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "'"); replace(TMP, "&#039;", "'");
+		TMP = scrapElement(a, "<p class=\"scroll\">","</p>");
+		replace(TMP, "<p class=\"scroll\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "'"); replace(TMP, "&#039;", "'");
 		//AnimeINF["sinopsis"] = TMP.substr(0,800);
 		AnimeINF["sinopsis"] = TMP;
 	} else {
@@ -932,8 +940,8 @@ void DataUpdate(string Link) {//Get info off chapter
         if(taser.length() < 5){
             //Sinopsis
             //TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
-            TMP = scrapElement(a, "<p class=\"tab sinopsis\">","</p>");
-            replace(TMP, "<p class=\"tab sinopsis\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
+            TMP = scrapElement(a, "<p class=\"scroll\">","</p>");
+            replace(TMP, "<p class=\"scroll\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
             //AnimeINF["sinopsis"] = TMP.substr(0,800);
             AnimeINF["sinopsis"] = TMP;
         }
