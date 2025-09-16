@@ -59,6 +59,7 @@ std::string scrapElement(std::string content, std::string get,std::string delim)
 vector<string> scrapElementAll(std::string content, std::string get,std::string delim,std::string addend,bool del){
 	vector<string> res;
 	std::string Element = "";
+    std::string latets = "";
 	if(content.length() <= 0)
 	{return res;}
 
@@ -88,6 +89,8 @@ vector<string> scrapElementAll(std::string content, std::string get,std::string 
                 replace(Element, "<span>", "");
                 replace(Element, "<h2>", "");
                 replace(Element, "</h2>", "");
+                replace(Element, "</i>", "");
+                replace(Element, "<i>", "");
                 //doit better
                 replace(Element, "  ", " ");
                 replace(Element, "  ", " ");
@@ -96,7 +99,10 @@ vector<string> scrapElementAll(std::string content, std::string get,std::string 
                 replace(Element, "  ", " ");
                 replace(Element, "  ", " ");
             }
-			res.push_back (Element+addend);
+            if (latets != (Element+addend)){
+                res.push_back (Element+addend);
+                latets = (Element+addend);
+            }
 		} else {
 
 			break;
