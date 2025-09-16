@@ -422,9 +422,10 @@ void CheckImgVector(json List,int& index){
     imgNumbufferAll = listsize;
 	for (int x = 0; x < listsize && !quit; x++)
 	{
+        //std::cout << listsize-1 << "/"  << x << std::endl;
 		index = x+1;
 		std::string tempima = List[x];
-		std::cout << "img: >" << tempima << std::endl;
+		//std::cout << "img: >" << tempima << std::endl;
 		if (tempima.length() == 0) continue;
         
         //Get the anime name

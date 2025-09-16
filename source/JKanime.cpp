@@ -154,7 +154,7 @@ int AnimeLoader(void* data){
 		steep++;//rebuild list
 		vector<string> ChapLink=scrapElementAll(temcont, "https://jkanime.net/");
 		vector<string> ChapImag=scrapElementAll(temcont, "https://"+CDNURL+"/assets/images/");
-		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "<span>","</span>");
+		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "</i>","</span>");
 
 		steep++;//Download All not existing images
 		cout << "# Recent IMG " << endl;
@@ -222,10 +222,9 @@ int AnimeLoader(void* data){
 		steep++;//Get history
 		cout << "# History IMG " << endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
-
 		steep++;//Agregados to Database
-		temp0=content.find("Listado de últimos agregados");
-		temp1=content.find("</section>",temp0);
+		temp0=content.find("Animes recientes");
+		temp1=content.find("Top animes",temp0);
 		temcont = content.substr(temp0,temp1-temp0);
 
 		MkAGR(temcont);
@@ -248,10 +247,13 @@ int AnimeLoader(void* data){
             MkBNR(temcont);
 		}
         
+cout << "# HERE 1 " << endl;
         //hourglas
 		if (haschange) {
 			MkHOR();
 		}
+cout << "# HERE 2 " << endl;
+		
 		steep++;//Top, Hour to Database
 		MkTOP();
 
@@ -267,6 +269,7 @@ int AnimeLoader(void* data){
 
 		cout << "# End Image Download " << endl;
 
+		return 0;
 
 		steep++;//Load to cache all Programation Chaps
 		cout << "# Cache Recent ";
@@ -291,10 +294,10 @@ int AnimeLoader(void* data){
 
 		steep++;//Load Directory
 		MkDIR();
-    } catch(const char* errorMessage) {
+    /*} catch(const char* errorMessage) {
         std::cout << "Error: " << errorMessage << std::endl;
     } catch(const std::exception& e) {
-        std::cout << "Error: " << e.what() << std::endl;
+        std::cout << "Error: " << e.what() << std::endl;*/
     } catch(...) {
 		LOG::E(2);
 		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
@@ -412,9 +415,16 @@ bool DataMaker(json LinkList,int& part, int& ofall) {
 int MkTOP(){
 	//load Top
 	vector<string> TOPC={};
+	int temp0=0,temp1=0;
 	cout << "# Top Get ";
 	string content=Net::GET("https://jkanime.net/top/");
+	temp0=content.find("<form id=\"niceform\"");
+	temp1=content.find("<div class=\"searchbg\"",temp0);
+	content = content.substr(temp0,temp1-temp0);
+
+	
 	replace(content,"https://jkanime.net/top/","");
+	replace(content,"https://jkanime.net/top","");
 	replace(content,"https://jkanime.net///","");
 	TOPC=scrapElementAll(content,"https://jkanime.net/");
 	TOPC.erase(unique(TOPC.begin(),TOPC.end()),TOPC.end());
@@ -497,10 +507,20 @@ int MkHOR(){
 	cout << "# HourGlass Get ";
 	string content=Net::GET("https://jkanime.net/horario/");
 	replace(content,"https://jkanime.net/horario/","");
+	/*
 	replace(content,"https://"+CDNURL+"/assets/images/animes/image/","https://jkanime.net/");
 	replace(content,".jpg","/");
 	replace(content,".png","/");
-
+	*/
+	
+	//poner limite a split esto hace q STP tenga 7 valores mas unos mas para el resto de la pagina  
+	replace(content,"<div class='box semana filtro'>","<div class='box semana'>");
+	replace(content,"Buscar anime","<div class='box semana'>");
+	
+	
+	//<div class="box semana filtro"
+	
+	//dividimos en dias 7 para lunes a domingo
 	vector<string> STP={};
 	STP=split(content,"<div class='box semana'>");
 	BD["arrays"]["HourGlass"]["Lunes"]=scrapElementAll(STP[1],"https://jkanime.net/","\"","Lunes");
@@ -530,6 +550,7 @@ int MkHOR(){
 	MPO=BD["arrays"]["HourGlass"]["Domingo"];
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
 */
+	//unimos todos en un solo vector asi podemso ver todos a la vez
 	MPO=scrapElementAll(STP[1],"https://jkanime.net/","\"","Lunes");
 	HORC.insert(HORC.end(), MPO.begin(), MPO.end());
 	MPO=scrapElementAll(STP[2],"https://jkanime.net/","\"","Martes");
@@ -937,7 +958,7 @@ void DataUpdate(string Link) {//Get info off chapter
         //cout << "-- HERE1 " <<endl;
         string taser = AnimeINF["sinopsis"];
         //cout << "-- HERE2 " <<endl;
-        if(taser.length() < 5){
+        if(taser.length() < 8){
             //Sinopsis
             //TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
             TMP = scrapElement(a, "<p class=\"scroll\">","</p>");
