@@ -242,7 +242,7 @@ int AnimeLoader(void* data){
 		if (haschange)
 		{
 			//Borrar Archivos temporales
-            //fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
+            fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
             mkdir((rootdirectory+"TEMP").c_str(), 0777);
 
 		}
@@ -602,9 +602,12 @@ int MkDIR(){
 			part=1;
 			ofall=0;
 			while (!quit) {
-				string content=Net::GET("https://jkanime.net/directorio/"+to_string(BD["arrays"]["Directory"]["page"].get<int>())+"/");
-				replace(content,"https://jkanime.net/directorio/","");
-				replace(content,"https://jkanime.net/studio/","");
+				string content=Net::GET("https://jkanime.net/directorio?p="+to_string(BD["arrays"]["Directory"]["page"].get<int>()));
+				content = scrapElement(content, "var animes=","var mode");
+
+				replace(content,";","");
+				replace(content,"var animes=","");
+				
 				replace(content,"card-title-alt\"><a href=\"https://jkanime.net/","");
 				replace(content,"card-title\"><a href=\"https://jkanime.net/","");
 				replace(content,"https://jkanime.net///","");
