@@ -59,6 +59,68 @@ extern bool ongrid;
 //Event handler
 SDL_Event e;
 
+//confirmación alternativa asíncrona
+typedef enum {
+	NONEEMPTY,
+	salirHome,
+	historialD,
+	favoritosD,
+	borrarTodo
+} confirms;
+
+int okState = NONEEMPTY;
+void Confirmar(int asunto){
+	okState = asunto;
+}
+/*
+	Confirmar(salirHome);
+	Confirmar(historialD);
+	Confirmar(favoritosD);
+	Confirmar(borrarTodo);
+*/
+bool checkConfirmar(){
+	switch (okState) {
+		case salirHome:
+		if (GOD.Confirm("Desea Salir al Home?"))
+		{
+			cancelcurl = 1;
+			quit = true;
+		}
+		break;
+		case historialD:
+			if (GOD.Confirm("Desea Borrarlo del Historial ?"))
+			{
+				UD["history"].erase(histchapter);
+				if (histchapter > 0) histchapter--;
+			}
+		break;
+		case favoritosD:
+			if (GOD.Confirm("Desea Borrar Favorito?")) 
+			{
+				delFavorite(favchapter);
+				if (favchapter > 0) favchapter--;
+			}
+		break;
+		case borrarTodo:
+			if (GOD.Confirm("Desea Borrar todos los datos que usa esta App, excepto los datos por usuario"))
+			{
+				preview = false;
+				quit = true;
+				cancelcurl = 1;
+				GOD.PleaseWait("Borrando cache");
+				read_DB(AB,"romfs:/AnimeMeta.json");
+				BD="{}"_json;
+				fsdevDeleteDirectoryRecursively((rootdirectory).c_str());
+				mount_theme("themes",false);
+				statenow=99;
+			}
+		break;
+	}
+	okState = NONEEMPTY;
+	return true;
+}
+
+
 //Private
 void PlayerGet(){
 	if (user::SelectUser()) {
@@ -78,6 +140,8 @@ void PlayerGet(){
 	USER.offboom_size=3;
 	USER.TickerBomb();
 }
+
+
 
 //call states
 void callmenuslide(){
@@ -154,10 +218,32 @@ void Inputinit(){
 }
 
 //Public
-void InputHandle(){
+int InputHandle(void* data){
+	
+	while(!quit){
+	//Revisar si la consola esta en el dock o en modo portátil
+	AppletOperationMode stus=appletGetOperationMode();
+	if (stus == AppletOperationMode_Handheld) {isHandheld=true;}
+	if (stus == AppletOperationMode_Console) {isHandheld=false;}
+	
+	//Cambiar a modo boost si esta n el dock o a normal al estar portatil 
+	static bool HanState = true;
+	if (HanState != isHandheld){
+		if(isHandheld){
+			appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
+			appletCancelCpuBoostMode();
+		} else {
+			appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
+		}
+		HanState = isHandheld;
+	}
+	
+	if (okState != NONEEMPTY) while(!quit && okState != NONEEMPTY){SDL_Delay(200);}
+
 	//Handle events on queue
 	while (SDL_PollEvent(&e))
 	{
+		
 		//User requests quit
 		if (e.type == SDL_QUIT)
 		{
@@ -165,6 +251,7 @@ void InputHandle(){
 			quit = true;
 			cout << "Saliendo" << endl;
 		}
+
 		GOD.GenState = statenow;
 		switch (e.type) {
 		case SDL_FINGERDOWN:
@@ -272,18 +359,7 @@ void InputHandle(){
 					else if (T_D.SPr()&&isDownloading) statenow = download_s;
 					else if (SCREEN.SPr()) e.jbutton.button = BT_ZR;
 					else if (CLEAR.SPr()) {
-						if (GOD.Confirm("Desea Borrar todos los datos que usa esta App, excepto los datos por usuario")) {
-							preview = false;
-							quit = true;
-							cancelcurl = 1;
-							GOD.PleaseWait("Borrando cache");
-							read_DB(AB,"romfs:/AnimeMeta.json");
-							BD="{}"_json;
-							fsdevDeleteDirectoryRecursively((rootdirectory).c_str());
-							mount_theme("themes",false);
-							statenow=99;
-						}
-
+						Confirmar(borrarTodo);
 						break;
 					}
 					SDL_Log("ScreenX %d    ScreenY %d butt %d\n",GOD.TouchX, GOD.TouchY,e.jbutton.button);
@@ -545,10 +621,7 @@ void InputHandle(){
 					switch (statenow)
 					{
 					case programation_s:
-						if (GOD.Confirm("Desea Salir al Home?")) {
-                            cancelcurl = 1;
-                            quit = true;
-						}
+						Confirmar(salirHome);
 						break;
 					case download_s:
 						statenow = chapter_s;
@@ -621,10 +694,8 @@ void InputHandle(){
 						   NameOfLink(nameh);
 						   if (GOD.Confirm("Desea Borrar "+nameh+" del Historial ?")){
 						 */
-						if (GOD.Confirm("Desea Borrarlo del Historial ?")) {
-							UD["history"].erase(histchapter);
-							if (histchapter > 0) histchapter--;
-						}
+						Confirmar(historialD);
+
 					}
 					break;
 					case favorites_s: {
@@ -633,10 +704,7 @@ void InputHandle(){
 						   NameOfLink(nameh);
 						   if (GOD.Confirm("Desea Borrar\n"+nameh+"?")){
 						 */
-						if (GOD.Confirm("Desea Borrarlo?")) {
-							delFavorite(favchapter);
-							if (favchapter > 0) favchapter--;
-						}
+						Confirmar(favoritosD);
 					}
 					break;
 
@@ -848,5 +916,8 @@ void InputHandle(){
 
 	}
 	GOD.GenState = statenow;
+	}
+	
+	return 0;
 
 }

@@ -130,6 +130,7 @@ SDL_Thread* searchthread = NULL;
 SDL_Thread* downloadthread = NULL;
 SDL_Thread* capithread = NULL;
 SDL_Thread* Loaderthread = NULL;
+SDL_Thread* inputThread = NULL;
 bool quit=false;
 std::string KeyName;
 int Frames=1;

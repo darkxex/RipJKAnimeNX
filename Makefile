@@ -64,7 +64,6 @@ CFLAGS	:=	-g -O3 -ffunction-sections \
 			-DVERSION_MAJOR=${VERSION_MAJOR} \
 			-DVERSION_MINOR=${VERSION_MINOR} \
 			-DVERSION_MICRO=${VERSION_MICRO} \
-			`freetype-config --cflags` \
 			`sdl2-config --cflags`
 
 CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -D_GNU_SOURCE=1 
@@ -77,7 +76,8 @@ LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-no-as-needed,-M
 
 LIBS	:=	-lnsp -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -lwebp -ljpeg `sdl2-config --libs`  -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lzstd -lz -lnx  `$(PREFIX)pkg-config --libs sdl2 SDL2_mixer SDL2_image SDL2_ttf` \
 
-#`freetype-config --libs`
+#`freetype-config --libs`			`pkg-config --cflags freetype2` \
+
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib

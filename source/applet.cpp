@@ -640,7 +640,7 @@ json DInfo(string ver){
 bool ChainManager(bool Chain,bool AndChaing){
 	if (Chain) {
 		if (AndChaing) {
-			appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
+			//appletSetCpuBoostMode(ApmCpuBoostMode_FastLoad);
 			appletSetAutoSleepDisabled(true);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(false);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_NoSuspend);
@@ -649,8 +649,12 @@ bool ChainManager(bool Chain,bool AndChaing){
 		} else return false;
 	} else {
 		if (AndChaing) {
-			appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
-			appletCancelCpuBoostMode();
+            /*
+			if (isHandheld){
+                appletSetCpuBoostMode(ApmCpuBoostMode_Normal);
+                appletCancelCpuBoostMode();
+            }
+            */
 			appletSetAutoSleepDisabled(false);
 			appletSetAutoSleepTimeAndDimmingTimeEnabled(true);
 			appletSetFocusHandlingMode(AppletFocusHandlingMode_SuspendHomeSleep);

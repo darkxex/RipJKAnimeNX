@@ -14,4 +14,5 @@
 #include <sys/types.h>
 
 void Inputinit();
-void InputHandle();
+int InputHandle(void* data);
+bool checkConfirmar();

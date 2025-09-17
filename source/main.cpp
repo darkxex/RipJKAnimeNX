@@ -119,7 +119,8 @@ int main(int argc, char **argv)
         //Este Thread se encarga de cargar casi todo en segundo plano imagenes, datos, Animes, temas, etc ver JKanime.cpp
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 		
-            
+        //este se encarga de los inputs
+		inputThread = SDL_CreateThread(InputHandle, "inputThread", (void*)NULL);
         
         //Esto se usa para evitar el cierre forzado de la app, poder capturar dicho evento y cerrar con normalidad.
 		//if (!AppletMode)
@@ -128,11 +129,6 @@ int main(int argc, char **argv)
 		//Bucle principal mientas la app corre, salirse de aquí significa cerrarla, (se saldrá si se fuerza el cierre)
 		while (GOD.JKMainLoop())
 		{
-			//Revisar si la consola esta en el dock o en modo portátil
-			AppletOperationMode stus=appletGetOperationMode();
-			if (stus == AppletOperationMode_Handheld) {isHandheld=true;}
-			if (stus == AppletOperationMode_Console) {isHandheld=false;}
-
 			//Limpiar pantalla
 			SDL_SetRenderDrawColor(GOD.gRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderClear(GOD.gRenderer);
@@ -1021,7 +1017,8 @@ int main(int argc, char **argv)
 			}
 			//HID Events
 			//#include "input.hpp"
-			InputHandle();
+			//InputHandle();
+			checkConfirmar();
 			if(quit) {
 				//wallpaper
 				Farest.render((0), (0));
@@ -1055,6 +1052,7 @@ int main(int argc, char **argv)
 	if (NULL == downloadthread) {printf("downloadthread Not in use\n");} else {printf("downloadthread in use: %s\n", SDL_GetError()); SDL_WaitThread(downloadthread, NULL);}
 	if (NULL == searchthread) {printf("searchthread Not in use\n");} else {printf("searchthread in use: %s\n", SDL_GetError()); SDL_WaitThread(searchthread,NULL);}
 	if (NULL == Loaderthread) {printf("Loaderthread Not in use\n");}else {printf("Loaderthread in use: %s\n", SDL_GetError()); SDL_WaitThread(Loaderthread, NULL);}
+	if (NULL == inputThread) {printf("inputThread Not in use\n");}else {printf("inputThread in use: %s\n", SDL_GetError()); SDL_WaitThread(inputThread, NULL);}
 
 
 	//Free loaded images
