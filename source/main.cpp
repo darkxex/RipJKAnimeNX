@@ -210,7 +210,7 @@ int main(int argc, char **argv)
 							gTextTexture.render(posxbase + 855, posybase + 598);
 						}
 						gTextTexture.loadFromRenderedText(GOD.Comic_16, BD["com"]["nextdate"], { 255,255,255 });
-						gTextTexture.render(posxbase + 1040, posybase + 615);
+						gTextTexture.render(posxbase + 1010, posybase + 615);
 					}
 				}
 
@@ -979,10 +979,20 @@ int main(int argc, char **argv)
 			} else if (ClFlock){
                 //CloudFlare protege este sitio asi q lo abrimos en en navegador
                 GOD.PleaseWait("CloudFlare Activo, Abriendo Navegador Espere...");
+				//Just open the browser
+				WebBrowserCloud("https://jkanime.net/");
+
                 reloadmain = Net::Bypass();
                 ClFlock = false;
             }
-
+			if (UAG){
+                //CloudFlare protege este sitio asi q lo abrimos en en navegador
+                GOD.PleaseWait("Obteniendo UA...");
+				//Just open the browser
+				WebBrowserUA();
+                Net::Bypass();
+                UAG = false;
+            }
 			if(programation_s != statenow && isHandheld) {
 				BACK.render(SCREEN_WIDTH - USER.getWidth() - BACK.getWidth() - 30, 1);
 			}

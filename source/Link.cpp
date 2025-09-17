@@ -75,6 +75,30 @@ std::string deobfuscate(const std::string& encoded, const std::vector<std::strin
 */
 std::string deobfuscate(const std::string& encoded, const std::vector<std::string>& map, int base) {
     std::string result;
+    std::string number;
+    
+    
+        for (char c : encoded) {
+        if (std::isdigit(c)) {
+            number += c;  // construir número
+        } else {
+            if (!number.empty()) {
+                int index = std::stoi(number); // convertir el número completo
+                if (index < (int)map.size() && map[index] != "ZZZ") {
+                    result += map[index];
+cout << index << " --> " << map[index]  << std::endl;
+ 
+                }
+                number.clear();
+            }
+            result += c;
+
+        }
+    }
+    
+    cout << "Contenido: " << result  << std::endl;
+
+    /*
     
     for (size_t i = 0; i < encoded.length(); ++i) {
         std::string character = encoded.substr(i, 1);  // Tomar un solo carácter como string
@@ -82,7 +106,7 @@ std::string deobfuscate(const std::string& encoded, const std::vector<std::strin
         if (std::isalnum(character[0])) {  // Verificar si el carácter es alfanumérico
 
             int index = baseToInt(character, base);
-            //std::cout << ">>" << character << "<<" << index << std::endl;
+            std::cout << ">>" << character << "<<" << index << std::endl;
 
             if (index < (int)map.size()) {
                 if (map[index] == "ZZZ"){
@@ -100,6 +124,7 @@ std::string deobfuscate(const std::string& encoded, const std::vector<std::strin
             result += character;  // Agregar el carácter no alfanumérico al resultado
         }
     }
+    */
     
     vector<string> list = split (result, ";");
     json data;

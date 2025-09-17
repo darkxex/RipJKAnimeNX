@@ -136,7 +136,7 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,do
 
 namespace Net {
 //string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
-string UserAgent = "Mozilla/5.0 (Nintendo Switch; WebApplet) AppleWebKit/609.4 (KHTML, like Gecko) NF/6.0.2.22.5 NintendoBrowser/5.1.0.23519";
+string UserAgent = "Mozilla/5.0 (Nintendo Switch; WebApplet) AppleWebKit/613.0 (KHTML, like Gecko) NF/6.0.3.27.17 NintendoBrowser/5.1.0.35231";
 int DebugNet = 1;        //0 no debug ,  1 some debug, 2 All debug
 
 //Simplification
@@ -181,7 +181,13 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 		if (HEADR) {
 			curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
 		} else if (POSTFIEL.length()>0) {
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
+            struct curl_slist *headers = nullptr;
+                headers = curl_slist_append(
+                    headers,
+                    "Content-Type: application/x-www-form-urlencoded; charset=UTF-8"
+                );
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);			
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
 			data["POST"] = POSTFIEL;
 		}
 		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
@@ -324,8 +330,6 @@ bool init(){
 bool Bypass(){
     bool change = false;
 
-    //Just open the browser
-    WebBrowserCloud("https://jkanime.net/");
     string cookies = "";
     GetCookies(cookies);//save the cookies
     
@@ -336,6 +340,7 @@ bool Bypass(){
         UserAgent = TUA;
         BD["UserAgentSet"] = TUA;
         cout << "# New UserAgent : -->" << TUA << "<--" <<std::endl;
+        BD["Firm"] = DInfo()["Firmware"].get<string>();
         change = true;
     } 
     return change;

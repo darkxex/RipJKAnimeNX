@@ -139,6 +139,14 @@ int AnimeLoader(void* data){
 			}
             Mromfs = false;
 		}
+		//Obtener UserAgent si se cambia de versión
+		if (BD["Firm"].is_null()){
+			UAG=true;
+		} else {
+			if (BD["Firm"].get<string>() != DInfo()["Firmware"].get<string>()){
+				UAG=true;
+			}
+		}
 
 		steep++;
 		if(!reloading) {
@@ -234,7 +242,7 @@ int AnimeLoader(void* data){
 		if (haschange)
 		{
 			//Borrar Archivos temporales
-            fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
+            //fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
             mkdir((rootdirectory+"TEMP").c_str(), 0777);
 
 		}
@@ -242,17 +250,18 @@ int AnimeLoader(void* data){
 		//if (haschange)
         {
             temp0=content.find("<section class=\"hero\">");
-            temp1=content.find("<div class=\"solopc\">",temp0);
+            temp1=content.find("</section>",temp0);
             temcont = content.substr(temp0,temp1-temp0);
             MkBNR(temcont);
 		}
+		//return 0;
         
-cout << "# HERE 1 " << endl;
+//cout << "# HERE 1 " << endl;
         //hourglas
 		if (haschange) {
 			MkHOR();
 		}
-cout << "# HERE 2 " << endl;
+//cout << "# HERE 2 " << endl;
 		
 		steep++;//Top, Hour to Database
 		MkTOP();
@@ -269,7 +278,6 @@ cout << "# HERE 2 " << endl;
 
 		cout << "# End Image Download " << endl;
 
-		return 0;
 
 		steep++;//Load to cache all Programation Chaps
 		cout << "# Cache Recent ";
@@ -293,7 +301,7 @@ cout << "# HERE 2 " << endl;
 		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
 
 		steep++;//Load Directory
-		MkDIR();
+		//MkDIR();
     /*} catch(const char* errorMessage) {
         std::cout << "Error: " << errorMessage << std::endl;
     } catch(const std::exception& e) {
@@ -438,7 +446,9 @@ int MkBNR(string content){
 	//Get Latest added animes
 	cout << "# Banner Get ";
     string imgurl = "https://"+CDNURL+"";
-	vector<string> BannerElem = scrapElementAll(content, "<div class=\"hero__items set-bg\"","</div>","",false);
+	
+	vector<string> BannerElem={};
+	BannerElem=split(content,"<div class=\"hero__items set-bg\"");
     bool hasbaner = false;
 	cout << "IMG " << endl;
 	vector<string> BannerFile;
@@ -446,9 +456,10 @@ int MkBNR(string content){
     json banerall = "[]"_json;
 	for (int i=0; i < sizeI; i++) {
 		string tCont = BannerElem[i];
+//cout << tCont << endl;
         string name = scrapElement(tCont, "<h2>","</h2>");
         string link = scrapElement(tCont, "href=\"","\"");
-        string img = scrapElement(tCont, "data-setbg=\""+imgurl+"/assets/images/animes/video/image/","\"");
+        string img = scrapElement(tCont, ""+imgurl+"/assets/images/animes/video/image/","\"");
         //string img = scrapElement(tCont, "data-setbg=\"","\"");
         string file = rootdirectory+"TEMP/"+img.substr(img.rfind("/")+1);;
         
@@ -733,7 +744,9 @@ int searchjk(void* data) {//Search Thread
 		replace(texts, ";", "");
 		if (texts.length() > 0) {
 			cout << "# Search: " << texts << endl;
-			string content = "";
+			string content = Net::GET("https://jkanime.net/buscar/" + texts);
+			
+			/*
 			for (int c=1; c < 10 && !quit; c++) {
 				string tempCont=Net::GET("https://jkanime.net/buscar/" + texts + "/"+to_string(c)+"/");
 				content += tempCont;
@@ -746,6 +759,7 @@ int searchjk(void* data) {//Search Thread
 					break;
 				}
 			}
+			*/
 
 			int val0 = 0,val1 = 1,val2,val3, val4;
 			while (val0 != -1) {
@@ -951,7 +965,7 @@ void DataUpdate(string Link) {//Get info off chapter
 		//Sinopsis
 		//TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 		TMP = scrapElement(a, "<p class=\"scroll\">","</p>");
-		replace(TMP, "<p class=\"scroll\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "'"); replace(TMP, "&#039;", "'");
+		replace(TMP, "<p class=\"scroll\">", ""); replace(TMP, "\n", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "'"); replace(TMP, "&#039;", "'");
 		//AnimeINF["sinopsis"] = TMP.substr(0,800);
 		AnimeINF["sinopsis"] = TMP;
 	} else {
@@ -989,6 +1003,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	TMP = scrapElement(a, "Episodios:","</li");
 	replace(TMP, "Episodios:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
 	AnimeINF["Episodios"] = TMP;
+	AnimeINF["maxcapit"] = atoi(TMP.c_str());
 
 	TMP = scrapElement(a, "Duracion:","</li");
 	replace(TMP, "Duracion:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
@@ -1020,7 +1035,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	} else {
 		//find next date
 		int re1 =0, re2=0;
-		re1 = a.find("<b>Próximo episodio</b>");
+		re1 = a.find("<b>Próximo episodio:</b>");
 		if(re1 > 1) {
 			re1 += 25;
 			re2 = a.find("<i class", re1);
@@ -1033,7 +1048,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	if (AnimeINF["generos"].is_null()) {
 		//Generos
 		int indx1 = 1, indx2, indx3;
-		indx1 = a.find("<span>Genero:</span>", indx1);
+		indx1 = a.find("<span>Generos:</span>", indx1);
 		TMP="";
 		while (indx1 != -1) {
 			indx1 = a.find("https://jkanime.net/genero", indx1);
@@ -1056,6 +1071,23 @@ void DataUpdate(string Link) {//Get info off chapter
 	} else {
 		AnimeINF["enemision"] = "true";
 		AnimeINF["Estado"] = "En Emisión";
+		AnimeINF["maxcapit"] = 99;//hardcoded
+		// si esta en emision tratamos de obtener el ultimo cap
+		TMP = scrapElement(a, "<b>Último episodio</b>:","</a>");
+		std::cout << "--:" << TMP << std::endl;
+
+		if (TMP.length() > 0){
+			TMP = scrapElement(TMP, "https://jkanime.net/","\"");
+			std::cout << "--:" << TMP << std::endl;
+
+			replace(TMP, Link, "");
+			std::cout << "--:" << TMP << std::endl;
+			replace(TMP, "/", "");
+			std::cout << "--:" << TMP << std::endl;
+			std::cout << "Capitulo Maximo:" << TMP << std::endl;
+			AnimeINF["maxcapit"] =  atoi(TMP.c_str());
+		}
+
 		if (a.find(">Por estrenar<") != string::npos) {
 			AnimeINF["Estado"] = "Por estrenar";
 		}
@@ -1068,6 +1100,7 @@ void DataUpdate(string Link) {//Get info off chapter
 
 	 */
 	//Get Caps number
+	/*
 	int val0, val1, val2, val3;
 	val0 = a.rfind("href=\"#pag");
 	if (val0 != -1) {
@@ -1084,26 +1117,49 @@ void DataUpdate(string Link) {//Get info off chapter
 	} else {
 		AnimeINF["maxcapit"] = 1;
 	}
+	*/
 
 	//cout << ">>>>>>>>>>> HERE! 1 --> " << Link << endl;
 
 	if (AnimeINF["mincapit"].is_null())
 	{
 		//empieza por 0?
+		//https://jkanime.net/img/404.png
+		
+		std::string haszero = Net::GET(Link+"0/");
+		if (haszero.find("https://jkanime.net/img/404.png") != string::npos) {
+			AnimeINF["mincapit"] = 1;
+		} else {
+			AnimeINF["mincapit"] = 0;
+			AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
+		}
+
+		/*
+		
+		int zero9 = a.rfind("");
+
+		
 		int zero1, zero2;
 		string zerocontainer = "";
 		string zerocontainer2 = "";
-		zero1 = a.rfind("/ajax/pagination_episodes/");
+		zero1 = a.rfind("/ajax/episodes/");
 		zero2 = a.find("'", zero1);
 		
-		if (zero1 > 0){
-			zerocontainer = "https://jkanime.net" + a.substr(zero1, zero2 - zero1) + "/1/";
+		if (zero1 > 0 && false){
+			zerocontainer = "https://jkanime.net" + a.substr(zero1, zero2 - zero1) + "/1";
 			replace(zerocontainer, "//a", "/a");
-			replace(zerocontainer, "//1/", "/1/");
+			replace(zerocontainer, "//1", "/1");
+			
+			std::string tokenT = scrapElement(a, "<meta name=\"csrf-token\" content=\"","\"");
+			replace(tokenT, "<meta name=\"csrf-token\" content=\"", "");
+			std::string token = "_token="+tokenT;//"_token=biljhxPAv91RXjw2NjS3wTdbpu5B0mqdfjWAVjoy";
 			//cout << zerocontainer << endl;
-			zerocontainer2 = Net::GET(zerocontainer);
-			//cout << zerocontainer << name << endl;
-			//cout << zerocontainer2 << name << endl;
+			zerocontainer2 = Net::POST(zerocontainer,token);
+
+			cout << tokenT << " Token " << name << endl;
+			cout << token << " Token " << name << endl;
+			cout << zerocontainer << " " << name << endl;
+			cout << zerocontainer2 << " " << name << endl;
 			
 		} else {
 			//cout << ">>>>>>>>>>>  " << a << endl;
@@ -1113,16 +1169,17 @@ void DataUpdate(string Link) {//Get info off chapter
 
 		if (zerocontainer2.find("\"number\":\"0\"") != string::npos) {
 			AnimeINF["mincapit"] = 0;
-		}
-		else {
+			AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
+		} else {
 			AnimeINF["mincapit"] = 1;
 		}
+		*/
 	}
 	//cout << ">>>>>>>>>>> HERE! 2 --> " << Link << endl;
-
+/*
 	if(AnimeINF["mincapit"].get<int>()==0)
 		AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
-
+*/
 
 	AnimeINF["TimeStamp"] = BD["TimeStamp"];
 	stringstream strm;

@@ -35,6 +35,7 @@ bool ChainManager(bool Chain,bool AndChaing);
 std::string KeyboardCall (std::string hint="", std::string text="");
 Result WebBrowserCall(std::string url="",bool nag=false,bool withe=false);
 Result WebBrowserCloud(std::string url);
+Result WebBrowserUA();
 Result WebWiFiCall(std::string url);
 
 bool GetCookies(string &cookies);

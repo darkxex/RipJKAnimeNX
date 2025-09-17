@@ -78,6 +78,7 @@ extern string rootsave;
 extern string roottheme;
 extern string CDNURL;
 extern bool ClFlock;
+extern bool UAG;
 extern bool Mromfs;
 extern bool ThemeNeedUpdate;
 extern bool reloadmain;

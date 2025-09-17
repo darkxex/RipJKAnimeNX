@@ -832,6 +832,54 @@ Result WebBrowserCloud(std::string url){
 	}
 	return rc;
 }
+
+Result WebBrowserUA(){
+    std::string url = "https://stardustcfw.github.io/UA.html";
+    string cburl = url+"?exit";
+    //url = url+to_string(Frames)+"M/";
+    cout << "Cloud WEB :"+url <<std::endl;
+
+	Result rc = 0;
+	WebCommonConfig config;
+	WebCommonReply reply;
+
+	rc = webNewsCreate(&config, url.c_str());
+	printf("webPageCreate(): 0x%x\n", rc);
+	if (R_SUCCEEDED(rc)) {
+		//mount user data to save logins and that stuff
+		webConfigSetUid(&config,user::uid);
+
+        //webConfigSetCallbackUrl (&config, (url+"?__cf_chl_tk=").c_str()); 	
+        webConfigSetCallbackUrl (&config, (cburl).c_str());
+        webConfigSetFooter(&config, false);
+		webConfigSetJsExtension (&config, true);
+		webConfigSetBootDisplayKind (&config, WebBootDisplayKind_Black);
+		webConfigSetPageCache (&config, true);
+		webConfigSetBootLoadingIcon (&config, true);
+		webConfigSetPageScrollIndicator (&config, true);
+        webConfigSetPointer(&config, false);
+        webConfigSetTouchEnabledOnContents(&config, false);
+
+		//block redirection
+        /*
+		if(url.substr(0,20) == "https://jkanime.net/") {
+			webConfigSetWhitelist(&config, "^https://jkanime\\.net($|/)");
+		} else {
+			webConfigSetWhitelist(&config, "^http*");
+		}*/
+
+        WebExitReason exitReason = WebExitReason_UnknownE;
+        //webConfigShow (WebCommonConfig *config, WebCommonReply *out)
+        webConfigShow(&config, &reply);
+        webConfigRequestExit (&config);
+		rc = webReplyGetExitReason(&reply, &exitReason);
+		printf("webReplyGetExitReason(): 0x%x", rc);
+		if (R_SUCCEEDED(rc)) printf(", 0x%x", exitReason);
+		printf("\n");
+	}
+	return rc;
+}
+
 Result WebBrowserCall(std::string url,bool nag,bool withe){//https://switchbrew.github.io/libnx/web_8h.html
 	Result rc = 0;
 	cout << "WEB :"+url <<std::endl;

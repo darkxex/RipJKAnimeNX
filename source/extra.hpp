@@ -38,6 +38,7 @@ string roottheme = "themes:/";
 string oldroot = "sdmc:/RipJKAnimeNX/";
 string CDNURL = "cdn.jkdesu.com";
 bool ClFlock = false;
+bool UAG = false;
 bool Mromfs=true;
 bool ThemeNeedUpdate=false;
 bool reloadmain = false;
