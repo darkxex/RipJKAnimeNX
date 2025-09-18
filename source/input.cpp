@@ -260,26 +260,27 @@ int InputHandle(void* data){
 			if (!GOD.fingerdown) {GOD.fingerdown = true; printf("F Down\n");}
 			break;
 		case SDL_FINGERMOTION:
-			if(e.tfinger.dy * SCREEN_HEIGHT > 30 || e.tfinger.dy * SCREEN_HEIGHT < -30 || e.tfinger.dx * SCREEN_WIDTH > 30 || e.tfinger.dx * SCREEN_WIDTH < -30) {
+			//SDL_Log("motion min %f \n",e.tfinger.dy * SCREEN_HEIGHT);
+			if(e.tfinger.dy * SCREEN_HEIGHT > 15 || e.tfinger.dy * SCREEN_HEIGHT < -15 || e.tfinger.dx * SCREEN_WIDTH > 15 || e.tfinger.dx * SCREEN_WIDTH < -15) {
 				SDL_Log("motion %f \n",e.tfinger.dy * SCREEN_HEIGHT);
 				if(!GOD.fingermotion) {
 					//swipe up go down
-					if(e.tfinger.dy * SCREEN_HEIGHT > 30 )
+					if(e.tfinger.dy * SCREEN_HEIGHT > 15 )
 					{
 						GOD.fingermotion_DOWN = true;
 					}
 					//swipe down go up
-					else if(e.tfinger.dy * SCREEN_HEIGHT < -30 )
+					else if(e.tfinger.dy * SCREEN_HEIGHT < -15 )
 					{
 						GOD.fingermotion_UP = true;
 					}
 
 					//left right
-					if(e.tfinger.dx * SCREEN_WIDTH > 30 )
+					if(e.tfinger.dx * SCREEN_WIDTH > 15 )
 					{
 						GOD.fingermotion_RIGHT = true;
 					}
-					else if(e.tfinger.dx * SCREEN_WIDTH < -30 )
+					else if(e.tfinger.dx * SCREEN_WIDTH < -15 )
 					{
 						GOD.fingermotion_LEFT = true;
 					}

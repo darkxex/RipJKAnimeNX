@@ -1401,7 +1401,7 @@ bool LTexture::SP(){
 //is press relesed
 bool LTexture::SPr(){
 	//return on negative touch
-	if (SelIns != GOD.FrameState) return false;
+	if (SelIns > GOD.FrameState+1 || SelIns < GOD.FrameState-1) return false;
 	if (Selstate != GOD.GenState) return false;
 	if (!mark) return false;
 	//check if touched

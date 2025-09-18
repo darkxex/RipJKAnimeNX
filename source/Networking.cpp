@@ -445,7 +445,7 @@ void CheckImgVector(json List,int& index){
         replace(tempima,"/", "");
 		*/
 
-		std::cout << "img: <" << tempima << std::endl;
+		//std::cout << "img: <" << tempima << std::endl;
 		CheckImgNet(rootdirectory+"DATA/"+tempima+".jpg");
 	}
 	index=0;

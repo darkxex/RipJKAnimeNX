@@ -479,12 +479,12 @@ bool onlinejkanimevideo(string onlineenlace,string server){
         }
 	}
 	if (server == "Desu") {
-		videourl = scrapElement(content,"um.php?","\"");
-        if (videourl.length() != 0) {videourl = JkURL + videourl;}
-        string FirstKey = Net::GET(videourl);
+		videourl = scrapElement(content,"https://jkanime.net/jkplayer/um?","\"");
+        if (videourl.length() == 0) {videourl = onlineenlace;}
+        //string FirstKey = Net::GET(videourl);
         cout << "Aqui llega: "<< videourl << endl;
 
-        videourl = onlineenlace;
+        
 	}
 	if (server == "Fembed") {
 		videourl = scrapElement(content,"jkfembed.php?u=","\"");

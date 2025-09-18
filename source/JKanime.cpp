@@ -1077,16 +1077,16 @@ void DataUpdate(string Link) {//Get info off chapter
 		AnimeINF["maxcapit"] = 99;//hardcoded
 		// si esta en emision tratamos de obtener el ultimo cap
 		TMP = scrapElement(a, "<b>Último episodio</b>:","</a>");
-		std::cout << "--:" << TMP << std::endl;
+		//std::cout << "--:" << TMP << std::endl;
 
 		if (TMP.length() > 0){
 			TMP = scrapElement(TMP, "https://jkanime.net/","\"");
-			std::cout << "--:" << TMP << std::endl;
+			//std::cout << "--:" << TMP << std::endl;
 
 			replace(TMP, Link, "");
-			std::cout << "--:" << TMP << std::endl;
+			//std::cout << "--:" << TMP << std::endl;
 			replace(TMP, "/", "");
-			std::cout << "--:" << TMP << std::endl;
+			//std::cout << "--:" << TMP << std::endl;
 			std::cout << "Capitulo Maximo:" << TMP << std::endl;
 			AnimeINF["maxcapit"] =  atoi(TMP.c_str());
 		}

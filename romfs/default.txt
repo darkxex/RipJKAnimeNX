@@ -64,3 +64,7 @@
 127.0.0.1 disasterthoughtless.com
 127.0.0.1 senselessvillaengineer.com
 127.0.0.1 blareclockwisebead.com
+127.0.0.1 *analytics.google.com
+127.0.0.1 *.caamamurry.com
+127.0.0.1 *.agl003.com
+127.0.0.1 cdn.jsdelivr.net
