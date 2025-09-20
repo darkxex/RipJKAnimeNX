@@ -27,7 +27,7 @@
 
 using namespace std;
 
-std::string scrapElement(std::string content, std::string get,std::string delim){
+std::string scrapElement(std::string content, std::string get,std::string delim,bool rep){
 	std::string Element = "";
 	if(content.length() <= 0)
 	{return Element;}
@@ -50,7 +50,7 @@ std::string scrapElement(std::string content, std::string get,std::string delim)
 		val2 = content.find(elmetTMP, val1+get.length()+1);
 
 		Element = content.substr(val1, val2 - val1);
-		replace(Element, "\\", "");
+		if (rep)replace(Element, "\\", "");
 
 		//std::cout << Element << std::endl;
 	}

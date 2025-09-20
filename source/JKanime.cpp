@@ -287,7 +287,7 @@ int AnimeLoader(void* data){
 				BD["latestchapter"] = BD["arrays"]["chapter"]["link"][0];
 			}
 		}
-
+/*
 		steep++;//Load to cache all Favorites Chaps
 		cout << "| favoritos ";
 		DataMaker(UD["favoritos"], part, ofall);
@@ -299,9 +299,9 @@ int AnimeLoader(void* data){
 		steep++;//Cache Horario
 		cout << "| HourGlass " <<endl;;
 		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
-
+*/
 		steep++;//Load Directory
-		//MkDIR();
+		MkDIR();
     /*} catch(const char* errorMessage) {
         std::cout << "Error: " << errorMessage << std::endl;
     } catch(const std::exception& e) {
@@ -589,44 +589,62 @@ int MkDIR(){
 	if (BD["arrays"]["Directory"]["TimeStamp"].is_null()) {BD["arrays"]["Directory"]["TimeStamp"]=0;}
 	if (BD["arrays"]["Directory"]["InTime"].is_null()) {BD["arrays"]["Directory"]["InTime"]=0;}
 	if (BD["arrays"]["Directory"]["page"].is_null()) {BD["arrays"]["Directory"]["page"]=1;}
-	if (BD["arrays"]["Directory"]["link"].is_null()) {BD["arrays"]["Directory"]["link"]={};}
+	if (BD["arrays"]["Directory"]["link"].is_null()) {BD["arrays"]["Directory"]["link"]=json::array();}
 	try{
         //La base de datos se re escanea cada mes pero también se va actualizando según salen animes
 		if ((TimeNow()-BD["arrays"]["Directory"]["TimeStamp"].get<int>()) > U_Month || BD["arrays"]["Directory"]["link"].size() == 0) {
 
             //Aquí se obtiene una lista de todos los animes para luego procesar uno por uno
 			cout << "# Directory Get ";
-			vector<string> DIR={};
-			vector<string> TDIR={};
+			if(BD["arrays"]["Directory"]["page"].get<int>() == 1){
+				BD["arrays"]["Directory"]["link"] = json::array();
+			}
 
 			part=1;
-			ofall=0;
+			ofall=1;
 			while (!quit) {
 				string content=Net::GET("https://jkanime.net/directorio?p="+to_string(BD["arrays"]["Directory"]["page"].get<int>()));
-				content = scrapElement(content, "var animes=","var mode");
+				content = scrapElement(content, "var animes = ","var mode",false);
 
 				replace(content,";","");
-				replace(content,"var animes=","");
-				
-				replace(content,"card-title-alt\"><a href=\"https://jkanime.net/","");
-				replace(content,"card-title\"><a href=\"https://jkanime.net/","");
-				replace(content,"https://jkanime.net///","");
-				TDIR=scrapElementAll(content,"https://jkanime.net/");
+				//replace(content,"\\","\\\\");
+				replace(content,"var animes =","");
 
 
-				if (TDIR.size() > 0) {
-					DIR.insert(DIR.end(), TDIR.begin(), TDIR.end());
-				} else
-					break; //Por si acaso
+//cout << "  >>>>>> " << BD["arrays"]["Directory"]["page"].get<int>() << " --> " << content << endl;
+				json tempJson;
+				if(json::accept(content) && content.length() > 1)
+				{
+					//Parse and use the JSON data
+					tempJson = json::parse(content);
+					std::cout << "Json parsed... " << std::endl;
 
-                //verificar si ya no hay mas animes que listar
-				if (content.find("Resultados Siguientes &raquo;") != string::npos) {
-					cout << "  #" << to_string(ofall);
-					//some code here soon
+					//parsear los datos de cada anime
+					for (auto& [key, value] : tempJson["data"].items()) {
+						std::cout << key << " : " << value["slug"] << "\n";
+						for (auto& [key1, value1] : value.items()) {
+							//std::cout << key1 << " : " << value1 << std::endl;
+							AB[value["slug"].get<string>()][key1] = value1;
+							//std::cout << value["server"] << "::" << value["slug"] << endl;;
+						}
+						BD["arrays"]["Directory"]["link"].push_back(value["url"].get<string>());
+						write_DB(AB,rootdirectory+"AnimeMeta.json");
+					}
+					
+					//marcar progreso
+					part=BD["arrays"]["Directory"]["page"].get<int>();
+					ofall=tempJson["last_page"].get<int>();
+					
+					//verificar si ya no hay mas animes que listar
+					if(BD["arrays"]["Directory"]["page"].get<int>() >= tempJson["last_page"].get<int>()){
+						break;
+					}
+					
 				} else {
-					cout << "end  #" << to_string(ofall) << endl;
-					break;
+					std::cout << "Json ERROR... " << std::endl;
+					return false;
 				}
+
 				BD["arrays"]["Directory"]["page"]=BD["arrays"]["Directory"]["page"].get<int>()+1;
 				ofall++;
 			}
@@ -634,12 +652,12 @@ int MkDIR(){
             //
 			BD["arrays"]["Directory"]["pageT"]=BD["arrays"]["Directory"]["page"];
 			BD["arrays"]["Directory"]["page"]=1;
-			DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());//borrar cosas repetidas
+			//DIR.erase(unique(DIR.begin(),DIR.end()),DIR.end());//borrar cosas repetidas
             //cerrar escaneo de directorio por un mes
-			if (ofall != 0 && DIR.size() != 0) {
+			if (ofall != 0 && BD["arrays"]["Directory"]["link"].size() != 0) {
 				BD["arrays"]["Directory"]["TimeStamp"]=TimeNow();
 			}
-			BD["arrays"]["Directory"]["link"]=DIR;
+			//BD["arrays"]["Directory"]["link"]=DIR;
 			//cout << BD["arrays"]["Directory"] << endl;
 			BD["arrays"]["Directory"]["InTime"]=0;
 			ofall=0;
@@ -778,8 +796,9 @@ int searchjk(void* data) {//Search Thread
 				val4 = content.find('"', val3);
 				string gsearchpreview = content.substr(val3, val4 - val3);
 				BD["arrays"]["search"]["images"].push_back(gsearchpreview);
+				
 				//cout << gsearchpreview << endl;
-
+				/*
 				val3 = content.find("<p>", val4) + 3;
 				val4 = content.find("</p>", val3);
 				gsearchpreview = content.substr(val3, val4 - val3);
@@ -789,6 +808,7 @@ int searchjk(void* data) {//Search Thread
 				}
 				replace(gsearchpreview, "&quot;", "");
 				BD["arrays"]["search"]["date"].push_back(gsearchpreview);
+				*/
 				val1++;
 			}
 
@@ -826,7 +846,7 @@ int capit(void* data) {//Get chap thread
 		BD["com"]["generos"] = AB[name]["generos"];//"......";
 		BD["com"]["Emitido"] = AB[name]["Emitido"];
 		BD["com"]["enemision"] = AB[name]["enemision"];
-		BD["com"]["Estado"] = AB[name]["Estado"];
+		BD["com"]["estado"] = AB[name]["estado"];
 		mincapit = AB[name]["mincapit"];//1;
 		maxcapit = AB[name]["maxcapit"];//-1;
 		//write json
@@ -834,8 +854,8 @@ int capit(void* data) {//Get chap thread
 
 		//Get Image
 		string image = rootdirectory+"DATA/"+name+".jpg";
-		if (!AB[name]["Image"].is_null()) {
-			CheckImgNet(image,AB[name]["Image"]);
+		if (!AB[name]["image"].is_null()) {
+			CheckImgNet(image,AB[name]["image"]);
 		}
     } catch(const char* errorMessage) {
         std::cout << "Error: " << errorMessage << std::endl;
@@ -869,7 +889,7 @@ int capBuffer (string Tlink) {//anime manager
 		BD["com"]["nextdate"] = " ";
 		BD["com"]["generos"] = " ";
 		BD["com"]["Emitido"] = " ";
-		BD["com"]["Estado"] = " ";
+		BD["com"]["estado"] = " ";
 		maxcapit = -1;
 		mincapit = 1;
 		latest = 1;
@@ -885,7 +905,7 @@ int capBuffer (string Tlink) {//anime manager
 			BD["com"]["generos"] = AB[name]["generos"];//"......";
 			BD["com"]["Emitido"] = AB[name]["Emitido"];
 			BD["com"]["enemision"] = AB[name]["enemision"];
-			BD["com"]["Estado"] = AB[name]["Estado"];
+			BD["com"]["estado"] = AB[name]["estado"];
 			maxcapit = AB[name]["maxcapit"];
 			mincapit = AB[name]["mincapit"];
 			//check For latest cap seend
@@ -905,8 +925,8 @@ int capBuffer (string Tlink) {//anime manager
 			}
 
 			//Get Image
-			if (!AB[name]["Image"].is_null()) {
-				CheckImgNet(image,AB[name]["Image"]);
+			if (!AB[name]["image"].is_null()) {
+				CheckImgNet(image,AB[name]["image"]);
 			}
 
 			if (AB[name]["TimeStamp"] != BD["TimeStamp"]) {
@@ -969,8 +989,8 @@ void DataUpdate(string Link) {//Get info off chapter
 		//TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
 		TMP = scrapElement(a, "<p class=\"scroll\">","</p>");
 		replace(TMP, "<p class=\"scroll\">", ""); replace(TMP, "\n", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "'"); replace(TMP, "&#039;", "'");
-		//AnimeINF["sinopsis"] = TMP.substr(0,800);
-		AnimeINF["sinopsis"] = TMP;
+		//AnimeINF["synopsis"] = TMP.substr(0,800);
+		AnimeINF["synopsis"] = TMP;
 	} else {
         //cout << "-- HERE1 " <<endl;
         string taser = AnimeINF["sinopsis"];
@@ -980,37 +1000,37 @@ void DataUpdate(string Link) {//Get info off chapter
             //TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
             TMP = scrapElement(a, "<p class=\"scroll\">","</p>");
             replace(TMP, "<p class=\"scroll\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
-            //AnimeINF["sinopsis"] = TMP.substr(0,800);
-            AnimeINF["sinopsis"] = TMP;
+            //AnimeINF["synopsis"] = TMP.substr(0,800);
+            AnimeINF["synopsis"] = TMP;
         }
     }
-	if (AnimeINF["Image"].is_null()) {
+	if (AnimeINF["image"].is_null()) {
 		//get image
 		TMP = scrapElement(a, "https://"+CDNURL+"/assets/images/animes/image/");
-		AnimeINF["Image"] = TMP;
+		AnimeINF["image"] = TMP;
 	}
 
-	if (AnimeINF["Tipo"].is_null()) {
+	if (AnimeINF["tipo"].is_null()) {
 		//Anime info
 		TMP = scrapElement(a, "<span>Tipo:","</li");
 		replace(TMP, "<span>Tipo:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
-		AnimeINF["Tipo"] = TMP;
+		AnimeINF["tipo"] = TMP;
 	}
 
-	if (AnimeINF["Idiomas"].is_null()) {
+	if (AnimeINF["idiomas"].is_null()) {
 		TMP = scrapElement(a, "Idiomas:","</li");
 		replace(TMP, "Idiomas:", ""); replace(TMP, "  ", " "); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
-		AnimeINF["Idiomas"] = TMP;
+		AnimeINF["idiomas"] = TMP;
 	}
 
 	TMP = scrapElement(a, "Episodios:","</li");
 	replace(TMP, "Episodios:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
-	AnimeINF["Episodios"] = TMP;
+	AnimeINF["episodios"] = TMP;
 	AnimeINF["maxcapit"] = atoi(TMP.c_str());
 
 	TMP = scrapElement(a, "Duracion:","</li");
 	replace(TMP, "Duracion:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
-	AnimeINF["Duracion"] = TMP;
+	AnimeINF["duracion"] = TMP;
 
 	TMP = scrapElement(a, "Emitido:","</li");
 	replace(TMP, "Emitido:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
@@ -1070,10 +1090,10 @@ void DataUpdate(string Link) {//Get info off chapter
 	//Esta en emision?
 	if (a.find(">Concluido<") != string::npos) {
 		AnimeINF["enemision"] = "false";
-		AnimeINF["Estado"] = "Concluido";
+		AnimeINF["estado"] = "Concluido";
 	} else {
 		AnimeINF["enemision"] = "true";
-		AnimeINF["Estado"] = "En Emisión";
+		AnimeINF["estado"] = "En Emisión";
 		AnimeINF["maxcapit"] = 99;//hardcoded
 		// si esta en emision tratamos de obtener el ultimo cap
 		TMP = scrapElement(a, "<b>Último episodio</b>:","</a>");
@@ -1092,10 +1112,10 @@ void DataUpdate(string Link) {//Get info off chapter
 		}
 
 		if (a.find(">Por estrenar<") != string::npos) {
-			AnimeINF["Estado"] = "Por estrenar";
+			AnimeINF["estado"] = "Por estrenar";
 		}
 		if (a.find(">En espera<") != string::npos) {
-			AnimeINF["Estado"] = "En espera";
+			AnimeINF["estado"] = "En espera";
 		}
 	}
 	/*

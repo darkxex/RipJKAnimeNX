@@ -196,10 +196,10 @@ int main(int argc, char **argv)
 					} else {
 						if (BD["com"]["enemision"] == "true")
 						{
-							if(BD["com"]["Estado"].is_null()) {
-								BD["com"]["Estado"] = "En Emisión";
+							if(BD["com"]["estado"].is_null()) {
+								BD["com"]["estado"] = "En Emisión";
 							}
-							gTextTexture.loadFromRenderedText(GOD.Arista_40, BD["com"]["Estado"], { 16,191,0 });
+							gTextTexture.loadFromRenderedText(GOD.Arista_40, BD["com"]["estado"], { 16,191,0 });
 							gTextTexture.render(posxbase + 855, posybase + 598);
 						} else {
 							gTextTexture.loadFromRenderedText(GOD.Arista_40, "Concluido", { 140,0,0 });
