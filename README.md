@@ -1,5 +1,6 @@
-# RipJKAnimeNX <img style="display:inline" src="Icon.jpg" width="32"/>
+# RipJKAnimeNX <img style="display:inline" src="https://github.com/user-attachments/assets/a76478fd-94e5-4227-aff4-bac1e39e16ca" width="32"/>
  App de [JKAnime](https://jkanime.net/) para Nintendo Switch
+
 ----------------------------------------
 Esta Aplicación es para Ver Online y Descargar Anime a través de la Nintendo Switch.
 
