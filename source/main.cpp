@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 		Loaderthread = SDL_CreateThread(AnimeLoader, "Loaderthread", (void*)NULL);
 		
         //este se encarga de los inputs
-		inputThread = SDL_CreateThread(InputHandle, "inputThread", (void*)NULL);
+		inputThread = SDL_CreateThread(inputAsync, "inputThread", (void*)NULL);
         
         //Esto se usa para evitar el cierre forzado de la app, poder capturar dicho evento y cerrar con normalidad.
 		//if (!AppletMode)

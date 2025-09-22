@@ -15,4 +15,5 @@
 
 void Inputinit();
 int InputHandle(void* data);
+int inputAsync(void* data);
 bool checkConfirmar();

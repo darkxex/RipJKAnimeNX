@@ -23,7 +23,7 @@
 json Servers;
 //json ServersTMP;
 std::vector<std::string> arrayserversbak = {
-	"MixDrop 2.0","Desu","Nozomi","Xtreme S","Okru","MAS...","JKAnime"
+	"MixDrop 2.0","Desu","Magi","Nozomi","Okru","MAS...","JKAnime"
 };
 bool white=false;
 
@@ -375,7 +375,7 @@ bool OneMORE(string content,bool add = true){
             }
             for (auto& [key, value] : ServersTMP.items()) {
                 //std::cout << key << " : " << value["server"] << "\n";
-                std::cout << value["server"] << "::" << value["slug"] << endl;;
+                std::cout << value["server"] << " " << value["slug"] << endl;;
                 string sourcename = string("_")+value["server"].get<string>();
                       
                 BD["com"]["servers"][KeyName][to_string(latest)][sourcename] = value["slug"].get<string>();
@@ -385,6 +385,8 @@ bool OneMORE(string content,bool add = true){
             Servers = BD["com"]["servers"][KeyName][to_string(latest)];
         }
                         // even easier with structured bindings (C++17)
+        cout << std::setw(4) << Servers << std::endl;
+
         if(add){
             for (auto& [key, value] : Servers.items()) {
                 arrayservers.push_back(key);
@@ -429,7 +431,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
     }
 
 	if (server == "MAS...") {
-		arrayservers.erase(arrayservers.begin()+arrayservers.size());
+		arrayservers = std::vector<std::string> {};
         OneMORE(content);
         arrayservers.push_back("JKAnime");
 	}
@@ -483,9 +485,15 @@ bool onlinejkanimevideo(string onlineenlace,string server){
         if (videourl.length() == 0) {videourl = onlineenlace;}
         //string FirstKey = Net::GET(videourl);
         cout << "Aqui llega: "<< videourl << endl;
-
-        
 	}
+	if (server == "Magi") {
+		videourl = scrapElement(content,"https://jkanime.net/jkplayer/umv?","\"");
+        if (videourl.length() == 0) {videourl = onlineenlace;}
+        //string FirstKey = Net::GET(videourl);
+        cout << "Aqui llega: "<< videourl << endl;
+	}
+    
+    //https://jkanime.net/jkplayer/umv?e=STFSS0ZDc3F...
 	if (server == "Fembed") {
 		videourl = scrapElement(content,"jkfembed.php?u=","\"");
         if (videourl.length() != 0) {videourl = JkURL + videourl;}
