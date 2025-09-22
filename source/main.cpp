@@ -179,12 +179,15 @@ int main(int argc, char **argv)
 
 					VOX.render_VOX({XG, YG, WG, HG}, 255, 255, 255, 170);
 					T_R.render(XG+10, YG+10);
-
-					gTextTexture.loadFromRenderedTextWrap(GOD.Comic_16, BD["com"]["Emitido"], textColor,WG-20);
-					gTextTexture.render(XG+10, YG+HG-(gTextTexture.getHeight()*2)-5);
-
-					gTextTexture.loadFromRenderedTextWrap(GOD.Comic_16, BD["com"]["generos"], textColor,WG-20);
-					gTextTexture.render(XG+10, YG+HG-gTextTexture.getHeight()-5);
+					if (!BD["com"]["Emitido"].is_null()){
+						gTextTexture.loadFromRenderedTextWrap(GOD.Comic_16, BD["com"]["Emitido"], textColor,WG-20);
+						gTextTexture.render(XG+10, YG+HG-(gTextTexture.getHeight()*2)-5);
+					}
+					if (!BD["com"]["generos"].is_null()){
+						gTextTexture.loadFromRenderedTextWrap(GOD.Comic_16, BD["com"]["generos"], textColor,WG-20);
+						gTextTexture.render(XG+10, YG+HG-gTextTexture.getHeight()-5);
+						
+					}
 				}
 
 				bool anend=false;

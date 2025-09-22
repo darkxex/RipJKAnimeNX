@@ -710,6 +710,8 @@ int MkDIR(){
 int downloadjkanimevideo(void* data) {//Download THREAD
 	try{
 		ChainManager(true,true);
+std::cout << "Down Here " << std::endl;
+
 		for (u64 x=0; x< BD["arrays"]["downloads"]["queue"].size(); x++) {
 			if (x==0) {led_on(1);}
 			DownTitle="................";
@@ -838,8 +840,8 @@ int capit(void* data) {//Get chap thread
 	if (!Net::HasConnection()) return 0;
 	string link = BD["com"]["ActualLink"];
 	string name = KeyOfLink(link);
-	DataUpdate(link);
 	try{
+		DataUpdate(link);
 		//cout << BD << endl;
 		BD["com"]["sinopsis"] = AB[name]["sinopsis"];
 		BD["com"]["nextdate"] = AB[name]["nextdate"];//"......";
@@ -946,9 +948,10 @@ void DataUpdate(string Link) {//Get info off chapter
 	string name = KeyOfLink(Link);
     Link = "https://jkanime.net/"+name+"/";
     if (Link == "https://jkanime.net/studio/") return;
+	//cout << "Here GEBUGs " << endl;
     json DataPage=Net::REQUEST(Link);
-	SDL_Delay(50);
-	
+	//cout << "Here GEBUGs " << endl;
+	//SDL_Delay(50);
 	while(!quit){
 		if (DataPage["CODE"] == 429){
 			cout << "Firewall detected halt 60s " << Link << endl;
@@ -1033,7 +1036,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	AnimeINF["duracion"] = TMP;
 
 	TMP = scrapElement(a, "Emitido:","</li");
-	replace(TMP, "Emitido:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");
+	replace(TMP, "Emitido:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");replace(TMP, ",", "");
 	AnimeINF["Emitido"] = TMP;
 
 	int bal1=0;

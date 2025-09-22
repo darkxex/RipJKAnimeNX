@@ -86,7 +86,7 @@ std::string deobfuscate(const std::string& encoded, const std::vector<std::strin
                 int index = std::stoi(number); // convertir el número completo
                 if (index < (int)map.size() && map[index] != "ZZZ") {
                     result += map[index];
-cout << index << " --> " << map[index]  << std::endl;
+//cout << index << " --> " << map[index]  << std::endl;
  
                 }
                 number.clear();
@@ -98,34 +98,6 @@ cout << index << " --> " << map[index]  << std::endl;
     
     cout << "Contenido: " << result  << std::endl;
 
-    /*
-    
-    for (size_t i = 0; i < encoded.length(); ++i) {
-        std::string character = encoded.substr(i, 1);  // Tomar un solo carácter como string
-        
-        if (std::isalnum(character[0])) {  // Verificar si el carácter es alfanumérico
-
-            int index = baseToInt(character, base);
-            std::cout << ">>" << character << "<<" << index << std::endl;
-
-            if (index < (int)map.size()) {
-                if (map[index] == "ZZZ"){
-                    //revisar si se debe saltear
-                    result += character;
-                } else {
-                     // Agregar el carácter mapeado al resultado
-                    result += map[index];
-                    //std::cout << ">>" << character << ">> " << index << " >>" << map[index] << std::endl;
-                }
-            } else {
-                result += character;  // Agregar el carácter original si no hay mapeo
-            }
-        } else {
-            result += character;  // Agregar el carácter no alfanumérico al resultado
-        }
-    }
-    */
-    
     vector<string> list = split (result, ";");
     json data;
 	for (u64 i=0; i < list.size(); i++) {
@@ -378,7 +350,8 @@ bool OneMORE(string content,bool add = true){
                 std::cout << value["server"] << " " << value["slug"] << endl;;
                 string sourcename = string("_")+value["server"].get<string>();
                       
-                BD["com"]["servers"][KeyName][to_string(latest)][sourcename] = value["slug"].get<string>();
+                BD["com"]["servers"][KeyName][to_string(latest)][sourcename]["slug"] = value["slug"];
+                BD["com"]["servers"][KeyName][to_string(latest)][sourcename]["remote"] = value["remote"];
             }
             Servers = BD["com"]["servers"][KeyName][to_string(latest)];
        } else {
@@ -412,7 +385,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
     {
         std::cout << Servers << endl;
         //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-        string Videored = string("https://c4.jkdesu.com/e/") + Servers[server].get<string>();
+        string Videored = string("https://c4.jkdesu.com/e/") + Servers[server]["slug"].get<string>();
         videourl = Net::REDIRECT(Videored,"");
         if(videourl.length()) {
             videourl = "https://stardustcfw.github.io/player.html#" + string_to_hex(videourl);
@@ -454,7 +427,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
         if(isset(Servers,"_Mixdrop")){
             std::cout << Servers["_Mixdrop"] << endl;
             //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mixdrop"].get<string>();
+            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mixdrop"]["slug"].get<string>();
             videourl = Net::REDIRECT(Videored,"");
             if(videourl.length()) {
                 tempcon=MixDrop_Link(videourl);
@@ -578,35 +551,36 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
             string tempcon = "";
             std::cout << Servers["_Mediafire"] << endl;
             //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mediafire"].get<string>();
-            videourl = Net::REDIRECT(Videored,"");
-            
+            videourl = base64_decode(Servers["_Mediafire"]["remote"]);
+            replace(videourl,"https://mediafire.","https://www.mediafire.");
+
             cout << videourl << endl;
             string tempmedia = Net::GET(videourl);
-            tempmedia = scrapElement(tempmedia, "data-scrambled-url=\"","\"");
-            if(tempmedia.length()) {
-                replace(tempmedia,"\"","")
-                videourl = base64_decode(tempmedia)
+            //cout << tempmedia << endl;
+            if(tempmedia.length() > 5) {
+                tempmedia = scrapElement(tempmedia, "data-scrambled-url=\"","\"");
+                replace(tempmedia,"data-scrambled-url=\"","");
+
+                cout << "--" << tempmedia << "--" << endl;
             }
 
-            //data-scrambled-url="
-            if(videourl.length()) {
-                tempcon=MixDrop_Link(videourl);
-                if(tempcon.length()) {
-                    videourl=tempcon;
+            if(tempmedia.length() > 5) {
+                replace(tempmedia,"\"","");
+                videourl = base64_decode(tempmedia);
+                 if(videourl.length()) {
                     serverenlace = videourl;
                     if(Net::DOWNLOAD(videourl, directorydownload)) return true;
                     if(cancelcurl == 1) return false;
-                }
+                 }
             }
-            //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
-            //white=true;
+
         }
+        return false;
         if(isset(Servers,"_Mixdrop")){
             string tempcon = "";
             std::cout << Servers["_Mixdrop"] << endl;
             //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mixdrop"].get<string>();
+            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mixdrop"]["slug"].get<string>();
             videourl = Net::REDIRECT(Videored,"");
             if(videourl.length()) {
                 tempcon=MixDrop_Link(videourl);

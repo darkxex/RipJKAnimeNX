@@ -137,7 +137,7 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,do
 namespace Net {
 //string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
 string UserAgent = "Mozilla/5.0 (Nintendo Switch; WebApplet) AppleWebKit/613.0 (KHTML, like Gecko) NF/6.0.3.27.17 NintendoBrowser/5.1.0.35231";
-int DebugNet = 1;        //0 no debug ,  1 some debug, 2 All debug
+int DebugNet = 0;        //0 no debug ,  1 some debug, 2 All debug
 
 //Simplification
 string REDIRECT(string url,string POSTFIEL){
@@ -148,6 +148,7 @@ string POST(string url,string POSTFIEL){
 	return REQUEST(url,POSTFIEL)["BODY"];
 }
 string GET(string url){
+    if ( DebugNet > 1) cout << "----GET" << endl;
 	return REQUEST(url)["BODY"];
 }
 json HEAD(string url){
@@ -161,6 +162,7 @@ json HEAD(string url){
 //General Request
 json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 	replace(url," ","%20");
+	replace(url,"\n","");
 	CURL *curl;
 	CURLcode res = CURLE_OK;
 	std::string Buffer;
@@ -169,8 +171,8 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 	char *red = "";
 	long http_code=0;
 	long redirects=0;
-	u64 sizeh=1;
 	data["RED"] = "";
+    size_t sizeh = 0;
 
 	curl = curl_easy_init();
 	if (curl) {
@@ -209,7 +211,9 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 			data["ERROR"] = curl_easy_strerror(res);
 		} else {
 			//Get Info
-			curl_easy_getinfo(curl, CURLINFO_HEADER_SIZE, &sizeh);
+            long header_size = 0;
+            curl_easy_getinfo(curl, CURLINFO_HEADER_SIZE, &header_size);
+            sizeh = static_cast<size_t>(header_size);
 			curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
 			curl_easy_getinfo(curl, CURLINFO_REDIRECT_COUNT, &redirects);
 
@@ -231,7 +235,11 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 		data["HEAD"] = split(Buffer.substr(0,sizeh), "\r\n");
 	} else {
 		data["HEAD"].push_back(Buffer.substr(0,sizeh));         //split(Buffer.substr(0,sizeh), "\r\n");
-		data["BODY"] = Buffer.substr(sizeh);
+        if (sizeh <= Buffer.size())
+            data["BODY"] = Buffer.substr(sizeh);
+        else
+            data["BODY"] = "";
+		//data["BODY"] = Buffer.substr(sizeh);
 	}
 
 	if (DebugNet > 1) {

@@ -180,7 +180,7 @@ void callfavs(){
 			getFavorite();
 			returnnow = favorites_s;
 			statenow = favorites_s;
-			Frames=1;
+			static bool onFra = true; if(onFra){Frames=1;onFra=false;} 
 		}
 	}
 }
@@ -194,26 +194,26 @@ void callhistory(){
 	if (UD["history"].size()>0) {
 		statenow = history_s;
 		returnnow = statenow;
-		Frames=1;
+		static bool onFra = true; if(onFra){Frames=1;onFra=false;} 
 	}
 }
 void calltop(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	statenow = top_s;
 	returnnow = statenow;
-	Frames=1;
+	static bool onFra = true; if(onFra){Frames=1;onFra=false;} 
 }
 void callagr(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	statenow = agregados_s;
 	returnnow = statenow;
-	Frames=1;
+	static bool onFra = true; if(onFra){Frames=1;onFra=false;} 
 }
 void callhourglass(){
 	GOD.WorKey="0"; GOD.MasKey=-1;
 	statenow = hourglass_s;
 	returnnow = statenow;
-	Frames=1;
+	static bool onFra = true; if(onFra){Frames=1;onFra=false;} 
 }
 
 
