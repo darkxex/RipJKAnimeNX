@@ -15,6 +15,7 @@ string scrapElement(string content, string get,string delim ="" ,bool rep=true);
 vector<string> scrapElementAll(string content, string get,string delim ="",string addend="",bool del=true);
 vector<string> split (string s, string delimiter);
 string url_decode(string text);
+std::string base64_decode(const std::string &input);
 void touch(string route);
 bool copy_me(string origen, string destino);
 std::string read_FL(std::string path,int line=1);

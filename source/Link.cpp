@@ -23,7 +23,7 @@
 json Servers;
 //json ServersTMP;
 std::vector<std::string> arrayserversbak = {
-	"MixDrop 2.0","Desu","Magi","Nozomi","Okru","MAS...","JKAnime"
+	"MixDrop 2.0","Desuka","Desu","Magi","Nozomi","Okru","MAS...","JKAnime"
 };
 bool white=false;
 
@@ -431,7 +431,7 @@ bool onlinejkanimevideo(string onlineenlace,string server){
     }
 
 	if (server == "MAS...") {
-		arrayservers = std::vector<std::string> {};
+		arrayservers = std::vector<std::string> {"MixDrop 2.0"};
         OneMORE(content);
         arrayservers.push_back("JKAnime");
 	}
@@ -482,6 +482,12 @@ bool onlinejkanimevideo(string onlineenlace,string server){
 	}
 	if (server == "Desu") {
 		videourl = scrapElement(content,"https://jkanime.net/jkplayer/um?","\"");
+        if (videourl.length() == 0) {videourl = onlineenlace;}
+        //string FirstKey = Net::GET(videourl);
+        cout << "Aqui llega: "<< videourl << endl;
+	}
+	if (server == "Desuka") {
+		videourl = scrapElement(content,"https://jkanime.net/jkplayer/jk?u=stream","\"");
         if (videourl.length() == 0) {videourl = onlineenlace;}
         //string FirstKey = Net::GET(videourl);
         cout << "Aqui llega: "<< videourl << endl;
@@ -568,6 +574,34 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	}
 	{
         OneMORE(content,false);
+        if(isset(Servers,"_Mediafire")){
+            string tempcon = "";
+            std::cout << Servers["_Mediafire"] << endl;
+            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
+            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mediafire"].get<string>();
+            videourl = Net::REDIRECT(Videored,"");
+            
+            cout << videourl << endl;
+            string tempmedia = Net::GET(videourl);
+            tempmedia = scrapElement(tempmedia, "data-scrambled-url=\"","\"");
+            if(tempmedia.length()) {
+                replace(tempmedia,"\"","")
+                videourl = base64_decode(tempmedia)
+            }
+
+            //data-scrambled-url="
+            if(videourl.length()) {
+                tempcon=MixDrop_Link(videourl);
+                if(tempcon.length()) {
+                    videourl=tempcon;
+                    serverenlace = videourl;
+                    if(Net::DOWNLOAD(videourl, directorydownload)) return true;
+                    if(cancelcurl == 1) return false;
+                }
+            }
+            //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
+            //white=true;
+        }
         if(isset(Servers,"_Mixdrop")){
             string tempcon = "";
             std::cout << Servers["_Mixdrop"] << endl;

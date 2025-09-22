@@ -235,6 +235,35 @@ string url_decode(string text) {
     return escaped.str();
 }
 
+std::string base64_decode(const std::string &input) {
+    static const std::string base64_chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz"
+        "0123456789+/";
+
+    auto is_base64 = [](unsigned char c) {
+        return (std::isalnum(c) || c == '+' || c == '/');
+    };
+
+    std::vector<unsigned char> ret;
+    int val = 0;
+    int bits = -8;
+
+    for (unsigned char c : input) {
+        if (std::isspace(c)) continue;             // ignorar espacios/saltos de línea
+        if (c == '=') break;                       // fin de padding
+        if (!is_base64(c))
+            throw std::runtime_error("Caracter inválido en Base64");
+
+        val = (val << 6) + base64_chars.find(c);
+        bits += 6;
+        if (bits >= 0) {
+            ret.push_back((val >> bits) & 0xFF);
+            bits -= 8;
+        }
+    }
+    return std::string(ret.begin(), ret.end());
+}
 
 std::string compress(const std::string& str, int compressionlevel = Z_BEST_COMPRESSION) {
 /** Compress a STL string using zlib with given compression level and return* the binary data. */
