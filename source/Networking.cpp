@@ -183,12 +183,14 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 		if (HEADR) {
 			curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
 		} else if (POSTFIEL.length()>0) {
+            /*
             struct curl_slist *headers = nullptr;
                 headers = curl_slist_append(
                     headers,
                     "Content-Type: application/x-www-form-urlencoded; charset=UTF-8"
                 );
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);			
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+            */
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, POSTFIEL.c_str());
 			data["POST"] = POSTFIEL;
 		}
@@ -202,7 +204,7 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 		}
-		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &Buffer);

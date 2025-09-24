@@ -334,7 +334,7 @@ bool OneMORE(string content,bool add = true){
             tempcon = scrapElement(content, "var servers = [","]");
 
             //Obtener info de la Data
-            cout << "Mas Servers." << tempcon << endl;
+            //cout << "Mas Servers." << tempcon << endl;
             //tempcon = Net::GET(tempcon);
             tempcon = scrapElement(tempcon, "[","]") + "]";
             cout << "Mas Servers.." << tempcon << endl;
@@ -350,14 +350,15 @@ bool OneMORE(string content,bool add = true){
                 std::cout << value["server"] << " " << value["slug"] << endl;;
                 string sourcename = string("_")+value["server"].get<string>();
                       
-                BD["com"]["servers"][KeyName][to_string(latest)][sourcename]["slug"] = value["slug"];
-                BD["com"]["servers"][KeyName][to_string(latest)][sourcename]["remote"] = value["remote"];
+                BD["com"]["servers"][KeyName][to_string(latest)][sourcename] = value;
+                //BD["com"]["servers"][KeyName][to_string(latest)][sourcename]["slug"] = value["slug"];
+                //BD["com"]["servers"][KeyName][to_string(latest)][sourcename]["remote"] = value["remote"];
             }
             Servers = BD["com"]["servers"][KeyName][to_string(latest)];
        } else {
             Servers = BD["com"]["servers"][KeyName][to_string(latest)];
         }
-                        // even easier with structured bindings (C++17)
+
         cout << std::setw(4) << Servers << std::endl;
 
         if(add){
@@ -365,7 +366,7 @@ bool OneMORE(string content,bool add = true){
                 arrayservers.push_back(key);
             }
         }
-        cout << std::setw(4) << BD["com"]["servers"][KeyName][to_string(latest)] << std::endl;
+        //cout << std::setw(4) << BD["com"]["servers"][KeyName][to_string(latest)] << std::endl;
     } catch(...) {
         std::cout << "Error cap server... " << std::endl;
         return false;
@@ -385,8 +386,10 @@ bool onlinejkanimevideo(string onlineenlace,string server){
     {
         std::cout << Servers << endl;
         //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-        string Videored = string("https://c4.jkdesu.com/e/") + Servers[server]["slug"].get<string>();
-        videourl = Net::REDIRECT(Videored,"");
+        //https://c4.jkdesu.com/e/2R3Z7865walL6
+        string Videored = Servers[server]["remote"];
+        videourl = base64_decode(Videored);
+
         if(videourl.length()) {
             videourl = "https://stardustcfw.github.io/player.html#" + string_to_hex(videourl);
         }
@@ -426,9 +429,11 @@ bool onlinejkanimevideo(string onlineenlace,string server){
         OneMORE(content,false);
         if(isset(Servers,"_Mixdrop")){
             std::cout << Servers["_Mixdrop"] << endl;
-            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mixdrop"]["slug"].get<string>();
-            videourl = Net::REDIRECT(Videored,"");
+
+            string Videored = Servers["_Mixdrop"]["remote"];
+            videourl = base64_decode(Videored);
+            //replace(videourl,".to",".cv");
+
             if(videourl.length()) {
                 tempcon=MixDrop_Link(videourl);
                 if(tempcon.length()) {videourl=tempcon;}
@@ -504,6 +509,66 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 	string content = "";
 	content = Net::GET(urltodownload);
 
+	{
+        OneMORE(content,false);
+        if(isset(Servers,"_Mediafire")){
+            string tempcon = "";
+            std::cout << Servers["_Mediafire"] << endl;
+            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
+            videourl = base64_decode(Servers["_Mediafire"]["remote"]);
+            replace(videourl,"https://mediafire.","https://www.mediafire.");
+
+            cout << videourl << endl;
+            string tempmedia = Net::GET(videourl);
+            //cout << tempmedia << endl;
+            if(tempmedia.length() > 5) {
+                tempmedia = scrapElement(tempmedia, "data-scrambled-url=\"","\"");
+                replace(tempmedia,"data-scrambled-url=\"","");
+
+                cout << "--" << tempmedia << "--" << endl;
+            }
+
+            if(tempmedia.length() > 5) {
+                replace(tempmedia,"\"","");
+                videourl = base64_decode(tempmedia);
+                 if(videourl.length()) {
+                    serverenlace = videourl;
+                    if(Net::DOWNLOAD(videourl, directorydownload)) return true;
+                    if(cancelcurl == 1) return false;
+                 }
+            }
+
+        }
+        return false;
+        if(isset(Servers,"_Mixdrop")){
+            string tempcon = "";
+            std::cout << Servers["_Mixdrop"] << endl;
+            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
+            string Videored = Servers["_Mixdrop"]["remote"];
+            videourl = base64_decode(Videored);
+            //replace(videourl,".to",".cv");
+            if(videourl.length()) {
+                tempcon=MixDrop_Link(videourl);
+                if(tempcon.length()) {
+                    videourl=tempcon;
+                    serverenlace = videourl;
+                    if(Net::DOWNLOAD(videourl, directorydownload)) return true;
+                    if(cancelcurl == 1) return false;
+                }
+            }
+            //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
+            //white=true;
+        }
+	}
+	return false;
+}
+/*
+Tiradero
+
+
+
+    //Descarga
+
 	videourl = scrapElement(content, "um2.php?","\"");
 	if(videourl.length())
 	{
@@ -545,56 +610,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 			if(cancelcurl == 1) return false;
 		}
 	}
-	{
-        OneMORE(content,false);
-        if(isset(Servers,"_Mediafire")){
-            string tempcon = "";
-            std::cout << Servers["_Mediafire"] << endl;
-            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-            videourl = base64_decode(Servers["_Mediafire"]["remote"]);
-            replace(videourl,"https://mediafire.","https://www.mediafire.");
 
-            cout << videourl << endl;
-            string tempmedia = Net::GET(videourl);
-            //cout << tempmedia << endl;
-            if(tempmedia.length() > 5) {
-                tempmedia = scrapElement(tempmedia, "data-scrambled-url=\"","\"");
-                replace(tempmedia,"data-scrambled-url=\"","");
-
-                cout << "--" << tempmedia << "--" << endl;
-            }
-
-            if(tempmedia.length() > 5) {
-                replace(tempmedia,"\"","");
-                videourl = base64_decode(tempmedia);
-                 if(videourl.length()) {
-                    serverenlace = videourl;
-                    if(Net::DOWNLOAD(videourl, directorydownload)) return true;
-                    if(cancelcurl == 1) return false;
-                 }
-            }
-
-        }
-        return false;
-        if(isset(Servers,"_Mixdrop")){
-            string tempcon = "";
-            std::cout << Servers["_Mixdrop"] << endl;
-            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-            string Videored = string("https://c4.jkdesu.com/e/") + Servers["_Mixdrop"]["slug"].get<string>();
-            videourl = Net::REDIRECT(Videored,"");
-            if(videourl.length()) {
-                tempcon=MixDrop_Link(videourl);
-                if(tempcon.length()) {
-                    videourl=tempcon;
-                    serverenlace = videourl;
-                    if(Net::DOWNLOAD(videourl, directorydownload)) return true;
-                    if(cancelcurl == 1) return false;
-                }
-            }
-            //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
-            //white=true;
-        }
-	}
 
 	videourl = scrapElement(content,"jkvmixdrop.php?u=","\"");
 	if(videourl.length())
@@ -638,5 +654,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 		if(cancelcurl == 1) return false;
 	}
 
-	return false;
-}
+
+
+
+*/
