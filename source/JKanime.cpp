@@ -1210,6 +1210,13 @@ void DataUpdate(string Link) {//Get info off chapter
 	AnimeINF["TimeStamp"] = BD["TimeStamp"];
 	stringstream strm;
 	try{
+		for (auto& [key, value] : AnimeINF.items()) {
+                if (value.is_null()){
+					value = " ";
+					cout << key << " NULL Arreglando" << endl;
+				}
+        }
+
 //		strm << setw(4) << base;
 		strm << AnimeINF;
 		//write to DB
