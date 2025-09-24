@@ -302,10 +302,10 @@ int AnimeLoader(void* data){
 */
 		steep++;//Load Directory
 		MkDIR();
-    /*} catch(const char* errorMessage) {
+    } catch(const char* errorMessage) {
         std::cout << "Error: " << errorMessage << std::endl;
     } catch(const std::exception& e) {
-        std::cout << "Error: " << e.what() << std::endl;*/
+        std::cout << "Error: " << e.what() << std::endl;
     } catch(...) {
 		LOG::E(2);
 		cout << "- Thread Chain Error Catched, Steep#" << steep <<endl;
