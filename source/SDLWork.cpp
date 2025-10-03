@@ -105,7 +105,9 @@ void SDLB::intA(){
 			}
 		}
 	}
-
+	SDL_RendererInfo info;
+	SDL_GetRendererInfo(gRenderer, &info);
+	printf("Renderer: %s\n", info.name);
 	NSM = TTF_OpenFont("romfs:/fonts/NintendoStandard.ttf", 22);
 	//AF_19 = TTF_OpenFont("romfs:/fonts/AF.ttf", 19);
 	AF_35 = TTF_OpenFont("romfs:/fonts/AF.ttf", 35);
@@ -119,6 +121,7 @@ void SDLB::intA(){
 	Arista_20 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 20);
 	//Arista_50 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 50);
 	Arista_100 = TTF_OpenFont("romfs:/fonts/Arista.ttf", 100);
+	digi_7 = TTF_OpenFont("romfs:/fonts/digifont.otf", 7);
 	digi_9 = TTF_OpenFont("romfs:/fonts/digifont.otf", 9);
 	digi_11 = TTF_OpenFont("romfs:/fonts/digifont.otf", 11);
 	digi_16 = TTF_OpenFont("romfs:/fonts/digifont.otf", 16);
@@ -484,7 +487,7 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 	}
 
 	int sizeportraitx = 300;
-	int sizeportraity =424;
+	int sizeportraity = 424;
 
 	int HS = (sizeportraity * (WS * 10000 /sizeportraitx) /10000);
 	if (MapT.find(KeyImage) == MapT.end() || MapT[KeyImage].isZero()) {
@@ -514,10 +517,13 @@ void SDLB::Cover(std::string path,int X, int Y,std::string Text,int WS,int key,i
 				MapT[KeyTextH].loadFromRenderedText(digi_11, numhe, { 255,255,255 });
 			}
 
-			int kinsize =11;
-			if(!selected) {if (WS < 115) {kinsize =7; Text=Text.substr(0,20);} }//
-			TTF_Font* customFont = TTF_OpenFont("romfs:/fonts/digifont.otf", kinsize);
-			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
+			if(!selected && (WS < 115)) {
+				Text=Text.substr(0,20);
+				MapT[KeyText].loadFromRenderedTextWrap(digi_7, Text, { 255,255,255 }, WS);
+			} else {
+				MapT[KeyText].loadFromRenderedTextWrap(digi_11, Text, { 255,255,255 }, WS);
+			}
+			
 		}
 		MapT[KeyImage].render_VOX({ X - 3, Y - 3, WS + 6, HS + 6 + MapT[KeyText].getHeight()+8}, 0, 0, blue, 200);
 		MapT[KeyText].render(X + 2, Y + 4+MapT[KeyImage].getHeight());
@@ -571,10 +577,12 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 				replace(numhe, " #", ""); replace(numhe, "#", "");
 				MapT[KeyTextH].loadFromRenderedText(digi_11, numhe, { 255,255,255 });
 			}
-			int kinsize =11;
-			if (WS < 115) {kinsize =10; Text=Text.substr(0,16);}//
-			TTF_Font* customFont = TTF_OpenFont("romfs:/fonts/digifont.otf", kinsize);
-			MapT[KeyText].loadFromRenderedTextWrap(customFont, Text, { 255,255,255 }, WS);
+			if((WS < 115)) {
+				Text=Text.substr(0,20);
+				MapT[KeyText].loadFromRenderedTextWrap(digi_9, Text, { 255,255,255 }, WS);
+			} else {
+				MapT[KeyText].loadFromRenderedTextWrap(digi_11, Text, { 255,255,255 }, WS);
+			}
 		}
 	}
 	if (!render) {return;}
