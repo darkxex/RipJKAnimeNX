@@ -62,7 +62,7 @@ int AnimeLoader(void* data){
 			if(quit) throw "Error is AppletMode";;
 		}
 
-		//execute this once, or if Mgate is true
+		//Esto se ejecuta para verificar el estado de los dns y si hay blokeos
 		static bool Mgate=true;
 		if (Mgate) {
 			#if __has_include("Debug.h")
@@ -89,13 +89,14 @@ int AnimeLoader(void* data){
 			}
             Mgate=false;
 		}
-		//Check for app Updates
+		//Antes de hacer nada Verifica si hay una nueva versión
 		CheckUpdates(AppletMode);
 		steep++;
-        //exit thread if are in applet mode
+        //Aunque se usa para salir de la app se se esta en modo applet
+		//también se usa cuando se termina de instalar una actualización 
         if (AppletMode) {quit=true; throw "Error is AppletMode";}
                 
-		steep++;//Get main page
+		steep++;//Se obtiene la pagina principal y se revisa su estado
         //GetCookies();//Get Cookies
 		json MainPage=Net::REQUEST("https://jkanime.net/");
 		//std::cout << std::setw(4) << MainPage << std::endl;
@@ -114,6 +115,7 @@ int AnimeLoader(void* data){
                 ClFlock = true;
                 //Si se me permite luego y si el navegador de la switch lo admite
                 //quisiera extraer los cookies para poder usar la web icluso si cloudflare esta activo
+				//Aunque esto no es siempre posible
                 throw "Error cloudflare active";
                 break;
 			
@@ -129,7 +131,7 @@ int AnimeLoader(void* data){
 
         //Aqui creamos otra ramificación para no detener el cargador de animes -.-
 		if (Mromfs) {
-			//Download themes
+			//Descargar Data Adicional si no se tiene
 			if (!mount_theme("themes",true) || ThemeNeedUpdate)
 			{
                 if (!ThemeISUpdating){
@@ -140,6 +142,7 @@ int AnimeLoader(void* data){
             Mromfs = false;
 		}
 		//Obtener UserAgent si se cambia de versión
+		//Obtener el UserAgent del navegador
 		if (BD["Firm"].is_null()){
 			UAG=true;
 		} else {
@@ -154,22 +157,23 @@ int AnimeLoader(void* data){
 			//CheckImgVector(BD["arrays"]["chapter"]["images"],imgNumbuffer);
 		}
 
-		steep++;//Get Programation list, Links and Images
+		steep++;//Obtener la Programación de Recientes
 		int temp0=0,temp1=0;
 		temp0=content.find("Programación");
 		temp1=content.find("Animes recientes",temp0);
 		string temcont = content.substr(temp0,temp1-temp0);
-		steep++;//rebuild list
 		vector<string> ChapLink=scrapElementAll(temcont, "https://jkanime.net/");
-		vector<string> ChapImag=scrapElementAll(temcont, "https://"+CDNURL+"/assets/images/");
+		temp0=temcont.find("tab-content");//obtener Tiempos
+		temcont = temcont.substr(temp0);
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "</i>","</span>");
-
-		steep++;//Download All not existing images
+		
+		
+		steep++;//Descargar Imagenes Faltantes
 		cout << "# Recent IMG " << endl;
 		CheckImgVector(ChapLink,imgNumbuffer);
 
 
-		steep++;//'haschange' See if there is any new chap
+		steep++;//'haschange' Revisar Si hay Capitulos nuevos
 		bool haschange = true;
 		if (!BD["latestchapter"].is_null()) {
 			if (BD["latestchapter"] == ChapLink[0] && !reloading)
@@ -177,20 +181,24 @@ int AnimeLoader(void* data){
 				haschange = false;
 			}
 		}
-		steep++;//Display List
+		steep++;//aca se sale de la pantalla de carga solo se vera una vez
 		if(reloading) {Frames=0; reloading = false;}
 
 		if (haschange || BD["TimeStamp"].is_null()) {
-			//update TimeStamp
+			//Aca nos Encargamos de crear el vector que guarda los capítulos recientes
             bool areNEQ = true;
+			
+			//esto evita poner NULL en la entrada [0] no tocar... Arreglar mas tarde
             if (BD["arrays"]["chapter"]["link"].size() > 0) areNEQ = BD["arrays"]["chapter"]["link"][0] != ChapLink[0];
-                
+			
+			//se procede si link es nulo si el Timestamp es nulo y por lo general si el ultimo capitulo guardado es viejo
 			if (BD["arrays"]["chapter"]["link"].is_null() || areNEQ || BD["TimeStamp"].is_null()) {
 
 				BD["TimeStamp"] = to_string(TimeNow());
 				cout << "# New TimeStamp: " << BD["TimeStamp"] << endl;
 
-				//merge vectors
+				//Mezclar el Vector nuevo y el viejo 
+				//tomando del nuevo solo lo q ha cambiado del nuevo
 				if (!BD["arrays"]["chapter"]["link"].is_null())
 				{
 					vector<string> OChapLink=BD["arrays"]["chapter"]["link"];
@@ -201,23 +209,12 @@ int AnimeLoader(void* data){
                         //if (ChapLink.size() > 100) {ChapLink.erase(ChapLink.begin()+100,ChapLink.end());} // esto  es para controlar el tamaño máximo de la lista de animes
                     }
 				}
-				/*
-				if (!BD["arrays"]["chapter"]["images"].is_null())
-				{
-					vector<string> OChapImag=BD["arrays"]["chapter"]["images"];
-                    if (OChapImag.size() > 0) {
-                        cout << "# Merge: chapter images <-- 30 List in web" << endl;
-                        ChapImag.erase(find(ChapImag.begin(), ChapImag.end(), OChapImag[0]),ChapImag.end());
-                        ChapImag.insert(ChapImag.end(), OChapImag.begin(), OChapImag.end());
-                        //if (ChapImag.size() > 100) {ChapImag.erase(ChapImag.begin()+100,ChapImag.end());} // esto  es para controlar el tamaño máximo de la lista de animes
-                    }
-				}
-				*/
-				DoubleKill(ChapLink);
+
+				DoubleKill(ChapLink);//eliminacion de duplicados deprecated
 				//ChapImag.erase(unique(ChapImag.begin(),ChapImag.end()),ChapImag.end());
 
-				GOD.PlayEffect(GOD.proc);
-				Frames=1;
+				GOD.PlayEffect(GOD.proc);//Reproducir un sonido para indicar nuevos caps
+				Frames=1;//efecto de carga
                 if (ChapLink.size() > 0) BD["arrays"]["chapter"]["link"]=ChapLink;
                 //if (ChapImag.size() > 0) BD["arrays"]["chapter"]["images"]=ChapImag;
 				haschange = true;
@@ -227,28 +224,29 @@ int AnimeLoader(void* data){
 			cout << "# TimeStamp: " << BD["TimeStamp"] << endl;
 		}
 
-		steep++;//Get history
+		steep++;//Obtener Historial de Usuario
 		cout << "# History IMG " << endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
-		steep++;//Agregados to Database
+		
+		
+		steep++;//Agregados . Pestalla de Nuevos
 		temp0=content.find("Animes recientes");
 		temp1=content.find("Top animes",temp0);
 		temcont = content.substr(temp0,temp1-temp0);
-
 		MkAGR(temcont);
 
-		steep++;//banner to Database /* */
 
+		steep++;//Crear El Banner con imágenes de capítulos y sugerencias
 		if (haschange)
 		{
-			//Borrar Archivos temporales
+			//Borrar Archivos temporales cada Cierto Tiempo
             fsdevDeleteDirectoryRecursively((rootdirectory+"TEMP").c_str());
             mkdir((rootdirectory+"TEMP").c_str(), 0777);
 
 		}
-
 		//if (haschange)
         {
+			//Obtener los datos y crear el Vector con el banner
             temp0=content.find("<section class=\"hero\">");
             temp1=content.find("</section>",temp0);
             temcont = content.substr(temp0,temp1-temp0);
@@ -256,17 +254,17 @@ int AnimeLoader(void* data){
 		}
 		//return 0;
         
-//cout << "# HERE 1 " << endl;
-        //hourglas
+
+        //Hourglass. Crear una sección con los animes en emisión
+		//ordenado y sepadado por días de la semana 
 		if (haschange) {
 			MkHOR();
 		}
-//cout << "# HERE 2 " << endl;
 		
-		steep++;//Top, Hour to Database
+		steep++;//Top, Animes recomandado y mejoor votados
 		MkTOP();
 
-
+		//Trabajar en la sección de favoritos agregados por el usuario
 		steep++;//Download All not existing images of Favorites
 		if(UD["favoritos"].is_null()) {
 			cout << "# Get fav list " << endl;
@@ -278,7 +276,8 @@ int AnimeLoader(void* data){
 
 		cout << "# End Image Download " << endl;
 
-
+		//Recargar los datos de todos los animes en Recientes
+		//Así se precarga información de lo mas inmediato
 		steep++;//Load to cache all Programation Chaps
 		cout << "# Cache Recent ";
 		if (haschange) {
@@ -288,6 +287,7 @@ int AnimeLoader(void* data){
 			}
 		}
 /*
+		//Esto se desactivo para evitar hacer peticiones innecesarias a Jkanime
 		steep++;//Load to cache all Favorites Chaps
 		cout << "| favoritos ";
 		DataMaker(UD["favoritos"], part, ofall);
@@ -300,8 +300,13 @@ int AnimeLoader(void* data){
 		cout << "| HourGlass " <<endl;;
 		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
 */
+		//Esto Carga una lista de todos los Animes 
+		//aunque de momento no hacemos nada con ella 
+		//si que carga info de los animes como estado y descripciones 
+		//Solo se activa una vez al mes en teoria
 		steep++;//Load Directory
 		MkDIR();
+	
     } catch(const char* errorMessage) {
         std::cout << "Error: " << errorMessage << std::endl;
     } catch(const std::exception& e) {
@@ -312,6 +317,7 @@ int AnimeLoader(void* data){
 		//appletOverrideAutoSleepTimeAndDimmingTime(1800, 0, 500, 0);
 		//cout << UD << endl;
 	}
+	//Aqui se acaba la fiesta y se cierra este Hilo has dentro de unos cuantos minutos
 	if(quit) write_DB(AB,rootdirectory+"AnimeMeta.json");
     if (themeT.joinable()) {themeT.join();}
 	cout << "# End Thread Chain" << endl;
