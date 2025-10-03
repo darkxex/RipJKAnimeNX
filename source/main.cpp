@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 				{//Dibujar descripcion
 					int XG=10,YG=63,WG=850,HG=50;
 					static string rese_prot = "..";
-					string rese_p = BD["com"]["sinopsis"];
+					string rese_p = BD["com"]["synopsis"];
                     rese_p = rese_p.substr(0,1200);
 					if (rese_prot != rese_p) {//recargar textura solo si el texto cambia (no lo hace, va mas rápido asi)
 						T_R.loadFromRenderedTextWrap(GOD.Comic_16, rese_p, textColor, WG-20);

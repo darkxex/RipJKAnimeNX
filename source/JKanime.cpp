@@ -628,8 +628,9 @@ int MkDIR(){
 							//std::cout << value["server"] << "::" << value["slug"] << endl;;
 						}
 						BD["arrays"]["Directory"]["link"].push_back(value["url"].get<string>());
-						write_DB(AB,rootdirectory+"AnimeMeta.json");
+						if(quit) break;
 					}
+					write_DB(AB,rootdirectory+"AnimeMeta.json");
 					
 					//marcar progreso
 					part=BD["arrays"]["Directory"]["page"].get<int>();
@@ -659,7 +660,7 @@ int MkDIR(){
 			}
 			//BD["arrays"]["Directory"]["link"]=DIR;
 			//cout << BD["arrays"]["Directory"] << endl;
-			BD["arrays"]["Directory"]["InTime"]=0;
+			BD["arrays"]["Directory"]["InTime"]=1;
 			ofall=0;
 			write_DB(BD,rootdirectory+"DataBase.json");
 		}
@@ -836,23 +837,40 @@ int searchjk(void* data) {//Search Thread
 	DataMaker(BD["arrays"]["search"]["link"], porcentajebufferS, porcentajebufferAllS);
 	return 0;
 }
+
+//Establecer valores
+int setCapit(string name) {
+	//Valores por defecto
+	BD["com"]["synopsis"] = " ";
+	BD["com"]["nextdate"] = " ";
+	BD["com"]["generos"] = " ";
+	BD["com"]["Emitido"] = " ";
+	BD["com"]["estado"] = " ";
+	maxcapit = -1;
+	mincapit = 1;
+	latest = 1;
+	
+	//establecer solo si no es nulo
+	if (!AB[name]["synopsis"].is_null()) BD["com"]["synopsis"] = AB[name]["synopsis"];
+	if (!AB[name]["nextdate"].is_null()) BD["com"]["nextdate"] = AB[name]["nextdate"];
+	if (!AB[name]["generos"].is_null()) BD["com"]["generos"] = AB[name]["generos"];
+	if (!AB[name]["Emitido"].is_null()) BD["com"]["Emitido"] = AB[name]["Emitido"];
+	if (!AB[name]["enemision"].is_null()) BD["com"]["enemision"] = AB[name]["enemision"];
+	if (!AB[name]["estado"].is_null()) BD["com"]["estado"] = AB[name]["estado"];
+	if (!AB[name]["mincapit"].is_null()) mincapit = AB[name]["mincapit"];
+	if (!AB[name]["maxcapit"].is_null()) maxcapit = AB[name]["maxcapit"];
+
+	return 0;
+}
 int capit(void* data) {//Get chap thread
 	if (!Net::HasConnection()) return 0;
 	string link = BD["com"]["ActualLink"];
 	string name = KeyOfLink(link);
 	try{
 		DataUpdate(link);
-		//cout << BD << endl;
-		BD["com"]["sinopsis"] = AB[name]["sinopsis"];
-		BD["com"]["nextdate"] = AB[name]["nextdate"];//"......";
-		BD["com"]["generos"] = AB[name]["generos"];//"......";
-		BD["com"]["Emitido"] = AB[name]["Emitido"];
-		BD["com"]["enemision"] = AB[name]["enemision"];
-		BD["com"]["estado"] = AB[name]["estado"];
-		mincapit = AB[name]["mincapit"];//1;
-		maxcapit = AB[name]["maxcapit"];//-1;
-		//write json
-		//write_DB(AB,rootdirectory+"AnimeMeta.json");
+		
+		//Setvals
+		setCapit(name);
 
 		//Get Image
 		string image = rootdirectory+"DATA/"+name+".jpg";
@@ -884,33 +902,26 @@ int capBuffer (string Tlink) {//anime manager
 
 	string image = rootdirectory+"DATA/"+name+".jpg";
 	statenow = chapter_s;
+	
+	//Valores por defecto
+	BD["com"]["synopsis"] = " ";
+	BD["com"]["nextdate"] = " ";
+	BD["com"]["generos"] = " ";
+	BD["com"]["Emitido"] = " ";
+	BD["com"]["estado"] = " ";
+	maxcapit = -1;
+	mincapit = 1;
+	latest = 1;
 
 	if (AB[name]["TimeStamp"].is_null())
 	{
-		BD["com"]["sinopsis"] = " ";
-		BD["com"]["nextdate"] = " ";
-		BD["com"]["generos"] = " ";
-		BD["com"]["Emitido"] = " ";
-		BD["com"]["estado"] = " ";
-		maxcapit = -1;
-		mincapit = 1;
-		latest = 1;
 		capithread = SDL_CreateThread(capit, "capithread", (void*)NULL);
 	} else {
 		try{
-            if (!AB[name]["sinopsis"].is_null()) {
-                BD["com"]["sinopsis"] = AB[name]["sinopsis"];
-            } else {
-                BD["com"]["sinopsis"] = " ";
-            }
-			BD["com"]["nextdate"] = AB[name]["nextdate"];//"......";
-			BD["com"]["generos"] = AB[name]["generos"];//"......";
-			BD["com"]["Emitido"] = AB[name]["Emitido"];
-			BD["com"]["enemision"] = AB[name]["enemision"];
-			BD["com"]["estado"] = AB[name]["estado"];
-			maxcapit = AB[name]["maxcapit"];
-			mincapit = AB[name]["mincapit"];
+			//Setvals
+			setCapit(name);
 			//check For latest cap seend
+			
 			if (!isset(UD["chapter"],name) || !isset(UD["chapter"][name],"latest")) {
 				//UD["chapter"].erase(name);
 				//get position to the latest cap if in emision
@@ -920,8 +931,7 @@ int capBuffer (string Tlink) {//anime manager
 					latest = AB[name]["mincapit"];//is not in emision
 				}
 				latestcolor = -1;
-			}
-			else{
+			} else {
 				latest = UD["chapter"][name]["latest"];
 				latestcolor = UD["chapter"][name]["latest"];
 			}
@@ -987,26 +997,30 @@ void DataUpdate(string Link) {//Get info off chapter
 	}
 	//
 	string TMP="";
-	if (AnimeINF["sinopsis"].is_null()) {
+	if (AnimeINF["synopsis"].is_null()) {
 		//Sinopsis
-		//TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
+		//TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");  <p class="scroll">
 		TMP = scrapElement(a, "<p class=\"scroll\">","</p>");
+		//cout << "---" << TMP << "---" <<endl;
 		replace(TMP, "<p class=\"scroll\">", ""); replace(TMP, "\n", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "'"); replace(TMP, "&#039;", "'");
 		//AnimeINF["synopsis"] = TMP.substr(0,800);
 		AnimeINF["synopsis"] = TMP;
 	} else {
         //cout << "-- HERE1 " <<endl;
-        string taser = AnimeINF["sinopsis"];
+        string taser = AnimeINF["synopsis"];
         //cout << "-- HERE2 " <<endl;
-        if(taser.length() < 8){
+        if(taser.length() < 5){
             //Sinopsis
             //TMP = scrapElement(a, "<p rel=\"sinopsis\">","</p>");
             TMP = scrapElement(a, "<p class=\"scroll\">","</p>");
             replace(TMP, "<p class=\"scroll\">", ""); replace(TMP, "<br/>", ""); replace(TMP, "&quot;", "");
             //AnimeINF["synopsis"] = TMP.substr(0,800);
-            AnimeINF["synopsis"] = TMP;
+			//cout << "---" << TMP << "---" <<endl;
+           AnimeINF["synopsis"] = TMP;
         }
     }
+	//throw "Error intencional";
+
 	if (AnimeINF["image"].is_null()) {
 		//get image
 		TMP = scrapElement(a, "https://"+CDNURL+"/assets/images/animes/image/");
@@ -1211,10 +1225,10 @@ void DataUpdate(string Link) {//Get info off chapter
 	stringstream strm;
 	try{
 		for (auto& [key, value] : AnimeINF.items()) {
-                if (value.is_null()){
-					value = " ";
-					cout << key << " NULL Arreglando" << endl;
-				}
+			if (value.is_null()){
+				AnimeINF.erase(key);
+				cout << key << " NULL Arreglando" << endl;
+			}
         }
 
 //		strm << setw(4) << base;
