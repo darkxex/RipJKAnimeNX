@@ -515,31 +515,41 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
             string tempcon = "";
             std::cout << Servers["_Mediafire"] << endl;
             //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-            videourl = base64_decode(Servers["_Mediafire"]["remote"]);
-            replace(videourl,"https://mediafire.","https://www.mediafire.");
+            tempcon = base64_decode(Servers["_Mediafire"]["remote"]);
+            replace(tempcon,"https://mediafire.","https://www.mediafire.");
 
-            cout << videourl << endl;
-            string tempmedia = Net::GET(videourl);
+            cout << tempcon << endl;
+            string a = Net::GET(tempcon);
+            string tempmedia = "";
             //cout << tempmedia << endl;
-            if(tempmedia.length() > 5) {
-                tempmedia = scrapElement(tempmedia, "data-scrambled-url=\"","\"");
-                replace(tempmedia,"data-scrambled-url=\"","");
-
-                cout << "--" << tempmedia << "--" << endl;
-            }
-
-            if(tempmedia.length() > 5) {
-                replace(tempmedia,"\"","");
-                videourl = base64_decode(tempmedia);
-                 if(videourl.length()) {
+            if(a.length() > 5) {
+                
+                
+                tempmedia = scrapElement(a, "https://download","\"");
+                if(tempmedia.length() > 5) {
+                    cout << "--" << tempmedia << "--" << endl;
+                    videourl = tempmedia;
+                    
+                } else {
+                    tempmedia = scrapElement(a, "data-scrambled-url=\"","\"");
+                    replace(tempmedia,"data-scrambled-url=\"","");
+                    cout << "--" << tempmedia << "--" << endl;
+                    if(tempmedia.length() > 5) {
+                        replace(tempmedia,"\"","");
+                        videourl = base64_decode(tempmedia);
+                    }
+                    
+                }
+                if(videourl.length()) {
                     serverenlace = videourl;
                     if(Net::DOWNLOAD(videourl, directorydownload)) return true;
                     if(cancelcurl == 1) return false;
-                 }
+                }
+
             }
 
         }
-        return false;
+
         if(isset(Servers,"_Mixdrop")){
             string tempcon = "";
             std::cout << Servers["_Mixdrop"] << endl;
