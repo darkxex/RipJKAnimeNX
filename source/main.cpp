@@ -895,17 +895,17 @@ int main(int argc, char **argv)
 					gTextTexture.loadFromRenderedText(GOD.Comic_16, "Peso estimado: " + to_string((int)(sizeestimated / 1000000)) + "mb.", textColor);
 					gTextTexture.render(posxbase, posybase + 160);
 
-					gTextTexture.loadFromRenderedText(GOD.Comic_16, "Usa el HomeBrew PPlay para reproducir el video.", textColor);
+					gTextTexture.loadFromRenderedText(GOD.Comic_16, "Usa el HomeBrew NXMP para Reproducir el video.", textColor);
 					gTextTexture.render(posxbase, posybase + 200);
 
 					if (to_string(porcendown) == "100"&&!isDownloading) {
 						//Render red filled quad
 						VOX.render_VOX({ posxbase + 198, posybase + 500, 580, 50 }, 255, 255, 255, 195);
-						gTextTexture.loadFromRenderedText(GOD.Arista_40, "¡Descarga Completada! Revisa tu SD.", textColor);
+						gTextTexture.loadFromRenderedText(GOD.Arista_40, "¡Descarga Completada! Revisa SD:/Videos/ .", textColor);
 						gTextTexture.render(posxbase + 200, posybase + 500);
 						if(lcdoff) {lcdoff=false; appletSetLcdBacklightOffEnabled(lcdoff);}
 					}else{
-						gTextTexture.loadFromRenderedText(GOD.digi_16, "Velocidad: " +speedD+" M/S", textColor);
+						gTextTexture.loadFromRenderedText(GOD.digi_16, "Velocidad: " +speedD.substr(0,4)+" MB/s", textColor);
 						VOX.render_VOX({ posxbase, posybase + 180, gTextTexture.getWidth()+6, 20 }, 255, 255, 255, 145);
 						gTextTexture.render(posxbase + 2, posybase + 180);
 						if (isHandheld) {
@@ -916,8 +916,8 @@ int main(int argc, char **argv)
 				} else {
 					porcendown=0;
 				}
-
-				gTextTexture.loadFromRenderedText(GOD.Comic_16, serverenlace.substr(0,300), {168,0,0});
+				//Link de descarga
+				gTextTexture.loadFromRenderedText(GOD.Comic_16, serverenlace.substr(0,50), {168,0,0});
 				gTextTexture.render(posxbase, posybase + 220);
 
 				static int tatic = 850;
