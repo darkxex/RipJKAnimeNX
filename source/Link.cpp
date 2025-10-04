@@ -511,6 +511,26 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
 
 	{
         OneMORE(content,false);
+        if(isset(Servers,"_Mixdrop")){
+            string tempcon = "";
+            std::cout << Servers["_Mixdrop"] << endl;
+            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
+            string Videored = Servers["_Mixdrop"]["remote"];
+            videourl = base64_decode(Videored);
+            //replace(videourl,".to",".cv");
+            if(videourl.length()) {
+                tempcon=MixDrop_Link(videourl);
+                if(tempcon.length()) {
+                    videourl=tempcon;
+                    serverenlace = videourl;
+                    if(Net::DOWNLOAD(videourl, directorydownload)) return true;
+                    if(cancelcurl == 1) return false;
+                }
+            }
+            //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
+            //white=true;
+        }
+       
         if(isset(Servers,"_Mediafire")){
             string tempcon = "";
             std::cout << Servers["_Mediafire"] << endl;
@@ -523,8 +543,7 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
             string tempmedia = "";
             //cout << tempmedia << endl;
             if(a.length() > 5) {
-                
-                
+
                 tempmedia = scrapElement(a, "https://download","\"");
                 if(tempmedia.length() > 5) {
                     cout << "--" << tempmedia << "--" << endl;
@@ -545,30 +564,9 @@ bool linktodownoadjkanime(string urltodownload,string directorydownload) {
                     if(Net::DOWNLOAD(videourl, directorydownload)) return true;
                     if(cancelcurl == 1) return false;
                 }
-
             }
-
         }
 
-        if(isset(Servers,"_Mixdrop")){
-            string tempcon = "";
-            std::cout << Servers["_Mixdrop"] << endl;
-            //https://jkanime.net/c3.php?u=7bc30453dVj8i&s=voe
-            string Videored = Servers["_Mixdrop"]["remote"];
-            videourl = base64_decode(Videored);
-            //replace(videourl,".to",".cv");
-            if(videourl.length()) {
-                tempcon=MixDrop_Link(videourl);
-                if(tempcon.length()) {
-                    videourl=tempcon;
-                    serverenlace = videourl;
-                    if(Net::DOWNLOAD(videourl, directorydownload)) return true;
-                    if(cancelcurl == 1) return false;
-                }
-            }
-            //replace(videourl, "mdfx9dc8n.net", "mixdrop.ag");
-            //white=true;
-        }
 	}
 	return false;
 }
