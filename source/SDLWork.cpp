@@ -552,7 +552,7 @@ void SDLB::Cover_idx(std::string path,int X, int Y,std::string Text,int WS,int i
 		path = "romfs:/img/SuperPro.jpg";
 	}
 	int sizeportraitx = 300;
-	int sizeportraity =424;
+	int sizeportraity = 424;
 	//make the math
 	bool needload = false;
 
