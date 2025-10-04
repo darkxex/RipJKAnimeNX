@@ -797,8 +797,8 @@ void SDLB::ListCover(int& selectindex,json Jlinks, bool ongrid,int limit){
 				offset3++;
 			}
 			if (GenState == menu_s) {
-				//if (x < 6) continue;
-				//if (x > 9 && x < 16) continue;
+				if (x < 6) continue;
+				if (x > 9 && x < 16) continue;
 			}
 			if ((AbsoluteSize < Frames)&&(x > 30)) break;
 			if (x == selectindex) {
