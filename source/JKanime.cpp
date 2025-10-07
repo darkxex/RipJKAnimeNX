@@ -1141,31 +1141,6 @@ void DataUpdate(string Link) {//Get info off chapter
 			AnimeINF["estado"] = "En espera";
 		}
 	}
-	/*
-
-
-	 */
-	//Get Caps number
-	/*
-	int val0, val1, val2, val3;
-	val0 = a.rfind("href=\"#pag");
-	if (val0 != -1) {
-		val1 = a.find(">", val0);
-		val1 = val1 + 1;
-		val2 = a.find("<", val1);
-
-		string urlx;
-		urlx = (a.substr(val1, val2 - val1));
-		val3 = urlx.find(" - ") + 3;
-		urlx = urlx.substr(val3);
-
-		AnimeINF["maxcapit"] = atoi(urlx.c_str());
-	} else {
-		AnimeINF["maxcapit"] = 1;
-	}
-	*/
-
-	//cout << ">>>>>>>>>>> HERE! 1 --> " << Link << endl;
 
 	if (AnimeINF["mincapit"].is_null())
 	{
@@ -1177,49 +1152,10 @@ void DataUpdate(string Link) {//Get info off chapter
 			AnimeINF["mincapit"] = 1;
 		} else {
 			AnimeINF["mincapit"] = 0;
-			AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
+			//if (AnimeINF["mincapit"] !=  AnimeINF["maxcapit"])
+				//AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
 		}
 
-		/*
-		
-		int zero9 = a.rfind("");
-
-		
-		int zero1, zero2;
-		string zerocontainer = "";
-		string zerocontainer2 = "";
-		zero1 = a.rfind("/ajax/episodes/");
-		zero2 = a.find("'", zero1);
-		
-		if (zero1 > 0 && false){
-			zerocontainer = "https://jkanime.net" + a.substr(zero1, zero2 - zero1) + "/1";
-			replace(zerocontainer, "//a", "/a");
-			replace(zerocontainer, "//1", "/1");
-			
-			std::string tokenT = scrapElement(a, "<meta name=\"csrf-token\" content=\"","\"");
-			replace(tokenT, "<meta name=\"csrf-token\" content=\"", "");
-			std::string token = "_token="+tokenT;//"_token=biljhxPAv91RXjw2NjS3wTdbpu5B0mqdfjWAVjoy";
-			//cout << zerocontainer << endl;
-			zerocontainer2 = Net::POST(zerocontainer,token);
-
-			cout << tokenT << " Token " << name << endl;
-			cout << token << " Token " << name << endl;
-			cout << zerocontainer << " " << name << endl;
-			cout << zerocontainer2 << " " << name << endl;
-			
-		} else {
-			//cout << ">>>>>>>>>>>  " << a << endl;
-
-			cout << ">>>>>>>>>>> Error Catched --> " << zero1 << " --> "<< zero2 << endl;
-		}
-
-		if (zerocontainer2.find("\"number\":\"0\"") != string::npos) {
-			AnimeINF["mincapit"] = 0;
-			AnimeINF["maxcapit"] = AnimeINF["maxcapit"].get<int>() - 1;
-		} else {
-			AnimeINF["mincapit"] = 1;
-		}
-		*/
 	}
 	//cout << ">>>>>>>>>>> HERE! 2 --> " << Link << endl;
 /*
