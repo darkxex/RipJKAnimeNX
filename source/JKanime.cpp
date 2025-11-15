@@ -1059,18 +1059,12 @@ void DataUpdate(string Link) {//Get info off chapter
 	replace(TMP, "Emitido:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");replace(TMP, ",", "");
 	AnimeINF["Emitido"] = TMP;
 
-	int bal1=0;
-	bal1=a.find("Secuela");
-	if (bal1 > 1) {
-		TMP = scrapElement(a.substr(bal1), "https://jkanime.net/","");
-		AnimeINF["Secuela"] = TMP;
-	}
+	for key in ["Secuela", "Precuela"]:
+		pos = a.find(key)
+		if pos != -1:
+			TMP = scrap_element(a[pos:], "https://jkanime.net/", "")
+			AnimeINF[key] = TMP
 
-	bal1=a.find("Precuela");
-	if (bal1 > 1) {
-		TMP = scrapElement(a.substr(bal1), "https://jkanime.net/","");
-		AnimeINF["Precuela"] = TMP;
-	}
 
 	//find next date
 	TMP = " ";
