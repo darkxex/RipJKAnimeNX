@@ -30,9 +30,9 @@ include $(DEVKITPRO)/libnx/switch_rules
 #     - icon.jpg
 #     - <libnx folder>/default_icon.jpg
 #---------------------------------------------------------------------------------
-VERSION_MAJOR := 2
-VERSION_MINOR := 9
-VERSION_MICRO := 9
+VERSION_MAJOR := 3
+VERSION_MINOR := 0
+VERSION_MICRO := 0
 
 VERSION_EXDAT := 1
 APP_TITLE	:=	RipJKAnimeNX
