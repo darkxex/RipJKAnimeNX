@@ -1058,13 +1058,16 @@ void DataUpdate(string Link) {//Get info off chapter
 	TMP = scrapElement(a, "Emitido:","</li");
 	replace(TMP, "Emitido:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");replace(TMP, ",", "");
 	AnimeINF["Emitido"] = TMP;
+	
+	std::vector<std::string> keys = {"Secuela", "Precuela"};
 
-	for key in ["Secuela", "Precuela"]:
-		pos = a.find(key)
-		if pos != -1:
-			TMP = scrap_element(a[pos:], "https://jkanime.net/", "")
-			AnimeINF[key] = TMP
-
+	for (const std::string& key : keys) {
+		size_t pos = a.find(key);
+		if (pos != std::string::npos) {
+			std::string tmp = scrapElement(a.substr(pos), "https://jkanime.net/", "");
+			AnimeINF[key] = tmp;
+		}
+	}
 
 	//find next date
 	TMP = " ";
