@@ -32,7 +32,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 VERSION_MAJOR := 2
 VERSION_MINOR := 9
-VERSION_MICRO := 8
+VERSION_MICRO := 9
 
 VERSION_EXDAT := 1
 APP_TITLE	:=	RipJKAnimeNX
@@ -74,7 +74,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20 -fexceptions
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-no-as-needed,-Map,$(notdir $*.map)
 
-LIBS	:=	-lnsp -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -lwebp -ljpeg `sdl2-config --libs`  -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lzstd -lz -lnx  `$(PREFIX)pkg-config --libs sdl2 SDL2_mixer SDL2_image SDL2_ttf` \
+LIBS	:=	-lmpv -lnsp -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lpng -lwebp -ljpeg `sdl2-config --libs`  -lcurl -lmbedtls -lmbedx509 -lmbedcrypto -lzstd -lz -lnx  `$(PREFIX)pkg-config --libs sdl2 SDL2_mixer SDL2_image SDL2_ttf` \
 
 #`freetype-config --libs`			`pkg-config --cflags freetype2` \
 
