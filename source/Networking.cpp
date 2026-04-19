@@ -137,7 +137,11 @@ int progress_func_str(void* ptr, double TotalToDownload, double NowDownloaded,do
 namespace Net {
 //string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36";
 string UserAgent = "Mozilla/5.0 (Nintendo Switch; WebApplet) AppleWebKit/613.0 (KHTML, like Gecko) NF/6.0.3.27.17 NintendoBrowser/5.1.0.35231";
-int DebugNet = 0;        //0 no debug ,  1 some debug, 2 All debug
+int DebugNet = 0;        //0 no debug ,  1 some debug, 2 All debug 3 Verbose
+
+void setDebugNet(int a){
+    DebugNet = a;
+}
 
 //Simplification
 string REDIRECT(string url,string POSTFIEL){
@@ -148,12 +152,12 @@ string POST(string url,string POSTFIEL){
 	return REQUEST(url,POSTFIEL)["BODY"];
 }
 string GET(string url){
-    if ( DebugNet > 1) cout << "----GET" << endl;
+    if ( DebugNet >= 2) cout << "----GET" << endl;
 	return REQUEST(url)["BODY"];
 }
 json HEAD(string url){
 	json deb = REQUEST(url,"",true,true);
-	if ( DebugNet > 0) {
+	if ( DebugNet >= 1) {
 		cout << "# Nintendo Web : " << deb["CODE"] << std::endl;
 	}
 	return deb;
@@ -161,6 +165,7 @@ json HEAD(string url){
 
 //General Request
 json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
+    cout << "# --------------------------------------------------------------" <<  std::endl;
 	replace(url," ","%20");
 	replace(url,"\n","");
 	CURL *curl;
@@ -179,6 +184,11 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_USERAGENT, UserAgent.c_str());
 		curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+        curl_easy_setopt(curl, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+        curl_easy_setopt(curl, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NO_REVOKE);
+
+        if ( DebugNet > 1) curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
 
 		if (HEADR) {
 			curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
@@ -197,13 +207,10 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 		curl_easy_setopt(curl, CURLOPT_COOKIEFILE, (rootdirectory+"COOKIES.txt").c_str());
 		curl_easy_setopt(curl, CURLOPT_COOKIEJAR, (rootdirectory+"COOKIES.txt").c_str());
 		curl_easy_setopt(curl, CURLOPT_REFERER, url.c_str());
-		if (Verify) {
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1L);
-		} else {
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-		}
+        
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, Verify ? 1L : 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, Verify ? 2L : 0L);
+
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -223,7 +230,7 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 				curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &red);
 			}
 			data["RED"] = red;
-			if (DebugNet > 0 && redirects > 0) {
+			if (DebugNet >= 1 && redirects > 0) {
 				std::cout << " EURL: " << red << std::endl;
 			}
 		}
@@ -244,8 +251,8 @@ json REQUEST(string url,string POSTFIEL,bool HEADR,bool Verify){
 		//data["BODY"] = Buffer.substr(sizeh);
 	}
 
-	if (DebugNet > 1) {
-		if (url.find("https://jkanime.net/gsplay") != string::npos|| DebugNet > 2)
+	if (DebugNet >= 2) {
+		if (url.find("https://jkanime.net/gsplay") != string::npos|| DebugNet >= 3)
 		{
 			std::cout << " ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " << std::endl;
 			try {
@@ -470,6 +477,7 @@ bool CheckImgNet(std::string image,std::string url){
 			tmp = "https://"+CDNURL+"/assets/images/animes/image/"+image.substr(image.find_last_of("/\\") + 1);
 		}
 		cout << "# Missing "+image+", Downloading..." << endl;
+		cout << "# "+tmp+"" << endl;
 		return Net::DOWNLOAD(tmp,image,false);
 	}
 	return true;

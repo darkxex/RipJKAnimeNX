@@ -10,6 +10,7 @@ using json = nlohmann::json;
 
 namespace Net {
 bool HasConnection();
+void setDebugNet(int a);
 bool init();
 bool Bypass();
 json REQUEST(string url,string POSTFIEL="",bool HEADR=false,bool Verify=false);

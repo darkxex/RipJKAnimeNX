@@ -507,6 +507,7 @@ json DInfo(string ver){
 			cout << "error user conf" << endl;
 		}
 
+        Net::setDebugNet(config["DebugNet"].get<int>());
 		info["config"]=config;
         CDNURL = config["CDNURL"].get<string>();
         //std::cout << "# CDMURL " << CDNURL <<std::endl;
@@ -794,7 +795,7 @@ std::string KeyboardCall (std::string hint, std::string text){
 
 Result WebBrowserCloud(std::string url){
     string cburl = url+"404.shtml";
-    url = url+to_string(Frames)+"M/";
+    //url = url+to_string(Frames)+"M/";
     cout << "Cloud WEB :"+url <<std::endl;
 
 	Result rc = 0;

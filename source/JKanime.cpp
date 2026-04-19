@@ -106,6 +106,7 @@ int AnimeLoader(void* data){
         switch (numCode) {
             case 0:
                 cout << "- Error can't connect with Web #" << numCode << endl;
+				ClFlock = true;
                 throw "Error Connect";
                 break;
             case 403:

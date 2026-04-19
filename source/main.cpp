@@ -1057,6 +1057,7 @@ int main(int argc, char **argv)
 	if (NULL == Loaderthread) {printf("Loaderthread Not in use\n");}else {printf("Loaderthread in use: %s\n", SDL_GetError()); SDL_WaitThread(Loaderthread, NULL);}
 	if (NULL == inputThread) {printf("inputThread Not in use\n");}else {printf("inputThread in use: %s\n", SDL_GetError()); SDL_WaitThread(inputThread, NULL);}
 
+	std::cout << "End Thread Wait: " << std::endl;
 
 	//Free loaded images
 	gTextTexture.free();
