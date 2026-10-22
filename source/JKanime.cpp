@@ -72,15 +72,7 @@ int AnimeLoader(void* data){
 			switch(Req) {
 			case 0:
 			case 503:
-				if (!isSXOS) {
-					//Check if dns are correct
-					cout << "# Place DNS" << endl;
-					fsdevDeleteDirectoryRecursively("sdmc:/atmosphere/hosts");
-					mkdir("sdmc:/atmosphere/hosts",0777);
-					copy_me("romfs:/default.txt","sdmc:/atmosphere/hosts/default.txt");
-					cout << "# Reload DNS" << endl;
-					ReloadDNS();
-				} else{
+				if (isSXOS) {
 					if (AppletMode) InstallNSP("romfs:/05B9DB505ABBE000.nsp");
 					//Disable Stealth mode
 					//txStealthMode(0);
@@ -93,9 +85,9 @@ int AnimeLoader(void* data){
 		CheckUpdates(AppletMode);
 		steep++;
         //Aunque se usa para salir de la app se se esta en modo applet
-		//también se usa cuando se termina de instalar una actualización 
+		//también se usa cuando se termina de instalar una actualización
         if (AppletMode) {quit=true; throw "Error is AppletMode";}
-                
+
 		steep++;//Se obtiene la pagina principal y se revisa su estado
         //GetCookies();//Get Cookies
 		json MainPage=Net::REQUEST("https://jkanime.net/");
@@ -119,7 +111,7 @@ int AnimeLoader(void* data){
 				//Aunque esto no es siempre posible
                 throw "Error cloudflare active";
                 break;
-			
+
 			case 200:
 				cout << "# Web State #" << numCode << endl;
 				break;
@@ -167,8 +159,8 @@ int AnimeLoader(void* data){
 		temp0=temcont.find("tab-content");//obtener Tiempos
 		temcont = temcont.substr(temp0);
 		BD["arrays"]["chapter"]["date"]=scrapElementAll(temcont, "</i>","</span>");
-		
-		
+
+
 		steep++;//Descargar Imagenes Faltantes
 		cout << "# Recent IMG " << endl;
 		CheckImgVector(ChapLink,imgNumbuffer);
@@ -188,17 +180,17 @@ int AnimeLoader(void* data){
 		if (haschange || BD["TimeStamp"].is_null()) {
 			//Aca nos Encargamos de crear el vector que guarda los capítulos recientes
             bool areNEQ = true;
-			
+
 			//esto evita poner NULL en la entrada [0] no tocar... Arreglar mas tarde
             if (BD["arrays"]["chapter"]["link"].size() > 0) areNEQ = BD["arrays"]["chapter"]["link"][0] != ChapLink[0];
-			
+
 			//se procede si link es nulo si el Timestamp es nulo y por lo general si el ultimo capitulo guardado es viejo
 			if (BD["arrays"]["chapter"]["link"].is_null() || areNEQ || BD["TimeStamp"].is_null()) {
 
 				BD["TimeStamp"] = to_string(TimeNow());
 				cout << "# New TimeStamp: " << BD["TimeStamp"] << endl;
 
-				//Mezclar el Vector nuevo y el viejo 
+				//Mezclar el Vector nuevo y el viejo
 				//tomando del nuevo solo lo q ha cambiado del nuevo
 				if (!BD["arrays"]["chapter"]["link"].is_null())
 				{
@@ -228,8 +220,8 @@ int AnimeLoader(void* data){
 		steep++;//Obtener Historial de Usuario
 		cout << "# History IMG " << endl;
 		CheckImgVector(UD["history"],imgNumbuffer);
-		
-		
+
+
 		steep++;//Agregados . Pestalla de Nuevos
 		temp0=content.find("Animes recientes");
 		temp1=content.find("Top animes",temp0);
@@ -254,14 +246,14 @@ int AnimeLoader(void* data){
             MkBNR(temcont);
 		}
 		//return 0;
-        
+
 
         //Hourglass. Crear una sección con los animes en emisión
-		//ordenado y sepadado por días de la semana 
+		//ordenado y sepadado por días de la semana
 		if (haschange) {
 			MkHOR();
 		}
-		
+
 		steep++;//Top, Animes recomandado y mejoor votados
 		MkTOP();
 
@@ -301,13 +293,13 @@ int AnimeLoader(void* data){
 		cout << "| HourGlass " <<endl;;
 		DataMaker(BD["arrays"]["HourGlass"]["link"], part, ofall);
 */
-		//Esto Carga una lista de todos los Animes 
-		//aunque de momento no hacemos nada con ella 
-		//si que carga info de los animes como estado y descripciones 
+		//Esto Carga una lista de todos los Animes
+		//aunque de momento no hacemos nada con ella
+		//si que carga info de los animes como estado y descripciones
 		//Solo se activa una vez al mes en teoria
 		steep++;//Load Directory
 		MkDIR();
-	
+
     } catch(const char* errorMessage) {
         std::cout << "Error: " << errorMessage << std::endl;
     } catch(const std::exception& e) {
@@ -437,7 +429,7 @@ int MkTOP(){
 	temp1=content.find("<div class=\"searchbg\"",temp0);
 	content = content.substr(temp0,temp1-temp0);
 
-	
+
 	replace(content,"https://jkanime.net/top/","");
 	replace(content,"https://jkanime.net/top","");
 	replace(content,"https://jkanime.net///","");
@@ -453,7 +445,7 @@ int MkBNR(string content){
 	//Get Latest added animes
 	cout << "# Banner Get ";
     string imgurl = "https://"+CDNURL+"";
-	
+
 	vector<string> BannerElem={};
 	BannerElem=split(content,"<div class=\"hero__items set-bg\"");
     bool hasbaner = false;
@@ -469,11 +461,11 @@ int MkBNR(string content){
         string img = scrapElement(tCont, ""+imgurl+"/assets/images/animes/video/image/","\"");
         //string img = scrapElement(tCont, "data-setbg=\"","\"");
         string file = rootdirectory+"TEMP/"+img.substr(img.rfind("/")+1);;
-        
+
         replace(link,"href=\"","");
         replace(img,"data-setbg=\"","");
         replace(name,"<h2>","");
-        
+
         if (img.length() > 0 &&link.length() > 0){
             json dataT;
             dataT["name"] = name;
@@ -494,14 +486,14 @@ scrapElementAll(content, "data-setbg=\""+imgurl+"/assets/images/animes/video/ima
             temp0=content.find("<section class=\"hero\">");
             temp1=content.find("<div class=\"solopc\">",temp0);
             temcont = content.substr(temp0,temp1-temp0);
-            
+
 		string name = url;
 		replace(name,imgurl+"/assets/images/animes/video/image/","");
 		name = rootdirectory+"TEMP/"+name;
 		BannerFile.push_back(name);
 
 		CheckImgNet(name,url);
-        
+
         */
 	}
     if (hasbaner){
@@ -530,14 +522,14 @@ int MkHOR(){
 	replace(content,".jpg","/");
 	replace(content,".png","/");
 	*/
-	
-	//poner limite a split esto hace q STP tenga 7 valores mas unos mas para el resto de la pagina  
+
+	//poner limite a split esto hace q STP tenga 7 valores mas unos mas para el resto de la pagina
 	replace(content,"<div class='box semana filtro'>","<div class='box semana'>");
 	replace(content,"Buscar anime","<div class='box semana'>");
-	
-	
+
+
 	//<div class="box semana filtro"
-	
+
 	//dividimos en dias 7 para lunes a domingo
 	vector<string> STP={};
 	STP=split(content,"<div class='box semana'>");
@@ -638,16 +630,16 @@ int MkDIR(){
 						if(quit) break;
 					}
 					write_DB(AB,rootdirectory+"AnimeMeta.json");
-					
+
 					//marcar progreso
 					part=BD["arrays"]["Directory"]["page"].get<int>();
 					ofall=tempJson["last_page"].get<int>();
-					
+
 					//verificar si ya no hay mas animes que listar
 					if(BD["arrays"]["Directory"]["page"].get<int>() >= tempJson["last_page"].get<int>()){
 						break;
 					}
-					
+
 				} else {
 					std::cout << "Json ERROR... " << std::endl;
 					return false;
@@ -696,7 +688,7 @@ int MkDIR(){
 			//write_DB(BD,rootdirectory+"DataBase.json");
 			return 0;
 		}
-        
+
         //Esta Parte limpia a lista de animes recientes a 60 elementos (no queremos que esta se extienda hasta el infinito)
         vector<string> ChapLink=BD["arrays"]["chapter"]["link"];
         if (ChapLink.size() > 60) {
@@ -776,7 +768,7 @@ int searchjk(void* data) {//Search Thread
 		if (texts.length() > 0) {
 			cout << "# Search: " << texts << endl;
 			string content = Net::GET("https://jkanime.net/buscar/" + texts);
-			
+
 			/*
 			for (int c=1; c < 10 && !quit; c++) {
 				string tempCont=Net::GET("https://jkanime.net/buscar/" + texts + "/"+to_string(c)+"/");
@@ -806,7 +798,7 @@ int searchjk(void* data) {//Search Thread
 				val4 = content.find('"', val3);
 				string gsearchpreview = content.substr(val3, val4 - val3);
 				BD["arrays"]["search"]["images"].push_back(gsearchpreview);
-				
+
 				//cout << gsearchpreview << endl;
 				/*
 				val3 = content.find("<p>", val4) + 3;
@@ -856,7 +848,7 @@ int setCapit(string name) {
 	maxcapit = -1;
 	mincapit = 1;
 	latest = 1;
-	
+
 	//establecer solo si no es nulo
 	if (!AB[name]["synopsis"].is_null()) BD["com"]["synopsis"] = AB[name]["synopsis"];
 	if (!AB[name]["nextdate"].is_null()) BD["com"]["nextdate"] = AB[name]["nextdate"];
@@ -875,7 +867,7 @@ int capit(void* data) {//Get chap thread
 	string name = KeyOfLink(link);
 	try{
 		DataUpdate(link);
-		
+
 		//Setvals
 		setCapit(name);
 
@@ -909,7 +901,7 @@ int capBuffer (string Tlink) {//anime manager
 
 	string image = rootdirectory+"DATA/"+name+".jpg";
 	statenow = chapter_s;
-	
+
 	//Valores por defecto
 	BD["com"]["synopsis"] = " ";
 	BD["com"]["nextdate"] = " ";
@@ -928,7 +920,7 @@ int capBuffer (string Tlink) {//anime manager
 			//Setvals
 			setCapit(name);
 			//check For latest cap seend
-			
+
 			if (!isset(UD["chapter"],name) || !isset(UD["chapter"][name],"latest")) {
 				//UD["chapter"].erase(name);
 				//get position to the latest cap if in emision
@@ -981,15 +973,15 @@ void DataUpdate(string Link) {//Get info off chapter
 		}
 	}
 	if(quit) return;
-/* */ 
+/* */
     cout << "-------------------- " << Link << endl;
     cout << "Link " << Link << endl;
     cout << "COUNT " << DataPage["COUNT"] << endl;
     cout << "RED " << DataPage["RED"] << endl;
     cout << "CODE " << DataPage["CODE"] << endl;
-  
+
     if (DataPage["COUNT"] > 0 && DataPage["RED"] == "https://jkanime.net/404.shtml"){
-        //puede darse el caso de que aparezca un link venenoso 
+        //puede darse el caso de que aparezca un link venenoso
         //y los thread no logran manejarlo y peta todo
         cout << "Poison " << Link << endl;
         return;
@@ -997,7 +989,7 @@ void DataUpdate(string Link) {//Get info off chapter
 
 	string a = DataPage["BODY"];
 	if(quit) return;
-	
+
 	json AnimeINF;//
 	if(!AB[name].is_null()){
 		AnimeINF=AB[name];
@@ -1059,7 +1051,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	TMP = scrapElement(a, "Emitido:","</li");
 	replace(TMP, "Emitido:", ""); replace(TMP, "</span> ", ""); replace(TMP, "</span>", "");replace(TMP, ",", "");
 	AnimeINF["Emitido"] = TMP;
-	
+
 	std::vector<std::string> keys = {"Secuela", "Precuela"};
 
 	for (const std::string& key : keys) {
@@ -1144,7 +1136,7 @@ void DataUpdate(string Link) {//Get info off chapter
 	{
 		//empieza por 0?
 		//https://jkanime.net/img/404.png
-		
+
 		std::string haszero = Net::GET(Link+"0/");
 		if (haszero.find("https://jkanime.net/img/404.png") != string::npos) {
 			AnimeINF["mincapit"] = 1;
